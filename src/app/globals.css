@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Tajawal';
+  src: url('/fonts/Tajawal-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes productImageZoom {
+  from {
+    transform: scale(1.05);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes productHoverZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.15);
+  }
+}
+
+/* Header bottom decoration */
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    #F5F5DC 0%, 
+    #8B7355 25%, 
+    #F5F5DC 50%, 
+    #8B7355 75%, 
+    #F5F5DC 100%
+  );
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Hero section wave bottom */
+.hero-wave-bottom {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 10;
+}
+
+.hero-wave-bottom::before {
+  content: '';
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100px;
+  background: white;
+  clip-path: path('M0,40 Q150,10 300,40 T600,40 T900,40 T1200,40 T1500,40 T1800,40 L1800,100 L0,100 Z');
+  filter: drop-shadow(0 -2px 4px rgba(139, 115, 85, 0.2));
+}
+
+.hero-wave-bottom::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 5px;
+  left: 5%;
+  width: 90%;
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    #8B7355 0px,
+    #8B7355 15px,
+    transparent 15px,
+    transparent 25px,
+    #F5F5DC 25px,
+    #F5F5DC 40px,
+    transparent 40px,
+    transparent 50px
+  );
+  opacity: 0.4;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .hero-wave-bottom::before {
+    height: 60px;
+  }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+* {
+  font-family: 'Tajawal', Arial, sans-serif !important;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Tajawal', Arial, sans-serif;
+  font-weight: 700;
+}
+
+.hero-section {
+  animation: heroZoom 1.5s ease-out;
+}
+
+.hero-content {
+  animation: fadeInUp 1s ease-out 0.3s backwards;
+}
+
+.product-image {
+  animation: productImageZoom 0.8s ease-out;
+  transition: transform 0.3s ease-in-out;
+}
+
+.product-card:hover .product-image {
+  animation: productHoverZoom 0.3s ease-in-out forwards;
+}

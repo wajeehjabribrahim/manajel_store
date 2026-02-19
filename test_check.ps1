@@ -1,0 +1,1 @@
+cd c:\Users\wajee\Desktop\Manajel_store; $response = Invoke-WebRequest -Uri http://localhost:3001 -UseBasicParsing; if ($response.Content -match "Manajel") { Write-Host " Site is loading"; } if ($response.Content -match "EN") { Write-Host " Language switcher found"; }
