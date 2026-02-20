@@ -16,9 +16,9 @@ export interface Product {
   description: string;
   price: number;
   sizes: {
-    small: { weight: string; price: number };
-    medium: { weight: string; price: number };
-    large: { weight: string; price: number };
+    small?: { weight: string; price: number };
+    medium?: { weight: string; price: number };
+    large?: { weight: string; price: number };
   };
   image: string;
   featured: boolean;
@@ -113,7 +113,7 @@ export const PRODUCTS: Product[] = [
       medium: { weight: "500g", price: 28 },
       large: { weight: "1kg", price: 50 },
     },
-    image: "/products/pressed-olives.jpg",
+    image: "/products/olive.png",
     featured: true,
     inStock: true,
     rating: 4.8,

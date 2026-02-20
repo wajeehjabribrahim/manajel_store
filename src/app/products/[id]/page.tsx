@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { PRODUCTS } from "@/constants/products";
-import { COLORS } from "@/constants/store";
+import { PRODUCTS, Product } from "@/constants/products";
+import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
 
@@ -17,11 +17,48 @@ interface PageProps {
 
 export default function ProductPage({ params }: PageProps) {
   const router = useRouter();
-  const product = PRODUCTS.find((p) => p.id === params.id);
   const { t, language } = useLanguage();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("medium");
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/products/${params.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.product) {
+            setProduct(data.product);
+          } else {
+            setProduct(null);
+          }
+        } else {
+          const fallback = PRODUCTS.find((p) => p.id === params.id) || null;
+          setProduct(fallback);
+        }
+      } catch {
+        const fallback = PRODUCTS.find((p) => p.id === params.id) || null;
+        setProduct(fallback);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [params.id]);
+
+  useEffect(() => {
+    if (!product) return;
+    const availableSizes = (Object.keys(product.sizes || {}) as Array<"small" | "medium" | "large">)
+      .filter((key) => product.sizes?.[key]?.price);
+    if (availableSizes.length && !availableSizes.includes(selectedSize)) {
+      setSelectedSize(availableSizes[0]);
+    }
+  }, [product, selectedSize]);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -29,12 +66,24 @@ export default function ProductPage({ params }: PageProps) {
     setIsAdding(true);
     
     // Add item to cart
+    const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
+      "small" | "medium" | "large",
+      { weight: string; price: number }
+    ]>).filter(([, value]) => value?.price);
+
+    const fallbackSize = sizeEntries.length
+      ? sizeEntries[0][0]
+      : "medium";
+    const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
+    const price = product.sizes?.[activeSize]?.price ?? product.price;
+
     const cartItem = {
       id: product.id,
       name: product.name,
-      size: selectedSize,
+      image: product.image,
+      size: activeSize,
       quantity,
-      price: product.sizes[selectedSize].price,
+      price,
     };
     
     // Get existing cart
@@ -63,6 +112,18 @@ export default function ProductPage({ params }: PageProps) {
     }, 300);
   };
 
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
+        <div className="text-center">
+          <p style={{ color: COLORS.primary }} className="text-xl font-semibold">
+            {t("common.loading")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
@@ -81,7 +142,16 @@ export default function ProductPage({ params }: PageProps) {
     );
   }
 
-  const currentSize = product.sizes[selectedSize];
+  const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
+    "small" | "medium" | "large",
+    { weight: string; price: number }
+  ]>).filter(([, value]) => value?.price);
+
+  const fallbackSize = sizeEntries.length
+    ? sizeEntries[0][0]
+    : "medium";
+  const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
+  const currentSize = product.sizes?.[activeSize] || { weight: "", price: product.price };
 
   const nameKey = `products.${product.id}.name`;
   const descKey = `products.${product.id}.description`;
@@ -202,18 +272,18 @@ export default function ProductPage({ params }: PageProps) {
                 {t("product.selectSize")}
               </h3>
               <div className="grid grid-cols-3 gap-3">
-                {(["small", "medium", "large"] as const).map((size) => (
+                {(sizeEntries.length ? sizeEntries.map(([size]) => size) : (["medium"] as const)).map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
                     className={`p-3 rounded-lg border-2 transition-all ${
-                      selectedSize === size
+                      activeSize === size
                         ? "border-solid"
                         : "border-dashed"
                     }`}
                     style={{
-                      borderColor: selectedSize === size ? COLORS.primary : COLORS.border,
-                      backgroundColor: selectedSize === size ? COLORS.accent : "white",
+                      borderColor: activeSize === size ? COLORS.primary : COLORS.border,
+                      backgroundColor: activeSize === size ? COLORS.accent : "white",
                     }}
                   >
                     <div
@@ -223,13 +293,13 @@ export default function ProductPage({ params }: PageProps) {
                       {t(`product.${size}`)}
                     </div>
                     <div className="text-xs text-gray-600">
-                      {product.sizes[size].weight}
+                      {product.sizes?.[size]?.weight || ""}
                     </div>
                     <div
                       style={{ color: COLORS.secondary }}
                       className="font-bold text-sm"
                     >
-                      ${product.sizes[size].price}
+                      {CURRENCY_SYMBOL}{product.sizes?.[size]?.price ?? product.price}
                     </div>
                   </button>
                 ))}
@@ -285,7 +355,7 @@ export default function ProductPage({ params }: PageProps) {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-700">{t("product.pricePerUnit")}</span>
                 <span style={{ color: COLORS.primary }} className="font-bold">
-                  ${currentSize.price}
+                  {CURRENCY_SYMBOL}{currentSize.price}
                 </span>
               </div>
               <div className="flex justify-between items-center border-t pt-2" style={{ borderColor: COLORS.border }}>
@@ -293,7 +363,7 @@ export default function ProductPage({ params }: PageProps) {
                   {t("product.total")}
                 </span>
                 <span style={{ color: COLORS.primary }} className="font-bold text-2xl">
-                  ${currentSize.price * quantity}
+                  {CURRENCY_SYMBOL}{currentSize.price * quantity}
                 </span>
               </div>
             </div>

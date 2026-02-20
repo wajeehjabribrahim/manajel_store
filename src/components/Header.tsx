@@ -6,11 +6,15 @@ import { COLORS } from "@/constants/store";
 import { useState } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const { t, language } = useLanguage();
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
 
   const navItems = [
     { name: t("nav.home"), href: "/" },
@@ -76,9 +80,99 @@ export default function Header() {
             ))}
           </div>
 
-          {/* Language Switcher & Cart */}
+          {/* Language Switcher, Auth & Cart */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                {isAdmin && (
+                  <>
+                    <Link
+                      href="/admin/products"
+                      className="hover:opacity-80 transition-opacity"
+                      title={t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct")}
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                    </Link>
+                    <Link
+                      href="/admin/orders"
+                      className="hover:opacity-80 transition-opacity"
+                      title={t("admin.orders") === "admin.orders" ? "الطلبات" : t("admin.orders")}
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                    </Link>
+                  </>
+                )}
+                <Link
+                  href="/orders"
+                  className="hover:opacity-80 transition-opacity"
+                  title={t("orders.myOrders")}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                </Link>
+                <span className="text-sm opacity-90">
+                  {t("auth.welcome")}
+                  {session?.user?.name ? `, ${session.user.name}` : ""}
+                </span>
+                <button
+                  onClick={() => signOut()}
+                  className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition-colors"
+                >
+                  {t("auth.logout")}
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition-colors"
+                >
+                  {t("auth.login")}
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-3 py-1 rounded-md border border-white/40 hover:bg-white/10 transition-colors"
+                >
+                  {t("auth.register")}
+                </Link>
+              </div>
+            )}
             <Link
               href="/cart"
               className="relative hover:opacity-80 transition-opacity"
@@ -136,6 +230,38 @@ export default function Header() {
             <Link href="/cart" className="block py-2 hover:opacity-80">
               {t("nav.cart")}
             </Link>
+            {isAuthenticated ? (
+              <>
+                {isAdmin && (
+                  <>
+                    <Link href="/admin/products" className="block py-2 hover:opacity-80">
+                      {t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct")}
+                    </Link>
+                    <Link href="/admin/orders" className="block py-2 hover:opacity-80">
+                      {t("admin.orders") === "admin.orders" ? "الطلبات الحالية" : t("admin.orders")}
+                    </Link>
+                  </>
+                )}
+                <Link href="/orders" className="block py-2 hover:opacity-80">
+                  {t("orders.myOrders")}
+                </Link>
+                <button
+                  onClick={() => signOut()}
+                  className="w-full text-left py-2 hover:opacity-80"
+                >
+                  {t("auth.logout")}
+                </button>
+              </>
+            ) : (
+              <div className="space-y-2">
+                <Link href="/login" className="block py-2 hover:opacity-80">
+                  {t("auth.login")}
+                </Link>
+                <Link href="/register" className="block py-2 hover:opacity-80">
+                  {t("auth.register")}
+                </Link>
+              </div>
+            )}
             <div className="pt-3 border-t border-white/20">
               <LanguageSwitcher />
             </div>
@@ -219,6 +345,25 @@ export default function Header() {
                 >
                   {t("nav.contact")}
                 </Link>
+
+                {isAdmin && (
+                  <>
+                    <Link
+                      href="/admin/products"
+                      onClick={() => setCategoriesOpen(false)}
+                      className="block py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                    >
+                      {t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct")}
+                    </Link>
+                    <Link
+                      href="/admin/orders"
+                      onClick={() => setCategoriesOpen(false)}
+                      className="block py-3 px-4 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                    >
+                      {t("admin.orders") === "admin.orders" ? "الطلبات الحالية" : t("admin.orders")}
+                    </Link>
+                  </>
+                )}
                 
                 <Link
                   href="/faq"

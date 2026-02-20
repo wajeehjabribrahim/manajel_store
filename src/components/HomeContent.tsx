@@ -2,13 +2,37 @@
 
 import ProductCard from "@/components/ProductCard";
 import { COLORS, STORE_DESCRIPTION } from "@/constants/store";
-import { PRODUCTS } from "@/constants/products";
+import { PRODUCTS, Product } from "@/constants/products";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function HomeContent() {
   const { t } = useLanguage();
-  const featuredProducts = PRODUCTS.filter((p) => p.featured);
+  const { data: session, status } = useSession();
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const res = await fetch("/api/products");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.products)) {
+            setProducts(data.products);
+          }
+        }
+      } catch {
+        // keep fallback
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  const featuredProducts = products.filter((p) => p.featured);
 
   return (
     <>
@@ -38,11 +62,13 @@ export default function HomeContent() {
             {STORE_DESCRIPTION}
           </p>
           <Link
-            href="/shop"
+            href={isAdmin ? "/admin/products" : "/shop"}
             className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
             style={{ backgroundColor: COLORS.accent, color: COLORS.primary }}
           >
-            {t("common.shopNow")}
+            {isAdmin
+              ? (t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct"))
+              : t("common.shopNow")}
           </Link>
         </div>
         {/* Bottom Wave Decoration */}

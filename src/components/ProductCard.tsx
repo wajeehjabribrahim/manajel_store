@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/constants/products";
-import { COLORS } from "@/constants/store";
+import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
 
@@ -37,7 +37,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${product.id}`}>
       <div
-        className="product-card rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+        className="product-card h-full flex flex-col rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
         style={{ backgroundColor: COLORS.light }}
       >
         {/* Image Container */}
@@ -76,7 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-4 flex flex-col flex-1">
           <h3 style={{ color: COLORS.primary }} className="font-semibold mb-1 line-clamp-1">
             {name}
           </h3>
@@ -102,15 +102,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
           {/* Price */}
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mt-auto">
             <div>
               <p
                 style={{ color: COLORS.primary }}
                 className="font-bold text-lg"
               >
-                ${product.price}
+                {CURRENCY_SYMBOL}{product.price}
               </p>
-              <p className="text-xs text-gray-500">From smallest size</p>
+              <p className="text-xs text-gray-500">{t("product.fromSmallestSize")}</p>
             </div>
             {product.inStock ? (
               <span

@@ -3,6 +3,9 @@ export const STORE_NAME = "Manajel";
 export const STORE_TAGLINE = "Palestinian Heritage in Every Product";
 export const STORE_DESCRIPTION = "";
 
+// Currency
+export const CURRENCY_SYMBOL = "₪";
+
 // Brand Colors
 export const COLORS = {
   primary: "#556B2F", // Olive Green
