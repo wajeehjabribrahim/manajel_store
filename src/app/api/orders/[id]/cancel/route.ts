@@ -24,7 +24,8 @@ export async function POST(
     }
 
     // Check if user is authorized (order owner or guest with correct ID)
-    if (order.userId && (!session?.user || session.user.id !== order.userId)) {
+    const sessionUserId = (session?.user as { id?: string } | undefined)?.id;
+    if (order.userId && (!sessionUserId || sessionUserId !== order.userId)) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 403 }
