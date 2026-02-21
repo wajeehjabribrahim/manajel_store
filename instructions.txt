@@ -11,3 +11,7 @@ npx prisma db push
 
 
 
+
+neon :
+Connection string
+postgresql://neondb_owner:npg_I9FDMouVrWZ8@ep-broad-cloud-ai5vc0ab-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require

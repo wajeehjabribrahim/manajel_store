@@ -26,6 +26,7 @@ export default function ShopContent() {
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string }>>(CATEGORIES);
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const loadProducts = async () => {
@@ -35,6 +36,30 @@ export default function ShopContent() {
         const data = await res.json();
         if (Array.isArray(data?.products)) {
           setProducts(data.products);
+          
+          // Extract unique categories from products
+          const productCategories = data.products
+            .map((p: Product) => p.category)
+            .filter((cat: any): cat is string => typeof cat === 'string' && cat.length > 0);
+          
+          const uniqueCategories = Array.from(new Set(productCategories));
+          
+          // Merge with predefined categories
+          const categoriesMap = new Map<string, { id: string; name: string }>();
+          
+          // Add predefined categories first
+          CATEGORIES.forEach(cat => {
+            categoriesMap.set(cat.id, cat);
+          });
+          
+          // Add custom categories from products
+          uniqueCategories.forEach((catId: string) => {
+            if (!categoriesMap.has(catId)) {
+              categoriesMap.set(catId, { id: catId, name: catId });
+            }
+          });
+          
+          setAllCategories(Array.from(categoriesMap.values()));
         }
       }
     } catch {
@@ -44,6 +69,13 @@ export default function ShopContent() {
 
   useEffect(() => {
     loadProducts();
+    
+    // Reload products every 10 seconds to catch new categories
+    const interval = setInterval(() => {
+      loadProducts();
+    }, 10000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const handleDelete = async (productId: string) => {
@@ -111,7 +143,7 @@ export default function ShopContent() {
               >
                 {t("shop.allProducts")}
               </button>
-              {CATEGORIES.map((category) => (
+              {allCategories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
@@ -125,7 +157,9 @@ export default function ShopContent() {
                   }}
                   className="w-full text-left px-4 py-2 rounded transition-colors"
                 >
-                  {t(getCategoryTranslationKey(category.id))}
+                  {t(getCategoryTranslationKey(category.id)) === getCategoryTranslationKey(category.id)
+                    ? category.name
+                    : t(getCategoryTranslationKey(category.id))}
                 </button>
               ))}
             </div>
@@ -139,9 +173,12 @@ export default function ShopContent() {
               {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.map((product) => (
+              {filteredProducts.map((product, index) => (
                 <div key={product.id} className="relative">
-                  <ProductCard product={product} />
+                  <ProductCard 
+                    product={product} 
+                    animationDelay={index * 50}
+                  />
                   {isAdmin && (
                     <div className="absolute top-2 right-2 flex gap-2 z-10">
                       <button

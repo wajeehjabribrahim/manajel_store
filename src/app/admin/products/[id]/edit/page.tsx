@@ -12,6 +12,19 @@ interface SizeState {
   price: string;
 }
 
+const getCategoryTranslationKey = (categoryId: string): string => {
+  const keyMap: { [key: string]: string } = {
+    "olive-oil": "shop.categoryOliveOil",
+    "zatar": "shop.categoryZatar",
+    "sage": "shop.categorySage",
+    "freekeh": "shop.categoryFreekeh",
+    "pressed-olives": "shop.categoryPressedOlives",
+    "duqqa": "shop.categoryDuqqa",
+    "soap": "shop.categorySoap",
+  };
+  return keyMap[categoryId] || "shop.categoryOliveOil";
+};
+
 export default function AdminEditProductPage() {
   const { t, dir } = useLanguage();
   const router = useRouter();
@@ -223,7 +236,7 @@ export default function AdminEditProductPage() {
             >
               {CATEGORIES.map((cat) => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.name}
+                  {t(getCategoryTranslationKey(cat.id))}
                 </option>
               ))}
             </select>

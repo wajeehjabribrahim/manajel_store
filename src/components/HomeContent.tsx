@@ -7,12 +7,17 @@ import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 export default function HomeContent() {
   const { t } = useLanguage();
   const { data: session, status } = useSession();
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  
+  const feature1 = useScrollAnimation({ delay: 0 });
+  const feature2 = useScrollAnimation({ delay: 100 });
+  const feature3 = useScrollAnimation({ delay: 200 });
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -77,7 +82,7 @@ export default function HomeContent() {
 
       {/* Featured Products */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 animate-fade-in-down">
           <h2
             style={{ color: COLORS.primary }}
             className="text-4xl font-bold mb-4"
@@ -90,8 +95,12 @@ export default function HomeContent() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {featuredProducts.map((product, index) => (
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              animationDelay={index * 100}
+            />
           ))}
         </div>
       </section>
@@ -110,7 +119,10 @@ export default function HomeContent() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
+            <div 
+              ref={feature1.elementRef}
+              className={`text-center scroll-animate ${feature1.isVisible ? "visible" : ""}`}
+            >
               <div
                 style={{ backgroundColor: COLORS.primary }}
                 className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -126,7 +138,10 @@ export default function HomeContent() {
               <p className="text-gray-600">{t("home.authenticDesc")}</p>
             </div>
 
-            <div className="text-center">
+            <div 
+              ref={feature2.elementRef}
+              className={`text-center scroll-animate ${feature2.isVisible ? "visible" : ""}`}
+            >
               <div
                 style={{ backgroundColor: COLORS.primary }}
                 className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -142,7 +157,10 @@ export default function HomeContent() {
               <p className="text-gray-600">{t("home.handcraftedDesc")}</p>
             </div>
 
-            <div className="text-center">
+            <div 
+              ref={feature3.elementRef}
+              className={`text-center scroll-animate ${feature3.isVisible ? "visible" : ""}`}
+            >
               <div
                 style={{ backgroundColor: COLORS.primary }}
                 className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"

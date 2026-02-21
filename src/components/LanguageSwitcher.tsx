@@ -7,32 +7,32 @@ export default function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1">
       <button
         onClick={() => setLanguage("en")}
-        className={`px-3 py-1 rounded-lg font-semibold transition-all ${
+        className={`px-2 py-1 md:px-3 rounded-lg font-semibold text-xs md:text-sm transition-all ${
           language === "en"
             ? "text-white"
-            : "text-gray-600 hover:text-gray-900"
+            : "text-white/70 hover:text-white"
         }`}
         style={{
-          backgroundColor: language === "en" ? COLORS.primary : "transparent",
+          backgroundColor: language === "en" ? COLORS.secondary : "transparent",
         }}
       >
         EN
       </button>
       <button
         onClick={() => setLanguage("ar")}
-        className={`px-3 py-1 rounded-lg font-semibold transition-all ${
+        className={`px-2 py-1 md:px-3 rounded-lg font-semibold text-xs md:text-sm transition-all ${
           language === "ar"
             ? "text-white"
-            : "text-gray-600 hover:text-gray-900"
+            : "text-white/70 hover:text-white"
         }`}
         style={{
-          backgroundColor: language === "ar" ? COLORS.primary : "transparent",
+          backgroundColor: language === "ar" ? COLORS.secondary : "transparent",
         }}
       >
-        العربية
+        ع
       </button>
     </div>
   );

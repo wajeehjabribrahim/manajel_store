@@ -11,11 +11,26 @@ interface SizeState {
   price: string;
 }
 
+const getCategoryTranslationKey = (categoryId: string): string => {
+  const keyMap: { [key: string]: string } = {
+    "olive-oil": "shop.categoryOliveOil",
+    "zatar": "shop.categoryZatar",
+    "sage": "shop.categorySage",
+    "freekeh": "shop.categoryFreekeh",
+    "pressed-olives": "shop.categoryPressedOlives",
+    "duqqa": "shop.categoryDuqqa",
+    "soap": "shop.categorySoap",
+  };
+  return keyMap[categoryId] || "shop.categoryOliveOil";
+};
+
 export default function AdminAddProductPage() {
   const { t, dir } = useLanguage();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]?.id || "olive-oil");
+  const [customCategory, setCustomCategory] = useState("");
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -60,7 +75,9 @@ export default function AdminAddProductPage() {
     setError("");
     setSuccess("");
 
-    if (!name.trim() || !description.trim() || !category) {
+    const finalCategory = showCustomCategory ? customCategory.trim() : category;
+
+    if (!name.trim() || !description.trim() || !finalCategory) {
       setError("الرجاء تعبئة الاسم والوصف والتصنيف");
       return;
     }
@@ -91,7 +108,7 @@ export default function AdminAddProductPage() {
       const payload = {
         name: name.trim(),
         description: description.trim(),
-        category,
+        category: finalCategory,
         price: Number(price) || 0,
         imageData,
         sizes: Object.keys(sizesPayload).length ? sizesPayload : undefined,
@@ -115,6 +132,9 @@ export default function AdminAddProductPage() {
       setSuccess("تم حفظ المنتج بنجاح");
       setName("");
       setDescription("");
+      setCategory(CATEGORIES[0]?.id || "olive-oil");
+      setCustomCategory("");
+      setShowCustomCategory(false);
       setPrice("");
       setImageFile(null);
       setImagePreview(null);
@@ -166,17 +186,49 @@ export default function AdminAddProductPage() {
           </div>
           <div>
             <label className="block text-sm font-semibold mb-2">التصنيف</label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2"
-            >
-              {CATEGORIES.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+            <div className="space-y-3">
+              <select
+                value={showCustomCategory ? "custom" : category}
+                onChange={(e) => {
+                  if (e.target.value === "custom") {
+                    setShowCustomCategory(true);
+                  } else {
+                    setShowCustomCategory(false);
+                    setCategory(e.target.value);
+                  }
+                }}
+                className="w-full border rounded-lg px-3 py-2"
+              >
+                {CATEGORIES.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {t(getCategoryTranslationKey(cat.id))}
+                  </option>
+                ))}
+                <option value="custom">➕ إضافة تصنيف جديد</option>
+              </select>
+              
+              {showCustomCategory && (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                    className="w-full border rounded-lg px-3 py-2"
+                    placeholder="اكتب اسم التصنيف الجديد..."
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCustomCategory(false);
+                      setCustomCategory("");
+                    }}
+                    className="text-sm text-gray-500 hover:text-gray-700"
+                  >
+                    ✕ إلغاء
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

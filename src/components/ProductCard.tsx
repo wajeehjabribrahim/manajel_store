@@ -6,13 +6,16 @@ import { Product } from "@/constants/products";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 interface ProductCardProps {
   product: Product;
+  animationDelay?: number;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, animationDelay = 0 }: ProductCardProps) {
   const { t } = useLanguage();
+  const { elementRef, isVisible } = useScrollAnimation({ delay: animationDelay });
 
   const nameKey = `products.${product.id}.name`;
   const descKey = `products.${product.id}.description`;
@@ -35,11 +38,15 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <Link href={`/products/${product.id}`}>
-      <div
-        className="product-card h-full flex flex-col rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
-        style={{ backgroundColor: COLORS.light }}
-      >
+    <div
+      ref={elementRef}
+      className={`scroll-animate ${isVisible ? "visible" : ""}`}
+    >
+      <Link href={`/products/${product.id}`}>
+        <div
+          className="product-card h-full flex flex-col rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
+          style={{ backgroundColor: COLORS.light }}
+        >
         {/* Image Container */}
         <div
           className="w-full h-48 bg-gradient-to-br relative overflow-hidden"
@@ -128,5 +135,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
     </Link>
+    </div>
   );
 }
