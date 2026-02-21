@@ -11,11 +11,14 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 interface ProductCardProps {
   product: Product;
   animationDelay?: number;
+  isFirstProduct?: boolean;
 }
 
-export default function ProductCard({ product, animationDelay = 0 }: ProductCardProps) {
+export default function ProductCard({ product, animationDelay = 0, isFirstProduct = false }: ProductCardProps) {
   const { t } = useLanguage();
-  const { elementRef, isVisible } = useScrollAnimation({ delay: animationDelay });
+  // Add extra delay for first product to ensure image loads
+  const totalDelay = isFirstProduct ? animationDelay + 500 : animationDelay;
+  const { elementRef, isVisible } = useScrollAnimation({ delay: totalDelay });
 
   const nameKey = `products.${product.id}.name`;
   const descKey = `products.${product.id}.description`;
@@ -87,7 +90,7 @@ export default function ProductCard({ product, animationDelay = 0 }: ProductCard
           <h3 style={{ color: COLORS.primary }} className="font-semibold mb-1 line-clamp-1">
             {name}
           </h3>
-          <p className="text-xs text-gray-600 mb-3 line-clamp-2">
+          <p className="text-xs text-gray-900 mb-3 line-clamp-2">
             {description.split(".")[0]}
           </p>
 

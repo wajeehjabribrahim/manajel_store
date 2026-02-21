@@ -44,11 +44,11 @@ export default function LoginPageClient() {
       <h1 className="text-3xl font-bold mb-2" style={{ color: COLORS.primary }}>
         {t("auth.titleLogin")}
       </h1>
-      <p className="text-gray-600 mb-6">{t("auth.optional")}</p>
+      <p className="text-gray-800 mb-6">{t("auth.optional")}</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-900 mb-1">
             {t("auth.email")}
           </label>
           <input
@@ -61,7 +61,7 @@ export default function LoginPageClient() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-900 mb-1">
             {t("auth.password")}
           </label>
           <input
@@ -86,7 +86,7 @@ export default function LoginPageClient() {
         </button>
       </form>
 
-      <div className="mt-6 text-sm text-gray-600">
+      <div className="mt-6 text-sm text-gray-800">
         {t("auth.noAccount")} {" "}
         <Link href="/register" className="underline" style={{ color: COLORS.primary }}>
           {t("auth.register")}

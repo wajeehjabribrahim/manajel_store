@@ -169,7 +169,7 @@ export default function ShopContent() {
 
           {/* Products Grid */}
           <div className="flex-1">
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-gray-900">
               {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -178,6 +178,7 @@ export default function ShopContent() {
                   <ProductCard 
                     product={product} 
                     animationDelay={index * 50}
+                    isFirstProduct={index === 0}
                   />
                   {isAdmin && (
                     <div className="absolute top-2 right-2 flex gap-2 z-10">

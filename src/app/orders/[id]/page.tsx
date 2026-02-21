@@ -191,7 +191,7 @@ export default function OrderDetailsPage() {
                   {getStatusText(order.status)}
                 </span>
               </div>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-900 text-sm">
                 {t("orders.orderDate")}: {new Date(order.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -235,10 +235,10 @@ export default function OrderDetailsPage() {
                     <h3 style={{ color: COLORS.primary }} className="font-bold text-lg mb-1">
                       {item.name}
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-900 text-sm">
                       {t("cart.size")}: {sizeLabel(item.size)}
                     </p>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-900 text-sm">
                       {t("product.quantity")}: {item.quantity}
                     </p>
                   </div>
@@ -248,7 +248,7 @@ export default function OrderDetailsPage() {
                     <p style={{ color: COLORS.primary }} className="font-bold">
                       {CURRENCY_SYMBOL}{item.price}
                     </p>
-                    <p className="text-gray-600 text-sm mt-2">{t("cart.total")}</p>
+                    <p className="text-gray-900 text-sm mt-2">{t("cart.total")}</p>
                     <p style={{ color: COLORS.secondary }} className="font-bold">
                       {CURRENCY_SYMBOL}{item.total.toFixed(2)}
                     </p>
@@ -266,24 +266,24 @@ export default function OrderDetailsPage() {
               </h3>
               <div className="space-y-2 text-sm">
                 <div>
-                  <span className="text-gray-600">{t("cart.fullName")}:</span>
+                  <span className="text-gray-900">{t("cart.fullName")}:</span>
                   <p className="font-semibold">{order.shippingName}</p>
                 </div>
                 <div>
-                  <span className="text-gray-600">{t("cart.phone")}:</span>
+                  <span className="text-gray-900">{t("cart.phone")}:</span>
                   <p className="font-semibold">{order.shippingPhone}</p>
                 </div>
                 <div>
-                  <span className="text-gray-600">{t("cart.city")}:</span>
+                  <span className="text-gray-900">{t("cart.city")}:</span>
                   <p className="font-semibold">{order.shippingCity}</p>
                 </div>
                 <div>
-                  <span className="text-gray-600">{t("cart.address")}:</span>
+                  <span className="text-gray-900">{t("cart.address")}:</span>
                   <p className="font-semibold">{order.shippingAddress}</p>
                 </div>
                 {order.shippingNotes && (
                   <div>
-                    <span className="text-gray-600">{t("cart.notes")}:</span>
+                    <span className="text-gray-900">{t("cart.notes")}:</span>
                     <p className="font-semibold">{order.shippingNotes}</p>
                   </div>
                 )}
@@ -296,13 +296,13 @@ export default function OrderDetailsPage() {
               </h3>
               <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t("cart.itemCount")}</span>
+                  <span className="text-gray-900">{t("cart.itemCount")}</span>
                   <span className="font-semibold">
                     {order.items.reduce((sum, item) => sum + item.quantity, 0)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t("cart.goodsPrice")}</span>
+                  <span className="text-gray-900">{t("cart.goodsPrice")}</span>
                   <span className="font-semibold">
                     {CURRENCY_SYMBOL}{order.total.toFixed(2)}
                   </span>

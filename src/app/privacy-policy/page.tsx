@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
             <h2 style={{ color: COLORS.primary }} className="text-2xl font-bold mb-4">
               {t.policies.privacyMatters}
             </h2>
-            <p className="text-gray-700 mb-4">
+            <p className="text-gray-900 mb-4">
               {t.policies.privacyDesc}
             </p>
           </div>
@@ -32,7 +32,7 @@ export default function PrivacyPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.dataCollection}
             </h3>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <ul className="list-disc list-inside text-gray-900 space-y-2">
               <li>
                 <strong>{t.policies.contactInfo}</strong> {t.policies.contactInfoDesc}
               </li>
@@ -55,7 +55,7 @@ export default function PrivacyPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.dataUsage}
             </h3>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <ul className="list-disc list-inside text-gray-900 space-y-2">
               <li>{t.policies.usage1}</li>
               <li>{t.policies.usage2}</li>
               <li>{t.policies.usage3}</li>
@@ -69,10 +69,10 @@ export default function PrivacyPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.dataProtection}
             </h3>
-            <p className="text-gray-700 mb-3">
+            <p className="text-gray-900 mb-3">
               {t.policies.protectionDesc}
             </p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <ul className="list-disc list-inside text-gray-900 space-y-2">
               <li>{t.policies.protection1}</li>
               <li>{t.policies.protection2}</li>
               <li>{t.policies.protection3}</li>
@@ -84,8 +84,8 @@ export default function PrivacyPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.userRights}
             </h3>
-            <p className="text-gray-700 mb-3">{t.policies.rightsDesc}</p>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <p className="text-gray-900 mb-3">{t.policies.rightsDesc}</p>
+            <ul className="list-disc list-inside text-gray-900 space-y-2">
               <li>{t.policies.right1}</li>
               <li>{t.policies.right2}</li>
               <li>{t.policies.right3}</li>
@@ -98,7 +98,7 @@ export default function PrivacyPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.thirdParty}
             </h3>
-            <p className="text-gray-700">
+            <p className="text-gray-900">
               {t.policies.thirdPartyDesc}
             </p>
           </div>
@@ -107,7 +107,7 @@ export default function PrivacyPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.cookies}
             </h3>
-            <p className="text-gray-700">
+            <p className="text-gray-900">
               {t.policies.cookiesDesc}
             </p>
           </div>
@@ -119,7 +119,7 @@ export default function PrivacyPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.contactPrivacy}
             </h3>
-            <p className="text-gray-700">
+            <p className="text-gray-900">
               {t.policies.contactPrivacyDesc}
             </p>
           </div>

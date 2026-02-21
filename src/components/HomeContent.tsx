@@ -89,7 +89,7 @@ export default function HomeContent() {
           >
             {t("home.featuredProducts")}
           </h2>
-          <p className="text-gray-600">
+          <p className="text-gray-900">
             {t("home.featuredDescription")}
           </p>
         </div>
@@ -100,6 +100,7 @@ export default function HomeContent() {
               key={product.id} 
               product={product} 
               animationDelay={index * 100}
+              isFirstProduct={index === 0}
             />
           ))}
         </div>
@@ -135,7 +136,7 @@ export default function HomeContent() {
               >
                 {t("home.authentic")}
               </h3>
-              <p className="text-gray-600">{t("home.authenticDesc")}</p>
+              <p className="text-gray-900">{t("home.authenticDesc")}</p>
             </div>
 
             <div 
@@ -154,7 +155,7 @@ export default function HomeContent() {
               >
                 {t("home.handcrafted")}
               </h3>
-              <p className="text-gray-600">{t("home.handcraftedDesc")}</p>
+              <p className="text-gray-900">{t("home.handcraftedDesc")}</p>
             </div>
 
             <div 
@@ -173,7 +174,7 @@ export default function HomeContent() {
               >
                 {t("home.supportLocal")}
               </h3>
-              <p className="text-gray-600">{t("home.supportLocalDesc")}</p>
+              <p className="text-gray-900">{t("home.supportLocalDesc")}</p>
             </div>
           </div>
         </div>

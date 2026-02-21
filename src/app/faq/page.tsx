@@ -49,7 +49,7 @@ export default function FAQ() {
                 {faq.question}
               </summary>
               <div className="p-4 bg-white">
-                <p className="text-gray-700">{faq.answer}</p>
+                <p className="text-gray-900">{faq.answer}</p>
               </div>
             </details>
           ))}
@@ -66,7 +66,7 @@ export default function FAQ() {
           >
             {t.faq.contactSection}
           </h2>
-          <p className="text-gray-700 mb-6">
+          <p className="text-gray-900 mb-6">
             {t.faq.contactDesc}
           </p>
           <a

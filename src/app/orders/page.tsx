@@ -103,7 +103,7 @@ export default function OrdersPage() {
             <h2 style={{ color: COLORS.primary }} className="text-2xl font-bold mb-4">
               {t("orders.noOrders")}
             </h2>
-            <p className="text-gray-600 mb-8">{t("orders.noOrdersDesc")}</p>
+            <p className="text-gray-900 mb-8">{t("orders.noOrdersDesc")}</p>
             <Link
               href="/shop"
               className="inline-block px-8 py-3 rounded-lg font-semibold"
@@ -124,7 +124,7 @@ export default function OrdersPage() {
                     <h3 style={{ color: COLORS.primary }} className="font-bold text-lg">
                       {t("orders.order")} #{order.id.slice(0, 8)}
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-900 text-sm">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -150,7 +150,7 @@ export default function OrdersPage() {
 
                   <div className="flex justify-between items-center pt-4 border-t" style={{ borderColor: COLORS.border }}>
                     <div>
-                      <span className="text-gray-600 text-sm">{t("cart.totalPrice")}:</span>
+                      <span className="text-gray-900 text-sm">{t("cart.totalPrice")}:</span>
                       <span style={{ color: COLORS.primary }} className="font-bold text-xl ml-2">
                         {CURRENCY_SYMBOL}{order.total.toFixed(2)}
                       </span>

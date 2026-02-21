@@ -91,7 +91,7 @@ export default function Contact() {
               >
                 {item.title}
               </h3>
-              <p className="text-gray-600">{item.content}</p>
+              <p className="text-gray-900">{item.content}</p>
             </div>
           ))}
         </div>
@@ -107,7 +107,7 @@ export default function Contact() {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-1">
                   {t.contact.name} {t.contact.required}
                 </label>
                 <input
@@ -124,7 +124,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-1">
                   {t.contact.email} {t.contact.required}
                 </label>
                 <input
@@ -141,7 +141,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1">
                   {t.contact.phone}
                 </label>
                 <input
@@ -157,7 +157,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-900 mb-1">
                   {t.contact.subject} {t.contact.required}
                 </label>
                 <input
@@ -174,7 +174,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-1">
                   {t.contact.message} {t.contact.required}
                 </label>
                 <textarea
@@ -220,7 +220,7 @@ export default function Contact() {
             >
               {t.contact.helpTitle}
             </h3>
-            <p className="text-gray-700 mb-6">
+            <p className="text-gray-900 mb-6">
               {t.contact.helpDesc}
             </p>
 
@@ -232,7 +232,7 @@ export default function Contact() {
                 >
                   {t.contact.hours}
                 </h4>
-                <p className="text-gray-600 text-sm whitespace-pre-line">
+                <p className="text-gray-900 text-sm whitespace-pre-line">
                   {t.contact.hoursTime}
                 </p>
               </div>
@@ -244,7 +244,7 @@ export default function Contact() {
                 >
                   {t.contact.responseTime}
                 </h4>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-900 text-sm">
                   {t.contact.responseDesc}
                 </p>
               </div>
@@ -256,7 +256,7 @@ export default function Contact() {
                 >
                   {t.contact.bulkOrders}
                 </h4>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-900 text-sm">
                   {t.contact.bulkOrdersDesc}
                 </p>
               </div>

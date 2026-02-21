@@ -172,7 +172,7 @@ export default function AdminOrdersPage() {
       <div className="space-y-4">
         {filteredOrders.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <p className="text-gray-600">لا توجد طلبات</p>
+            <p className="text-gray-900">لا توجد طلبات</p>
           </div>
         ) : (
           filteredOrders.map((order) => (
@@ -193,12 +193,12 @@ export default function AdminOrdersPage() {
                       {getStatusText(order.status)}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-900">
                     {new Date(order.createdAt).toLocaleString("ar-EG")}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-600">المجموع</p>
+                  <p className="text-sm text-gray-900">المجموع</p>
                   <p style={{ color: COLORS.primary }} className="font-bold text-2xl">
                     {CURRENCY_SYMBOL}
                     {order.total.toFixed(2)}
@@ -251,7 +251,7 @@ export default function AdminOrdersPage() {
                         style={{ backgroundColor: COLORS.light }}
                       >
                         <p className="font-semibold">{item.name}</p>
-                        <p className="text-gray-600">
+                        <p className="text-gray-900">
                           الحجم: {item.size} | الكمية: {item.quantity} | السعر:{" "}
                           {CURRENCY_SYMBOL}
                           {item.price}
@@ -287,7 +287,7 @@ export default function AdminOrdersPage() {
                     <option value="cancelled">ملغي</option>
                   </select>
                   {updatingOrder === order.id && (
-                    <span className="text-sm text-gray-600">جاري التحديث...</span>
+                    <span className="text-sm text-gray-900">جاري التحديث...</span>
                   )}
                 </div>
 

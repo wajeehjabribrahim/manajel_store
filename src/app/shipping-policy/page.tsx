@@ -23,7 +23,7 @@ export default function ShippingPolicy() {
             <h2 style={{ color: COLORS.primary }} className="text-2xl font-bold mb-4">
               {t.policies.shippingInfo}
             </h2>
-            <p className="text-gray-700 mb-4">
+            <p className="text-gray-900 mb-4">
               {t.policies.shippingDesc}
             </p>
           </div>
@@ -32,7 +32,7 @@ export default function ShippingPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.deliveryAreas}
             </h3>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
+            <ul className="list-disc list-inside text-gray-900 space-y-2">
               <li>{t.policies.area1}</li>
               <li>{t.policies.area2}</li>
               <li>{t.policies.area3}</li>
@@ -43,7 +43,7 @@ export default function ShippingPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.shippingCosts}
             </h3>
-            <ul className="text-gray-700 space-y-2">
+            <ul className="text-gray-900 space-y-2">
               <li>
                 <strong>{t.policies.localOrders}</strong> {t.policies.localOrdersDesc}
               </li>
@@ -60,7 +60,7 @@ export default function ShippingPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.deliveryTimes}
             </h3>
-            <ul className="text-gray-700 space-y-2">
+            <ul className="text-gray-900 space-y-2">
               <li>
                 <strong>{t.policies.local}</strong> {t.policies.localTime}
               </li>
@@ -77,7 +77,7 @@ export default function ShippingPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.tracking}
             </h3>
-            <p className="text-gray-700">
+            <p className="text-gray-900">
               {t.policies.trackingDesc}
             </p>
           </div>
@@ -89,7 +89,7 @@ export default function ShippingPolicy() {
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.specialHandling}
             </h3>
-            <p className="text-gray-700">
+            <p className="text-gray-900">
               {t.policies.specialHandlingDesc}
             </p>
           </div>

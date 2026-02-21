@@ -190,7 +190,7 @@ export default function Cart() {
             >
               {t("cart.orderConfirmed")}
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-gray-900 mb-8">
               {t("cart.orderConfirmedDesc")}
             </p>
             <Link
@@ -211,7 +211,7 @@ export default function Cart() {
             >
               {t("cart.empty")}
             </h2>
-            <p className="text-gray-600 mb-8">
+            <p className="text-gray-900 mb-8">
               {t("cart.emptyDesc")}
             </p>
             <Link
@@ -274,7 +274,7 @@ export default function Cart() {
                       >
                         {productName}
                       </h3>
-                      <p className="text-gray-600 text-sm mb-4">
+                      <p className="text-gray-900 text-sm mb-4">
                         {t("cart.size")}: <span className="font-semibold">{sizeLabel(item.size)}</span>
                       </p>
 
@@ -337,14 +337,14 @@ export default function Cart() {
                         {t("cart.remove")}
                       </button>
                       <div>
-                        <p className="text-gray-600 text-sm">{t("cart.pricePerUnit")}</p>
+                        <p className="text-gray-900 text-sm">{t("cart.pricePerUnit")}</p>
                         <p
                           style={{ color: COLORS.primary }}
                           className="font-bold text-lg"
                         >
                           {CURRENCY_SYMBOL}{item.price}
                         </p>
-                        <p className="text-gray-600 text-sm mt-2">{t("cart.total")}</p>
+                        <p className="text-gray-900 text-sm mt-2">{t("cart.total")}</p>
                         <p
                           style={{ color: COLORS.secondary }}
                           className="font-bold text-lg"
@@ -384,13 +384,13 @@ export default function Cart() {
 
                 <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">{t("cart.itemCount")}</span>
+                    <span className="text-gray-900">{t("cart.itemCount")}</span>
                     <span className="font-semibold">
                       {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">{t("cart.goodsPrice")}</span>
+                    <span className="text-gray-900">{t("cart.goodsPrice")}</span>
                     <span className="font-semibold">{CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
