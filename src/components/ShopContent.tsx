@@ -42,7 +42,7 @@ export default function ShopContent() {
             .map((p: Product) => p.category)
             .filter((cat: any): cat is string => typeof cat === 'string' && cat.length > 0);
           
-          const uniqueCategories = Array.from(new Set(productCategories));
+          const uniqueCategories: string[] = Array.from(new Set(productCategories));
           
           // Merge with predefined categories
           const categoriesMap = new Map<string, { id: string; name: string }>();
@@ -53,7 +53,7 @@ export default function ShopContent() {
           });
           
           // Add custom categories from products
-          uniqueCategories.forEach((catId: string) => {
+          uniqueCategories.forEach((catId) => {
             if (!categoriesMap.has(catId)) {
               categoriesMap.set(catId, { id: catId, name: catId });
             }
