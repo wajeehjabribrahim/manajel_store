@@ -97,6 +97,7 @@ model Product {
   category    String
   price       Float
   image       String?
+  imageData   String?  @db.Text
   sizes       String?
   featured    Boolean  @default(false)
   inStock     Boolean  @default(true)

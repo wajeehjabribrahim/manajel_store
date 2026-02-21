@@ -3,8 +3,6 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PRODUCTS, Product } from "@/constants/products";
-import { promises as fs } from "fs";
-import path from "path";
 
 const toNumber = (value: unknown) => {
   const num = Number(value);
@@ -62,7 +60,7 @@ const mapDbProduct = (db: any): Product => {
     description: String(db.description),
     price: Number.isFinite(minPrice) && minPrice !== Infinity ? minPrice : price,
     sizes,
-    image: db.image ? String(db.image) : "",
+    image: db.imageData ? String(db.imageData) : (db.image ? String(db.image) : ""),
     featured: Boolean(db.featured),
     inStock: Boolean(db.inStock),
     rating: toNumber(db.rating) || 0,
@@ -115,16 +113,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Delete image file if exists
-    if (product.image && product.image.startsWith("/products/")) {
-      try {
-        const imagePath = path.join(process.cwd(), "public", product.image);
-        await fs.unlink(imagePath);
-      } catch {
-        // Ignore if file doesn't exist
-      }
-    }
-
     await prisma.product.delete({ where: { id } });
 
     return NextResponse.json({ success: true }, { status: 200 });
@@ -155,6 +143,7 @@ export async function PUT(
     const description = typeof body?.description === "string" ? body.description.trim() : "";
     const category = typeof body?.category === "string" ? body.category.trim() : "";
     const image = typeof body?.image === "string" ? body.image.trim() : "";
+    const imageData = typeof body?.imageData === "string" ? body.imageData.trim() : "";
     const rawPrice = toNumber(body?.price);
 
     if (!name || !description || !category) {
@@ -177,6 +166,7 @@ export async function PUT(
         description,
         category,
         image: image || null,
+        imageData: imageData || null,
         price,
         sizes: sizes && Object.keys(sizes).length ? JSON.stringify(sizes) : null,
         featured: Boolean(body?.featured),

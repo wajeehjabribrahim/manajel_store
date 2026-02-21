@@ -67,11 +67,10 @@ export default function AdminAddProductPage() {
 
     setSaving(true);
     try {
-      let imagePath = "";
+      let imageData = "";
       if (imageFile) {
         const uploadData = new FormData();
         uploadData.append("file", imageFile);
-        uploadData.append("name", name.trim());
         const uploadRes = await fetch("/api/uploads/product-image", {
           method: "POST",
           body: uploadData,
@@ -85,7 +84,7 @@ export default function AdminAddProductPage() {
         }
 
         const uploadJson = await uploadRes.json();
-        imagePath = typeof uploadJson?.path === "string" ? uploadJson.path : "";
+        imageData = typeof uploadJson?.imageData === "string" ? uploadJson.imageData : "";
       }
 
       const sizesPayload = buildSizesPayload();
@@ -94,7 +93,7 @@ export default function AdminAddProductPage() {
         description: description.trim(),
         category,
         price: Number(price) || 0,
-        image: imagePath,
+        imageData,
         sizes: Object.keys(sizesPayload).length ? sizesPayload : undefined,
         featured,
         inStock,

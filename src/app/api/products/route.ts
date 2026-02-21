@@ -58,7 +58,7 @@ const mapDbProduct = (db: any): Product => {
     description: String(db.description),
     price: Number.isFinite(minPrice) && minPrice !== Infinity ? minPrice : price,
     sizes,
-    image: db.image ? String(db.image) : "",
+    image: db.imageData ? String(db.imageData) : (db.image ? String(db.image) : ""),
     featured: Boolean(db.featured),
     inStock: Boolean(db.inStock),
     rating: toNumber(db.rating) || 0,
@@ -89,6 +89,7 @@ export async function POST(req: Request) {
     const description = typeof body?.description === "string" ? body.description.trim() : "";
     const category = typeof body?.category === "string" ? body.category.trim() : "";
     const image = typeof body?.image === "string" ? body.image.trim() : "";
+    const imageData = typeof body?.imageData === "string" ? body.imageData.trim() : "";
     const rawPrice = toNumber(body?.price);
 
     if (!name || !description || !category) {
@@ -110,6 +111,7 @@ export async function POST(req: Request) {
         description,
         category,
         image: image || null,
+        imageData: imageData || null,
         price,
         sizes: sizes ? JSON.stringify(sizes) : null,
         featured: Boolean(body?.featured),
