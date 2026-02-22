@@ -30,22 +30,22 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">{t("footer.shopTitle")}</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/shop" className="hover:opacity-100 opacity-80">
+                <Link href="/shop" className="opacity-100">
                   {t("footer.allProducts")}
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=olive-oil" className="hover:opacity-100 opacity-80">
+                <Link href="/shop?category=olive-oil" className="opacity-100">
                   {t("footer.oliveOil")}
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=zatar" className="hover:opacity-100 opacity-80">
+                <Link href="/shop?category=zatar" className="opacity-100">
                   {t("footer.zatar")}
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=freekeh" className="hover:opacity-100 opacity-80">
+                <Link href="/shop?category=freekeh" className="opacity-100">
                   {t("footer.freekeh")}
                 </Link>
               </li>
@@ -57,17 +57,17 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">{t("footer.infoTitle")}</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/about" className="hover:opacity-100 opacity-80">
+                <Link href="/about" className="opacity-100">
                   {t("footer.aboutUs")}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:opacity-100 opacity-80">
+                <Link href="/contact" className="opacity-100">
                   {t("footer.contact")}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:opacity-100 opacity-80">
+                <Link href="/faq" className="opacity-100">
                   {t("footer.faq")}
                 </Link>
               </li>
@@ -79,17 +79,17 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">{t("footer.policiesTitle")}</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/shipping-policy" className="hover:opacity-100 opacity-80">
+                <Link href="/shipping-policy" className="opacity-100">
                   {t("footer.shippingPolicy")}
                 </Link>
               </li>
               <li>
-                <Link href="/return-policy" className="hover:opacity-100 opacity-80">
+                <Link href="/return-policy" className="opacity-100">
                   {t("footer.returnPolicy")}
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:opacity-100 opacity-80">
+                <Link href="/privacy-policy" className="opacity-100">
                   {t("footer.privacyPolicy")}
                 </Link>
               </li>
@@ -108,7 +108,7 @@ export default function Footer() {
             </p>
             <p>
               {t("footer.contactLabel")}{" "}
-              <a href={`mailto:${CONTACT_INFO.email}`} className="hover:opacity-100">
+              <a href={`mailto:${CONTACT_INFO.email}`} className="opacity-100">
                 {CONTACT_INFO.email}
               </a>
             </p>

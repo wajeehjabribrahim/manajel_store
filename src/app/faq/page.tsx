@@ -44,7 +44,7 @@ export default function FAQ() {
             >
               <summary
                 style={{ backgroundColor: COLORS.accent }}
-                className="cursor-pointer p-4 font-semibold hover:opacity-80 transition-opacity"
+                className="cursor-pointer p-4 font-semibold"
               >
                 {faq.question}
               </summary>
