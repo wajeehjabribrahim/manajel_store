@@ -48,7 +48,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="hover:opacity-80 transition-opacity"
+                className="transition-opacity"
               >
                 {item.name}
               </Link>
@@ -64,7 +64,7 @@ export default function Header() {
                   <>
                     <Link
                       href="/admin/products"
-                      className="hover:opacity-80 transition-opacity"
+                      className="transition-opacity"
                       title={t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct")}
                     >
                       <svg
@@ -83,7 +83,7 @@ export default function Header() {
                     </Link>
                     <Link
                       href="/admin/orders"
-                      className="hover:opacity-80 transition-opacity"
+                      className="transition-opacity"
                       title={t("admin.orders") === "admin.orders" ? "الطلبات" : t("admin.orders")}
                     >
                       <svg
@@ -104,7 +104,7 @@ export default function Header() {
                 )}
                 <Link
                   href="/orders"
-                  className="hover:opacity-80 transition-opacity"
+                  className="transition-opacity"
                   title={t("orders.myOrders")}
                 >
                   <svg
@@ -150,7 +150,7 @@ export default function Header() {
             )}
             <Link
               href="/cart"
-              className="relative hover:opacity-80 transition-opacity"
+              className="relative transition-opacity"
               title={t("nav.cart")}
             >
               <svg
@@ -174,7 +174,7 @@ export default function Header() {
             <LanguageSwitcher />
             <Link
               href={isAuthenticated ? "/orders" : "/login"}
-              className="hover:opacity-80 transition-opacity"
+              className="transition-opacity"
               title={isAuthenticated ? t("orders.myOrders") : t("auth.login")}
             >
               <svg
@@ -193,7 +193,7 @@ export default function Header() {
             </Link>
             <Link
               href="/cart"
-              className="hover:opacity-80 transition-opacity"
+              className="transition-opacity"
               title={t("nav.cart")}
             >
               <svg
