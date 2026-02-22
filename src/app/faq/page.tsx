@@ -43,7 +43,7 @@ export default function FAQ() {
               style={{ borderColor: COLORS.border }}
             >
               <summary
-                style={{ backgroundColor: COLORS.accent }}
+                style={{ backgroundColor: COLORS.accent, color: COLORS.primary }}
                 className="cursor-pointer p-4 font-semibold"
               >
                 {faq.question}
