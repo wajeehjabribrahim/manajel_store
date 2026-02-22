@@ -43,9 +43,9 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
   return (
     <div
       ref={elementRef}
-      className={`scroll-animate ${isVisible ? "visible" : ""}`}
+      className={`scroll-animate h-full ${isVisible ? "visible" : ""}`}
     >
-      <Link href={`/products/${product.id}`}>
+      <Link href={`/products/${product.id}`} className="block h-full">
         <div
           className="product-card h-full flex flex-col rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer group"
           style={{ backgroundColor: COLORS.light }}

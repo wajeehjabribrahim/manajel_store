@@ -399,10 +399,10 @@ export default function ProductPage({ params }: PageProps) {
               style={{ color: COLORS.primary }}
               className="font-bold text-lg mb-2"
             >
-              ✓ منتج أصلي
+              {t.product.original}
             </h4>
             <p className="text-gray-900 text-sm">
-              مصنوع من أجود المواد الطبيعية مباشرة من مزارع سلفيت الفلسطينية
+              {t.product.originalDesc}
             </p>
           </div>
           <div className="p-6 rounded-lg" style={{ backgroundColor: "white" }}>
@@ -410,10 +410,10 @@ export default function ProductPage({ params }: PageProps) {
               style={{ color: COLORS.primary }}
               className="font-bold text-lg mb-2"
             >
-              ✓ شحن سريع
+              {t.product.fastShip}
             </h4>
             <p className="text-gray-900 text-sm">
-              توصيل آمن وسريع إلى جميع المناطق
+              {t.product.fastShipDesc}
             </p>
           </div>
           <div className="p-6 rounded-lg" style={{ backgroundColor: "white" }}>
@@ -421,10 +421,10 @@ export default function ProductPage({ params }: PageProps) {
               style={{ color: COLORS.primary }}
               className="font-bold text-lg mb-2"
             >
-              ✓ ضمان الرضا
+              {t.product.satisfaction}
             </h4>
-            <p className="text-gray-600 text-sm">
-              ضمان استرجاع خلال 7 أيام للمنتجات المعيبة مع استرجاع مجاني واستبدال
+            <p className="text-gray-900 text-sm">
+              {t.product.satisfactionDesc}
             </p>
           </div>
         </div>

@@ -35,17 +35,17 @@ export default function About() {
             >
               {t.about.ourStory}
             </h2>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              وُلدت فكرة مناجل من الأرض… من بين أشجار الزيتون التي رافقتنا لسنوات وكانت جزءًا من يومنا وتاريخ عائلتنا. لم يكن الزيت بالنسبة لنا مجرد منتج، بل حكاية تعبٍ ومواسم، ورائحة معاصر، وذكريات قطاف اجتمع فيها الأهل والأصدقاء.
+            <p className="text-gray-900 mb-4 leading-relaxed">
+              {t.about.storyPara1}
             </p>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              مع مرور الوقت، أدركنا أن ما نملكه ليس فقط زيت زيتون عالي الجودة، بل تجربة كاملة تستحق أن تصل إلى كل بيت. من هنا بدأت رحلة مناجل؛ رحلة هدفها نقل أصالة الأرض ونقاء المنتج إلى عملائنا بطريقة عصرية وسهلة.
+            <p className="text-gray-900 mb-4 leading-relaxed">
+              {t.about.storyPara2}
             </p>
-            <p className="text-gray-700 mb-4 leading-relaxed">
-              نعتني بكل خطوة في رحلتنا — من العناية بالأشجار، إلى القطاف، إلى العصر والتعبئة — لنضمن أن يصل إليكم زيت زيتون طبيعي يحمل الطعم الحقيقي الذي نؤمن به ونفخر بتقديمه.
+            <p className="text-gray-900 mb-4 leading-relaxed">
+              {t.about.storyPara3}
             </p>
-            <p className="text-gray-700 leading-relaxed">
-              مناجل ليست معصرة فقط، بل امتداد لأرض وهوية ورسالة: أن يبقى الخير الذي تمنحه الطبيعة حاضرًا على موائدكم كما نعيشه نحن كل موسم.
+            <p className="text-gray-900 leading-relaxed">
+              {t.about.storyPara4}
             </p>
           </AnimatedSection>
           <AnimatedSection animationType="fade-right" delay={100}>
@@ -57,7 +57,7 @@ export default function About() {
                 style={{ color: COLORS.primary }}
                 className="text-2xl font-bold mb-4"
               >
-                بعض قيمنا
+                {t.about.ourValues}
               </h3>
               <ul className="space-y-3">
                 {[
@@ -75,7 +75,7 @@ export default function About() {
                     >
                       ✓
                     </span>
-                    <span>{value}</span>
+                    <span className="text-gray-900">{value}</span>
                   </li>
                 ))}
               </ul>
@@ -90,7 +90,7 @@ export default function About() {
               style={{ color: COLORS.primary }}
               className="text-3xl font-bold mb-8 text-center"
             >
-              بعض منتجاتنا
+              {t.about.products}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[

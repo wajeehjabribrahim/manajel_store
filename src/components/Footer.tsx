@@ -18,35 +18,35 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold mb-4">{t("footer.brandName")}</h3>
+            <h3 className="text-lg font-bold mb-4">{(t as any).footer.brandName}</h3>
             <p className="mb-4 text-xs opacity-80">
-              {t("footer.tagline")}
+              {(t as any).footer.tagline}
             </p>
-            <p className="text-xs opacity-80">{t("footer.location")}</p>
+            <p className="text-xs opacity-80">{(t as any).footer.location}</p>
           </div>
 
           {/* Shop */}
           <div>
-            <h4 className="font-semibold mb-4">{t("footer.shopTitle")}</h4>
+            <h4 className="font-semibold mb-4">{(t as any).footer.shopTitle}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/shop" className="opacity-100">
-                  {t("footer.allProducts")}
+                  {(t as any).footer.allProducts}
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=olive-oil" className="opacity-100">
-                  {t("footer.oliveOil")}
+                  {(t as any).footer.oliveOil}
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=zatar" className="opacity-100">
-                  {t("footer.zatar")}
+                  {(t as any).footer.zatar}
                 </Link>
               </li>
               <li>
                 <Link href="/shop?category=freekeh" className="opacity-100">
-                  {t("footer.freekeh")}
+                  {(t as any).footer.freekeh}
                 </Link>
               </li>
             </ul>
@@ -54,21 +54,21 @@ export default function Footer() {
 
           {/* Information */}
           <div>
-            <h4 className="font-semibold mb-4">{t("footer.infoTitle")}</h4>
+            <h4 className="font-semibold mb-4">{(t as any).footer.infoTitle}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/about" className="opacity-100">
-                  {t("footer.aboutUs")}
+                  {(t as any).footer.aboutUs}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="opacity-100">
-                  {t("footer.contact")}
+                  {(t as any).footer.contact}
                 </Link>
               </li>
               <li>
                 <Link href="/faq" className="opacity-100">
-                  {t("footer.faq")}
+                  {(t as any).footer.faq}
                 </Link>
               </li>
             </ul>
@@ -76,21 +76,21 @@ export default function Footer() {
 
           {/* Policies */}
           <div>
-            <h4 className="font-semibold mb-4">{t("footer.policiesTitle")}</h4>
+            <h4 className="font-semibold mb-4">{(t as any).footer.policiesTitle}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/shipping-policy" className="opacity-100">
-                  {t("footer.shippingPolicy")}
+                  {(t as any).footer.shippingPolicy}
                 </Link>
               </li>
               <li>
                 <Link href="/return-policy" className="opacity-100">
-                  {t("footer.returnPolicy")}
+                  {(t as any).footer.returnPolicy}
                 </Link>
               </li>
               <li>
                 <Link href="/privacy-policy" className="opacity-100">
-                  {t("footer.privacyPolicy")}
+                  {(t as any).footer.privacyPolicy}
                 </Link>
               </li>
             </ul>

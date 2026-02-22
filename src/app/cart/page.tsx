@@ -456,7 +456,7 @@ export default function Cart() {
                         type="tel"
                         value={guestPhone}
                         onChange={(e) => setGuestPhone(e.target.value)}
-                        placeholder="ادخل الرقم مع مقدمة واتساب مثل +972"
+                        placeholder={t.contact.phonePlaceholder}
                          className="w-full border rounded-lg px-3 py-2 text-right text-gray-900"
                         style={{ borderColor: COLORS.border }}
                         required

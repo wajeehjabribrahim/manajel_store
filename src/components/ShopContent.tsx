@@ -6,6 +6,7 @@ import ProductCard from "@/components/ProductCard";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 const getCategoryTranslationKey = (categoryId: string): string => {
   const keyMap: { [key: string]: string } = {
@@ -23,6 +24,7 @@ const getCategoryTranslationKey = (categoryId: string): string => {
 export default function ShopContent() {
   const { t } = useLanguage();
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
@@ -77,6 +79,14 @@ export default function ShopContent() {
     
     return () => clearInterval(interval);
   }, []);
+
+  // Read category from URL on mount
+  useEffect(() => {
+    const category = searchParams.get('category');
+    if (category) {
+      setSelectedCategory(category);
+    }
+  }, [searchParams]);
 
   const handleDelete = async (productId: string) => {
     if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
@@ -140,28 +150,46 @@ export default function ShopContent() {
                   color: selectedCategory === null ? "white" : COLORS.dark,
                 }}
                 className="w-full text-left px-4 py-2 rounded transition-colors"
+                type="button"
               >
                 {t("shop.allProducts")}
               </button>
-              {allCategories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  style={{
-                    backgroundColor:
-                      selectedCategory === category.id
-                        ? COLORS.primary
-                        : COLORS.light,
-                    color:
-                      selectedCategory === category.id ? "white" : COLORS.dark,
-                  }}
-                  className="w-full text-left px-4 py-2 rounded transition-colors"
-                >
-                  {t(getCategoryTranslationKey(category.id)) === getCategoryTranslationKey(category.id)
-                    ? category.name
-                    : t(getCategoryTranslationKey(category.id))}
-                </button>
-              ))}
+              {allCategories.map((category) => {
+                const translationKey = getCategoryTranslationKey(category.id);
+                // Try function call first, then object access
+                let displayName = category.name;
+                try {
+                  const translated = (t as any)(translationKey);
+                  if (translated && translated !== translationKey) {
+                    displayName = translated;
+                  }
+                } catch {
+                  // Fallback to category name
+                }
+                
+                return (
+                  <button
+                    key={category.id}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedCategory(category.id);
+                    }}
+                    style={{
+                      backgroundColor:
+                        selectedCategory === category.id
+                          ? COLORS.primary
+                          : COLORS.light,
+                      color:
+                        selectedCategory === category.id ? "white" : COLORS.dark,
+                    }}
+                    className="w-full text-left px-4 py-2 rounded transition-colors"
+                    type="button"
+                  >
+                    {displayName}
+                  </button>
+                );
+              })}
             </div>
 
 
@@ -172,9 +200,9 @@ export default function ShopContent() {
             <div className="mb-4 text-sm text-gray-900">
               {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
               {filteredProducts.map((product, index) => (
-                <div key={product.id} className="relative">
+                <div key={product.id} className="relative h-full">
                   <ProductCard 
                     product={product} 
                     animationDelay={index * 50}

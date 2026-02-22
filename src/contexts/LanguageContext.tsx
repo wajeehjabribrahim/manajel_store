@@ -6,7 +6,7 @@ import { Language, translations } from "@/constants/translations";
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (path: string) => string;
+  t: typeof translations.en & ((path: string) => string);
   dir: "ltr" | "rtl";
 }
 
@@ -47,10 +47,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("manajel-language", lang);
   };
 
-  const t = (path: string): string => {
+  // Create hybrid t that works both as object and function
+  const baseTranslations = translations[language];
+  const tFunction = (path: string): string => {
     try {
       const keys = path.split(".");
-      let value: any = translations[language];
+      let value: any = baseTranslations;
       for (const key of keys) {
         value = value[key];
       }
@@ -59,6 +61,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       return path;
     }
   };
+  
+  // Merge object properties with function
+  const t = Object.assign(tFunction, baseTranslations) as typeof baseTranslations & ((path: string) => string);
 
   const dir = language === "ar" ? "rtl" : "ltr";
 
