@@ -331,7 +331,7 @@ export default function ProductPage({ params }: PageProps) {
                   onChange={(e) =>
                     setQuantity(Math.max(1, parseInt(e.target.value) || 1))
                   }
-                  className="w-16 px-3 py-2 text-center border-2 rounded-lg"
+                  className="w-16 px-3 py-2 text-center border-2 rounded-lg text-gray-900"
                   style={{ borderColor: COLORS.border }}
                 />
                 <button
@@ -353,7 +353,7 @@ export default function ProductPage({ params }: PageProps) {
               style={{ backgroundColor: COLORS.accent }}
             >
               <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-700">{t("product.pricePerUnit")}</span>
+                <span className="text-gray-900">{t("product.pricePerUnit")}</span>
                 <span style={{ color: COLORS.primary }} className="font-bold">
                   {CURRENCY_SYMBOL}{currentSize.price}
                 </span>
@@ -401,7 +401,7 @@ export default function ProductPage({ params }: PageProps) {
             >
               ✓ منتج أصلي
             </h4>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-900 text-sm">
               مصنوع من أجود المواد الطبيعية مباشرة من مزارع سلفيت الفلسطينية
             </p>
           </div>
@@ -412,7 +412,7 @@ export default function ProductPage({ params }: PageProps) {
             >
               ✓ شحن سريع
             </h4>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-900 text-sm">
               توصيل آمن وسريع إلى جميع أنحاء الأردن والدول المجاورة
             </p>
           </div>

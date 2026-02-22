@@ -118,7 +118,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
                   placeholder={t.contact.namePlaceholder}
                 />
               </div>
@@ -135,7 +135,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
                   placeholder={t.contact.emailPlaceholder}
                 />
               </div>
@@ -151,7 +151,7 @@ export default function Contact() {
                   value={formData.phone}
                   onChange={handleChange}
                   style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
                   placeholder={t.contact.phonePlaceholder}
                 />
               </div>
@@ -168,7 +168,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
                   placeholder={t.contact.subjectPlaceholder}
                 />
               </div>
@@ -185,7 +185,7 @@ export default function Contact() {
                   required
                   rows={5}
                   style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
                   placeholder={t.contact.messagePlaceholder}
                 />
               </div>

@@ -109,7 +109,7 @@ export default function About() {
                   >
                     {product}
                   </h4>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-900 text-sm">
                     {t.about.productDesc}
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export default function About() {
             >
               {t.about.contactCTA}
             </h3>
-            <p className="text-gray-700 mb-6">
+            <p className="text-gray-900 mb-6">
               {t.about.contactDesc}
             </p>
             <Link

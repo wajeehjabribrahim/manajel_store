@@ -244,7 +244,7 @@ export default function OrderDetailsPage() {
                   </div>
 
                   <div className="text-right">
-                    <p className="text-gray-600 text-sm">{t("cart.pricePerUnit")}</p>
+                    <p className="text-gray-900 text-sm">{t("cart.pricePerUnit")}</p>
                     <p style={{ color: COLORS.primary }} className="font-bold">
                       {CURRENCY_SYMBOL}{item.price}
                     </p>
@@ -330,7 +330,7 @@ export default function OrderDetailsPage() {
               <button
                 onClick={handleCancelOrder}
                 disabled={cancelling}
-                className="w-full text-center px-6 py-3 rounded-lg font-semibold mt-4 border-2 hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full text-center px-6 py-3 rounded-lg font-semibold mt-4 border-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ 
                   borderColor: "#F44336", 
                   color: "#F44336",

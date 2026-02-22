@@ -416,7 +416,7 @@ export default function Cart() {
                   {orderLoading ? t("cart.orderSaving") : t("cart.buyNow")}
                 </button>
 
-                <p className="text-xs text-gray-500 text-center mt-4">
+                <p className="text-xs text-gray-900 text-center mt-4">
                   {t("cart.willRedirect")}
                 </p>
 
@@ -432,24 +432,24 @@ export default function Cart() {
                     >
                       {t("cart.deliveryInfo")}
                     </h4>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-900">
                       {t("cart.loginToSkip")}
                     </p>
                     <div>
-                      <label className="block text-sm text-gray-700 mb-1">
+                      <label className="block text-sm text-gray-900 mb-1">
                         {t("cart.fullName")}
                       </label>
                       <input
                         type="text"
                         value={guestName}
                         onChange={(e) => setGuestName(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-700 mb-1">
+                      <label className="block text-sm text-gray-900 mb-1">
                         {t("cart.phone")}
                       </label>
                       <input
@@ -457,45 +457,45 @@ export default function Cart() {
                         value={guestPhone}
                         onChange={(e) => setGuestPhone(e.target.value)}
                         placeholder="ادخل الرقم مع مقدمة واتساب مثل +972"
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-700 mb-1">
+                      <label className="block text-sm text-gray-900 mb-1">
                         {t("cart.city")}
                       </label>
                       <input
                         type="text"
                         value={guestCity}
                         onChange={(e) => setGuestCity(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-700 mb-1">
+                      <label className="block text-sm text-gray-900 mb-1">
                         {t("cart.address")}
                       </label>
                       <input
                         type="text"
                         value={guestAddress}
                         onChange={(e) => setGuestAddress(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-700 mb-1">
+                      <label className="block text-sm text-gray-900 mb-1">
                         {t("cart.notes")}
                       </label>
                       <textarea
                         value={guestNotes}
                         onChange={(e) => setGuestNotes(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
                         style={{ borderColor: COLORS.border }}
                         rows={3}
                       />
