@@ -56,32 +56,6 @@ export default function ShippingPolicy() {
             </ul>
           </div>
 
-          <div>
-            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
-              {t.policies.deliveryTimes}
-            </h3>
-            <ul className="text-gray-900 space-y-2">
-              <li>
-                <strong>{t.policies.local}</strong> {t.policies.localTime}
-              </li>
-              <li>
-                <strong>{t.policies.internationalTime}</strong> {t.policies.internationalTimeDesc}
-              </li>
-              <li>
-                <strong>{t.policies.processing}</strong> {t.policies.processingTime}
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
-              {t.policies.tracking}
-            </h3>
-            <p className="text-gray-900">
-              {t.policies.trackingDesc}
-            </p>
-          </div>
-
           <div
             style={{ backgroundColor: COLORS.accent }}
             className="rounded-lg p-6"
