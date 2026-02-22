@@ -53,7 +53,7 @@ export const FOOTER_LINKS = {
 
 // Contact Information
 export const CONTACT_INFO = {
-  phone: "+970 (0) XXX XXXXX",
+  phone: "+972569834393",
   email: "contact@mnajel.com",
   address: "Salfit, Palestine",
   city: "Salfit",

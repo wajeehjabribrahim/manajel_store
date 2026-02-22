@@ -30,19 +30,6 @@ export default function ReturnPolicy() {
 
           <div>
             <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
-              {t.policies.returnWindow}
-            </h3>
-            <ul className="text-gray-900 space-y-2">
-              <li>
-                <strong>{t.policies.returnPeriod}</strong> {t.policies.returnPeriodDesc}
-              </li>
-              <li>{t.policies.returnCondition1}</li>
-              <li>{t.policies.returnCondition2}</li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
               {t.policies.defectiveProducts}
             </h3>
             <p className="text-gray-900 mb-3">

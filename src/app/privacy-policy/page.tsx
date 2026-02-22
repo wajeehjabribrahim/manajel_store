@@ -60,7 +60,6 @@ export default function PrivacyPolicy() {
               <li>{t.policies.usage2}</li>
               <li>{t.policies.usage3}</li>
               <li>{t.policies.usage4}</li>
-              <li>{t.policies.usage5}</li>
               <li>{t.policies.usage6}</li>
             </ul>
           </div>
@@ -73,7 +72,6 @@ export default function PrivacyPolicy() {
               {t.policies.protectionDesc}
             </p>
             <ul className="list-disc list-inside text-gray-900 space-y-2">
-              <li>{t.policies.protection1}</li>
               <li>{t.policies.protection2}</li>
               <li>{t.policies.protection3}</li>
               <li>{t.policies.protection4}</li>

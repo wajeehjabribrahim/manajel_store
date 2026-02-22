@@ -457,7 +457,7 @@ export default function Cart() {
                         value={guestPhone}
                         onChange={(e) => setGuestPhone(e.target.value)}
                         placeholder="ادخل الرقم مع مقدمة واتساب مثل +972"
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
+                         className="w-full border rounded-lg px-3 py-2 text-right text-gray-900"
                         style={{ borderColor: COLORS.border }}
                         required
                       />

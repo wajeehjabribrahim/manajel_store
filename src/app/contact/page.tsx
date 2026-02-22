@@ -151,7 +151,7 @@ export default function Contact() {
                   value={formData.phone}
                   onChange={handleChange}
                   style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 border rounded-lg text-right text-gray-900 focus:outline-none focus:ring-2"
                   placeholder={t.contact.phonePlaceholder}
                 />
               </div>

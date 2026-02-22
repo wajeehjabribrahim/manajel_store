@@ -413,7 +413,7 @@ export default function ProductPage({ params }: PageProps) {
               ✓ شحن سريع
             </h4>
             <p className="text-gray-900 text-sm">
-              توصيل آمن وسريع إلى جميع أنحاء الأردن والدول المجاورة
+              توصيل آمن وسريع إلى جميع المناطق
             </p>
           </div>
           <div className="p-6 rounded-lg" style={{ backgroundColor: "white" }}>
@@ -424,7 +424,7 @@ export default function ProductPage({ params }: PageProps) {
               ✓ ضمان الرضا
             </h4>
             <p className="text-gray-600 text-sm">
-              ضمان استرجاع خلال 30 يوم بدون أسئلة إذا لم تكن مرتاضياً
+              ضمان استرجاع خلال 7 أيام للمنتجات المعيبة مع استرجاع مجاني واستبدال
             </p>
           </div>
         </div>

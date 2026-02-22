@@ -25,21 +25,24 @@ export default function Header() {
       style={{ backgroundColor: COLORS.primary }}
       className="text-white shadow-lg relative"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border-2" style={{ borderColor: COLORS.accent }}>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden border-2 transition-transform duration-300 group-hover:scale-110" style={{ borderColor: COLORS.accent }}>
               <Image
-                src="/images/logo.png"
+                src="/images/logo.jpg"
                 alt="Manajel Logo"
-                width={40}
-                height={40}
+                width={48}
+                height={48}
                 priority
                 className="object-cover w-full h-full"
               />
             </div>
-            <span className="text-xl font-bold">{t("nav.brand")}</span>
+            <div className="flex flex-col">
+              <span className="text-2xl font-bold tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
+              <span className="text-xs opacity-70 font-medium tracking-widest">PALESTINE</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
