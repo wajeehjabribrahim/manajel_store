@@ -36,6 +36,12 @@ export const translations = {
       emailInUse: "Email is already in use",
       successRegister: "Account created. Redirecting...",
     },
+    // Account
+    account: {
+      title: "Account",
+      save: "Save",
+      updated: "Profile updated",
+    },
     // Orders
     orders: {
       title: "Orders",
@@ -438,6 +444,12 @@ export const translations = {
       passwordMismatch: "كلمتا المرور غير متطابقتين",
       emailInUse: "هذا البريد مستخدم مسبقاً",
       successRegister: "تم إنشاء الحساب. جارٍ التحويل...",
+    },
+    // Account
+    account: {
+      title: "الحساب",
+      save: "تحديث",
+      updated: "تم التحديث",
     },
     // Orders
     orders: {

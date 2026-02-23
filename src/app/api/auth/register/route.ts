@@ -5,6 +5,12 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    try {
+      // Log incoming request body for debugging (remove in production)
+      console.log("[register] body:", JSON.stringify(body));
+    } catch (e) {
+      // ignore logging errors
+    }
     const name = typeof body?.name === "string" ? body.name.trim() : "";
     const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
     const city = typeof body?.city === "string" ? body.city.trim() : "";
@@ -12,9 +18,21 @@ export async function POST(req: Request) {
     const email = typeof body?.email === "string" ? body.email.toLowerCase().trim() : "";
     const password = typeof body?.password === "string" ? body.password : "";
 
-    if (!name || !phone || !city || !address || !email || !password || password.length < 6) {
+    const missing: string[] = [];
+    if (!name) missing.push("name");
+    if (!phone) missing.push("phone");
+    if (!city) missing.push("city");
+    if (!address) missing.push("address");
+    if (!email) missing.push("email");
+    if (!password) missing.push("password");
+    if (password && password.length < 6) missing.push("password_too_short");
+
+    if (missing.length > 0) {
+      try {
+        console.log("[register] validation missing:", missing);
+      } catch (e) {}
       return NextResponse.json(
-        { error: "Invalid data" },
+        { error: "Invalid data", missing },
         { status: 400 }
       );
     }

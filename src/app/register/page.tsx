@@ -60,6 +60,22 @@ export default function RegisterPage() {
     setLoading(false);
   };
 
+  // Password rules and client-side validation
+  const passwordRules = [
+    {
+      key: "minLength",
+      test: (p: string) => p.length >= 6,
+      message: "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+    },
+    {
+      key: "digit",
+      test: (p: string) => /\d/.test(p),
+      message: "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+    },
+  ];
+
+  const unmetRules = passwordRules.filter((r) => !r.test(password));
+
   return (
     <div className="max-w-md mx-auto px-4 py-12" style={{ direction: dir }}>
       <h1 className="text-3xl font-bold mb-2" style={{ color: COLORS.primary }}>
@@ -77,7 +93,7 @@ export default function RegisterPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            style={{ borderColor: COLORS.border }}
+            style={{ borderColor: COLORS.border, color: COLORS.dark, backgroundColor: "#fff" }}
             required
           />
         </div>
@@ -91,7 +107,7 @@ export default function RegisterPage() {
             onChange={(e) => setPhone(e.target.value)}
             placeholder={t.contact.phonePlaceholder}
             className="w-full border rounded-lg px-3 py-2 text-right focus:outline-none focus:ring-2"
-            style={{ borderColor: COLORS.border }}
+            style={{ borderColor: COLORS.border, color: COLORS.dark, backgroundColor: "#fff" }}
             required
           />
         </div>
@@ -104,7 +120,7 @@ export default function RegisterPage() {
             value={city}
             onChange={(e) => setCity(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            style={{ borderColor: COLORS.border }}
+            style={{ borderColor: COLORS.border, color: COLORS.dark, backgroundColor: "#fff" }}
             required
           />
         </div>
@@ -117,7 +133,7 @@ export default function RegisterPage() {
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            style={{ borderColor: COLORS.border }}
+            style={{ borderColor: COLORS.border, color: COLORS.dark, backgroundColor: "#fff" }}
             required
           />
         </div>
@@ -130,7 +146,7 @@ export default function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            style={{ borderColor: COLORS.border }}
+            style={{ borderColor: COLORS.border, color: COLORS.dark, backgroundColor: "#fff" }}
             required
           />
         </div>
@@ -143,9 +159,16 @@ export default function RegisterPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            style={{ borderColor: COLORS.border }}
+            style={{ borderColor: COLORS.border, color: COLORS.dark, backgroundColor: "#fff" }}
             required
           />
+          {unmetRules.length > 0 && (
+            <ul className="mt-2 text-sm text-red-600 list-disc list-inside">
+              {unmetRules.map((r) => (
+                <li key={r.key}>{r.message}</li>
+              ))}
+            </ul>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-900 mb-1">
@@ -156,7 +179,7 @@ export default function RegisterPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
-            style={{ borderColor: COLORS.border }}
+            style={{ borderColor: COLORS.border, color: COLORS.dark, backgroundColor: "#fff" }}
             required
           />
         </div>
@@ -166,7 +189,9 @@ export default function RegisterPage() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={
+            loading || unmetRules.length > 0 || password !== confirmPassword
+          }
           className="w-full py-2 rounded-lg text-white transition-opacity"
           style={{ backgroundColor: COLORS.primary, opacity: loading ? 0.7 : 1 }}
         >
