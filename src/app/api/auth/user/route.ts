@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = String((session.user as any).id);
+    const id = String((session as any).user.id);
     const user = await prisma.user.findUnique({
       where: { id },
       select: { id: true, name: true, email: true, phone: true, city: true, address: true },
@@ -33,7 +33,7 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = String((session.user as any).id);
+    const id = String((session as any).user.id);
     const body = await req.json();
     const phone = typeof body?.phone === "string" ? body.phone.trim() : undefined;
     const city = typeof body?.city === "string" ? body.city.trim() : undefined;
