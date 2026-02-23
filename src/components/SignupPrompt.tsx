@@ -10,7 +10,6 @@ export default function SignupPrompt() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
     // Don't show if user is already logged in or if we've already shown it
@@ -18,19 +17,13 @@ export default function SignupPrompt() {
       return;
     }
 
-    // Check if this is first visit (no localStorage flag)
-    const visitFlag = localStorage.getItem("signupPromptShown");
-    if (!visitFlag && !hasShown) {
-      // Wait a moment before showing the modal
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-        setHasShown(true);
-        localStorage.setItem("signupPromptShown", "true");
-      }, 2000);
+    // Show the modal after 2 seconds for every visit
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 2000);
 
-      return () => clearTimeout(timer);
-    }
-  }, [status, hasShown]);
+    return () => clearTimeout(timer);
+  }, [status]);
 
   if (!isOpen) return null;
 

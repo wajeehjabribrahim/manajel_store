@@ -61,6 +61,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {addProductText === "admin.addProduct" ? "إضافة منتج" : addProductText}
           </Link>
           <Link
+            href="/admin/categories"
+            className="block px-4 py-2 rounded-lg hover:bg-gray-100"
+            style={{ color: COLORS.primary }}
+          >
+            إدارة التصنيفات
+          </Link>
+          <Link
             href="/admin/orders"
             className="block px-4 py-2 rounded-lg hover:bg-gray-100"
             style={{ color: COLORS.primary }}

@@ -519,7 +519,7 @@ export const translations = {
       categoryZatar: "زعتر بلدي",
       categorySage: "الأعشاب التقليدية",
       categoryFreekeh: "الفريكة",
-      categoryPressedOlives: "الزيتون المعصور",
+      categoryPressedOlives: "زيتون مكبوس",
       categoryDuqqa: "الدقة التقليدية",
       categorySoap: "الصابون التقليدي",
     },

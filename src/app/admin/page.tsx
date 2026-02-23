@@ -24,6 +24,13 @@ export default function AdminDashboard() {
       color: "from-blue-500 to-blue-600",
     },
     {
+      title: "إدارة التصنيفات",
+      description: "إضافة وتعديل تصنيفات المنتجات",
+      icon: "🏷️",
+      href: "/admin/categories",
+      color: "from-teal-500 to-teal-600",
+    },
+    {
       title: "ترتيب المنتجات",
       description: "إدارة ترتيب عرض المنتجات",
       icon: "🔄",

@@ -81,6 +81,99 @@ export default function Header() {
           {/* Language Switcher, Auth & Cart */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageSwitcher />
+            
+            {/* قائمة السلة والطلبات - للجميع */}
+            <div className="relative z-50" ref={userMenuRef}>
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="transition-opacity relative"
+                title="السلة والطلبات"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+              </button>
+              
+              {showUserMenu && (
+                <div
+                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
+                  style={{ 
+                    backgroundColor: 'white',
+                    zIndex: 99999,
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                  }}
+                >
+                  <Link
+                    href="/cart"
+                    onClick={() => setShowUserMenu(false)}
+                    className="block px-4 py-3 transition-colors border-b"
+                    style={{ 
+                      color: COLORS.primary,
+                      borderColor: COLORS.border 
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                  >
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
+                        />
+                      </svg>
+                      <span className="font-semibold">{t("nav.cart")}</span>
+                    </div>
+                  </Link>
+                  {isAuthenticated && (
+                    <Link
+                      href="/orders"
+                      onClick={() => setShowUserMenu(false)}
+                      className="block px-4 py-3 transition-colors"
+                      style={{ 
+                        color: COLORS.primary 
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                    >
+                      <div className="flex items-center gap-3">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          />
+                        </svg>
+                        <span className="font-semibold">{t("orders.myOrders")}</span>
+                      </div>
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
+            
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 {isAdmin && (
@@ -125,96 +218,6 @@ export default function Header() {
                     </Link>
                   </>
                 )}
-                
-                {/* قائمة السلة والطلبات */}
-                <div className="relative z-50" ref={userMenuRef}>
-                  <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="transition-opacity relative"
-                    title="السلة والطلبات"
-                  >
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                      />
-                    </svg>
-                  </button>
-                  
-                  {showUserMenu && (
-                    <div
-                      className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
-                      style={{ 
-                        backgroundColor: 'white',
-                        zIndex: 99999,
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
-                      }}
-                    >
-                      <Link
-                        href="/cart"
-                        onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 transition-colors border-b"
-                        style={{ 
-                          color: COLORS.primary,
-                          borderColor: COLORS.border 
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                      >
-                        <div className="flex items-center gap-3">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
-                            />
-                          </svg>
-                          <span className="font-semibold">{t("nav.cart")}</span>
-                        </div>
-                      </Link>
-                      <Link
-                        href="/orders"
-                        onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 transition-colors"
-                        style={{ 
-                          color: COLORS.primary 
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                      >
-                        <div className="flex items-center gap-3">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
-                          <span className="font-semibold">{t("orders.myOrders")}</span>
-                        </div>
-                      </Link>
-                    </div>
-                  )}
-                </div>
                 
                 <Link
                   href="/account"
@@ -272,65 +275,65 @@ export default function Header() {
             </Link>
             
             {/* قائمة السلة والطلبات للموبايل */}
-            {isAuthenticated && (
-              <div className="relative z-50" ref={mobileUserMenuRef}>
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="transition-opacity"
-                  title="السلة والطلبات"
+            <div className="relative z-50" ref={mobileUserMenuRef}>
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="transition-opacity"
+                title="السلة والطلبات"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                    />
-                  </svg>
-                </button>
-                
-                {showUserMenu && (
-                  <div
-                    className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+              </button>
+              
+              {showUserMenu && (
+                <div
+                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
+                  style={{ 
+                    backgroundColor: 'white',
+                    zIndex: 99999,
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                  }}
+                >
+                  <Link
+                    href="/cart"
+                    onClick={() => setShowUserMenu(false)}
+                    className="block px-4 py-3 transition-colors border-b"
                     style={{ 
-                      backgroundColor: 'white',
-                      zIndex: 99999,
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                      color: COLORS.primary,
+                      borderColor: COLORS.border 
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                   >
-                    <Link
-                      href="/cart"
-                      onClick={() => setShowUserMenu(false)}
-                      className="block px-4 py-3 transition-colors border-b"
-                      style={{ 
-                        color: COLORS.primary,
-                        borderColor: COLORS.border 
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
-                    >
-                      <div className="flex items-center gap-3">
-                        <svg
-                          className="w-5 h-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
-                          />
-                        </svg>
-                        <span className="font-semibold">{t("nav.cart")}</span>
-                      </div>
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
+                        />
+                      </svg>
+                      <span className="font-semibold">{t("nav.cart")}</span>
+                    </div>
+                  </Link>
+                  {isAuthenticated && (
                     <Link
                       href="/orders"
                       onClick={() => setShowUserMenu(false)}
@@ -358,32 +361,10 @@ export default function Header() {
                         <span className="font-semibold">{t("orders.myOrders")}</span>
                       </div>
                     </Link>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {!isAuthenticated && (
-              <Link
-                href="/cart"
-                className="transition-opacity"
-                title={t("nav.cart")}
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
-                  />
-                </svg>
-              </Link>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button - Removed */}

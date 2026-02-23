@@ -1,25 +1,18 @@
 "use client";
 
 import { COLORS } from "@/constants/store";
-import { PRODUCTS, CATEGORIES, Product } from "@/constants/products";
+import { PRODUCTS, Product } from "@/constants/products";
 import ProductCard from "@/components/ProductCard";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
-const getCategoryTranslationKey = (categoryId: string): string => {
-  const keyMap: { [key: string]: string } = {
-    "olive-oil": "shop.categoryOliveOil",
-    "zatar": "shop.categoryZatar",
-    "sage": "shop.categorySage",
-    "freekeh": "shop.categoryFreekeh",
-    "pressed-olives": "shop.categoryPressedOlives",
-    "duqqa": "shop.categoryDuqqa",
-    "soap": "shop.categorySoap",
-  };
-  return keyMap[categoryId] || "shop.categoryOliveOil";
-};
+interface Category {
+  id: string;
+  name: string;
+  nameAr: string;
+}
 
 export default function ShopContent() {
   const { t, dir, language } = useLanguage();
@@ -28,8 +21,20 @@ export default function ShopContent() {
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
-  const [allCategories, setAllCategories] = useState<Array<{ id: string; name: string }>>(CATEGORIES);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
+
+  const loadCategories = async () => {
+    try {
+      const res = await fetch('/api/categories');
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error("Error loading categories:", error);
+    }
+  };
 
   const loadProducts = async () => {
     try {
@@ -38,30 +43,6 @@ export default function ShopContent() {
         const data = await res.json();
         if (Array.isArray(data?.products)) {
           setProducts(data.products);
-          
-          // Extract unique categories from products
-          const productCategories = data.products
-            .map((p: Product) => p.category)
-            .filter((cat: any): cat is string => typeof cat === 'string' && cat.length > 0);
-          
-          const uniqueCategories: string[] = Array.from(new Set(productCategories));
-          
-          // Merge with predefined categories
-          const categoriesMap = new Map<string, { id: string; name: string }>();
-          
-          // Add predefined categories first
-          CATEGORIES.forEach(cat => {
-            categoriesMap.set(cat.id, cat);
-          });
-          
-          // Add custom categories from products
-          uniqueCategories.forEach((catId) => {
-            if (!categoriesMap.has(catId)) {
-              categoriesMap.set(catId, { id: catId, name: catId });
-            }
-          });
-          
-          setAllCategories(Array.from(categoriesMap.values()));
         }
       }
     } catch {
@@ -70,9 +51,10 @@ export default function ShopContent() {
   };
 
   useEffect(() => {
+    loadCategories();
     loadProducts();
     
-    // Reload products every 10 seconds to catch new categories
+    // Reload products every 10 seconds to catch changes
     const interval = setInterval(() => {
       loadProducts();
     }, 10000);
@@ -154,18 +136,8 @@ export default function ShopContent() {
               >
                 {t("shop.allProducts")}
               </button>
-              {allCategories.map((category) => {
-                const translationKey = getCategoryTranslationKey(category.id);
-                // Try function call first, then object access
-                let displayName = category.name;
-                try {
-                  const translated = (t as any)(translationKey);
-                  if (translated && translated !== translationKey) {
-                    displayName = translated;
-                  }
-                } catch {
-                  // Fallback to category name
-                }
+              {categories.map((category) => {
+                const displayName = language === 'ar' ? category.nameAr : category.name;
                 
                 return (
                   <button
