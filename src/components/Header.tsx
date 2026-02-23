@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 
 export default function Header() {
-  const { t, language } = useLanguage();
+  const { t, language, dir } = useLanguage();
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
@@ -19,6 +19,15 @@ export default function Header() {
 
   // إغلاق القائمة عند الضغط خارجها
   useEffect(() => {
+    // منع تحرك الصفحة عندما تظهر القائمة
+    if (showUserMenu) {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
+    }
+
     const handleClickOutside = (event: MouseEvent) => {
       const isClickInside = 
         (userMenuRef.current && userMenuRef.current.contains(event.target as Node)) ||
@@ -30,8 +39,12 @@ export default function Header() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
+    };
+  }, [showUserMenu]);
 
   const navItems = [
     { name: t("nav.home"), href: "/" },
@@ -106,11 +119,18 @@ export default function Header() {
               
               {showUserMenu && (
                 <div
-                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
+                  className="absolute rounded-lg shadow-xl border border-white/20"
                   style={{ 
                     backgroundColor: 'white',
                     zIndex: 99999,
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+                    top: '100%',
+                    marginTop: '8px',
+                    width: '192px',
+                    maxHeight: '150px',
+                    overflowY: 'auto',
+                    maxWidth: '90vw',
+                    [dir === 'rtl' ? 'left' : 'right']: 0
                   }}
                 >
                   <Link
@@ -298,11 +318,18 @@ export default function Header() {
               
               {showUserMenu && (
                 <div
-                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
+                  className="absolute rounded-lg shadow-xl border border-white/20"
                   style={{ 
                     backgroundColor: 'white',
                     zIndex: 99999,
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+                    top: '100%',
+                    marginTop: '8px',
+                    width: '192px',
+                    maxHeight: '150px',
+                    overflowY: 'auto',
+                    maxWidth: '90vw',
+                    [dir === 'rtl' ? 'left' : 'right']: 0
                   }}
                 >
                   <Link
