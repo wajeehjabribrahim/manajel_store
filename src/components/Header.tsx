@@ -150,13 +150,23 @@ export default function Header() {
                   
                   {showUserMenu && (
                     <div
-                      className="absolute left-0 mt-2 w-48 rounded-lg shadow-lg overflow-hidden"
-                      style={{ backgroundColor: COLORS.primary, zIndex: 9999 }}
+                      className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
+                      style={{ 
+                        backgroundColor: 'white',
+                        zIndex: 99999,
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                      }}
                     >
                       <Link
                         href="/cart"
                         onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 hover:bg-white/10 transition-colors border-b border-white/20"
+                        className="block px-4 py-3 transition-colors border-b"
+                        style={{ 
+                          color: COLORS.primary,
+                          borderColor: COLORS.border 
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                       >
                         <div className="flex items-center gap-3">
                           <svg
@@ -172,13 +182,18 @@ export default function Header() {
                               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
                             />
                           </svg>
-                          <span>{t("nav.cart")}</span>
+                          <span className="font-semibold">{t("nav.cart")}</span>
                         </div>
                       </Link>
                       <Link
                         href="/orders"
                         onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 hover:bg-white/10 transition-colors"
+                        className="block px-4 py-3 transition-colors"
+                        style={{ 
+                          color: COLORS.primary 
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                       >
                         <div className="flex items-center gap-3">
                           <svg
@@ -194,7 +209,7 @@ export default function Header() {
                               d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                             />
                           </svg>
-                          <span>{t("orders.myOrders")}</span>
+                          <span className="font-semibold">{t("orders.myOrders")}</span>
                         </div>
                       </Link>
                     </div>
@@ -281,13 +296,23 @@ export default function Header() {
                 
                 {showUserMenu && (
                   <div
-                    className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg overflow-hidden"
-                    style={{ backgroundColor: COLORS.primary, zIndex: 9999 }}
+                    className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden border border-white/20"
+                    style={{ 
+                      backgroundColor: 'white',
+                      zIndex: 99999,
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
+                    }}
                   >
                     <Link
                       href="/cart"
                       onClick={() => setShowUserMenu(false)}
-                      className="block px-4 py-3 hover:bg-white/10 transition-colors border-b border-white/20"
+                      className="block px-4 py-3 transition-colors border-b"
+                      style={{ 
+                        color: COLORS.primary,
+                        borderColor: COLORS.border 
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                     >
                       <div className="flex items-center gap-3">
                         <svg
@@ -303,13 +328,18 @@ export default function Header() {
                             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
                           />
                         </svg>
-                        <span>{t("nav.cart")}</span>
+                        <span className="font-semibold">{t("nav.cart")}</span>
                       </div>
                     </Link>
                     <Link
                       href="/orders"
                       onClick={() => setShowUserMenu(false)}
-                      className="block px-4 py-3 hover:bg-white/10 transition-colors"
+                      className="block px-4 py-3 transition-colors"
+                      style={{ 
+                        color: COLORS.primary 
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                     >
                       <div className="flex items-center gap-3">
                         <svg
@@ -325,7 +355,7 @@ export default function Header() {
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                           />
                         </svg>
-                        <span>{t("orders.myOrders")}</span>
+                        <span className="font-semibold">{t("orders.myOrders")}</span>
                       </div>
                     </Link>
                   </div>

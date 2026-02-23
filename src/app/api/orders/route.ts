@@ -9,6 +9,7 @@ interface OrderItemInput {
   size: string;
   quantity: number;
   price: number;
+  image?: string;
 }
 
 export async function POST(req: Request) {
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
         size: String(item.size),
         quantity: Number(item.quantity) || 0,
         price: Number(item.price) || 0,
+        image: typeof item.image === "string" ? item.image : undefined,
       }))
       .filter((item) => item.quantity > 0 && item.price >= 0);
 
@@ -103,6 +105,7 @@ export async function POST(req: Request) {
             quantity: item.quantity,
             price: item.price,
             total: item.price * item.quantity,
+            image: item.image || null,
           })),
         },
       },

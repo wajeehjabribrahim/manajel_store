@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
+import { PRODUCTS } from "@/constants/products";
 import Link from "next/link";
 
 interface OrderItem {
@@ -13,6 +14,7 @@ interface OrderItem {
   quantity: number;
   price: number;
   total: number;
+  image?: string;
 }
 
 interface Order {
@@ -243,25 +245,41 @@ export default function AdminOrdersPage() {
                   <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
                     المنتجات ({order.items.length})
                   </h4>
-                  <div className="space-y-2">
-                    {order.items.map((item) => (
+                  <div className="space-y-3">
+                    {order.items.map((item) => {
+                      const product = PRODUCTS.find(p => p.id === item.productId);
+                      const itemImage = item.image || product?.image;
+                      
+                      return (
                       <div
                         key={item.id}
-                        className="text-sm p-2 rounded"
+                        className="p-3 rounded flex gap-3"
                         style={{ backgroundColor: COLORS.light }}
                       >
-                        <p className="font-semibold">{item.name}</p>
-                        <p className="text-gray-900">
-                          الحجم: {item.size} | الكمية: {item.quantity} | السعر:{" "}
-                          {CURRENCY_SYMBOL}
-                          {item.price}
-                        </p>
-                        <p className="font-semibold">
-                          المجموع: {CURRENCY_SYMBOL}
-                          {item.total.toFixed(2)}
-                        </p>
+                        {itemImage && (
+                          <img
+                            src={itemImage}
+                            alt={item.name}
+                            className="w-16 h-16 object-cover rounded flex-shrink-0"
+                            style={{ border: `2px solid ${COLORS.border}` }}
+                          />
+                        )}
+                        <div className="flex-1 text-sm">
+                          <p className="font-semibold">{item.name}</p>
+                          <p className="text-gray-900">
+                            الحجم: {item.size} | الكمية: {item.quantity}
+                          </p>
+                          <p className="text-gray-900">
+                            السعر: {CURRENCY_SYMBOL}
+                            {item.price}
+                          </p>
+                          <p className="font-semibold">
+                            المجموع: {CURRENCY_SYMBOL}
+                            {item.total.toFixed(2)}
+                          </p>
+                        </div>
                       </div>
-                    ))}
+                    );})}
                   </div>
                 </div>
               </div>

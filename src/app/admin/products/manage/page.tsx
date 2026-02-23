@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { COLORS } from "@/constants/store";
+import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   DndContext,
@@ -85,7 +85,7 @@ function SortableRow({ product, onEdit, onDelete }: SortableRowProps) {
         <div className="text-sm text-gray-500">{product.category}</div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900">${product.price.toFixed(2)}</div>
+        <div className="text-sm text-gray-900">{CURRENCY_SYMBOL}{product.price.toFixed(2)}</div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center justify-center gap-2">

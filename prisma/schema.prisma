@@ -30,7 +30,7 @@ model Order {
   userId          String?
   status          String      @default("pending")
   total           Float
-  currency        String      @default("USD")
+  currency        String      @default("ILS")
   shippingName    String
   shippingPhone   String
   shippingCity    String
@@ -51,6 +51,7 @@ model OrderItem {
   quantity  Int
   price     Float
   total     Float
+  image     String?
   order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 

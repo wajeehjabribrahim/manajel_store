@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
+import { PRODUCTS } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
 
@@ -12,6 +13,7 @@ interface OrderItem {
   name: string;
   quantity: number;
   total: number;
+  image?: string;
 }
 
 interface Order {
@@ -137,15 +139,30 @@ export default function OrdersPage() {
                 </div>
 
                 <div className="p-6">
-                  <div className="space-y-2 mb-4">
-                    {order.items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span className="text-gray-700">
-                          {item.name} x {item.quantity}
-                        </span>
-                        <span className="font-semibold">${item.total.toFixed(2)}</span>
+                  <div className="space-y-4 mb-4">
+                    {order.items.map((item) => {
+                      const product = PRODUCTS.find(p => p.id === (item as any).productId);
+                      const itemImage = item.image || product?.image;
+                      
+                      return (
+                      <div key={item.id} className="flex gap-4 p-3 bg-gray-50 rounded-lg">
+                        {itemImage && (
+                          <img
+                            src={itemImage}
+                            alt={item.name}
+                            className="w-20 h-20 object-cover rounded-md flex-shrink-0"
+                            style={{ border: `2px solid ${COLORS.border}` }}
+                          />
+                        )}
+                        <div className="flex-1 flex justify-between items-start">
+                          <div>
+                            <p className="font-semibold text-gray-900">{item.name}</p>
+                            <p className="text-sm text-gray-600">الكمية: {item.quantity}</p>
+                          </div>
+                          <span className="font-semibold">{CURRENCY_SYMBOL}{item.total.toFixed(2)}</span>
+                        </div>
                       </div>
-                    ))}
+                    );})}
                   </div>
 
                   <div className="flex justify-between items-center pt-4 border-t" style={{ borderColor: COLORS.border }}>

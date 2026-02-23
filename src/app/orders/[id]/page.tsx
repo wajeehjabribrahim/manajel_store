@@ -17,6 +17,7 @@ interface OrderItem {
   quantity: number;
   price: number;
   total: number;
+  image?: string;
 }
 
 interface Order {
@@ -202,20 +203,24 @@ export default function OrderDetailsPage() {
                   {t("orders.items")}
                 </h3>
               </div>
-              {order.items.map((item, index) => {
-                const product = PRODUCTS.find(p => p.id === item.productId);
-                return (
-                <div
-                  key={item.id}
-                  className={`p-6 flex gap-6 ${
-                    index !== order.items.length - 1 ? "border-b" : ""
-                  }`}
-                  style={{ borderColor: COLORS.border }}
-                >
+              {order.items && order.items.length > 0 ? (
+                order.items.map((item, index) => {
+                  // محاولة الحصول على الصورة من المنتج إذا لم تكن موجودة في الطلب
+                  const product = PRODUCTS.find(p => p.id === item.productId);
+                  const itemImage = item.image || product?.image;
+                  
+                  return (
+                  <div
+                    key={item.id}
+                    className={`p-6 flex gap-6 ${
+                      index !== order.items.length - 1 ? "border-b" : ""
+                    }`}
+                    style={{ borderColor: COLORS.border }}
+                  >
                   <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                    {product?.image ? (
+                    {itemImage ? (
                       <img
-                        src={product.image}
+                        src={itemImage}
                         alt={item.name}
                         className="object-cover w-full h-full"
                       />
@@ -225,7 +230,7 @@ export default function OrderDetailsPage() {
                         style={{ backgroundColor: COLORS.accent }}
                       >
                         <div style={{ color: COLORS.primary }} className="text-xs font-bold">
-                          ID: {item.productId}
+                          📦
                         </div>
                       </div>
                     )}
@@ -254,7 +259,12 @@ export default function OrderDetailsPage() {
                     </p>
                   </div>
                 </div>
-              );})}
+              );})
+              ) : (
+                <div className="p-6 text-center text-gray-500">
+                  لا توجد عناصر في الطلب
+                </div>
+              )}
             </div>
           </div>
 

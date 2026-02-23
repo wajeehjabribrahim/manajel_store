@@ -1,0 +1,14 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force LF for specific files
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.prisma text eol=lf
+
+# Windows files should use CRLF
+*.bat text eol=crlf
