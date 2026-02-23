@@ -31,12 +31,17 @@ export default function AdminEditProductPage() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
+  const [nameEn, setNameEn] = useState("");
   const [description, setDescription] = useState("");
+  const [descriptionEn, setDescriptionEn] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]?.id || "olive-oil");
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [existingImage, setExistingImage] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [featured, setFeatured] = useState(false);
   const [inStock, setInStock] = useState(true);
   const [sizes, setSizes] = useState<Record<"small" | "medium" | "large", SizeState>>({
@@ -57,10 +62,13 @@ export default function AdminEditProductPage() {
           const product = data?.product;
           if (product) {
             setName(product.name || "");
+            setNameEn(product.nameEn || "");
             setDescription(product.description || "");
+            setDescriptionEn(product.descriptionEn || "");
             setCategory(product.category || CATEGORIES[0]?.id);
             setPrice(String(product.price || ""));
             setExistingImage(product.image || null);
+            setExistingImages(product.images || []);
             setFeatured(Boolean(product.featured));
             setInStock(Boolean(product.inStock));
 
@@ -101,6 +109,18 @@ export default function AdminEditProductPage() {
     return () => URL.revokeObjectURL(url);
   }, [imageFile]);
 
+  useEffect(() => {
+    if (imageFiles.length === 0) {
+      setImagePreviews([]);
+      return;
+    }
+    const urls = imageFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews(urls);
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [imageFiles]);
+
   const buildSizesPayload = () => {
     const payload: Record<string, { weight: string; price: number }> = {};
     (Object.keys(sizes) as Array<"small" | "medium" | "large">).forEach((key) => {
@@ -129,6 +149,7 @@ export default function AdminEditProductPage() {
     setSaving(true);
     try {
       let imageData = existingImage || "";
+      let imagesData = [...existingImages];
       
       if (imageFile) {
         const uploadData = new FormData();
@@ -140,7 +161,7 @@ export default function AdminEditProductPage() {
 
         if (!uploadRes.ok) {
           const uploadError = await uploadRes.json().catch(() => ({}));
-          setError(uploadError?.error || "فشل رفع الصورة");
+          setError(uploadError?.error || "فشل رفع الصورة الرئيسية");
           setSaving(false);
           return;
         }
@@ -149,13 +170,35 @@ export default function AdminEditProductPage() {
         imageData = typeof uploadJson?.imageData === "string" ? uploadJson.imageData : imageData;
       }
 
+      // Upload new multiple images
+      if (imageFiles.length > 0) {
+        for (const file of imageFiles) {
+          const uploadData = new FormData();
+          uploadData.append("file", file);
+          const uploadRes = await fetch("/api/uploads/product-image", {
+            method: "POST",
+            body: uploadData,
+          });
+
+          if (uploadRes.ok) {
+            const uploadJson = await uploadRes.json();
+            if (typeof uploadJson?.imageData === "string") {
+              imagesData.push(uploadJson.imageData);
+            }
+          }
+        }
+      }
+
       const sizesPayload = buildSizesPayload();
       const payload = {
         name: name.trim(),
+        nameEn: nameEn.trim() || undefined,
         description: description.trim(),
+        descriptionEn: descriptionEn.trim() || undefined,
         category,
         price: Number(price) || 0,
         imageData,
+        images: imagesData.length > 0 ? JSON.stringify(imagesData) : undefined,
         sizes: Object.keys(sizesPayload).length ? sizesPayload : undefined,
         featured,
         inStock,
@@ -218,7 +261,7 @@ export default function AdminEditProductPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-semibold mb-2">اسم المنتج</label>
+            <label className="block text-sm font-semibold mb-2">اسم المنتج (عربي)</label>
             <input
               type="text"
               value={name}
@@ -228,29 +271,51 @@ export default function AdminEditProductPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-2">التصنيف</label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+            <label className="block text-sm font-semibold mb-2">اسم المنتج (English)</label>
+            <input
+              type="text"
+              value={nameEn}
+              onChange={(e) => setNameEn(e.target.value)}
               className="w-full border rounded-lg px-3 py-2"
-            >
-              {CATEGORIES.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {t(getCategoryTranslationKey(cat.id))}
-                </option>
-              ))}
-            </select>
+              placeholder="e.g: Extra Virgin Olive Oil"
+            />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-2">وصف المنتج</label>
+          <label className="block text-sm font-semibold mb-2">التصنيف</label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2"
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {t(getCategoryTranslationKey(cat.id))}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-2">وصف المنتج (عربي)</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
             className="w-full border rounded-lg px-3 py-2"
-            placeholder="اكتب وصفاً مختصراً للمنتج"
+            placeholder="اكتب وصفاً مختصراً للمنتج بالعربي"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-2">وصف المنتج (English)</label>
+          <textarea
+            value={descriptionEn}
+            onChange={(e) => setDescriptionEn(e.target.value)}
+            rows={4}
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="Write a brief description in English"
           />
         </div>
 
@@ -280,12 +345,82 @@ export default function AdminEditProductPage() {
         </div>
 
         {(imagePreview || existingImage) && (
-          <div className="w-40 h-40 rounded-lg overflow-hidden border">
-            <img
-              src={imagePreview || existingImage || ""}
-              alt="preview"
-              className="w-full h-full object-cover"
-            />
+          <div>
+            <label className="block text-sm font-semibold mb-2">معاينة الصورة الرئيسية</label>
+            <div className="w-40 h-40 rounded-lg overflow-hidden border">
+              <img
+                src={imagePreview || existingImage || ""}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Multiple Images Upload */}
+        <div>
+          <label className="block text-sm font-semibold mb-2">صور إضافية (اختياري)</label>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
+            className="w-full border rounded-lg px-3 py-2"
+          />
+          <p className="text-xs text-gray-500 mt-1">يمكنك رفع عدة صور لعرضها في معرض المنتج</p>
+        </div>
+
+        {/* Existing Images */}
+        {existingImages.length > 0 && (
+          <div>
+            <label className="block text-sm font-semibold mb-2">الصور الموجودة ({existingImages.length})</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {existingImages.map((image, idx) => (
+                <div key={idx} className="relative">
+                  <img
+                    src={image}
+                    alt={`Existing ${idx + 1}`}
+                    className="w-full h-32 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setExistingImages(existingImages.filter((_, i) => i !== idx));
+                    }}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Multiple Images Preview */}
+        {imagePreviews.length > 0 && (
+          <div>
+            <label className="block text-sm font-semibold mb-2">معاينة الصور الإضافية الجديدة ({imagePreviews.length})</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {imagePreviews.map((preview, idx) => (
+                <div key={idx} className="relative">
+                  <img
+                    src={preview}
+                    alt={`New Preview ${idx + 1}`}
+                    className="w-full h-32 object-cover rounded-lg border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImageFiles(imageFiles.filter((_, i) => i !== idx));
+                    }}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

@@ -6,12 +6,32 @@ import { COLORS } from "@/constants/store";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Header() {
   const { t, language } = useLanguage();
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const mobileUserMenuRef = useRef<HTMLDivElement>(null);
+
+  // إغلاق القائمة عند الضغط خارجها
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const isClickInside = 
+        (userMenuRef.current && userMenuRef.current.contains(event.target as Node)) ||
+        (mobileUserMenuRef.current && mobileUserMenuRef.current.contains(event.target as Node));
+      
+      if (!isClickInside) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const navItems = [
     { name: t("nav.home"), href: "/" },
@@ -25,8 +45,8 @@ export default function Header() {
       style={{ backgroundColor: COLORS.primary }}
       className="text-white shadow-lg relative"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex justify-between items-center">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
+        <div className="flex justify-between items-center relative">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden border-2 transition-transform duration-300 group-hover:scale-110" style={{ borderColor: COLORS.accent }}>
@@ -105,25 +125,82 @@ export default function Header() {
                     </Link>
                   </>
                 )}
-                <Link
-                  href="/orders"
-                  className="transition-opacity"
-                  title={t("orders.myOrders")}
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                
+                {/* قائمة السلة والطلبات */}
+                <div className="relative z-50" ref={userMenuRef}>
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="transition-opacity relative"
+                    title="السلة والطلبات"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                    />
-                  </svg>
-                </Link>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                      />
+                    </svg>
+                  </button>
+                  
+                  {showUserMenu && (
+                    <div
+                      className="absolute left-0 mt-2 w-48 rounded-lg shadow-lg overflow-hidden"
+                      style={{ backgroundColor: COLORS.primary, zIndex: 9999 }}
+                    >
+                      <Link
+                        href="/cart"
+                        onClick={() => setShowUserMenu(false)}
+                        className="block px-4 py-3 hover:bg-white/10 transition-colors border-b border-white/20"
+                      >
+                        <div className="flex items-center gap-3">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
+                            />
+                          </svg>
+                          <span>{t("nav.cart")}</span>
+                        </div>
+                      </Link>
+                      <Link
+                        href="/orders"
+                        onClick={() => setShowUserMenu(false)}
+                        className="block px-4 py-3 hover:bg-white/10 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                            />
+                          </svg>
+                          <span>{t("orders.myOrders")}</span>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                
                 <Link
                   href="/account"
                   className="transition-opacity px-2"
@@ -154,25 +231,6 @@ export default function Header() {
                 </Link>
               </div>
             )}
-            <Link
-              href="/cart"
-              className="relative transition-opacity"
-              title={t("nav.cart")}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
-                />
-              </svg>
-            </Link>
           </div>
 
           {/* Mobile Icons - Language, Account & Cart */}
@@ -197,25 +255,105 @@ export default function Header() {
                 />
               </svg>
             </Link>
-            <Link
-              href="/cart"
-              className="transition-opacity"
-              title={t("nav.cart")}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            
+            {/* قائمة السلة والطلبات للموبايل */}
+            {isAuthenticated && (
+              <div className="relative z-50" ref={mobileUserMenuRef}>
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="transition-opacity"
+                  title="السلة والطلبات"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                </button>
+                
+                {showUserMenu && (
+                  <div
+                    className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg overflow-hidden"
+                    style={{ backgroundColor: COLORS.primary, zIndex: 9999 }}
+                  >
+                    <Link
+                      href="/cart"
+                      onClick={() => setShowUserMenu(false)}
+                      className="block px-4 py-3 hover:bg-white/10 transition-colors border-b border-white/20"
+                    >
+                      <div className="flex items-center gap-3">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
+                          />
+                        </svg>
+                        <span>{t("nav.cart")}</span>
+                      </div>
+                    </Link>
+                    <Link
+                      href="/orders"
+                      onClick={() => setShowUserMenu(false)}
+                      className="block px-4 py-3 hover:bg-white/10 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          />
+                        </svg>
+                        <span>{t("orders.myOrders")}</span>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {!isAuthenticated && (
+              <Link
+                href="/cart"
+                className="transition-opacity"
+                title={t("nav.cart")}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
-                />
-              </svg>
-            </Link>
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
+                  />
+                </svg>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button - Removed */}

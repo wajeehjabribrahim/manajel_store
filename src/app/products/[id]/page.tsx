@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import ImageGallery from "@/components/ImageGallery";
 import { PRODUCTS, Product } from "@/constants/products";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -28,7 +29,7 @@ export default function ProductPage({ params }: PageProps) {
     const loadProduct = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/products/${params.id}`);
+        const res = await fetch(`/api/products/${params.id}?lang=${language}`);
         if (res.ok) {
           const data = await res.json();
           if (data?.product) {
@@ -49,7 +50,7 @@ export default function ProductPage({ params }: PageProps) {
     };
 
     loadProduct();
-  }, [params.id]);
+  }, [params.id, language]);
 
   useEffect(() => {
     if (!product) return;
@@ -187,33 +188,33 @@ export default function ProductPage({ params }: PageProps) {
       {/* Product Detail */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Product Image */}
-          <div
-            className="rounded-lg overflow-hidden h-96 relative flex items-center justify-center"
-            style={{ backgroundColor: COLORS.accent }}
-          >
-            {product.image ? (
-              <Image
-                src={product.image}
-                alt={name}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
+          {/* Product Image Gallery */}
+          <div className="rounded-lg overflow-hidden" style={{ backgroundColor: COLORS.accent }}>
+            {product.image || (product.images && product.images.length > 0) ? (
+              <ImageGallery 
+                images={
+                  product.image 
+                    ? [product.image, ...(product.images || [])]
+                    : (product.images || [])
+                } 
+                alt={name} 
               />
             ) : (
-              <div className="text-center">
-                <div
-                  style={{ color: COLORS.primary }}
-                  className="text-8xl font-bold mb-4"
-                >
-                  {name.split(" ")[0][0]}
+              <div className="w-full h-96 flex items-center justify-center">
+                <div className="text-center">
+                  <div
+                    style={{ color: COLORS.primary }}
+                    className="text-8xl font-bold mb-4"
+                  >
+                    {name.split(" ")[0][0]}
+                  </div>
+                  <p
+                    style={{ color: COLORS.secondary }}
+                    className="text-lg font-semibold"
+                  >
+                    {name}
+                  </p>
                 </div>
-                <p
-                  style={{ color: COLORS.secondary }}
-                  className="text-lg font-semibold"
-                >
-                  {name}
-                </p>
               </div>
             )}
           </div>
@@ -230,9 +231,6 @@ export default function ProductPage({ params }: PageProps) {
             {/* Rating */}
             <div className="mb-4 flex items-center gap-2">
               <span className="text-lg">★★★★★</span>
-              <span className="text-gray-600">
-                {product.rating} ({product.reviews} تقييم)
-              </span>
             </div>
 
             {/* Stock Status */}

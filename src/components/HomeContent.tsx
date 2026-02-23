@@ -1,6 +1,7 @@
 "use client";
 
 import ProductCard from "@/components/ProductCard";
+import SignupPrompt from "@/components/SignupPrompt";
 import { COLORS, STORE_DESCRIPTION } from "@/constants/store";
 import { PRODUCTS, Product } from "@/constants/products";
 import Link from "next/link";
@@ -10,7 +11,7 @@ import { useSession } from "next-auth/react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 export default function HomeContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { data: session, status } = useSession();
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
@@ -22,7 +23,7 @@ export default function HomeContent() {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch(`/api/products?lang=${language}`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data?.products)) {
@@ -35,13 +36,13 @@ export default function HomeContent() {
     };
 
     loadProducts();
-  }, []);
+  }, [language]);
 
   const featuredProducts = products.filter((p) => p.featured);
 
   return (
     <>
-      {/* Hero Section */}
+      <SignupPrompt />
       <section
         className="hero-section text-white py-20 px-4 relative"
         style={{
@@ -67,12 +68,12 @@ export default function HomeContent() {
             {STORE_DESCRIPTION}
           </p>
           <Link
-            href={isAdmin ? "/admin/products" : "/shop"}
+            href={isAdmin ? "/admin" : "/shop"}
             className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
             style={{ backgroundColor: COLORS.accent, color: COLORS.primary }}
           >
             {isAdmin
-              ? (t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct"))
+              ? "لوحة التحكم"
               : t("common.shopNow")}
           </Link>
         </div>

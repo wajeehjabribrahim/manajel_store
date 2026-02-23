@@ -103,12 +103,6 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                 </span>
               ))}
             </div>
-            <span
-              style={{ color: COLORS.secondary }}
-              className="text-xs ml-auto"
-            >
-              {product.rating} ({product.reviews})
-            </span>
           </div>
 
           {/* Price */}

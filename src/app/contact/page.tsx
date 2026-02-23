@@ -25,6 +25,8 @@ export default function Contact() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -34,17 +36,43 @@ export default function Contact() {
       ...prev,
       [name]: value,
     }));
+    setError(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, you would send this data to your backend
-    console.log("Form submitted:", formData);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Failed to send message. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      setSubmitted(true);
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    }, 3000);
+      
+      setTimeout(() => {
+        setSubmitted(false);
+      }, 5000);
+    } catch (err) {
+      setError("Network error. Please check your connection and try again.");
+      console.error("Contact form error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -192,10 +220,11 @@ export default function Contact() {
 
               <button
                 type="submit"
+                disabled={loading}
                 style={{ backgroundColor: COLORS.primary }}
-                className="w-full text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="w-full text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                {t.contact.send}
+                {loading ? "جاري الإرسال..." : t.contact.send}
               </button>
 
               {submitted && (
@@ -203,7 +232,16 @@ export default function Contact() {
                   style={{ backgroundColor: "#D4EDDA", color: "#155724", borderColor: "#C3E6CB" }}
                   className="border p-3 rounded"
                 >
-                  {t.contact.successDesc}
+                  تم استقبال رسالتك بنجاح. سيتم الرد عليك قريباً
+                </div>
+              )}
+
+              {error && (
+                <div
+                  style={{ backgroundColor: "#F8D7DA", color: "#721C24", borderColor: "#F5C6CB" }}
+                  className="border p-3 rounded"
+                >
+                  {error}
                 </div>
               )}
             </form>

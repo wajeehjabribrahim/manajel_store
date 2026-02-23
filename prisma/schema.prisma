@@ -18,17 +18,16 @@ model User {
   image         String?
   password      String?
   role          String    @default("user")
-  accounts      Account[]
-  sessions      Session[]
-  orders        Order[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  orders        Order[]
+  sessions      Session[]
 }
 
 model Order {
   id              String      @id @default(cuid())
   userId          String?
-  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   status          String      @default("pending")
   total           Float
   currency        String      @default("USD")
@@ -38,20 +37,21 @@ model Order {
   shippingAddress String
   shippingNotes   String?
   email           String?
-  items           OrderItem[]
   createdAt       DateTime    @default(now())
+  user            User?       @relation(fields: [userId], references: [id])
+  items           OrderItem[]
 }
 
 model OrderItem {
-  id        String  @id @default(cuid())
+  id        String @id @default(cuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
   name      String
   size      String
   quantity  Int
   price     Float
   total     Float
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -67,8 +67,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -78,8 +77,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -91,18 +89,34 @@ model VerificationToken {
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  category    String
-  price       Float
-  image       String?
-  imageData   String?  @db.Text
-  sizes       String?
-  featured    Boolean  @default(false)
-  inStock     Boolean  @default(true)
-  rating      Float    @default(0)
-  reviews     Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  nameEn        String?
+  description   String
+  descriptionEn String?
+  category      String
+  price         Float
+  image         String?
+  images        String?
+  sizes         String?
+  featured      Boolean  @default(false)
+  inStock       Boolean  @default(true)
+  rating        Float    @default(0)
+  reviews       Int      @default(0)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  imageData     String?
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

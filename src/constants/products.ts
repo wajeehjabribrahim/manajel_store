@@ -21,6 +21,7 @@ export interface Product {
     large?: { weight: string; price: number };
   };
   image: string;
+  images?: string[];
   featured: boolean;
   inStock: boolean;
   rating: number;
@@ -37,7 +38,7 @@ export const CATEGORIES = [
   { id: "zatar", name: "Traditional Za'atar", slug: "zatar" },
   { id: "sage", name: "Traditional Herbs (Sage)", slug: "sage" },
   { id: "freekeh", name: "Freekeh", slug: "freekeh" },
-  { id: "pressed-olives", name: "Pressed Olives", slug: "pressed-olives" },
+  { id: "pressed-olives", name: "Pickled Olives", slug: "pressed-olives" },
   { id: "duqqa", name: "Traditional Duqqa", slug: "duqqa" },
   { id: "soap", name: "Traditional Soap", slug: "soap" },
 ];

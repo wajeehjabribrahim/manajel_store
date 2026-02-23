@@ -37,7 +37,7 @@ const normalizeSizes = (sizes: any, fallbackPrice: number) => {
   return normalized;
 };
 
-const mapDbProduct = (db: any): Product => {
+const mapDbProduct = (db: any, language?: string): Product => {
   const price = toNumber(db.price);
   let parsedSizes: any = undefined;
   if (typeof db.sizes === "string" && db.sizes.trim()) {
@@ -53,14 +53,30 @@ const mapDbProduct = (db: any): Product => {
     price || Infinity
   );
 
+  // استخدام اللغة الإنجليزية إذا كانت متوفرة واللغة المطلوبة هي الإنجليزية
+  const name = (language === 'en' && db.nameEn) ? String(db.nameEn) : String(db.name);
+  const description = (language === 'en' && db.descriptionEn) ? String(db.descriptionEn) : String(db.description);
+
+  // Parse images JSON
+  let images: string[] = [];
+  if (typeof db.images === "string" && db.images.trim()) {
+    try {
+      const parsed = JSON.parse(db.images);
+      images = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      images = [];
+    }
+  }
+
   return {
     id: String(db.id),
-    name: String(db.name),
+    name,
     category: db.category as Product["category"],
-    description: String(db.description),
+    description,
     price: Number.isFinite(minPrice) && minPrice !== Infinity ? minPrice : price,
     sizes,
     image: db.imageData ? String(db.imageData) : (db.image ? String(db.image) : ""),
+    images: images.length > 0 ? images : undefined,
     featured: Boolean(db.featured),
     inStock: Boolean(db.inStock),
     rating: toNumber(db.rating) || 0,
@@ -75,6 +91,10 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
+    // الحصول على اللغة من URL
+    const url = new URL(_?.url || '');
+    const language = url.searchParams.get('lang') || 'ar';
+
     const staticProduct = PRODUCTS.find((p) => p.id === id);
     if (staticProduct) {
       return NextResponse.json({ product: staticProduct });
@@ -85,7 +105,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ product: mapDbProduct(dbProduct) });
+    return NextResponse.json({ product: mapDbProduct(dbProduct, language) });
   } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
@@ -140,10 +160,13 @@ export async function PUT(
 
     const body = await req.json();
     const name = typeof body?.name === "string" ? body.name.trim() : "";
+    const nameEn = typeof body?.nameEn === "string" ? body.nameEn.trim() : null;
     const description = typeof body?.description === "string" ? body.description.trim() : "";
+    const descriptionEn = typeof body?.descriptionEn === "string" ? body.descriptionEn.trim() : null;
     const category = typeof body?.category === "string" ? body.category.trim() : "";
     const image = typeof body?.image === "string" ? body.image.trim() : "";
     const imageData = typeof body?.imageData === "string" ? body.imageData.trim() : "";
+    const images = typeof body?.images === "string" ? body.images : null;
     const rawPrice = toNumber(body?.price);
 
     if (!name || !description || !category) {
@@ -163,10 +186,13 @@ export async function PUT(
       where: { id },
       data: {
         name,
+        nameEn: nameEn || null,
         description,
+        descriptionEn: descriptionEn || null,
         category,
         image: image || null,
         imageData: imageData || null,
+        images: images || null,
         price,
         sizes: sizes && Object.keys(sizes).length ? JSON.stringify(sizes) : null,
         featured: Boolean(body?.featured),

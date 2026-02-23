@@ -22,7 +22,7 @@ const getCategoryTranslationKey = (categoryId: string): string => {
 };
 
 export default function ShopContent() {
-  const { t } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
@@ -33,7 +33,7 @@ export default function ShopContent() {
 
   const loadProducts = async () => {
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch(`/api/products?lang=${language}`);
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data?.products)) {
@@ -78,7 +78,7 @@ export default function ShopContent() {
     }, 10000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [language]);
 
   // Read category from URL on mount
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function ShopContent() {
                   backgroundColor: selectedCategory === null ? COLORS.primary : COLORS.light,
                   color: selectedCategory === null ? "white" : COLORS.dark,
                 }}
-                className="w-full text-left px-4 py-2 rounded transition-colors"
+                className={`w-full px-4 py-2 rounded transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                 type="button"
               >
                 {t("shop.allProducts")}
@@ -183,7 +183,7 @@ export default function ShopContent() {
                       color:
                         selectedCategory === category.id ? "white" : COLORS.dark,
                     }}
-                    className="w-full text-left px-4 py-2 rounded transition-colors"
+                    className={`w-full px-4 py-2 rounded transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                     type="button"
                   >
                     {displayName}

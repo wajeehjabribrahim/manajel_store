@@ -35,7 +35,7 @@ const normalizeSizes = (sizes: any, fallbackPrice: number) => {
   return Object.keys(normalized).length ? normalized : undefined;
 };
 
-const mapDbProduct = (db: any): Product => {
+const mapDbProduct = (db: any, language?: string): Product => {
   const price = toNumber(db.price);
   let parsedSizes: any = undefined;
   if (typeof db.sizes === "string" && db.sizes.trim()) {
@@ -51,14 +51,30 @@ const mapDbProduct = (db: any): Product => {
     price || Infinity
   );
 
+  // استخدام اللغة الإنجليزية إذا كانت متوفرة واللغة المطلوبة هي الإنجليزية
+  const name = (language === 'en' && db.nameEn) ? String(db.nameEn) : String(db.name);
+  const description = (language === 'en' && db.descriptionEn) ? String(db.descriptionEn) : String(db.description);
+
+  // Parse images JSON
+  let images: string[] = [];
+  if (typeof db.images === "string" && db.images.trim()) {
+    try {
+      const parsed = JSON.parse(db.images);
+      images = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      images = [];
+    }
+  }
+
   return {
     id: String(db.id),
-    name: String(db.name),
+    name,
     category: db.category as Product["category"],
-    description: String(db.description),
+    description,
     price: Number.isFinite(minPrice) && minPrice !== Infinity ? minPrice : price,
     sizes,
     image: db.imageData ? String(db.imageData) : (db.image ? String(db.image) : ""),
+    images: images.length > 0 ? images : undefined,
     featured: Boolean(db.featured),
     inStock: Boolean(db.inStock),
     rating: toNumber(db.rating) || 0,
@@ -66,13 +82,16 @@ const mapDbProduct = (db: any): Product => {
   };
 };
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    // الحصول على اللغة من header أو query parameter
+    const url = new URL(req.url);
+    const language = url.searchParams.get('lang') || 'ar';
     const dbProducts = await prisma.product.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { displayOrder: "asc" },
     });
 
-    const mapped = dbProducts.map(mapDbProduct);
+    const mapped = dbProducts.map((p) => mapDbProduct(p, language));
     const existingIds = new Set(PRODUCTS.map((p) => p.id));
     const merged = [...PRODUCTS, ...mapped.filter((p: Product) => !existingIds.has(p.id))];
 
@@ -86,10 +105,13 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const name = typeof body?.name === "string" ? body.name.trim() : "";
+    const nameEn = typeof body?.nameEn === "string" ? body.nameEn.trim() : null;
     const description = typeof body?.description === "string" ? body.description.trim() : "";
+    const descriptionEn = typeof body?.descriptionEn === "string" ? body.descriptionEn.trim() : null;
     const category = typeof body?.category === "string" ? body.category.trim() : "";
     const image = typeof body?.image === "string" ? body.image.trim() : "";
     const imageData = typeof body?.imageData === "string" ? body.imageData.trim() : "";
+    const images = typeof body?.images === "string" ? body.images : null;
     const rawPrice = toNumber(body?.price);
 
     if (!name || !description || !category) {
@@ -108,10 +130,13 @@ export async function POST(req: Request) {
     const created = await prisma.product.create({
       data: {
         name,
+        nameEn: nameEn || null,
         description,
+        descriptionEn: descriptionEn || null,
         category,
         image: image || null,
         imageData: imageData || null,
+        images: images || null,
         price,
         sizes: sizes ? JSON.stringify(sizes) : null,
         featured: Boolean(body?.featured),
