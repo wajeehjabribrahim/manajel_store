@@ -5,7 +5,7 @@ import Image from "next/image";
 import { COLORS } from "@/constants/store";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
   const { t, language } = useLanguage();
@@ -133,16 +133,10 @@ export default function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.644 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </Link>
-                <span className="text-sm opacity-90">
+                <span className="text-sm" style={{ color: "#111" }}>
                   {t("auth.welcome")}
                   {session?.user?.name ? `, ${session.user.name}` : ""}
                 </span>
-                <button
-                  onClick={() => signOut()}
-                  className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition-colors"
-                >
-                  {t("auth.logout")}
-                </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">

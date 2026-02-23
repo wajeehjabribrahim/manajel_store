@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -70,14 +70,14 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-12" style={{ direction: dir }}>
+    <div className="max-w-md mx-auto px-4 py-12" style={{ direction: dir, color: COLORS.dark }}>
       <h1 className="text-2xl font-bold mb-4" style={{ color: COLORS.primary }}>
         {t("account.title") || "Account"}
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1">{t("auth.phone")}</label>
+          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.phone")}</label>
           <input
             type="tel"
             value={phone}
@@ -88,7 +88,7 @@ export default function AccountPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1">{t("auth.city")}</label>
+          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.city")}</label>
           <input
             type="text"
             value={city}
@@ -99,7 +99,7 @@ export default function AccountPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-1">{t("auth.address")}</label>
+          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.address")}</label>
           <input
             type="text"
             value={address}
@@ -115,10 +115,19 @@ export default function AccountPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 rounded-lg text-white transition-opacity"
+          className="w-full py-2 rounded-lg text-white transition-opacity mb-2"
           style={{ backgroundColor: COLORS.primary, opacity: loading ? 0.7 : 1 }}
         >
           {loading ? t("common.loading") : t("account.save") || "Save"}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => signOut()}
+          className="w-full py-2 rounded-lg text-white transition-opacity"
+          style={{ backgroundColor: COLORS.secondary }}
+        >
+          {t("auth.logout")}
         </button>
       </form>
     </div>
