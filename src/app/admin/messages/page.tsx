@@ -121,7 +121,7 @@ export default function AdminMessagesPage() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: COLORS.background }}>
+    <div className="min-h-screen" style={{ backgroundColor: COLORS.light }}>
       {/* Header */}
       <section style={{ backgroundColor: COLORS.primary }} className="text-white py-6 px-4">
         <div className="max-w-7xl mx-auto">
