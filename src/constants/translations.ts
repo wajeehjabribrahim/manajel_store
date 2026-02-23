@@ -101,7 +101,7 @@ export const translations = {
       showing: "Showing",
       items: "items",
       categoryOliveOil: "Olive Oil",
-      categoryZatar: "Traditional Za'atar",
+      categoryZatar: "Local Za'atar",
       categorySage: "Traditional Herbs (Sage)",
       categoryFreekeh: "Freekeh",
       categoryPressedOlives: "Pressed Olives",
@@ -117,7 +117,7 @@ export const translations = {
         description: "Palestinian extra virgin olive oil, cold-pressed from Salfit olives with a rich flavor."
       },
       "2": {
-        name: "Traditional Za'atar",
+        name: "Local Za'atar",
         description: "Authentic Palestinian za'atar blend with sesame and sumac, perfect for bread and breakfasts."
       },
       "3": {
@@ -250,7 +250,7 @@ export const translations = {
       products: "Some of Our Products",
       productsDesc: "We carefully cultivate and prepare six primary products, each one a testament to our dedication to quality and authenticity.",
       product1: "Extra Virgin Olive Oil",
-      product2: "Traditional Za'atar",
+      product2: "Local Za'atar",
       product3: "Traditional Sage",
       product4: "Freekeh",
       product5: "Pressed Olives",
@@ -504,7 +504,7 @@ export const translations = {
       showing: "عرض",
       items: "عنصر",
       categoryOliveOil: "زيت الزيتون",
-      categoryZatar: "الزعتر التقليدي",
+      categoryZatar: "زعتر بلدي",
       categorySage: "الأعشاب التقليدية (المريمية)",
       categoryFreekeh: "الفريكة",
       categoryPressedOlives: "الزيتون المعصور",
@@ -518,7 +518,7 @@ export const translations = {
         description: "زيت زيتون بكر فلسطيني معصور على البارد من زيتون سلفيت بنكهة غنية."
       },
       "2": {
-        name: "زعتر تقليدي",
+        name: "زعتر بلدي",
         description: "خلطة زعتر فلسطينية أصلية مع الطحينة والسمسم والسمّق، مثالية للخبز والإفطار."
       },
       "3": {
@@ -651,7 +651,7 @@ export const translations = {
       products: "بعض منتجاتنا",
       productsDesc: "نزرع ونحضر بعناية ستة منتجات رئيسية، كل واحد منها شاهد على تفانينا في الجودة والأصالة.",
       product1: "زيت زيتون بكر ممتاز",
-      product2: "زعتر تقليدي",
+      product2: "زعتر بلدي",
       product3: "مريمية جبلية",
       product4: "فريكة",
       product5: "زيتون مكبوس",

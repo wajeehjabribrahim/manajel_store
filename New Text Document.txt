@@ -15,3 +15,13 @@ npx prisma db push
 neon :
 Connection string
 postgresql://neondb_owner:npg_I9FDMouVrWZ8@ep-broad-cloud-ai5vc0ab-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+
+
+
+
+1️⃣ تحديث A record
+Type	Host	Answer	TTL	Prio
+A	@	216.198.79.1	300	N/A
+2️⃣ تحديث CNAME للسابق www
+Type	Host	Answer	TTL	Prio
+CNAME	www	bb8894891842fd9e.vercel-dns-017.com	300	N/A
