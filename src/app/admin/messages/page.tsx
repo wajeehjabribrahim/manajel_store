@@ -30,7 +30,7 @@ export default function AdminMessagesPage() {
 
   // Redirect if not admin
   useEffect(() => {
-    if (session && session.user?.role !== "admin") {
+    if (session && (session.user as { role?: string } | undefined)?.role !== "admin") {
       router.push("/");
     }
   }, [session, router]);
