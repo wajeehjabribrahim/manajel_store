@@ -78,10 +78,15 @@ export default function ProductPage({ params }: PageProps) {
     const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
     const price = product.sizes?.[activeSize]?.price ?? product.price;
 
+    const rawImage = typeof product.image === "string" ? product.image : "";
+    const safeImage = rawImage && !rawImage.startsWith("data:") && rawImage.length < 2000
+      ? rawImage
+      : "";
+
     const cartItem = {
       id: product.id,
       name: product.name,
-      image: product.image,
+      image: safeImage,
       size: activeSize,
       quantity,
       price,
@@ -105,7 +110,28 @@ export default function ProductPage({ params }: PageProps) {
     }
     
     // Save to localStorage
-    localStorage.setItem("manajel-cart", JSON.stringify(cart));
+    try {
+      localStorage.setItem("manajel-cart", JSON.stringify(cart));
+    } catch (error) {
+      const isQuotaError = error instanceof DOMException && error.name === "QuotaExceededError";
+      if (isQuotaError) {
+        const trimmedCart = cart.map((item: any) => ({
+          ...item,
+          image: "",
+        }));
+        try {
+          localStorage.setItem("manajel-cart", JSON.stringify(trimmedCart));
+        } catch {
+          setIsAdding(false);
+          alert(t("cart.orderFailed"));
+          return;
+        }
+      } else {
+        setIsAdding(false);
+        alert(t("cart.orderFailed"));
+        return;
+      }
+    }
     
     // Redirect to cart
     setTimeout(() => {

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
-import { PRODUCTS } from "@/constants/products";
+import { Product } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
 
@@ -18,11 +18,12 @@ interface CartItem {
 }
 
 export default function Cart() {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const router = useRouter();
   const { status } = useSession();
   const isAuthenticated = status === "authenticated";
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [productMap, setProductMap] = useState<Record<string, Product>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [showGuestForm, setShowGuestForm] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
@@ -45,10 +46,64 @@ export default function Cart() {
     setIsLoading(false);
   }, []);
 
+  // Load product data for images/names
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem(`manajel-products-cache-${language}`);
+      if (cached) {
+        const parsed = JSON.parse(cached) as Product[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const map = parsed.reduce<Record<string, Product>>((acc, item) => {
+            acc[item.id] = item;
+            return acc;
+          }, {});
+          setProductMap(map);
+        }
+      }
+    } catch {
+      // ignore cache errors
+    }
+
+    const loadProducts = async () => {
+      try {
+        const res = await fetch(`/api/products?lang=${language}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data?.products)) {
+            const map = (data.products as Product[]).reduce<Record<string, Product>>((acc, item) => {
+              acc[item.id] = item;
+              return acc;
+            }, {});
+            setProductMap(map);
+          }
+        }
+      } catch {
+        // keep cached
+      }
+    };
+
+    loadProducts();
+  }, [language]);
+
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     if (!isLoading) {
-      localStorage.setItem("manajel-cart", JSON.stringify(cartItems));
+      try {
+        localStorage.setItem("manajel-cart", JSON.stringify(cartItems));
+      } catch (error) {
+        const isQuotaError = error instanceof DOMException && error.name === "QuotaExceededError";
+        if (isQuotaError) {
+          const trimmedCart = cartItems.map((item) => ({
+            ...item,
+            image: "",
+          }));
+          try {
+            localStorage.setItem("manajel-cart", JSON.stringify(trimmedCart));
+          } catch {
+            // ignore if still failing
+          }
+        }
+      }
     }
   }, [cartItems, isLoading]);
 
@@ -229,8 +284,9 @@ export default function Cart() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg overflow-hidden shadow-md">
                 {cartItems.map((item, index) => {
-                  const product = PRODUCTS.find(p => p.id === item.id);
-                  const productName = product ? t(`products.${product.id}.name`) : item.name;
+                  const product = productMap[item.id];
+                  const productName = product?.name || item.name;
+                  const productImage = product?.image || item.image || "";
                   return (
                   <div
                     key={`${item.id}-${item.size}`}
@@ -245,9 +301,9 @@ export default function Cart() {
                   >
                     {/* Product Image */}
                     <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-                      {(product?.image || item.image) ? (
+                      {productImage ? (
                         <img
-                          src={product?.image || item.image || ""}
+                          src={productImage}
                           alt={productName}
                           className="object-cover w-full h-full"
                         />

@@ -95,9 +95,13 @@ export async function GET(req: Request) {
     const existingIds = new Set(PRODUCTS.map((p) => p.id));
     const merged = [...PRODUCTS, ...mapped.filter((p: Product) => !existingIds.has(p.id))];
 
-    return NextResponse.json({ products: merged });
+    const response = NextResponse.json({ products: merged });
+    response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
+    return response;
   } catch (error) {
-    return NextResponse.json({ products: PRODUCTS });
+    const response = NextResponse.json({ products: PRODUCTS });
+    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
+    return response;
   }
 }
 

@@ -43,6 +43,11 @@ export default function ShopContent() {
         const data = await res.json();
         if (Array.isArray(data?.products)) {
           setProducts(data.products);
+          try {
+            localStorage.setItem(`manajel-products-cache-${language}`, JSON.stringify(data.products));
+          } catch {
+            // ignore cache errors
+          }
         }
       }
     } catch {
@@ -51,6 +56,17 @@ export default function ShopContent() {
   };
 
   useEffect(() => {
+    try {
+      const cached = localStorage.getItem(`manajel-products-cache-${language}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProducts(parsed);
+        }
+      }
+    } catch {
+      // ignore cache errors
+    }
     loadCategories();
     loadProducts();
     return () => undefined;
