@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { sendContactNotification } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,6 +37,19 @@ export async function POST(request: NextRequest) {
         status: 'new',
       },
     });
+
+    // إرسال إيميل للأدمن
+    try {
+      const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.com'];
+      await sendContactNotification(adminEmails, {
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+      });
+    } catch (emailError) {
+      console.error("Failed to send contact email:", emailError);
+      // لا نرجع خطأ، الرسالة تم حفظها حتى لو فشل الإيميل
+    }
 
     return NextResponse.json(
       {

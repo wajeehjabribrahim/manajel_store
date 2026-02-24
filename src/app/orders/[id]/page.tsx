@@ -308,7 +308,7 @@ export default function OrderDetailsPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-900">{t("cart.itemCount")}</span>
                   <span className="font-semibold">
-                    {order.items.reduce((sum, item) => sum + item.quantity, 0)}
+                    {order.items && order.items.length > 0 ? order.items.reduce((sum, item) => sum + item.quantity, 0) : 0}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">

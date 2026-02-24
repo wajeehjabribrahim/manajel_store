@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { sendOrderNotification } from "@/lib/email";
 
 interface OrderItemInput {
   id: string;
@@ -110,6 +111,23 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    // إرسال إيميل الطلب
+    if (email) {
+      try {
+        console.log("📧 Sending order email to:", email);
+        await sendOrderNotification(email, {
+          id: order.id,
+          total,
+          items: normalizedItems,
+          createdAt: order.createdAt,
+        });
+        console.log("✅ Order email sent successfully");
+      } catch (emailError) {
+        console.error("❌ Failed to send order email:", emailError);
+        // لا نرجع خطأ، الطلب تم إنشاؤه بنجاح حتى لو فشل الإيميل
+      }
+    }
 
     return NextResponse.json({ ok: true, orderId: order.id }, { status: 201 });
   } catch {

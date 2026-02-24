@@ -2,6 +2,7 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 import { COLORS } from "@/constants/store";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import AuthProvider from "@/components/AuthProvider";
@@ -30,6 +31,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <CookieConsent />
           </LanguageProvider>
         </AuthProvider>
       </body>
