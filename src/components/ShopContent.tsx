@@ -1,7 +1,7 @@
 "use client";
 
 import { COLORS } from "@/constants/store";
-import { PRODUCTS, Product } from "@/constants/products";
+import { PRODUCTS, Product, CATEGORIES } from "@/constants/products";
 import ProductCard from "@/components/ProductCard";
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 interface Category {
   id: string;
   name: string;
-  nameAr: string;
+  nameAr?: string;
 }
 
 export default function ShopContent() {
@@ -21,7 +21,7 @@ export default function ShopContent() {
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>(CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name })));
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const loadCategories = async () => {
@@ -29,10 +29,12 @@ export default function ShopContent() {
       const res = await fetch('/api/categories');
       if (res.ok) {
         const data = await res.json();
-        setCategories(data);
+        if (Array.isArray(data) && data.length > 0) {
+          setCategories(data);
+        }
       }
     } catch (error) {
-      console.error("Error loading categories:", error);
+      console.error('Error loading categories:', error);
     }
   };
 
@@ -147,14 +149,13 @@ export default function ShopContent() {
                 {t("shop.allProducts")}
               </button>
               {categories.map((category) => {
-                const displayName = language === 'ar' ? category.nameAr : category.name;
+                const displayName = language === 'ar' ? (category.nameAr || category.name) : category.name;
                 
                 return (
                   <button
                     key={category.id}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
+                      console.log('Selected category:', category.id);
                       setSelectedCategory(category.id);
                     }}
                     style={{

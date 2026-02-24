@@ -6,6 +6,12 @@ import { CATEGORIES } from "@/constants/products";
 import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+interface Category {
+  id: string;
+  name: string;
+  nameAr: string;
+}
+
 interface SizeState {
   enabled: boolean;
   weight: string;
@@ -32,7 +38,8 @@ export default function AdminAddProductPage() {
   const [nameEn, setNameEn] = useState("");
   const [description, setDescription] = useState("");
   const [descriptionEn, setDescriptionEn] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]?.id || "olive-oil");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [category, setCategory] = useState("");
   const [customCategory, setCustomCategory] = useState("");
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [price, setPrice] = useState("");
@@ -50,6 +57,39 @@ export default function AdminAddProductPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await fetch('/api/categories');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setCategories(data);
+            if (!category && data[0]?.id) {
+              setCategory(data[0].id);
+            }
+          } else {
+            // Fallback to CATEGORIES constant if no categories in DB
+            const fallbackCategories = CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name }));
+            setCategories(fallbackCategories);
+            if (!category && fallbackCategories[0]?.id) {
+              setCategory(fallbackCategories[0].id);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        // Fallback to CATEGORIES constant
+        const fallbackCategories = CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name }));
+        setCategories(fallbackCategories);
+        if (!category && fallbackCategories[0]?.id) {
+          setCategory(fallbackCategories[0].id);
+        }
+      }
+    };
+    loadCategories();
+  }, []);
 
   useEffect(() => {
     if (!imageFile) {
@@ -269,9 +309,9 @@ export default function AdminAddProductPage() {
                 }}
                 className="w-full border rounded-lg px-3 py-2"
               >
-                {CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
-                    {t(getCategoryTranslationKey(cat.id))}
+                    {cat.nameAr || cat.name}
                   </option>
                 ))}
                 <option value="custom">➕ إضافة تصنيف جديد</option>

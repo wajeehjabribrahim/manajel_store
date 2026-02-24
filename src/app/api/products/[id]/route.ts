@@ -71,8 +71,10 @@ const mapDbProduct = (db: any, language?: string): Product => {
   return {
     id: String(db.id),
     name,
+    nameEn: db.nameEn ? String(db.nameEn) : undefined,
     category: db.category as Product["category"],
     description,
+    descriptionEn: db.descriptionEn ? String(db.descriptionEn) : undefined,
     price: Number.isFinite(minPrice) && minPrice !== Infinity ? minPrice : price,
     sizes,
     image: db.imageData ? String(db.imageData) : (db.image ? String(db.image) : ""),
@@ -186,9 +188,9 @@ export async function PUT(
       where: { id },
       data: {
         name,
-        nameEn: nameEn || null,
+        nameEn: nameEn !== null && nameEn !== "" ? nameEn : null,
         description,
-        descriptionEn: descriptionEn || null,
+        descriptionEn: descriptionEn !== null && descriptionEn !== "" ? descriptionEn : null,
         category,
         image: image || null,
         imageData: imageData || null,

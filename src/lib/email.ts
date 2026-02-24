@@ -11,13 +11,13 @@ export async function sendOrderNotification(
     createdAt: Date;
   }
 ) {
-  const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.com'];
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
   const customerEmail = userEmail && userEmail.trim() ? userEmail : "غير متوفر";
   
   try {
     // إرسال إيميل لجميع الأدمنز
     await resend.emails.send({
-      from: 'Manajel Store <onboarding@resend.dev>',
+      from: 'Manajel Store <info@manajel.works>',
       to: adminEmails,
       subject: `🔔 طلب جديد - Order #${orderData.id}`,
       html: `
@@ -73,7 +73,7 @@ export async function sendContactNotification(
   try {
     const emailList = Array.isArray(adminEmails) ? adminEmails : [adminEmails];
     await resend.emails.send({
-      from: 'Manajel Store <onboarding@resend.dev>',
+      from: 'Manajel Store <info@manajel.works>',
       to: emailList,
       subject: `📧 رسالة جديدة من ${contactData.name}`,
       html: `

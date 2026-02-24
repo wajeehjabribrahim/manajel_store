@@ -6,6 +6,12 @@ import { CATEGORIES } from "@/constants/products";
 import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+interface Category {
+  id: string;
+  name: string;
+  nameAr: string;
+}
+
 interface SizeState {
   enabled: boolean;
   weight: string;
@@ -34,7 +40,8 @@ export default function AdminEditProductPage() {
   const [nameEn, setNameEn] = useState("");
   const [description, setDescription] = useState("");
   const [descriptionEn, setDescriptionEn] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]?.id || "olive-oil");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -54,6 +61,25 @@ export default function AdminEditProductPage() {
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await fetch('/api/categories');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setCategories(data);
+          } else {
+            const fallbackCategories = CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name }));
+            setCategories(fallbackCategories);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading categories:', error);
+        const fallbackCategories = CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name }));
+        setCategories(fallbackCategories);
+      }
+    };
+
     const loadProduct = async () => {
       try {
         const res = await fetch(`/api/products/${id}`);
@@ -95,6 +121,7 @@ export default function AdminEditProductPage() {
     };
 
     if (id) {
+      loadCategories();
       loadProduct();
     }
   }, [id]);
@@ -289,9 +316,9 @@ export default function AdminEditProductPage() {
             onChange={(e) => setCategory(e.target.value)}
             className="w-full border rounded-lg px-3 py-2"
           >
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
-                {t(getCategoryTranslationKey(cat.id))}
+                {cat.nameAr || cat.name}
               </option>
             ))}
           </select>

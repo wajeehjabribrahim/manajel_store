@@ -12,8 +12,10 @@ export type Category =
 export interface Product {
   id: string;
   name: string;
+  nameEn?: string;
   category: Category;
   description: string;
+  descriptionEn?: string;
   price: number;
   sizes: {
     small?: { weight: string; price: number };
