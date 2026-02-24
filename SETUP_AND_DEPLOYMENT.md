@@ -437,7 +437,7 @@ Before deployment, test:
 Add to `src/app/layout.tsx`:
 ```typescript
 import Script from "next/script";
-
+{% raw %}
 <Script
   src="https://www.googletagmanager.com/gtag/js?id=GA_ID"
   strategy="afterInteractive"
@@ -452,6 +452,7 @@ import Script from "next/script";
     gtag('config', 'GA_ID');`,
   }}
 />
+{% endraw %}
 ```
 
 ---
