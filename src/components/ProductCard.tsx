@@ -64,6 +64,9 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
               fill
               className="object-cover product-image"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={70}
+              priority={isFirstProduct}
+              loading={isFirstProduct ? "eager" : "lazy"}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">

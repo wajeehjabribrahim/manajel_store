@@ -112,21 +112,19 @@ export async function POST(req: Request) {
       },
     });
 
-    // إرسال إيميل الطلب
-    if (email) {
-      try {
-        console.log("📧 Sending order email to:", email);
-        await sendOrderNotification(email, {
-          id: order.id,
-          total,
-          items: normalizedItems,
-          createdAt: order.createdAt,
-        });
-        console.log("✅ Order email sent successfully");
-      } catch (emailError) {
-        console.error("❌ Failed to send order email:", emailError);
-        // لا نرجع خطأ، الطلب تم إنشاؤه بنجاح حتى لو فشل الإيميل
-      }
+    // إرسال إيميل الطلب (للأدمن دائماً)
+    try {
+      console.log("📧 Sending order email to:", email ?? "(no customer email)");
+      await sendOrderNotification(email, {
+        id: order.id,
+        total,
+        items: normalizedItems,
+        createdAt: order.createdAt,
+      });
+      console.log("✅ Order email sent successfully");
+    } catch (emailError) {
+      console.error("❌ Failed to send order email:", emailError);
+      // لا نرجع خطأ، الطلب تم إنشاؤه بنجاح حتى لو فشل الإيميل
     }
 
     return NextResponse.json({ ok: true, orderId: order.id }, { status: 201 });

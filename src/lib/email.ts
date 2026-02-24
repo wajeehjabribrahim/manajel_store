@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendOrderNotification(
-  userEmail: string,
+  userEmail: string | null | undefined,
   orderData: {
     id: string;
     total: number;
@@ -12,6 +12,7 @@ export async function sendOrderNotification(
   }
 ) {
   const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.com'];
+  const customerEmail = userEmail && userEmail.trim() ? userEmail : "غير متوفر";
   
   try {
     // إرسال إيميل لجميع الأدمنز
@@ -26,7 +27,7 @@ export async function sendOrderNotification(
           
           <h3 style="color: #2d5016; margin-top: 20px;">البيانات:</h3>
           <p><strong>رقم الطلب:</strong> ${orderData.id}</p>
-          <p><strong>البريد الإلكتروني للزبون:</strong> ${userEmail}</p>
+          <p><strong>البريد الإلكتروني للزبون:</strong> ${customerEmail}</p>
           <p><strong>الإجمالي:</strong> ₪${orderData.total}</p>
           <p><strong>التاريخ:</strong> ${new Date(orderData.createdAt).toLocaleString('ar-PS')}</p>
           

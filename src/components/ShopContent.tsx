@@ -53,13 +53,7 @@ export default function ShopContent() {
   useEffect(() => {
     loadCategories();
     loadProducts();
-    
-    // Reload products every 10 seconds to catch changes
-    const interval = setInterval(() => {
-      loadProducts();
-    }, 10000);
-    
-    return () => clearInterval(interval);
+    return () => undefined;
   }, [language]);
 
   // Read category from URL on mount
