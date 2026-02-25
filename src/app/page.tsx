@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import HomeContent from "@/components/HomeContent";
 
 export const metadata: Metadata = {
-  title: "مناجل - متجر المنتجات الفلسطينية الأصيلة",
+  title: "زيت زيتون فلسطيني بكر ممتاز | Manajel",
   description:
-    "مناجل متجر فلسطيني للمنتجات الأصيلة: زيت الزيتون، الزعتر، الميرمية وغيرها. جودة عالية وتقاليد عريقة مع شحن سريع داخل فلسطين.",
+    "متجر مناجل يقدم زيت زيتون فلسطيني طبيعي 100% ومنتجات تراثية عالية الجودة من المزارع مباشرة.",
 };
 
 export default function Home() {
