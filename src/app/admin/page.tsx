@@ -5,7 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { COLORS } from "@/constants/store";
 
 export default function AdminDashboard() {
-  const { dir } = useLanguage();
+  const { dir, language } = useLanguage();
   const router = useRouter();
 
   const dashboardItems = [
@@ -44,6 +44,20 @@ export default function AdminDashboard() {
       href: "/admin/messages",
       color: "from-orange-500 to-orange-600",
     },
+    {
+      title: "حسابات المستخدمين",
+      description: "عرض وإدارة جميع حسابات المستخدمين المسجلة",
+      icon: "👥",
+      href: "/admin/users",
+      color: "from-pink-500 to-pink-600",
+    },
+    {
+      title: "الطلبات حسب السنة",
+      description: "عرض الطلبات والإيرادات حسب السنة والشهر",
+      icon: "📊",
+      href: "/admin/orders-yearly",
+      color: "from-indigo-500 to-indigo-600",
+    },
   ];
 
   return (
@@ -61,6 +75,54 @@ export default function AdminDashboard() {
           </p>
         </div>
 
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {/* Users Summary Card */}
+          <button
+            onClick={() => router.push("/admin/users-summary")}
+            className="w-full text-right"
+          >
+            <div className="flex items-center gap-4 p-6 bg-gradient-to-br from-cyan-500 to-cyan-600 text-white rounded-xl hover:shadow-xl transition-all hover:scale-105 cursor-pointer h-full">
+              <span className="text-5xl">👥</span>
+              <div className="text-right flex-1">
+                <h3 className="text-2xl font-bold mb-1">
+                  {language === "ar"
+                    ? "ملخص الحسابات"
+                    : "Users Summary"}
+                </h3>
+                <p className="text-white/90">
+                  {language === "ar"
+                    ? "عرض إحصائيات المستخدمين المسجلين"
+                    : "View user statistics"}
+                </p>
+              </div>
+            </div>
+          </button>
+
+          {/* Orders Summary Card */}
+          <button
+            onClick={() => router.push("/admin/orders-summary")}
+            className="w-full text-right"
+          >
+            <div className="flex items-center gap-4 p-6 bg-gradient-to-br from-amber-500 to-amber-600 text-white rounded-xl hover:shadow-xl transition-all hover:scale-105 cursor-pointer h-full">
+              <span className="text-5xl">📦</span>
+              <div className="text-right flex-1">
+                <h3 className="text-2xl font-bold mb-1">
+                  {language === "ar"
+                    ? "ملخص الطلبات"
+                    : "Orders Summary"}
+                </h3>
+                <p className="text-white/90">
+                  {language === "ar"
+                    ? "عرض إحصائيات الطلبات والإيرادات"
+                    : "View orders and revenue"}
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Management Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {dashboardItems.map((item, index) => (
             <button
