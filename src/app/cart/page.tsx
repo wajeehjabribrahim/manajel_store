@@ -338,17 +338,20 @@ export default function Cart() {
                           src={productImage}
                           alt={productName}
                           className="object-cover w-full h-full"
+                          onError={(e) => {
+                            e.currentTarget.src = "/images/placeholder.png";
+                          }}
                         />
                       ) : (
                         <div
-                          className="w-full h-full flex items-center justify-center"
+                          className="w-full h-full flex items-center justify-center text-center"
                           style={{ backgroundColor: COLORS.accent }}
                         >
                           <div
                             style={{ color: COLORS.primary }}
-                            className="text-4xl font-bold"
+                            className="text-2xl font-bold overflow-hidden"
                           >
-                            {item.name.split(" ")[0][0]}
+                            {item.name.split(" ")[0]?.[0] || "📦"}
                           </div>
                         </div>
                       )}

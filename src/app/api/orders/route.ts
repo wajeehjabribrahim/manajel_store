@@ -22,22 +22,85 @@ export async function POST(req: Request) {
     const notes = typeof body?.notes === "string" ? body.notes.trim() : "";
 
     if (!items.length) {
-      return NextResponse.json({ error: "No items" }, { status: 400 });
+      return NextResponse.json({ error: "لا توجد عناصر" }, { status: 400 });
     }
 
-    const normalizedItems = items
-      .map((item) => ({
+    // التحقق من صحة الكميات والأسعار والمنتجات
+    const normalizedItems = [];
+    for (const item of items) {
+      const quantity = Number(item.quantity) || 0;
+      const price = Number(item.price) || 0;
+
+      // التحقق من صحة الكمية
+      if (!Number.isInteger(quantity) || quantity <= 0 || quantity > 9999) {
+        return NextResponse.json(
+          { error: `كمية غير صحيحة للمنتج: ${item.name}` },
+          { status: 400 }
+        );
+      }
+
+      // التحقق من صحة السعر
+      if (!Number.isFinite(price) || price < 0 || price > 999999) {
+        return NextResponse.json(
+          { error: `سعر غير صحيح للمنتج: ${item.name}` },
+          { status: 400 }
+        );
+      }
+
+      // تحقق من وجود المنتج في قاعدة البيانات والتحقق من السعر
+      const dbProduct = await prisma.product.findUnique({
+        where: { id: String(item.id) },
+        select: { id: true, name: true, price: true, sizes: true, inStock: true },
+      });
+
+      if (!dbProduct) {
+        return NextResponse.json(
+          { error: `المنتج غير موجود: ${item.id}` },
+          { status: 400 }
+        );
+      }
+
+      if (!dbProduct.inStock) {
+        return NextResponse.json(
+          { error: `المنتج غير متوفر: ${dbProduct.name}` },
+          { status: 400 }
+        );
+      }
+
+      // التحقق من السعر الصحيح
+      let correctPrice = dbProduct.price;
+      if (typeof dbProduct.sizes === "string") {
+        try {
+          const sizes = JSON.parse(dbProduct.sizes);
+          const size = String(item.size);
+          if (sizes[size] && sizes[size].price) {
+            correctPrice = sizes[size].price;
+          }
+        } catch (e) {
+          // استخدم السعر الأساسي
+        }
+      }
+
+      // تحقق من تطابق السعر (السماح بـ ±0.01 بسبب التقريب)
+      if (Math.abs(price - correctPrice) > 0.01) {
+        return NextResponse.json(
+          { error: `سعر غير متطابق للمنتج: ${dbProduct.name}` },
+          { status: 400 }
+        );
+      }
+
+      normalizedItems.push({
         productId: String(item.id),
-        name: String(item.name),
+        name: dbProduct.name,
         size: String(item.size),
-        quantity: Number(item.quantity) || 0,
-        price: Number(item.price) || 0,
+        quantity,
+        price: correctPrice,
         image: typeof item.image === "string" ? item.image : undefined,
-      }))
-      .filter((item) => item.quantity > 0 && item.price >= 0);
+      });
+    }
 
     if (!normalizedItems.length) {
-      return NextResponse.json({ error: "Invalid items" }, { status: 400 });
+      return NextResponse.json({ error: "عناصر غير صحيحة" }, { status: 400 });
     }
 
     const total = normalizedItems.reduce(
@@ -82,7 +145,23 @@ export async function POST(req: Request) {
 
       if (!shippingName || !shippingPhone || !shippingCity || !shippingAddress) {
         return NextResponse.json(
-          { error: "Missing delivery data" },
+          { error: "بيانات الشحن غير كاملة" },
+          { status: 400 }
+        );
+      }
+
+      // التحقق من صيغة البريد الإلكتروني
+      if (email && !email.includes("@")) {
+        return NextResponse.json(
+          { error: "بريد إلكتروني غير صحيح" },
+          { status: 400 }
+        );
+      }
+
+      // التحقق من صيغة الهاتف
+      if (shippingPhone && !/^[0-9\-\+\s]{7,}$/.test(shippingPhone)) {
+        return NextResponse.json(
+          { error: "رقم هاتف غير صحيح" },
           { status: 400 }
         );
       }
@@ -112,18 +191,25 @@ export async function POST(req: Request) {
       },
     });
 
-    // إرسال إيميل الطلب (للأدمن دائماً)
+    // إرسال إشعار الطلب (بدون بيانات حساسة)
     try {
-      console.log("📧 Sending order email to:", email ?? "(no customer email)");
+      console.log("📧 Sending order notification");
       await sendOrderNotification(email, {
         id: order.id,
         total,
-        items: normalizedItems,
+        items: normalizedItems.map(item => ({
+          id: item.productId,
+          name: item.name,
+          size: item.size,
+          quantity: item.quantity,
+          price: item.price
+          // لا ترسل الصورة في الإيميل
+        })),
         createdAt: order.createdAt,
       });
-      console.log("✅ Order email sent successfully");
+      console.log("✅ Order notification sent successfully");
     } catch (emailError) {
-      console.error("❌ Failed to send order email:", emailError);
+      console.error("❌ Failed to send order notification:", emailError);
       // لا نرجع خطأ، الطلب تم إنشاؤه بنجاح حتى لو فشل الإيميل
     }
 

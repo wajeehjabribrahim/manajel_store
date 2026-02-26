@@ -99,9 +99,11 @@ export async function GET(req: Request) {
     response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
     return response;
   } catch (error) {
-    const response = NextResponse.json({ products: PRODUCTS });
-    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=300");
-    return response;
+    console.error("Error fetching products:", error);
+    return NextResponse.json(
+      { error: "فشل جلب المنتجات" },
+      { status: 500 }
+    );
   }
 }
 

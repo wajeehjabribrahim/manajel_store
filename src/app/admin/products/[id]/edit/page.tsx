@@ -391,10 +391,17 @@ export default function AdminEditProductPage() {
             type="file"
             multiple
             accept="image/*"
-            onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
+            onChange={(e) => {
+              const files = Array.from(e.target.files || []);
+              if (files.length > 5) {
+                setError("الحد الأقصى 5 صور إضافية");
+                return;
+              }
+              setImageFiles(files);
+            }}
             className="w-full border rounded-lg px-3 py-2"
           />
-          <p className="text-xs text-gray-500 mt-1">يمكنك رفع عدة صور لعرضها في معرض المنتج</p>
+          <p className="text-xs text-gray-500 mt-1">الحد الأقصى 5 صور ({imageFiles.length}/5)</p>
         </div>
 
         {/* Existing Images */}
@@ -412,7 +419,9 @@ export default function AdminEditProductPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setExistingImages(existingImages.filter((_, i) => i !== idx));
+                      if (confirm("هل أنت متأكد من حذف هذه الصورة؟")) {
+                        setExistingImages(existingImages.filter((_, i) => i !== idx));
+                      }
                     }}
                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
                   >

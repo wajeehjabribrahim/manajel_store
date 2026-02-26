@@ -3,14 +3,33 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+// دالة للتحقق من صلاحيات المسؤول
+async function verifyAdmin(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return { error: "غير مصرح - تسجيل الدخول مطلوب", status: 401 };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: (session.user as any).id },
+    select: { id: true, role: true }
+  });
+
+  if (!user || user.role !== "admin") {
+    return { error: "حق الوصول مرفوض - صلاحيات إدارية مطلوبة", status: 403 };
+  }
+
+  return { success: true };
+}
+
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user || (session.user as any).role !== "admin") {
+    const authCheck = await verifyAdmin(request);
+    if (!authCheck.success) {
       return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
+        { error: authCheck.error },
+        { status: authCheck.status }
       );
     }
 

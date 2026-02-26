@@ -1,0 +1,390 @@
+{
+  "auditReport": {
+    "date": "2026-02-26",
+    "store": "Manajel E-commerce",
+    "version": "1.0",
+    "summary": {
+      "totalIssues": 26,
+      "critical": 5,
+      "medium": 11,
+      "minor": 8,
+      "successRate": "73%"
+    },
+    "categories": [
+      {
+        "category": "Data Consistency",
+        "issues": [
+          {
+            "id": 1,
+            "severity": "critical",
+            "title": "Order Status Mismatch (completed vs delivered)",
+            "description": "Search for status 'completed' that doesn't exist in validStatuses",
+            "files": [
+              "src/app/api/admin/orders-stats/route.ts",
+              "prisma/schema.prisma"
+            ],
+            "impact": "All completed orders statistics are incorrect"
+          },
+          {
+            "id": 2,
+            "severity": "medium",
+            "title": "Product Interface Mismatch",
+            "description": "Database has nameEn/descriptionEn but TypeScript interface inconsistent",
+            "files": [
+              "src/constants/products.ts",
+              "src/app/api/products/route.ts"
+            ],
+            "impact": "Language support may be incomplete"
+          },
+          {
+            "id": 3,
+            "severity": "critical",
+            "title": "Cart Price-Database Sync Issue",
+            "description": "Prices stored in localStorage may be outdated compared to database",
+            "files": [
+              "src/app/cart/page.tsx",
+              "src/app/api/orders/route.ts"
+            ],
+            "impact": "Revenue loss or billing inaccuracy possible"
+          }
+        ]
+      },
+      {
+        "category": "Price Handling",
+        "issues": [
+          {
+            "id": 4,
+            "severity": "medium",
+            "title": "Negative Price Validation",
+            "description": "No check for negative prices in order items",
+            "files": ["src/app/api/orders/route.ts"],
+            "impact": "Unauthorized discounts possible"
+          },
+          {
+            "id": 5,
+            "severity": "medium",
+            "title": "localStorage Data URL Images",
+            "description": "Base64 images can bloat localStorage and cause quota issues",
+            "files": [
+              "src/app/cart/page.tsx",
+              "src/app/products/[id]/page.tsx"
+            ],
+            "impact": "Lost product images, poor UX when storage full"
+          }
+        ]
+      },
+      {
+        "category": "Error Handling",
+        "issues": [
+          {
+            "id": 6,
+            "severity": "medium",
+            "title": "Generic Error Catches",
+            "description": "Most catch blocks don't log the actual error",
+            "files": ["src/app/api/**/*.ts"],
+            "impact": "Cannot investigate production issues"
+          },
+          {
+            "id": 7,
+            "severity": "medium",
+            "title": "Incomplete Input Validation",
+            "description": "Some endpoints lack validation for required fields",
+            "files": ["src/app/api/products/[id]/route.ts"],
+            "impact": "Invalid data in database possible"
+          },
+          {
+            "id": 8,
+            "severity": "medium",
+            "title": "Email Error Handling",
+            "description": "No retry mechanism or failed email logging",
+            "files": ["src/lib/email.ts"],
+            "impact": "Lost email notifications"
+          }
+        ]
+      },
+      {
+        "category": "Status Consistency",
+        "issues": [
+          {
+            "id": 9,
+            "severity": "minor",
+            "title": "Undocumented Order Statuses",
+            "description": "Status values hardcoded without clear documentation",
+            "files": ["src/app/api/orders/[id]/route.ts"],
+            "impact": "Developer confusion"
+          },
+          {
+            "id": 10,
+            "severity": "medium",
+            "title": "Shipped Status Missing in Stats",
+            "description": "Shipped orders not clearly displayed in OrdersSummary",
+            "files": ["src/components/OrdersSummary.tsx"],
+            "impact": "Incomplete business visibility"
+          }
+        ]
+      },
+      {
+        "category": "Localization",
+        "issues": [
+          {
+            "id": 11,
+            "severity": "medium",
+            "title": "Missing Product Arabic Translations",
+            "description": "Only English translations for product data",
+            "files": ["src/constants/translations.ts"],
+            "impact": "Arabic language not fully supported"
+          },
+          {
+            "id": 12,
+            "severity": "minor",
+            "title": "Untranslated Error Messages",
+            "description": "Some error messages hardcoded in Arabic only",
+            "files": ["src/app/products/[id]/page.tsx"],
+            "impact": "English users see Arabic error messages"
+          },
+          {
+            "id": 13,
+            "severity": "minor",
+            "title": "Inconsistent Translation Keys",
+            "description": "Translation key naming convention not uniform",
+            "files": [
+              "src/components/ProductCard.tsx",
+              "src/constants/translations.ts"
+            ],
+            "impact": "Maintenance difficult"
+          }
+        ]
+      },
+      {
+        "category": "Storage & Performance",
+        "issues": [
+          {
+            "id": 14,
+            "severity": "critical",
+            "title": "localStorage Quota Overflow",
+            "description": "Silent data loss when storage full, no user notification",
+            "files": ["src/app/cart/page.tsx"],
+            "impact": "User loses cart data silently"
+          },
+          {
+            "id": 15,
+            "severity": "medium",
+            "title": "Large Base64 Images in API",
+            "description": "Data URLs for images can be megabytes",
+            "files": ["src/app/api/products/route.ts"],
+            "impact": "Slow API responses, bandwidth waste"
+          },
+          {
+            "id": 16,
+            "severity": "medium",
+            "title": "No File Size Validation",
+            "description": "Uploaded images not validated for size",
+            "files": ["src/app/api/uploads/product-image/route.ts"],
+            "impact": "Server storage exhaustion possible"
+          }
+        ]
+      },
+      {
+        "category": "Authorization",
+        "issues": [
+          {
+            "id": 17,
+            "severity": "critical",
+            "title": "Guest Order Authorization Bypass",
+            "description": "Any guest order accessible without authentication token",
+            "files": ["src/app/api/orders/[id]/route.ts"],
+            "impact": "Data leak - users can view other guest orders"
+          },
+          {
+            "id": 18,
+            "severity": "medium",
+            "title": "Inconsistent Admin Role Check",
+            "description": "Admin verification not uniformly applied",
+            "files": ["src/app/api/admin/**/*.ts"],
+            "impact": "Potential privilege escalation"
+          },
+          {
+            "id": 19,
+            "severity": "medium",
+            "title": "Missing Rate Limiting",
+            "description": "No rate limiting on any endpoints",
+            "files": ["src/app/api/**/*.ts"],
+            "impact": "Brute force and DDoS attacks possible"
+          }
+        ]
+      },
+      {
+        "category": "Validation",
+        "issues": [
+          {
+            "id": 20,
+            "severity": "minor",
+            "title": "Frontend Validation Only",
+            "description": "Some validation only on client side",
+            "files": ["src/app/cart/page.tsx"],
+            "impact": "Bypass via F12 developer tools"
+          },
+          {
+            "id": 21,
+            "severity": "medium",
+            "title": "No Order Item Validation",
+            "description": "Quantity limits not enforced, no bounds checking",
+            "files": ["src/app/api/orders/route.ts"],
+            "impact": "Massive orders possible"
+          },
+          {
+            "id": 22,
+            "severity": "critical",
+            "title": "Product Existence Not Verified",
+            "description": "No check if products actually exist before creating order",
+            "files": ["src/app/api/orders/route.ts"],
+            "impact": "Fake/phantom products in orders"
+          }
+        ]
+      },
+      {
+        "category": "Business Logic",
+        "issues": [
+          {
+            "id": 23,
+            "severity": "critical",
+            "title": "Price Tampering Vulnerability",
+            "description": "Order uses client-side prices, no server-side verification",
+            "files": ["src/app/api/orders/route.ts"],
+            "impact": "Customers can order at any price"
+          },
+          {
+            "id": 24,
+            "severity": "medium",
+            "title": "Incorrect Total Calculation",
+            "description": "Total depends on localStorage prices which may be stale",
+            "files": ["src/app/api/orders/route.ts"],
+            "impact": "Invoice amount inaccuracy"
+          },
+          {
+            "id": 25,
+            "severity": "minor",
+            "title": "No Idempotency Keys",
+            "description": "Duplicate requests create duplicate orders",
+            "files": ["src/app/api/orders/route.ts"],
+            "impact": "Double billing possible"
+          },
+          {
+            "id": 26,
+            "severity": "medium",
+            "title": "No Profile Completion Check",
+            "description": "New users can place orders without full profile",
+            "files": ["src/app/api/orders/route.ts"],
+            "impact": "Incomplete shipping data"
+          }
+        ]
+      }
+    ],
+    "affectedFiles": {
+      "critical": [
+        "src/app/api/orders/route.ts",
+        "src/app/api/orders/[id]/route.ts",
+        "src/app/api/admin/orders-stats/route.ts",
+        "src/app/cart/page.tsx",
+        "prisma/schema.prisma"
+      ],
+      "high": [
+        "src/app/api/products/[id]/route.ts",
+        "src/lib/email.ts",
+        "src/constants/translations.ts"
+      ],
+      "medium": [
+        "src/app/products/[id]/page.tsx",
+        "src/components/OrdersSummary.tsx",
+        "src/app/api/contact/route.ts"
+      ]
+    },
+    "recommendations": {
+      "immediate": [
+        "Fix price validation on server side (Issue #23, #22)",
+        "Fix authorization bypass for guest orders (Issue #17)",
+        "Fix order status mismatch (Issue #1)",
+        "Implement product existence check before order (Issue #22)",
+        "Fix localStorage quota handling (Issue #14)"
+      ],
+      "urgent": [
+        "Add comprehensive error logging",
+        "Add input validation throughout",
+        "Add rate limiting",
+        "Add Arabic translations",
+        "Fix email error handling"
+      ],
+      "improvements": [
+        "Add idempotency keys",
+        "Add file size validation",
+        "Optimize image storage",
+        "Unify translation keys",
+        "Add monitoring/alerts"
+      ]
+    },
+    "timeline": {
+      "week1": {
+        "priority": "critical",
+        "issues": [1, 22, 23, 17, 14],
+        "estimatedHours": 24
+      },
+      "week2": {
+        "priority": "high",
+        "issues": [6, 7, 8, 11, 19],
+        "estimatedHours": 32
+      },
+      "week3": {
+        "priority": "medium",
+        "issues": [2, 4, 5, 10, 15, 16, 18, 24],
+        "estimatedHours": 40
+      },
+      "week4": {
+        "priority": "low",
+        "issues": [9, 12, 13, 20, 21, 25, 26],
+        "estimatedHours": 20
+      }
+    },
+    "testing": {
+      "unitTests": {
+        "required": true,
+        "coverage": "85%+"
+      },
+      "integrationTests": {
+        "required": true,
+        "scenarios": [
+          "price_validation",
+          "product_existence",
+          "authorization",
+          "order_creation",
+          "status_updates"
+        ]
+      },
+      "securityTests": {
+        "required": true,
+        "scenarios": [
+          "price_tampering",
+          "unauthorized_access",
+          "sql_injection",
+          "xss",
+          "csrf"
+        ]
+      }
+    },
+    "notes": {
+      "positive": [
+        "Good TypeScript usage",
+        "Password hashing implemented",
+        "Authorization checks present",
+        "Two-language support structure exists",
+        "localStorage quota error handling attempted"
+      ],
+      "warnings": [
+        "Critical security issues found",
+        "Price validation completely missing on server",
+        "Data integrity not protected",
+        "Rate limiting absent",
+        "Logging insufficient"
+      ]
+    }
+  }
+}

@@ -1,12 +1,42 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { COLORS } from "@/constants/store";
 
 export default function AdminDashboard() {
   const { dir, language } = useLanguage();
   const router = useRouter();
+  const { status, data: session } = useSession();
+  const [authorized, setAuthorized] = useState(false);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+      return;
+    }
+
+    if (status === "authenticated") {
+      const userRole = (session?.user as any)?.role;
+      if (userRole !== "admin") {
+        router.push("/");
+        return;
+      }
+      setAuthorized(true);
+    }
+  }, [status, session, router]);
+
+  if (!authorized) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p style={{ color: COLORS.primary }} className="text-lg font-semibold">
+          جاري التحقق من الصلاحيات...
+        </p>
+      </div>
+    );
+  }
 
   const dashboardItems = [
     {

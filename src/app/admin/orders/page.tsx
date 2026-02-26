@@ -63,6 +63,13 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     loadOrders();
+    
+    // تحديث البيانات تلقائياً كل 30 ثانية
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
