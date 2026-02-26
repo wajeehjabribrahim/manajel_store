@@ -124,7 +124,7 @@ export async function POST(req: Request) {
         });
         if (!user || !user.name || !user.phone || !user.city || !user.address) {
           return NextResponse.json(
-            { error: "Missing profile data" },
+            { error: "بيانات ملفك الشخصي غير كاملة" },
             { status: 400 }
           );
         }
@@ -214,7 +214,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true, orderId: order.id }, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  } catch (error) {
+    console.error("Order creation error:", error);
+    return NextResponse.json({ error: "حدث خطأ في الخادم" }, { status: 500 });
   }
 }
