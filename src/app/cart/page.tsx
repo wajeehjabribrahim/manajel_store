@@ -126,7 +126,26 @@ export default function Cart() {
   };
 
   const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return cartItems.reduce(
+      (sum, item) => sum + getResolvedPrice(item) * item.quantity,
+      0
+    );
+  };
+
+  const getResolvedPrice = (item: CartItem) => {
+    const product = productMap[item.id];
+    if (!product) {
+      return item.price;
+    }
+
+    const sizePrice = product.sizes?.[item.size]?.price;
+    if (typeof sizePrice === "number" && sizePrice > 0) {
+      return sizePrice;
+    }
+
+    return typeof product.price === "number" && product.price > 0
+      ? product.price
+      : item.price;
   };
 
   const sizeLabel = (size: string) => {
@@ -161,7 +180,19 @@ export default function Cart() {
     setOrderLoading(true);
 
     const payload = {
-      items: cartItems,
+      items: cartItems.map((item) => {
+        const product = productMap[item.id];
+        const resolvedPrice = getResolvedPrice(item);
+        const resolvedName = product?.name || item.name;
+        const resolvedImage = product?.image || item.image || null;
+
+        return {
+          ...item,
+          name: resolvedName,
+          price: resolvedPrice,
+          image: resolvedImage,
+        };
+      }),
       name: guestData?.name,
       phone: guestData?.phone,
       city: guestData?.city,
@@ -287,6 +318,7 @@ export default function Cart() {
                   const product = productMap[item.id];
                   const productName = product?.name || item.name;
                   const productImage = product?.image || item.image || "";
+                  const productPrice = getResolvedPrice(item);
                   return (
                   <div
                     key={`${item.id}-${item.size}`}
@@ -398,14 +430,14 @@ export default function Cart() {
                           style={{ color: COLORS.primary }}
                           className="font-bold text-lg"
                         >
-                          {CURRENCY_SYMBOL}{item.price}
+                          {CURRENCY_SYMBOL}{productPrice}
                         </p>
                         <p className="text-gray-900 text-sm mt-2">{t("cart.total")}</p>
                         <p
                           style={{ color: COLORS.secondary }}
                           className="font-bold text-lg"
                         >
-                          {CURRENCY_SYMBOL}{item.price * item.quantity}
+                          {CURRENCY_SYMBOL}{productPrice * item.quantity}
                         </p>
                       </div>
                     </div>
