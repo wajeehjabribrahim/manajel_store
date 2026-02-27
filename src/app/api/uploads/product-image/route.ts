@@ -21,11 +21,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }
 
-    // Convert image to base64 for database storage (Vercel-compatible)
+    // تحويل الصورة إلى WebP بجودة 75
     const buffer = Buffer.from(await file.arrayBuffer());
-    const base64 = buffer.toString('base64');
-    const imageData = `data:${file.type};base64,${base64}`;
-
+    let webpBuffer;
+    let imageData;
+    try {
+      const sharp = (await import('sharp')).default;
+      webpBuffer = await sharp(buffer).webp({ quality: 75 }).toBuffer();
+      const webpBase64 = webpBuffer.toString('base64');
+      imageData = `data:image/webp;base64,${webpBase64}`;
+    } catch (err) {
+      // fallback: إذا فشل التحويل استخدم الصورة الأصلية
+      const base64 = buffer.toString('base64');
+      imageData = `data:${file.type};base64,${base64}`;
+    }
     return NextResponse.json({ imageData }, { status: 201 });
   } catch (err) {
     console.error("Upload error:", err);
