@@ -25,3 +25,10 @@ A	@	216.198.79.1	300	N/A
 2️⃣ تحديث CNAME للسابق www
 Type	Host	Answer	TTL	Prio
 CNAME	www	bb8894891842fd9e.vercel-dns-017.com	300	N/A
+
+
+---------------------------------------
+onboarding@resend.dev لخدمة ارسال البيانات
+
+----------------------------------------------------------
+DATABASE_URL="file:./dev.db"

@@ -112,14 +112,24 @@ export default function HomeContent() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredProducts.map((product, index) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              animationDelay={index * 100}
-              isFirstProduct={index === 0}
-            />
-          ))}
+          {featuredProducts.length === 0
+            ? Array.from({ length: 3 }).map((_, idx) => (
+                <div key={idx} className="relative h-full animate-pulse">
+                  <div className="rounded-lg bg-gray-200 h-48 w-full mb-4" />
+                  <div className="h-6 bg-gray-200 rounded mb-2 w-3/4" />
+                  <div className="h-4 bg-gray-200 rounded mb-2 w-1/2" />
+                  <div className="h-4 bg-gray-200 rounded mb-2 w-1/3" />
+                  <div className="h-8 bg-gray-200 rounded w-1/2 mt-auto" />
+                </div>
+              ))
+            : featuredProducts.map((product, index) => (
+                <ProductCard 
+                  key={product.id} 
+                  product={product} 
+                  animationDelay={index * 100}
+                  isFirstProduct={index === 0}
+                />
+              ))}
         </div>
       </section>
 
