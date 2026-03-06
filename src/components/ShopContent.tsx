@@ -23,6 +23,8 @@ export default function ShopContent() {
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [categories, setCategories] = useState<Category[]>(CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name })));
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
+  const [productsLoaded, setProductsLoaded] = useState(false);
 
   const loadCategories = async () => {
     try {
@@ -35,6 +37,8 @@ export default function ShopContent() {
       }
     } catch (error) {
       console.error('Error loading categories:', error);
+    } finally {
+      setCategoriesLoaded(true);
     }
   };
 
@@ -54,6 +58,8 @@ export default function ShopContent() {
       }
     } catch {
       // keep fallback
+    } finally {
+      setProductsLoaded(true);
     }
   };
 
@@ -110,6 +116,8 @@ export default function ShopContent() {
     ? products.filter((p) => p.category === selectedCategory)
     : products;
 
+  const isLoading = !categoriesLoaded || !productsLoaded;
+
   return (
     <div>
       {/* Header */}
@@ -137,54 +145,67 @@ export default function ShopContent() {
               {t("shop.categories")}
             </h3>
             <div className="space-y-2">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                style={{
-                  backgroundColor: selectedCategory === null ? COLORS.primary : COLORS.light,
-                  color: selectedCategory === null ? "white" : COLORS.dark,
-                }}
-                className={`w-full px-4 py-2 rounded transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
-                type="button"
-              >
-                {t("shop.allProducts")}
-              </button>
-              {categories.map((category) => {
-                const displayName = language === 'ar' ? (category.nameAr || category.name) : category.name;
-                
-                return (
+              {isLoading ? (
+                // Categories Skeleton
+                <>
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <div key={idx} className="relative h-full animate-pulse">
+                      <div className="h-10 bg-gray-200 rounded w-full" />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <>
                   <button
-                    key={category.id}
-                    onClick={() => {
-                      console.log('Selected category:', category.id);
-                      setSelectedCategory(category.id);
-                    }}
+                    onClick={() => setSelectedCategory(null)}
                     style={{
-                      backgroundColor:
-                        selectedCategory === category.id
-                          ? COLORS.primary
-                          : COLORS.light,
-                      color:
-                        selectedCategory === category.id ? "white" : COLORS.dark,
+                      backgroundColor: selectedCategory === null ? COLORS.primary : COLORS.light,
+                      color: selectedCategory === null ? "white" : COLORS.dark,
                     }}
                     className={`w-full px-4 py-2 rounded transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                     type="button"
                   >
-                    {displayName}
+                    {t("shop.allProducts")}
                   </button>
-                );
-              })}
+                  {categories.map((category) => {
+                    const displayName = language === 'ar' ? (category.nameAr || category.name) : category.name;
+                    
+                    return (
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          console.log('Selected category:', category.id);
+                          setSelectedCategory(category.id);
+                        }}
+                        style={{
+                          backgroundColor:
+                            selectedCategory === category.id
+                              ? COLORS.primary
+                              : COLORS.light,
+                          color:
+                            selectedCategory === category.id ? "white" : COLORS.dark,
+                        }}
+                        className={`w-full px-4 py-2 rounded transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                        type="button"
+                      >
+                        {displayName}
+                      </button>
+                    );
+                  })}
+                </>
+              )}
             </div>
-
-
           </div>
 
           {/* Products Grid */}
           <div className="flex-1">
-            <div className="mb-4 text-sm text-gray-900">
-              {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
-            </div>
+            {!isLoading && (
+              <div className="mb-4 text-sm text-gray-900">
+                {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
-              {filteredProducts.length === 0
+              {isLoading || filteredProducts.length === 0
                 ? Array.from({ length: 8 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
                       <div className="rounded-lg bg-gray-200 h-48 w-full mb-4" />

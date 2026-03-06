@@ -25,6 +25,7 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [productMap, setProductMap] = useState<Record<string, Product>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [productsLoaded, setProductsLoaded] = useState(false);
   const [showGuestForm, setShowGuestForm] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -43,11 +44,12 @@ export default function Cart() {
     if (savedCart) {
       setCartItems(JSON.parse(savedCart));
     }
-    setIsLoading(false);
   }, []);
 
   // Load product data for images/names
   useEffect(() => {
+    let mounted = true;
+    
     try {
       const cached = localStorage.getItem(`manajel-products-cache-${language}`);
       if (cached) {
@@ -69,21 +71,37 @@ export default function Cart() {
         const res = await fetch(`/api/products?lang=${language}`);
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data?.products)) {
+          if (Array.isArray(data?.products) && mounted) {
             const map = (data.products as Product[]).reduce<Record<string, Product>>((acc, item) => {
               acc[item.id] = item;
               return acc;
             }, {});
             setProductMap(map);
+            setProductsLoaded(true);
           }
         }
       } catch {
         // keep cached
+      } finally {
+        if (mounted) {
+          setProductsLoaded(true);
+        }
       }
     };
 
     loadProducts();
+    
+    return () => {
+      mounted = false;
+    };
   }, [language]);
+
+  // Update isLoading based on products loaded
+  useEffect(() => {
+    if (productsLoaded) {
+      setIsLoading(false);
+    }
+  }, [productsLoaded]);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
@@ -159,12 +177,97 @@ export default function Cart() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
-        <div className="text-center">
-          <p style={{ color: COLORS.primary }} className="text-xl font-semibold">
-            {t("cart.loading")}
-          </p>
-        </div>
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
+        {/* Header Skeleton */}
+        <section
+          style={{ backgroundColor: COLORS.primary }}
+          className="text-white py-12 px-4"
+        >
+          <div className="max-w-7xl mx-auto">
+            <div className="h-10 w-32 bg-white/20 rounded animate-pulse"></div>
+          </div>
+        </section>
+
+        {/* Main Content Skeleton */}
+        <section className="max-w-7xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Cart Items Skeleton */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg overflow-hidden shadow-md">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="relative h-full animate-pulse"
+                  >
+                    <div
+                      className={`p-6 flex gap-6 ${
+                        i !== 3 ? "border-b" : ""
+                      }`}
+                      style={{ borderColor: COLORS.border }}
+                    >
+                      {/* Image Skeleton */}
+                      <div className="w-24 h-24 rounded-lg bg-gray-200 flex-shrink-0"></div>
+
+                      {/* Info Skeleton */}
+                      <div className="flex-1 space-y-3">
+                        <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 bg-gray-200 rounded"></div>
+                          <div className="h-8 w-12 bg-gray-200 rounded"></div>
+                          <div className="h-8 w-8 bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+
+                      {/* Price Skeleton */}
+                      <div className="text-right flex flex-col justify-between">
+                        <div className="h-4 w-16 bg-gray-200 rounded mb-4"></div>
+                        <div className="space-y-2">
+                          <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
+                          <div className="h-6 bg-gray-200 rounded w-24 ml-auto"></div>
+                          <div className="h-4 bg-gray-200 rounded w-20 ml-auto mt-2"></div>
+                          <div className="h-6 bg-gray-200 rounded w-24 ml-auto"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Continue Shopping Button Skeleton */}
+              <div className="mt-6">
+                <div className="h-10 w-48 bg-gray-200 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+
+            {/* Order Summary Skeleton */}
+            <div>
+              <div className="bg-white rounded-lg p-6 shadow-md animate-pulse">
+                <div className="h-6 bg-gray-200 rounded w-1/2 mb-4"></div>
+                
+                <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
+                  <div className="flex justify-between">
+                    <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded w-8"></div>
+                  </div>
+                  <div className="flex justify-between">
+                    <div className="h-4 bg-gray-200 rounded w-24"></div>
+                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center mb-6">
+                  <div className="h-6 bg-gray-200 rounded w-24"></div>
+                  <div className="h-8 bg-gray-200 rounded w-28"></div>
+                </div>
+
+                <div className="h-12 bg-gray-200 rounded-lg"></div>
+                
+                <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto mt-4"></div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     );
   }
