@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { sendOrderNotification } from "@/lib/email";
+import { generateGuestOrderToken } from "@/lib/guestOrderToken";
 
 interface OrderItemInput {
   id: string;
@@ -213,7 +214,12 @@ export async function POST(req: Request) {
       // لا نرجع خطأ، الطلب تم إنشاؤه بنجاح حتى لو فشل الإيميل
     }
 
-    return NextResponse.json({ ok: true, orderId: order.id }, { status: 201 });
+    const guestToken = !userId ? generateGuestOrderToken(order.id) : null;
+
+    return NextResponse.json(
+      { ok: true, orderId: order.id, guestToken },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Order creation error:", error);
     return NextResponse.json({ error: "حدث خطأ في الخادم" }, { status: 500 });

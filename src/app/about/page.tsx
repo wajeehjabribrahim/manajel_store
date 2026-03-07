@@ -115,6 +115,15 @@ export default function About() {
                 </div>
               ))}
             </div>
+            <div className="text-center mt-8">
+              <Link
+                href="/shop"
+                className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
+                style={{ backgroundColor: COLORS.primary, color: "white" }}
+              >
+                {t.common.shopNow}
+              </Link>
+            </div>
           </div>
         </AnimatedSection>
 

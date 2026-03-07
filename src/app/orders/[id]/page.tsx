@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { PRODUCTS } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSession } from "next-auth/react";
 
 interface OrderItem {
   id: string;
@@ -38,8 +36,8 @@ interface Order {
 export default function OrderDetailsPage() {
   const { t, dir } = useLanguage();
   const { id } = useParams();
-  const router = useRouter();
-  const { status } = useSession();
+  const searchParams = useSearchParams();
+  const guestToken = searchParams.get("guestToken") || "";
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -50,7 +48,10 @@ export default function OrderDetailsPage() {
 
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`/api/orders/${id}`);
+        const query = guestToken
+          ? `?guestToken=${encodeURIComponent(guestToken)}`
+          : "";
+        const res = await fetch(`/api/orders/${id}${query}`);
         if (res.ok) {
           const data = await res.json();
           setOrder(data.order);
@@ -65,7 +66,7 @@ export default function OrderDetailsPage() {
     };
 
     fetchOrder();
-  }, [id, t]);
+  }, [id, guestToken, t]);
 
   if (loading) {
     return (
@@ -135,7 +136,10 @@ export default function OrderDetailsPage() {
 
     setCancelling(true);
     try {
-      const response = await fetch(`/api/orders/${id}/cancel`, {
+      const query = guestToken
+        ? `?guestToken=${encodeURIComponent(guestToken)}`
+        : "";
+      const response = await fetch(`/api/orders/${id}/cancel${query}`, {
         method: "POST",
       });
 

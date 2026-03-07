@@ -3,9 +3,77 @@
 import Link from "next/link";
 import { COLORS, FOOTER_LINKS, CONTACT_INFO } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect, useState } from "react";
+
+interface Category {
+  id: string;
+  name: string;
+  nameAr?: string;
+}
+
+const normalize = (value: string) =>
+  value.trim().toLowerCase().replace(/[\s_]+/g, "-");
+
+const hasAnyMatch = (category: Category, candidates: string[]) => {
+  const values = [category.id, category.name, category.nameAr || ""]
+    .filter(Boolean)
+    .map((v) => normalize(v));
+  return candidates.some((candidate) => values.includes(normalize(candidate)));
+};
 
 export default function Footer() {
   const { t } = useLanguage();
+  const [categoryParams, setCategoryParams] = useState({
+    oliveOil: "olive-oil",
+    zatar: "zatar",
+    freekeh: "freekeh",
+  });
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await fetch("/api/categories");
+        if (!res.ok) {
+          return;
+        }
+
+        const data = (await res.json()) as Category[];
+        if (!Array.isArray(data) || data.length === 0) {
+          return;
+        }
+
+        const oliveOilCategory = data.find((cat) =>
+          hasAnyMatch(cat, ["olive-oil", "olive oil", "زيت الزيتون"]) 
+        );
+        const baladiCategory = data.find((cat) =>
+          hasAnyMatch(cat, [
+            "منتجات بلدية",
+            "منتجات-بلدية",
+            "baladi",
+            "balady",
+            "traditional products",
+          ])
+        );
+        const zatarCategory = data.find((cat) =>
+          hasAnyMatch(cat, ["zatar", "zaatar", "زعتر", "زعتر بلدي"]) 
+        );
+        const freekehCategory = data.find((cat) =>
+          hasAnyMatch(cat, ["freekeh", "فريكة", "الفريكة"]) 
+        );
+
+        setCategoryParams((prev) => ({
+          oliveOil: oliveOilCategory?.id || prev.oliveOil,
+          zatar: baladiCategory?.id || zatarCategory?.id || prev.zatar,
+          freekeh: freekehCategory?.id || prev.freekeh,
+        }));
+      } catch {
+        // keep fallback links
+      }
+    };
+
+    loadCategories();
+  }, []);
+
   return (
     <footer
       style={{
@@ -35,17 +103,17 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=olive-oil" className="opacity-100">
+                <Link href={`/shop?category=${encodeURIComponent(categoryParams.oliveOil)}`} className="opacity-100">
                   {(t as any).footer.oliveOil}
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=zatar" className="opacity-100">
+                <Link href={`/shop?category=${encodeURIComponent(categoryParams.zatar)}`} className="opacity-100">
                   {(t as any).footer.zatar}
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=freekeh" className="opacity-100">
+                <Link href={`/shop?category=${encodeURIComponent(categoryParams.freekeh)}`} className="opacity-100">
                   {(t as any).footer.freekeh}
                 </Link>
               </li>

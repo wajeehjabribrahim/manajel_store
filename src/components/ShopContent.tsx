@@ -14,6 +14,114 @@ interface Category {
   nameAr?: string;
 }
 
+const normalizeCategoryValue = (value: string) =>
+  value.trim().toLowerCase().replace(/[\s_]+/g, "-");
+
+const categoryAliases: Record<string, string[]> = {
+  "olive-oil": ["olive-oil", "oliveoil", "olive", "zayt", "zait", "زيت-الزيتون", "زيت"],
+  zatar: ["zatar", "zaatar", "za3tar", "thyme", "زعتر", "الزعتر", "زعتر-بلدي"],
+  zaatar: ["zatar", "zaatar", "za3tar", "thyme", "زعتر", "الزعتر", "زعتر-بلدي"],
+  freekeh: ["freekeh", "freekah", "freakeh", "فريكة", "الفريكة"],
+};
+
+const matchesCategory = (raw: string, category: Category) => {
+  const normalizedRaw = normalizeCategoryValue(raw);
+  const normalizedId = normalizeCategoryValue(category.id);
+  const normalizedName = normalizeCategoryValue(category.name);
+  const normalizedNameAr = category.nameAr
+    ? normalizeCategoryValue(category.nameAr)
+    : "";
+
+  if (
+    normalizedRaw === normalizedId ||
+    normalizedRaw === normalizedName ||
+    normalizedRaw === normalizedNameAr
+  ) {
+    return true;
+  }
+
+  const aliases = categoryAliases[normalizedId] || [];
+  const aliasesByName = categoryAliases[normalizedName] || [];
+  return [...aliases, ...aliasesByName].some(
+    (alias) => normalizeCategoryValue(alias) === normalizedRaw
+  );
+};
+
+const resolveCategoryId = (value: string, categories: Category[]) => {
+  const directMatch = categories.find((cat) => matchesCategory(value, cat));
+  if (directMatch) {
+    return directMatch.id;
+  }
+
+  const normalizedValue = normalizeCategoryValue(value);
+  const looseMatch = categories.find((cat) => {
+    const normalizedId = normalizeCategoryValue(cat.id);
+    const normalizedName = normalizeCategoryValue(cat.name);
+    const normalizedNameAr = cat.nameAr ? normalizeCategoryValue(cat.nameAr) : "";
+
+    return (
+      normalizedId.includes(normalizedValue) ||
+      normalizedName.includes(normalizedValue) ||
+      normalizedNameAr.includes(normalizedValue) ||
+      normalizedValue.includes(normalizedId) ||
+      normalizedValue.includes(normalizedName) ||
+      (normalizedNameAr ? normalizedValue.includes(normalizedNameAr) : false)
+    );
+  });
+
+  return looseMatch?.id;
+};
+
+const productMatchesSelectedCategory = (
+  productCategory: string,
+  selectedCategory: string,
+  categories: Category[]
+) => {
+  const resolvedSelected = resolveCategoryId(selectedCategory, categories);
+  const resolvedProduct = resolveCategoryId(productCategory, categories);
+
+  if (resolvedSelected && resolvedProduct) {
+    return resolvedSelected === resolvedProduct;
+  }
+
+  const normalizedProduct = normalizeCategoryValue(productCategory);
+  const normalizedSelected = normalizeCategoryValue(selectedCategory);
+
+  if (normalizedProduct === normalizedSelected) {
+    return true;
+  }
+
+  const selectedCategoryObj = categories.find(
+    (cat) =>
+      normalizeCategoryValue(cat.id) === normalizedSelected ||
+      normalizeCategoryValue(cat.name) === normalizedSelected ||
+      (cat.nameAr && normalizeCategoryValue(cat.nameAr) === normalizedSelected)
+  );
+
+  if (!selectedCategoryObj) {
+    const selectedAliases = categoryAliases[normalizedSelected] || [];
+    return selectedAliases.some(
+      (alias) => normalizeCategoryValue(alias) === normalizedProduct
+    );
+  }
+
+  const candidates = new Set<string>([
+    normalizeCategoryValue(selectedCategoryObj.id),
+    normalizeCategoryValue(selectedCategoryObj.name),
+    selectedCategoryObj.nameAr ? normalizeCategoryValue(selectedCategoryObj.nameAr) : "",
+  ]);
+
+  const normalizedName = normalizeCategoryValue(selectedCategoryObj.name);
+  const aliasesById = categoryAliases[normalizeCategoryValue(selectedCategoryObj.id)] || [];
+  const aliasesByName = categoryAliases[normalizedName] || [];
+
+  [...aliasesById, ...aliasesByName].forEach((alias) => {
+    candidates.add(normalizeCategoryValue(alias));
+  });
+
+  return candidates.has(normalizedProduct);
+};
+
 export default function ShopContent() {
   const { t, dir, language } = useLanguage();
   const { data: session } = useSession();
@@ -80,13 +188,18 @@ export default function ShopContent() {
     return () => undefined;
   }, [language]);
 
-  // Read category from URL on mount
+  // Read category from URL
   useEffect(() => {
     const category = searchParams.get('category');
-    if (category) {
-      setSelectedCategory(category);
+
+    if (!category) {
+      setSelectedCategory(null);
+      return;
     }
-  }, [searchParams]);
+
+    const matchedCategory = categories.find((cat) => matchesCategory(category, cat));
+    setSelectedCategory(matchedCategory?.id ?? category);
+  }, [searchParams, categories]);
 
   const handleDelete = async (productId: string) => {
     if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
@@ -113,7 +226,14 @@ export default function ShopContent() {
   };
 
   const filteredProducts = selectedCategory
-    ? products.filter((p) => p.category === selectedCategory)
+    ? products.filter(
+        (p) =>
+          productMatchesSelectedCategory(
+            p.category,
+            selectedCategory,
+            categories
+          )
+      )
     : products;
 
   const isLoading = !categoriesLoaded || !productsLoaded;

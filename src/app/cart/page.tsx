@@ -312,11 +312,36 @@ export default function Cart() {
     if (res.ok) {
       const data = await res.json();
       const newOrderId = data?.orderId;
+      const guestToken = typeof data?.guestToken === "string" ? data.guestToken : "";
       if (newOrderId) {
+        if (!isAuthenticated && guestToken) {
+          try {
+            const key = "manajel-guest-orders";
+            const raw = localStorage.getItem(key);
+            const parsed = raw ? JSON.parse(raw) : [];
+            const list = (Array.isArray(parsed) ? parsed : []) as Array<{
+              id?: string;
+              guestToken?: string;
+              createdAt?: string;
+            }>;
+            const nextList = [
+              { id: newOrderId, guestToken, createdAt: new Date().toISOString() },
+              ...list.filter((item) => item?.id !== newOrderId),
+            ].slice(0, 20);
+            localStorage.setItem(key, JSON.stringify(nextList));
+          } catch {
+            // ignore localStorage errors
+          }
+        }
+
         setOrderId(newOrderId);
         setCartItems([]);
         localStorage.removeItem("manajel-cart");
-        router.push(`/orders/${newOrderId}`);
+        router.push(
+          !isAuthenticated && guestToken
+            ? `/orders/${newOrderId}?guestToken=${encodeURIComponent(guestToken)}`
+            : `/orders/${newOrderId}`
+        );
       } else {
         setOrderPlaced(true);
       }
@@ -425,7 +450,7 @@ export default function Cart() {
                   return (
                   <div
                     key={`${item.id}-${item.size}`}
-                    className={`p-6 flex gap-6 ${
+                    className={`p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 ${
                       index !== cartItems.length - 1
                         ? "border-b"
                         : ""
@@ -461,7 +486,7 @@ export default function Cart() {
                     </div>
 
                     {/* Product Info */}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <h3
                         style={{ color: COLORS.primary }}
                         className="font-bold text-lg mb-2"
@@ -473,7 +498,7 @@ export default function Cart() {
                       </p>
 
                       {/* Quantity Controls */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-wrap">
                         <button
                           onClick={() =>
                             updateQuantity(
@@ -523,10 +548,10 @@ export default function Cart() {
                     </div>
 
                     {/* Price & Remove */}
-                    <div className="text-right flex flex-col justify-between">
+                    <div className="w-full sm:w-auto text-start sm:text-right flex flex-row sm:flex-col justify-between gap-4 sm:gap-0">
                       <button
                         onClick={() => removeItem(item.id, item.size)}
-                        className="text-red-500 hover:text-red-700 text-sm font-semibold mb-4"
+                        className="text-red-500 hover:text-red-700 text-sm font-semibold sm:mb-4"
                       >
                         {t("cart.remove")}
                       </button>

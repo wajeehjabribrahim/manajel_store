@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { PRODUCTS } from "@/constants/products";
@@ -10,6 +9,7 @@ import { useSession } from "next-auth/react";
 
 interface OrderItem {
   id: string;
+  productId?: string;
   name: string;
   quantity: number;
   total: number;
@@ -22,25 +22,33 @@ interface Order {
   total: number;
   createdAt: string;
   items: OrderItem[];
+  guestToken?: string;
+}
+
+interface GuestOrderRef {
+  id: string;
+  guestToken: string;
+  createdAt?: string;
 }
 
 export default function OrdersPage() {
   const { t, dir } = useLanguage();
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/orders");
+    if (status === "loading") {
       return;
     }
 
     if (status === "authenticated") {
       fetchOrders();
+      return;
     }
-  }, [status, router]);
+
+    fetchGuestOrders();
+  }, [status]);
 
   const fetchOrders = async () => {
     try {
@@ -48,9 +56,74 @@ export default function OrdersPage() {
       if (res.ok) {
         const data = await res.json();
         setOrders(data.orders);
+      } else {
+        setOrders([]);
       }
     } catch (error) {
       console.error("Failed to fetch orders:", error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchGuestOrders = async () => {
+    try {
+      const key = "manajel-guest-orders";
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? JSON.parse(raw) : [];
+      const refs = (Array.isArray(parsed) ? parsed : []) as GuestOrderRef[];
+
+      const normalizedRefs = refs.filter(
+        (ref) =>
+          typeof ref?.id === "string" &&
+          ref.id.length > 0 &&
+          typeof ref?.guestToken === "string" &&
+          ref.guestToken.length > 0
+      );
+
+      if (normalizedRefs.length === 0) {
+        setOrders([]);
+        return;
+      }
+
+      const resolvedOrders = await Promise.all(
+        normalizedRefs.map(async (ref) => {
+          try {
+            const res = await fetch(
+              `/api/orders/${ref.id}?guestToken=${encodeURIComponent(ref.guestToken)}`
+            );
+            if (!res.ok) {
+              return null;
+            }
+            const data = await res.json();
+            if (!data?.order?.id) {
+              return null;
+            }
+            return { ...data.order, guestToken: ref.guestToken } as Order;
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      const validOrders = resolvedOrders.filter(
+        (order): order is Order => Boolean(order)
+      );
+
+      validOrders.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+
+      setOrders(validOrders);
+
+      const validIds = new Set(validOrders.map((order) => order.id));
+      const cleanedRefs = normalizedRefs.filter((ref) => validIds.has(ref.id));
+      localStorage.setItem(key, JSON.stringify(cleanedRefs));
+    } catch (error) {
+      console.error("Failed to fetch guest orders:", error);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -141,7 +214,7 @@ export default function OrdersPage() {
                 <div className="p-6">
                   <div className="space-y-4 mb-4">
                     {order.items.map((item) => {
-                      const product = PRODUCTS.find(p => p.id === (item as any).productId);
+                      const product = PRODUCTS.find((p) => p.id === item.productId);
                       const itemImage = item.image || product?.image;
                       
                       return (
@@ -173,7 +246,11 @@ export default function OrdersPage() {
                       </span>
                     </div>
                     <Link
-                      href={`/orders/${order.id}`}
+                      href={
+                        order.guestToken
+                          ? `/orders/${order.id}?guestToken=${encodeURIComponent(order.guestToken)}`
+                          : `/orders/${order.id}`
+                      }
                       className="px-6 py-2 rounded-lg font-semibold"
                       style={{ backgroundColor: COLORS.primary, color: "white" }}
                     >

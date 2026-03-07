@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
 
 export async function GET(
   req: Request,
@@ -33,10 +34,25 @@ export async function GET(
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Check authorization - user must own the order or be unauthenticated guest with matching orderId
-    const sessionUser = session?.user as { id?: string } | undefined;
-    if (order.userId && (!sessionUser?.id || sessionUser.id !== order.userId)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    const sessionUser = session?.user as { id?: string; role?: string } | undefined;
+    const isAdmin = sessionUser?.role === "admin";
+
+    // Authenticated user order: owner or admin only
+    if (order.userId) {
+      if (!isAdmin && (!sessionUser?.id || sessionUser.id !== order.userId)) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      }
+    } else {
+      // Guest order: require secure guest token unless admin
+      if (!isAdmin) {
+        const { searchParams } = new URL(req.url);
+        const guestToken = searchParams.get("guestToken") || "";
+        const isValidToken = verifyGuestOrderToken(orderId, guestToken);
+
+        if (!isValidToken) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+        }
+      }
     }
 
     return NextResponse.json({ order }, { status: 200 });
