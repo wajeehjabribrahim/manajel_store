@@ -64,7 +64,7 @@ export default function Footer() {
         setCategoryParams((prev) => ({
           oliveOil: oliveOilCategory?.id || prev.oliveOil,
           zatar: baladiCategory?.id || zatarCategory?.id || prev.zatar,
-          freekeh: freekehCategory?.id || prev.freekeh,
+          freekeh: baladiCategory?.id || prev.freekeh,
         }));
       } catch {
         // keep fallback links
@@ -110,11 +110,6 @@ export default function Footer() {
               <li>
                 <Link href={`/shop?category=${encodeURIComponent(categoryParams.zatar)}`} className="opacity-100">
                   {(t as any).footer.zatar}
-                </Link>
-              </li>
-              <li>
-                <Link href={`/shop?category=${encodeURIComponent(categoryParams.freekeh)}`} className="opacity-100">
-                  {(t as any).footer.freekeh}
                 </Link>
               </li>
             </ul>
