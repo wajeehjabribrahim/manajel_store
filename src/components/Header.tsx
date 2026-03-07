@@ -99,7 +99,7 @@ export default function Header() {
             <div className="relative z-50" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity relative"
+                className="transition-opacity relative w-10 h-10 flex items-center justify-center"
                 title="السلة والطلبات"
               >
                 <svg
@@ -119,7 +119,7 @@ export default function Header() {
               
               {showUserMenu && (
                 <div
-                  className="absolute rounded-lg shadow-xl border border-white/20"
+                  className="absolute rounded-lg shadow-xl border border-white/20 overflow-hidden"
                   style={{ 
                     backgroundColor: 'white',
                     zIndex: 99999,
@@ -127,9 +127,6 @@ export default function Header() {
                     top: '100%',
                     marginTop: '8px',
                     width: '192px',
-                    maxHeight: '150px',
-                    overflowY: 'auto',
-                    maxWidth: '90vw',
                     [dir === 'rtl' ? 'left' : 'right']: 0
                   }}
                 >
@@ -239,7 +236,7 @@ export default function Header() {
                 
                 <Link
                   href="/account"
-                  className="transition-opacity px-2"
+                  className="transition-opacity w-10 h-10 flex items-center justify-center"
                   title={t("account.title") === "account.title" ? "الحساب" : t("account.title")}
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,7 +271,7 @@ export default function Header() {
             <LanguageSwitcher />
             <Link
               href={isAuthenticated ? "/account" : "/login"}
-              className="transition-opacity"
+              className="transition-opacity w-10 h-10 flex items-center justify-center"
               title={isAuthenticated ? (t("account.title") === "account.title" ? "الحساب" : t("account.title")) : t("auth.login")}
             >
               <svg
@@ -296,7 +293,7 @@ export default function Header() {
             <div className="relative z-50" ref={mobileUserMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity"
+                className="transition-opacity w-10 h-10 flex items-center justify-center"
                 title="السلة والطلبات"
               >
                 <svg
@@ -316,7 +313,7 @@ export default function Header() {
               
               {showUserMenu && (
                 <div
-                  className="absolute rounded-lg shadow-xl border border-white/20"
+                  className="absolute rounded-lg shadow-xl border border-white/20 overflow-hidden"
                   style={{ 
                     backgroundColor: 'white',
                     zIndex: 99999,
@@ -324,9 +321,6 @@ export default function Header() {
                     top: '100%',
                     marginTop: '8px',
                     width: '192px',
-                    maxHeight: '150px',
-                    overflowY: 'auto',
-                    maxWidth: '90vw',
                     [dir === 'rtl' ? 'left' : 'right']: 0
                   }}
                 >
