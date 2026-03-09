@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
@@ -22,6 +22,7 @@ export default function Cart() {
   const router = useRouter();
   const { status } = useSession();
   const isAuthenticated = status === "authenticated";
+  const guestFormRef = useRef<HTMLDivElement>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [productMap, setProductMap] = useState<Record<string, Product>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -357,6 +358,10 @@ export default function Cart() {
   const handlePlaceOrder = () => {
     if (!isAuthenticated) {
       setShowGuestForm(true);
+      // انتظر قليلاً ثم نزل الصفحة للنموذج
+      setTimeout(() => {
+        guestFormRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
       return;
     }
     submitOrder();
@@ -640,11 +645,24 @@ export default function Cart() {
                 </p>
 
                 {!isAuthenticated && showGuestForm && !orderPlaced && (
-                  <form
-                    onSubmit={handleGuestSubmit}
-                    className="mt-6 space-y-3"
-                    style={{ direction: dir }}
+                  <div
+                    ref={guestFormRef}
+                    className="mt-8 p-6 rounded-lg border-2"
+                    style={{ borderColor: COLORS.primary, backgroundColor: "#f0f8ff" }}
                   >
+                    {/* رسالة تنبيه */}
+                    <div
+                      className="p-4 rounded-lg mb-6 text-sm font-semibold"
+                      style={{ backgroundColor: COLORS.primary, color: "white" }}
+                    >
+                      {t("cart.deliveryInfo")} - {t("cart.deliveryRequired")}
+                    </div>
+
+                    <form
+                      onSubmit={handleGuestSubmit}
+                      className="space-y-3"
+                      style={{ direction: dir }}
+                    >
                     <h4
                       className="font-semibold"
                       style={{ color: COLORS.primary }}
@@ -733,7 +751,8 @@ export default function Cart() {
                     >
                       {orderLoading ? t("cart.orderSaving") : t("cart.placeOrder")}
                     </button>
-                  </form>
+                    </form>
+                  </div>
                 )}
 
                 {orderError && !orderPlaced && (

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sendContactNotification } from '@/lib/email';
+import { encryptData, decryptData } from '@/lib/encryption';
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,10 +31,10 @@ export async function POST(request: NextRequest) {
     const contactMessage = await prisma.contactMessage.create({
       data: {
         name: name.trim(),
-        email: email.trim(),
-        phone: phone?.trim() || null,
+        email: encryptData(email.trim()),
+        phone: phone?.trim() ? encryptData(phone.trim()) : null,
         subject: subject.trim(),
-        message: message.trim(),
+        message: encryptData(message.trim()),
         status: 'new',
       },
     });
@@ -88,7 +89,14 @@ export async function GET(request: NextRequest) {
         orderBy: { createdAt: 'desc' },
       });
 
-      return NextResponse.json({ messages });
+      const safeMessages = messages.map((msg) => ({
+        ...msg,
+        email: msg.email ? decryptData(msg.email) : msg.email,
+        phone: msg.phone ? decryptData(msg.phone) : msg.phone,
+        message: msg.message ? decryptData(msg.message) : msg.message,
+      }));
+
+      return NextResponse.json({ messages: safeMessages });
     }
 
     return NextResponse.json(

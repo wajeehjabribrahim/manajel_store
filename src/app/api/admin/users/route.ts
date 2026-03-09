@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { corsMiddleware, applyCorsHeaders } from "@/lib/cors";
 import { prisma } from "@/lib/prisma";
+import { decryptData } from "@/lib/encryption";
+import { requireAdminAccess } from "@/lib/adminAuth";
 
 export async function GET(request: NextRequest) {
+  // CORS preflight
+  // @ts-ignore
+  const corsResult = corsMiddleware(request);
+  if (corsResult && corsResult instanceof NextResponse && corsResult.body === null) {
+    return corsResult;
+  }
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user || (session.user as any).role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      let response = adminCheck.response;
+      response = applyCorsHeaders(response, request.headers.get('origin'));
+      return response;
     }
 
     const { searchParams } = new URL(request.url);
@@ -44,7 +49,6 @@ export async function GET(request: NextRequest) {
         phone: true,
         city: true,
         address: true,
-        password: true,
         role: true,
         createdAt: true,
         _count: {
@@ -60,8 +64,14 @@ export async function GET(request: NextRequest) {
       take: limit,
     });
 
-    return NextResponse.json({
-      users,
+    const safeUsers = users.map((user) => ({
+      ...user,
+      city: user.city ? decryptData(user.city) : user.city,
+      address: user.address ? decryptData(user.address) : user.address,
+    }));
+
+    let response = NextResponse.json({
+      users: safeUsers,
       pagination: {
         total,
         page,
@@ -69,11 +79,15 @@ export async function GET(request: NextRequest) {
         pages: Math.ceil(total / limit),
       },
     });
+    response = applyCorsHeaders(response, request.headers.get('origin'));
+    return response;
   } catch (error) {
     console.error("Error fetching users:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch users" },
+    let response = NextResponse.json(
+      { error: "Server error" },
       { status: 500 }
     );
+    response = applyCorsHeaders(response, request.headers.get('origin'));
+    return response;
   }
 }

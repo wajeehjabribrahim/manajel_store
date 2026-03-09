@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import * as bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { encryptData } from "@/lib/encryption";
 
 export async function POST(req: Request) {
   try {
@@ -54,8 +55,8 @@ export async function POST(req: Request) {
       data: {
         name,
         phone,
-        city,
-        address,
+        city: encryptData(city),
+        address: encryptData(address),
         email,
         password: hashedPassword,
       },

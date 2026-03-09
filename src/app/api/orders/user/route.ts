@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { decryptData } from "@/lib/encryption";
 
 export async function GET() {
   try {
@@ -26,7 +27,13 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ orders }, { status: 200 });
+    const safeOrders = orders.map((order) => ({
+      ...order,
+      shippingCity: order.shippingCity ? decryptData(order.shippingCity) : order.shippingCity,
+      shippingAddress: order.shippingAddress ? decryptData(order.shippingAddress) : order.shippingAddress,
+    }));
+
+    return NextResponse.json({ orders: safeOrders }, { status: 200 });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

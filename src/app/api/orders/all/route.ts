@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { decryptData } from "@/lib/encryption";
+import { requireAdminAccess } from "@/lib/adminAuth";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-    const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-    
-    if (!session || !isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const orders = await prisma.order.findMany({
@@ -28,7 +26,13 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ orders }, { status: 200 });
+    const safeOrders = orders.map((order) => ({
+      ...order,
+      shippingCity: order.shippingCity ? decryptData(order.shippingCity) : order.shippingCity,
+      shippingAddress: order.shippingAddress ? decryptData(order.shippingAddress) : order.shippingAddress,
+    }));
+
+    return NextResponse.json({ orders: safeOrders }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

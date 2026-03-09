@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { requireAdminAccess } from "@/lib/adminAuth";
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user || (session.user as any).role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const { userId, newPassword } = await request.json();
@@ -46,7 +41,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error resetting password:", error);
     return NextResponse.json(
-      { error: "Failed to reset password" },
+      { error: "Server error" },
       { status: 500 }
     );
   }

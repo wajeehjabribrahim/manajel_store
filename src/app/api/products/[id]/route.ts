@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PRODUCTS, Product } from "@/constants/products";
+import { requireAdminAccess } from "@/lib/adminAuth";
 
 const toNumber = (value: unknown) => {
   const num = Number(value);
@@ -118,11 +119,9 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-    
-    if (!session || !isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const id = params?.id ? String(params.id) : "";
@@ -148,11 +147,9 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-    
-    if (!session || !isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const id = params?.id ? String(params.id) : "";

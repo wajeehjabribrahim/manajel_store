@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { requireAdminAccess } from "@/lib/adminAuth";
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-    if (!session || !isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const formData = await req.formData();
@@ -19,6 +17,11 @@ export async function POST(req: Request) {
 
     if (!file.type.startsWith("image/")) {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+    }
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json({ error: "File too large. Maximum 10MB allowed." }, { status: 400 });
     }
 
     // تحويل الصورة إلى WebP بجودة 75

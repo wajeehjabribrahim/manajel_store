@@ -1,7 +1,11 @@
 import crypto from "crypto";
 
 function getGuestTokenSecret() {
-  return process.env.GUEST_ORDER_TOKEN_SECRET || process.env.NEXTAUTH_SECRET || "manajel-guest-token-fallback";
+  const secret = process.env.GUEST_ORDER_TOKEN_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    throw new Error("Missing guest order token secret. Set GUEST_ORDER_TOKEN_SECRET or NEXTAUTH_SECRET.");
+  }
+  return secret;
 }
 
 export function generateGuestOrderToken(orderId: string) {

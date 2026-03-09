@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { corsMiddleware, applyCorsHeaders } from "@/lib/cors";
 import { prisma } from "@/lib/prisma";
 import { PRODUCTS, Product } from "@/constants/products";
+import { requireAdminAccess } from "@/lib/adminAuth";
 
 const toNumber = (value: unknown) => {
   const num = Number(value);
@@ -82,7 +84,14 @@ const mapDbProduct = (db: any, language?: string): Product => {
   };
 };
 
+
 export async function GET(req: Request) {
+  // CORS preflight
+  // @ts-ignore
+  const corsResult = corsMiddleware(req);
+  if (corsResult && corsResult instanceof NextResponse && corsResult.body === null) {
+    return corsResult;
+  }
   try {
     // الحصول على اللغة من header أو query parameter
     const url = new URL(req.url);
@@ -95,20 +104,36 @@ export async function GET(req: Request) {
     const existingIds = new Set(PRODUCTS.map((p) => p.id));
     const merged = [...PRODUCTS, ...mapped.filter((p: Product) => !existingIds.has(p.id))];
 
-    const response = NextResponse.json({ products: merged });
+    let response = NextResponse.json({ products: merged });
     response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
+    response = applyCorsHeaders(response, req.headers.get('origin'));
     return response;
   } catch (error) {
     console.error("Error fetching products:", error);
-    return NextResponse.json(
+    let response = NextResponse.json(
       { error: "فشل جلب المنتجات" },
       { status: 500 }
     );
+    response = applyCorsHeaders(response, req.headers.get('origin'));
+    return response;
   }
 }
 
 export async function POST(req: Request) {
+  // CORS preflight
+  // @ts-ignore
+  const corsResult = corsMiddleware(req);
+  if (corsResult && corsResult instanceof NextResponse && corsResult.body === null) {
+    return corsResult;
+  }
   try {
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      let response = adminCheck.response;
+      response = applyCorsHeaders(response, req.headers.get('origin'));
+      return response;
+    }
+
     const body = await req.json();
     const name = typeof body?.name === "string" ? body.name.trim() : "";
     const nameEn = typeof body?.nameEn === "string" ? body.nameEn.trim() : null;
@@ -121,7 +146,9 @@ export async function POST(req: Request) {
     const rawPrice = toNumber(body?.price);
 
     if (!name || !description || !category) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      let response = NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      response = applyCorsHeaders(response, req.headers.get('origin'));
+      return response;
     }
 
     const sizes = normalizeSizes(body?.sizes, rawPrice);
@@ -130,7 +157,9 @@ export async function POST(req: Request) {
     const price = minPrice > 0 ? minPrice : rawPrice;
 
     if (!price || price <= 0) {
-      return NextResponse.json({ error: "Invalid price" }, { status: 400 });
+      let response = NextResponse.json({ error: "Invalid price" }, { status: 400 });
+      response = applyCorsHeaders(response, req.headers.get('origin'));
+      return response;
     }
 
     const created = await prisma.product.create({
@@ -152,8 +181,12 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ product: mapDbProduct(created) }, { status: 201 });
+    let response = NextResponse.json({ product: mapDbProduct(created) }, { status: 201 });
+    response = applyCorsHeaders(response, req.headers.get('origin'));
+    return response;
   } catch (error) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    let response = NextResponse.json({ error: "Server error" }, { status: 500 });
+    response = applyCorsHeaders(response, req.headers.get('origin'));
+    return response;
   }
 }

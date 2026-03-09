@@ -3,6 +3,9 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
+import { auditLog } from "@/lib/auditLog";
+import { decryptData } from "@/lib/encryption";
+import { requireAdminAccess } from "@/lib/adminAuth";
 
 export async function GET(
   req: Request,
@@ -40,6 +43,12 @@ export async function GET(
     // Authenticated user order: owner or admin only
     if (order.userId) {
       if (!isAdmin && (!sessionUser?.id || sessionUser.id !== order.userId)) {
+        await auditLog({
+          action: "ORDER_ACCESS_DENIED",
+          orderId,
+          userId: sessionUser?.id,
+          reason: "Not order owner",
+        });
         return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
       }
     } else {
@@ -50,12 +59,23 @@ export async function GET(
         const isValidToken = verifyGuestOrderToken(orderId, guestToken);
 
         if (!isValidToken) {
+          await auditLog({
+            action: "GUEST_ORDER_ACCESS_DENIED",
+            orderId,
+            reason: "Invalid token",
+          });
           return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
       }
     }
 
-    return NextResponse.json({ order }, { status: 200 });
+    const safeOrder = {
+      ...order,
+      shippingCity: order.shippingCity ? decryptData(order.shippingCity) : order.shippingCity,
+      shippingAddress: order.shippingAddress ? decryptData(order.shippingAddress) : order.shippingAddress,
+    };
+
+    return NextResponse.json({ order: safeOrder }, { status: 200 });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
@@ -66,11 +86,9 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-    
-    if (!session || !isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const orderId = params.id;
@@ -101,7 +119,20 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json({ order }, { status: 200 });
+    await auditLog({
+      action: "ORDER_STATUS_CHANGED",
+      orderId,
+      userId: adminCheck.userId,
+      metadata: { newStatus: status },
+    });
+
+    const safeOrder = {
+      ...order,
+      shippingCity: order.shippingCity ? decryptData(order.shippingCity) : order.shippingCity,
+      shippingAddress: order.shippingAddress ? decryptData(order.shippingAddress) : order.shippingAddress,
+    };
+
+    return NextResponse.json({ order: safeOrder }, { status: 200 });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { corsMiddleware, applyCorsHeaders } from "@/lib/cors";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { sendOrderNotification } from "@/lib/email";
 import { generateGuestOrderToken } from "@/lib/guestOrderToken";
+import { encryptData, decryptData } from "@/lib/encryption";
 
 interface OrderItemInput {
   id: string;
@@ -15,6 +17,12 @@ interface OrderItemInput {
 }
 
 export async function POST(req: Request) {
+  // CORS preflight
+  // @ts-ignore
+  const corsResult = corsMiddleware(req);
+  if (corsResult && corsResult instanceof NextResponse && corsResult.body === null) {
+    return corsResult;
+  }
   try {
     const session = await getServerSession(authOptions);
     const body = await req.json();
@@ -23,7 +31,9 @@ export async function POST(req: Request) {
     const notes = typeof body?.notes === "string" ? body.notes.trim() : "";
 
     if (!items.length) {
-      return NextResponse.json({ error: "لا توجد عناصر" }, { status: 400 });
+      let response = NextResponse.json({ error: "لا توجد عناصر" }, { status: 400 });
+      response = applyCorsHeaders(response, req.headers.get('origin'));
+      return response;
     }
 
     // التحقق من صحة الكميات والأسعار والمنتجات
@@ -34,18 +44,22 @@ export async function POST(req: Request) {
 
       // التحقق من صحة الكمية
       if (!Number.isInteger(quantity) || quantity <= 0 || quantity > 9999) {
-        return NextResponse.json(
-          { error: `كمية غير صحيحة للمنتج: ${item.name}` },
+        let response = NextResponse.json(
+          { error: "بيانات الطلب غير صالحة" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
 
       // التحقق من صحة السعر
       if (!Number.isFinite(price) || price < 0 || price > 999999) {
-        return NextResponse.json(
-          { error: `سعر غير صحيح للمنتج: ${item.name}` },
+        let response = NextResponse.json(
+          { error: "بيانات الطلب غير صالحة" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
 
       // تحقق من وجود المنتج في قاعدة البيانات والتحقق من السعر
@@ -55,17 +69,21 @@ export async function POST(req: Request) {
       });
 
       if (!dbProduct) {
-        return NextResponse.json(
-          { error: `المنتج غير موجود: ${item.id}` },
+        let response = NextResponse.json(
+          { error: "بيانات الطلب غير صالحة" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
 
       if (!dbProduct.inStock) {
-        return NextResponse.json(
-          { error: `المنتج غير متوفر: ${dbProduct.name}` },
+        let response = NextResponse.json(
+          { error: "بيانات الطلب غير صالحة" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
 
       // التحقق من السعر الصحيح
@@ -84,10 +102,12 @@ export async function POST(req: Request) {
 
       // تحقق من تطابق السعر (السماح بـ ±0.01 بسبب التقريب)
       if (Math.abs(price - correctPrice) > 0.01) {
-        return NextResponse.json(
-          { error: `سعر غير متطابق للمنتج: ${dbProduct.name}` },
+        let response = NextResponse.json(
+          { error: "بيانات الطلب غير صالحة" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
 
       normalizedItems.push({
@@ -101,7 +121,9 @@ export async function POST(req: Request) {
     }
 
     if (!normalizedItems.length) {
-      return NextResponse.json({ error: "عناصر غير صحيحة" }, { status: 400 });
+      let response = NextResponse.json({ error: "عناصر غير صحيحة" }, { status: 400 });
+      response = applyCorsHeaders(response, req.headers.get('origin'));
+      return response;
     }
 
     const total = normalizedItems.reduce(
@@ -124,15 +146,17 @@ export async function POST(req: Request) {
           where: { id: sessionUser.id },
         });
         if (!user || !user.name || !user.phone || !user.city || !user.address) {
-          return NextResponse.json(
+          let response = NextResponse.json(
             { error: "بيانات ملفك الشخصي غير كاملة" },
             { status: 400 }
           );
+          response = applyCorsHeaders(response, req.headers.get('origin'));
+          return response;
         }
         shippingName = user.name;
         shippingPhone = user.phone;
-        shippingCity = user.city;
-        shippingAddress = user.address;
+        shippingCity = user.city ? decryptData(user.city) : "";
+        shippingAddress = user.address ? decryptData(user.address) : "";
         email = user.email ?? sessionUser.email ?? null;
       }
     }
@@ -145,26 +169,32 @@ export async function POST(req: Request) {
       email = typeof body?.email === "string" ? body.email.trim() : null;
 
       if (!shippingName || !shippingPhone || !shippingCity || !shippingAddress) {
-        return NextResponse.json(
+        let response = NextResponse.json(
           { error: "بيانات الشحن غير كاملة" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
 
       // التحقق من صيغة البريد الإلكتروني
       if (email && !email.includes("@")) {
-        return NextResponse.json(
+        let response = NextResponse.json(
           { error: "بريد إلكتروني غير صحيح" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
 
       // التحقق من صيغة الهاتف
       if (shippingPhone && !/^[0-9\-\+\s]{7,}$/.test(shippingPhone)) {
-        return NextResponse.json(
+        let response = NextResponse.json(
           { error: "رقم هاتف غير صحيح" },
           { status: 400 }
         );
+        response = applyCorsHeaders(response, req.headers.get('origin'));
+        return response;
       }
     }
 
@@ -174,8 +204,8 @@ export async function POST(req: Request) {
         total,
         shippingName,
         shippingPhone,
-        shippingCity,
-        shippingAddress,
+        shippingCity: encryptData(shippingCity),
+        shippingAddress: encryptData(shippingAddress),
         shippingNotes: notes || null,
         email,
         items: {
@@ -198,6 +228,7 @@ export async function POST(req: Request) {
       await sendOrderNotification(email, {
         id: order.id,
         total,
+        customerName: shippingName,
         items: normalizedItems.map(item => ({
           id: item.productId,
           name: item.name,
@@ -216,12 +247,16 @@ export async function POST(req: Request) {
 
     const guestToken = !userId ? generateGuestOrderToken(order.id) : null;
 
-    return NextResponse.json(
+    let response = NextResponse.json(
       { ok: true, orderId: order.id, guestToken },
       { status: 201 }
     );
+    response = applyCorsHeaders(response, req.headers.get('origin'));
+    return response;
   } catch (error) {
     console.error("Order creation error:", error);
-    return NextResponse.json({ error: "حدث خطأ في الخادم" }, { status: 500 });
+    let response = NextResponse.json({ error: "حدث خطأ في الخادم" }, { status: 500 });
+    response = applyCorsHeaders(response, req.headers.get('origin'));
+    return response;
   }
 }
