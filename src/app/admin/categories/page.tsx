@@ -180,7 +180,7 @@ export default function CategoriesManagementPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                className="w-full px-4 py-2 border rounded-lg"
+                className="w-full px-4 py-2 border rounded-lg text-gray-900 placeholder:text-gray-500"
                 style={{ borderColor: COLORS.border }}
                 placeholder="e.g., Olive Oil"
                 required
@@ -194,7 +194,7 @@ export default function CategoriesManagementPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, nameAr: e.target.value })
                 }
-                className="w-full px-4 py-2 border rounded-lg"
+                className="w-full px-4 py-2 border rounded-lg text-gray-900 placeholder:text-gray-500"
                 style={{ borderColor: COLORS.border }}
                 placeholder="مثال: زيت الزيتون"
                 required
@@ -232,7 +232,7 @@ export default function CategoriesManagementPage() {
           <tbody>
             {categories.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                <td colSpan={4} className="px-6 py-8 text-center text-gray-700">
                   لا توجد تصنيفات. قم بإضافة تصنيف جديد!
                 </td>
               </tr>
@@ -247,11 +247,11 @@ export default function CategoriesManagementPage() {
                         onChange={(e) =>
                           updateCategory(category.id, "name", e.target.value)
                         }
-                        className="w-full px-3 py-1 border rounded"
+                        className="w-full px-3 py-1 border rounded text-gray-900"
                         style={{ borderColor: COLORS.border }}
                       />
                     ) : (
-                      <span>{category.name}</span>
+                      <span className="text-gray-900">{category.name}</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
@@ -262,14 +262,14 @@ export default function CategoriesManagementPage() {
                         onChange={(e) =>
                           updateCategory(category.id, "nameAr", e.target.value)
                         }
-                        className="w-full px-3 py-1 border rounded"
+                        className="w-full px-3 py-1 border rounded text-gray-900"
                         style={{ borderColor: COLORS.border }}
                       />
                     ) : (
-                      <span>{category.nameAr}</span>
+                      <span className="text-gray-900">{category.nameAr}</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4 text-gray-800">
                     {new Date(category.createdAt).toLocaleDateString("ar")}
                   </td>
                   <td className="px-6 py-4">
