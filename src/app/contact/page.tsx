@@ -16,6 +16,7 @@ interface FormData {
 export default function Contact() {
   const { language } = useLanguage();
   const t = translations[language];
+  const WHATSAPP_URL = "https://wa.me/message/TZFYMQR2ZGRJN1";
   
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -107,8 +108,9 @@ export default function Contact() {
             },
             {
               icon: "📞",
-              title: t.contact.phoneNum,
+              title: t.contact.whatsappNum,
               content: CONTACT_INFO.phone,
+              link: WHATSAPP_URL,
             },
           ].map((item, i) => (
             <div key={i} className="text-center">
@@ -119,7 +121,18 @@ export default function Contact() {
               >
                 {item.title}
               </h3>
-              <p className="text-gray-900">{item.content}</p>
+              {item.link ? (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-900 underline hover:opacity-80"
+                >
+                  {item.content}
+                </a>
+              ) : (
+                <p className="text-gray-900">{item.content}</p>
+              )}
             </div>
           ))}
         </div>

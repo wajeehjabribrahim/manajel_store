@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { COLORS, FOOTER_LINKS, CONTACT_INFO } from "@/constants/store";
+import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 
@@ -28,6 +28,32 @@ export default function Footer() {
     zatar: "zatar",
     freekeh: "freekeh",
   });
+  const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [subscribeState, setSubscribeState] = useState<"idle" | "success" | "error">("idle");
+
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const email = subscribeEmail.trim().toLowerCase();
+    if (!email) return;
+
+    try {
+      const res = await fetch("/api/subscribers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        setSubscribeState("error");
+        return;
+      }
+
+      setSubscribeEmail("");
+      setSubscribeState("success");
+    } catch {
+      setSubscribeState("error");
+    }
+  };
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -184,16 +210,38 @@ export default function Footer() {
                 </svg>
               </a>
             </div>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[340px]">
               <p>
                 {t("footer.copyright")}
               </p>
-              <p>
-                {t("footer.contactLabel")}{" "}
-                <a href={`mailto:${CONTACT_INFO.email}`} className="opacity-100">
-                  {CONTACT_INFO.email}
-                </a>
-              </p>
+              <div>
+                <p className="mb-2 opacity-100">
+                  {t("footer.subscribeText")}
+                </p>
+                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="email"
+                    value={subscribeEmail}
+                    onChange={(e) => setSubscribeEmail(e.target.value)}
+                    placeholder={t("footer.subscribePlaceholder")}
+                    className="px-3 py-2 rounded-md text-gray-900 w-full sm:w-56"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-md font-semibold text-white"
+                    style={{ backgroundColor: COLORS.secondary }}
+                  >
+                    {t("footer.subscribeButton")}
+                  </button>
+                </form>
+                {subscribeState === "success" && (
+                  <p className="mt-2 text-[11px] text-green-200">تم الاشتراك بنجاح</p>
+                )}
+                {subscribeState === "error" && (
+                  <p className="mt-2 text-[11px] text-red-200">تعذر حفظ الاشتراك</p>
+                )}
+              </div>
             </div>
           </div>
         </div>

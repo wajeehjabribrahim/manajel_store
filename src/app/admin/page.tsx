@@ -88,6 +88,13 @@ export default function AdminDashboard() {
       href: "/admin/orders-yearly",
       color: "from-indigo-500 to-indigo-600",
     },
+    {
+      title: "الإيميلات المشتركة معنا",
+      description: "عرض جميع الإيميلات المسجلة في الاشتراك",
+      icon: "📧",
+      href: "/admin/subscribers",
+      color: "from-emerald-500 to-emerald-600",
+    },
   ];
 
   return (

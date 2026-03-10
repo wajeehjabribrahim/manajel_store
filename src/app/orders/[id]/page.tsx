@@ -281,24 +281,24 @@ export default function OrderDetailsPage() {
               <div className="space-y-2 text-sm">
                 <div>
                   <span className="text-gray-900">{t("cart.fullName")}:</span>
-                  <p className="font-semibold">{order.shippingName}</p>
+                  <p className="font-semibold text-gray-900">{order.shippingName}</p>
                 </div>
                 <div>
                   <span className="text-gray-900">{t("cart.phone")}:</span>
-                  <p className="font-semibold">{order.shippingPhone}</p>
+                  <p className="font-semibold text-gray-900">{order.shippingPhone}</p>
                 </div>
                 <div>
                   <span className="text-gray-900">{t("cart.city")}:</span>
-                  <p className="font-semibold">{order.shippingCity}</p>
+                  <p className="font-semibold text-gray-900">{order.shippingCity}</p>
                 </div>
                 <div>
                   <span className="text-gray-900">{t("cart.address")}:</span>
-                  <p className="font-semibold">{order.shippingAddress}</p>
+                  <p className="font-semibold text-gray-900">{order.shippingAddress}</p>
                 </div>
                 {order.shippingNotes && (
                   <div>
                     <span className="text-gray-900">{t("cart.notes")}:</span>
-                    <p className="font-semibold">{order.shippingNotes}</p>
+                    <p className="font-semibold text-gray-900">{order.shippingNotes}</p>
                   </div>
                 )}
               </div>
@@ -311,13 +311,13 @@ export default function OrderDetailsPage() {
               <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-900">{t("cart.itemCount")}</span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-gray-900">
                     {order.items && order.items.length > 0 ? order.items.reduce((sum, item) => sum + item.quantity, 0) : 0}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-900">{t("cart.goodsPrice")}</span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-gray-900">
                     {CURRENCY_SYMBOL}{order.total.toFixed(2)}
                   </span>
                 </div>

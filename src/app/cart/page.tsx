@@ -530,7 +530,7 @@ export default function Cart() {
                               parseInt(e.target.value) || 1
                             )
                           }
-                          className="w-12 px-2 py-1 text-center border rounded"
+                          className="w-12 px-2 py-1 text-center border rounded text-gray-900"
                           style={{ borderColor: COLORS.border }}
                         />
                         <button
@@ -609,13 +609,13 @@ export default function Cart() {
                 <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-900">{t("cart.itemCount")}</span>
-                    <span className="font-semibold">
+                    <span className="font-semibold text-gray-900">
                       {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-900">{t("cart.goodsPrice")}</span>
-                    <span className="font-semibold">{CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}</span>
+                    <span className="font-semibold text-gray-900">{CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -680,7 +680,7 @@ export default function Cart() {
                         type="text"
                         value={guestName}
                         onChange={(e) => setGuestName(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
@@ -694,7 +694,7 @@ export default function Cart() {
                         value={guestPhone}
                         onChange={(e) => setGuestPhone(e.target.value)}
                         placeholder={t.contact.phonePlaceholder}
-                         className="w-full border rounded-lg px-3 py-2 text-right text-gray-900"
+                         className="w-full border rounded-lg px-3 py-2 text-right text-gray-900 placeholder:text-gray-500"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
@@ -707,7 +707,7 @@ export default function Cart() {
                         type="text"
                         value={guestCity}
                         onChange={(e) => setGuestCity(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
@@ -720,7 +720,7 @@ export default function Cart() {
                         type="text"
                         value={guestAddress}
                         onChange={(e) => setGuestAddress(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
                         style={{ borderColor: COLORS.border }}
                         required
                       />
@@ -732,7 +732,7 @@ export default function Cart() {
                       <textarea
                         value={guestNotes}
                         onChange={(e) => setGuestNotes(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900"
+                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
                         style={{ borderColor: COLORS.border }}
                         rows={3}
                       />
