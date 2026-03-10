@@ -236,10 +236,10 @@ export default function Footer() {
                   </button>
                 </form>
                 {subscribeState === "success" && (
-                  <p className="mt-2 text-[11px] text-green-200">تم الاشتراك بنجاح</p>
+                  <p className="mt-2 text-[11px] text-green-200">{t("footer.subscribeSuccess")}</p>
                 )}
                 {subscribeState === "error" && (
-                  <p className="mt-2 text-[11px] text-red-200">تعذر حفظ الاشتراك</p>
+                  <p className="mt-2 text-[11px] text-red-200">{t("footer.subscribeError")}</p>
                 )}
               </div>
             </div>
