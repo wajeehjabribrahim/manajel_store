@@ -95,7 +95,8 @@ export default function AccountPage() {
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
+            dir="ltr"
+            className="w-full border rounded-lg px-3 py-2 text-right"
             style={{ borderColor: COLORS.border }}
           />
         </div>
