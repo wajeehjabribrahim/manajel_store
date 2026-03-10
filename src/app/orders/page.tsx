@@ -232,7 +232,7 @@ export default function OrdersPage() {
                             <p className="font-semibold text-gray-900">{item.name}</p>
                             <p className="text-sm text-gray-600">الكمية: {item.quantity}</p>
                           </div>
-                          <span className="font-semibold">{CURRENCY_SYMBOL}{item.total.toFixed(2)}</span>
+                          <span className="font-semibold text-gray-900">{CURRENCY_SYMBOL}{item.total.toFixed(2)}</span>
                         </div>
                       </div>
                     );})}

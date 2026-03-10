@@ -172,6 +172,7 @@ export const translations = {
       fastShipDesc: "Safe and fast delivery to all areas",
       satisfaction: "✓ Satisfaction Guarantee",
       satisfactionDesc: "7-day return guarantee for defective items with free returns and replacements",
+       swipeToNavigate: "Swipe to navigate between images",
     },
     // Cart Page
     cart: {
@@ -585,6 +586,7 @@ export const translations = {
       fastShipDesc: "توصيل آمن وسريع إلى جميع المناطق",
       satisfaction: "✓ ضمان الرضا",
       satisfactionDesc: "ضمان استرجاع خلال 7 أيام للمنتجات المعيبة مع استرجاع مجاني واستبدال",
+       swipeToNavigate: "اسحب للتنقل بين الصور",
     },
     // Cart Page
     cart: {

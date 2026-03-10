@@ -15,8 +15,7 @@ export async function sendOrderNotification(
   const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
   const customerEmail = userEmail && userEmail.trim() ? userEmail : "غير متوفر";
   const customerName = orderData.customerName || "زبون جديد";
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || "http://localhost:3000").replace(/\/$/, "");
-  const adminOrdersUrl = `${appUrl}/admin/orders`;
+  const adminOrdersUrl = "https://www.mnajel.com/admin/orders";
   
   try {
     // إرسال إيميل لجميع الأدمنز

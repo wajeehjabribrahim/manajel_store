@@ -117,7 +117,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
               >
                 {CURRENCY_SYMBOL}{product.price}
               </p>
-              <p className="text-xs text-gray-500">{t("product.fromSmallestSize")}</p>
+              <p className="text-xs text-gray-600">{t("product.fromSmallestSize")}</p>
             </div>
             {product.inStock ? (
               <span

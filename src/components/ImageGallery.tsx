@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ImageGalleryProps {
   images: string[];
@@ -8,6 +9,7 @@ interface ImageGalleryProps {
 }
 
 export default function ImageGallery({ images, alt }: ImageGalleryProps) {
+    const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -84,7 +86,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
   if (imageCount === 0) {
     return (
       <div className="w-full bg-gray-200 rounded-lg h-80 flex items-center justify-center">
-        <span className="text-gray-500">لا توجد صور</span>
+        <span className="text-gray-700">لا توجد صور</span>
       </div>
     );
   }
@@ -107,28 +109,6 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
           className="w-full h-full object-cover select-none"
           draggable={false}
         />
-        
-        {/* Navigation Arrows */}
-        {imageCount > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={goToPrevious}
-              className="absolute z-10 left-2 top-1/2 -translate-y-1/2 bg-black/65 text-white rounded-full w-10 h-10 flex items-center justify-center"
-              aria-label="Previous image"
-            >
-              <span className="text-xl leading-none">❮</span>
-            </button>
-            <button
-              type="button"
-              onClick={goToNext}
-              className="absolute z-10 right-2 top-1/2 -translate-y-1/2 bg-black/65 text-white rounded-full w-10 h-10 flex items-center justify-center"
-              aria-label="Next image"
-            >
-              <span className="text-xl leading-none">❯</span>
-            </button>
-          </>
-        )}
       </div>
 
       {/* Thumbnails */}
@@ -161,7 +141,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
       {imageCount > 1 && (
         <div className="flex items-center justify-between text-sm text-gray-600">
           <p>{selectedIndex + 1} / {imageCount}</p>
-          <p className="text-xs text-gray-500">اسحب للتنقل بين الصور</p>
+           <p className="text-xs text-gray-600">{t("product.swipeToNavigate")}</p>
         </div>
       )}
     </div>

@@ -15,6 +15,7 @@ export default function AccountPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
@@ -30,6 +31,7 @@ export default function AccountPage() {
         const res = await fetch("/api/auth/user");
         if (!res.ok) return;
         const data = await res.json();
+        setEmail(data.user.email ?? "");
         setPhone(data.user.phone ?? "");
         setCity(data.user.city ?? "");
         setAddress(data.user.address ?? "");
@@ -76,6 +78,17 @@ export default function AccountPage() {
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.email")}</label>
+          <input
+            type="email"
+            value={email || ((session?.user as { email?: string } | undefined)?.email ?? "")}
+            readOnly
+            className="w-full border rounded-lg px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
+            style={{ borderColor: COLORS.border }}
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.phone")}</label>
           <input
