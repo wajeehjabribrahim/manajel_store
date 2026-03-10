@@ -24,7 +24,7 @@ export default function AdminMessagesPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "new" | "read">("all");
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -41,7 +41,14 @@ export default function AdminMessagesPage() {
       const res = await fetch("/api/contact?action=list");
       if (res.ok) {
         const data = await res.json();
-        setMessages(data.messages || []);
+        const nextMessages: ContactMessage[] = data.messages || [];
+        setMessages(nextMessages);
+        if (selectedMessageId) {
+          const stillExists = nextMessages.some((m) => m.id === selectedMessageId);
+          if (!stillExists) {
+            setSelectedMessageId(null);
+          }
+        }
       } else {
         setError("فشل تحميل الرسائل");
       }
@@ -66,9 +73,6 @@ export default function AdminMessagesPage() {
 
       if (res.ok) {
         await loadMessages();
-        if (selectedMessage?.id === messageId) {
-          setSelectedMessage({ ...selectedMessage, status: "read" });
-        }
       }
     } catch {
       alert("فشل تحديث حالة الرسالة");
@@ -90,8 +94,8 @@ export default function AdminMessagesPage() {
 
       if (res.ok) {
         await loadMessages();
-        if (selectedMessage?.id === messageId) {
-          setSelectedMessage(null);
+        if (selectedMessageId === messageId) {
+          setSelectedMessageId(null);
         }
       } else {
         alert("فشل حذف الرسالة");
@@ -119,6 +123,10 @@ export default function AdminMessagesPage() {
       minute: "2-digit",
     });
   };
+
+  const selectedMessage = selectedMessageId
+    ? messages.find((m) => m.id === selectedMessageId) || null
+    : null;
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: COLORS.light }}>
@@ -175,51 +183,120 @@ export default function AdminMessagesPage() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow">
                 {filteredMessages.map((message) => (
-                  <div
-                    key={message.id}
-                    onClick={() => {
-                      setSelectedMessage(message);
-                      if (message.status === "new") {
-                        handleMarkAsRead(message.id);
-                      }
-                    }}
-                    className={`p-4 border-b cursor-pointer transition-colors hover:bg-gray-50 ${
-                      selectedMessage?.id === message.id
-                        ? "bg-blue-50 border-l-4"
-                        : ""
-                    }`}
-                    style={{
-                      borderLeftColor:
-                        selectedMessage?.id === message.id ? COLORS.primary : undefined,
-                      backgroundColor:
-                        selectedMessage?.id === message.id ? "#EFF6FF" : undefined,
-                    }}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-gray-900">{message.subject}</h3>
-                        <p className="text-sm text-gray-600">{message.name}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {formatDate(message.createdAt)}
-                        </p>
+                  <div key={message.id} className="border-b">
+                    <div
+                      onClick={() => {
+                          setSelectedMessageId(message.id);
+                        if (message.status === "new") {
+                          handleMarkAsRead(message.id);
+                        }
+                      }}
+                      className={`p-4 cursor-pointer transition-colors hover:bg-gray-50 ${
+                        selectedMessageId === message.id
+                          ? "bg-blue-50 border-l-4"
+                          : ""
+                      }`}
+                      style={{
+                        borderLeftColor:
+                          selectedMessageId === message.id ? COLORS.primary : undefined,
+                        backgroundColor:
+                          selectedMessageId === message.id ? "#EFF6FF" : undefined,
+                      }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900">{message.subject}</h3>
+                          <p className="text-sm text-gray-600">{message.name}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {formatDate(message.createdAt)}
+                          </p>
+                        </div>
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-semibold ml-2 ${
+                            message.status === "new"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {message.status === "new" ? "جديد" : "مقروء"}
+                        </span>
                       </div>
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-semibold ml-2 ${
-                          message.status === "new"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }`}
-                      >
-                        {message.status === "new" ? "جديد" : "مقروء"}
-                      </span>
                     </div>
+
+                    {/* Mobile details under selected message */}
+                    {selectedMessage && selectedMessageId === message.id && (
+                      <div className="lg:hidden bg-white p-4 border-t" onClick={(e) => e.stopPropagation()}>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500">الاسم</label>
+                            <p className="text-gray-900">{selectedMessage.name}</p>
+                          </div>
+
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500">البريد الإلكتروني</label>
+                            <a
+                              href={`mailto:${selectedMessage.email}`}
+                              className="text-blue-600 hover:underline"
+                            >
+                              {selectedMessage.email}
+                            </a>
+                          </div>
+
+                          {selectedMessage.phone && (
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500">الهاتف</label>
+                              <a
+                                href={`tel:${selectedMessage.phone}`}
+                                className="text-blue-600 hover:underline"
+                              >
+                                {selectedMessage.phone}
+                              </a>
+                            </div>
+                          )}
+
+                          <div>
+                            <label className="text-xs font-semibold text-gray-500">التاريخ</label>
+                            <p className="text-gray-900">
+                              {formatDate(selectedMessage.createdAt)}
+                            </p>
+                          </div>
+
+                          <div className="border-t pt-4">
+                            <label className="text-xs font-semibold text-gray-500 block mb-2">
+                              الرسالة
+                            </label>
+                            <p className="text-gray-900 whitespace-pre-wrap text-sm">
+                              {selectedMessage.message}
+                            </p>
+                          </div>
+
+                          <div className="border-t pt-4 space-y-2">
+                            {selectedMessage.status === "new" && (
+                              <button
+                                onClick={() => handleMarkAsRead(selectedMessage.id)}
+                                className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700"
+                              >
+                                وضع علامة كمقروءة
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDelete(selectedMessage.id)}
+                              disabled={deletingId === selectedMessage.id}
+                              className="w-full bg-red-600 text-white py-2 rounded font-semibold hover:bg-red-700 disabled:opacity-50"
+                            >
+                              {deletingId === selectedMessage.id ? "جاري الحذف..." : "حذف"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Message Details */}
-            <div className="lg:col-span-1">
+            <div className="hidden lg:block lg:col-span-1">
               {selectedMessage ? (
                 <div className="bg-white rounded-lg shadow p-6">
                   <h2 className="text-xl font-bold mb-4">{selectedMessage.subject}</h2>

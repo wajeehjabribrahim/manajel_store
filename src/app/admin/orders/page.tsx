@@ -43,7 +43,9 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [orderSearch, setOrderSearch] = useState("");
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+  const [deletingOrder, setDeletingOrder] = useState<string | null>(null);
 
   const loadOrders = async () => {
     try {
@@ -94,6 +96,31 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const handleDeleteOrder = async (orderId: string) => {
+    const confirmed = window.confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟");
+    if (!confirmed) {
+      return;
+    }
+
+    setDeletingOrder(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        await loadOrders();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data?.error || "فشل حذف الطلب");
+      }
+    } catch {
+      alert("حدث خطأ أثناء حذف الطلب");
+    } finally {
+      setDeletingOrder(null);
+    }
+  };
+
   const getStatusText = (status: string) => {
     const statusMap: { [key: string]: string } = {
       pending: "قيد الانتظار",
@@ -116,9 +143,19 @@ export default function AdminOrdersPage() {
     return colorMap[status] || "#666";
   };
 
-  const filteredOrders = selectedStatus
-    ? orders.filter((o) => o.status === selectedStatus)
-    : orders;
+  const normalizedSearch = orderSearch.trim().replace(/^#/, "").toLowerCase();
+
+  const filteredOrders = orders.filter((o) => {
+    const matchesStatus = selectedStatus ? o.status === selectedStatus : true;
+    const shortId = o.id.slice(0, 8).toLowerCase();
+    const fullId = o.id.toLowerCase();
+    const matchesSearch =
+      normalizedSearch.length === 0 ||
+      fullId.includes(normalizedSearch) ||
+      shortId.includes(normalizedSearch);
+
+    return matchesStatus && matchesSearch;
+  });
 
   if (loading) {
     return (
@@ -146,7 +183,7 @@ export default function AdminOrdersPage() {
 
       {/* Filter by Status */}
       <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-        <h3 className="font-semibold mb-3">تصفية حسب الحالة:</h3>
+        <h3 className="font-semibold mb-3 text-gray-900">تصفية حسب الحالة:</h3>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedStatus(null)}
@@ -174,6 +211,20 @@ export default function AdminOrdersPage() {
               </button>
             );
           })}
+        </div>
+
+        <div className="mt-4">
+          <label className="block text-sm font-semibold mb-2 text-gray-900">
+            البحث برقم الطلب:
+          </label>
+          <input
+            type="text"
+            value={orderSearch}
+            onChange={(e) => setOrderSearch(e.target.value)}
+            placeholder="مثال: cmmkbt0 أو رقم الطلب الكامل"
+            className="w-full md:w-96 px-3 py-2 rounded-lg border-2 text-gray-900"
+            style={{ borderColor: COLORS.border }}
+          />
         </div>
       </div>
 
@@ -221,7 +272,7 @@ export default function AdminOrdersPage() {
                   <h4 className="font-semibold mb-2" style={{ color: COLORS.primary }}>
                     معلومات العميل
                   </h4>
-                  <div className="text-sm space-y-1">
+                  <div className="text-sm space-y-1 text-gray-900">
                     <p>
                       <strong>الاسم:</strong> {order.shippingName}
                     </p>
@@ -272,7 +323,7 @@ export default function AdminOrdersPage() {
                           />
                         )}
                         <div className="flex-1 text-sm">
-                          <p className="font-semibold">{item.name}</p>
+                          <p className="font-semibold text-gray-900">{item.name}</p>
                           <p className="text-gray-900">
                             الحجم: {item.size} | الكمية: {item.quantity}
                           </p>
@@ -280,7 +331,7 @@ export default function AdminOrdersPage() {
                             السعر: {CURRENCY_SYMBOL}
                             {item.price}
                           </p>
-                          <p className="font-semibold">
+                          <p className="font-semibold text-gray-900">
                             المجموع: {CURRENCY_SYMBOL}
                             {item.total.toFixed(2)}
                           </p>
@@ -294,12 +345,12 @@ export default function AdminOrdersPage() {
               <div className="p-4 bg-gray-50 flex justify-between items-center">
                 {/* Status Change Dropdown */}
                 <div className="flex items-center gap-3">
-                  <label className="font-semibold text-sm">تغيير الحالة:</label>
+                  <label className="font-semibold text-sm text-gray-900">تغيير الحالة:</label>
                   <select
                     value={order.status}
                     onChange={(e) => handleStatusChange(order.id, e.target.value)}
                     disabled={updatingOrder === order.id}
-                    className="px-3 py-2 rounded-lg border-2 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 rounded-lg border-2 font-semibold text-gray-900 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
                       borderColor: COLORS.primary,
                       color: COLORS.dark,
@@ -316,13 +367,24 @@ export default function AdminOrdersPage() {
                   )}
                 </div>
 
-                <Link
-                  href={`/orders/${order.id}`}
-                  className="px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90"
-                  style={{ backgroundColor: COLORS.primary }}
-                >
-                  عرض التفاصيل
-                </Link>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteOrder(order.id)}
+                    disabled={deletingOrder === order.id}
+                    className="px-4 py-2 rounded-lg text-white font-semibold disabled:opacity-50"
+                    style={{ backgroundColor: "#dc2626" }}
+                  >
+                    {deletingOrder === order.id ? "جاري الحذف..." : "حذف الطلب"}
+                  </button>
+                  <Link
+                    href={`/orders/${order.id}`}
+                    className="px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90"
+                    style={{ backgroundColor: COLORS.primary }}
+                  >
+                    عرض التفاصيل
+                  </Link>
+                </div>
               </div>
             </div>
           ))

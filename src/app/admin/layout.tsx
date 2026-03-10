@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div
-      className="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-6"
+      className="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-6 [&_.text-gray-400]:text-gray-600 [&_.text-gray-500]:text-gray-700 [&_.text-gray-600]:text-gray-800"
       style={{ direction: dir }}
     >
       <aside className="w-full lg:w-64 bg-white rounded-lg shadow-md p-4 h-fit">
