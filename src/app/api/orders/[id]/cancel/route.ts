@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
 import { sendOrderCancellationNotification } from "@/lib/email";
+import { decryptData } from "@/lib/encryption";
 
 export async function POST(
   req: NextRequest,
@@ -93,7 +94,17 @@ export async function POST(
       // Do not fail cancellation if email fails
     }
 
-    return NextResponse.json(updatedOrder);
+    const safeOrder = {
+      ...updatedOrder,
+      shippingCity: updatedOrder.shippingCity
+        ? decryptData(updatedOrder.shippingCity)
+        : updatedOrder.shippingCity,
+      shippingAddress: updatedOrder.shippingAddress
+        ? decryptData(updatedOrder.shippingAddress)
+        : updatedOrder.shippingAddress,
+    };
+
+    return NextResponse.json(safeOrder);
   } catch (error) {
     console.error("Error cancelling order:", error);
     return NextResponse.json(
