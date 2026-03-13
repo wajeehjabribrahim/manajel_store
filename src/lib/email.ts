@@ -147,3 +147,59 @@ export async function sendSecurityAlert(
     throw error;
   }
 }
+
+export async function sendOrderCancellationNotification(
+  orderData: {
+    id: string;
+    customerName?: string | null;
+    customerEmail?: string | null;
+    total: number;
+    cancelledBy: 'admin' | 'user' | 'guest';
+    cancelledAt: Date;
+  }
+) {
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
+  const adminOrdersUrl = "https://www.mnajel.com/admin/orders";
+  const customerName = orderData.customerName?.trim() || "زبون";
+  const customerEmail = orderData.customerEmail?.trim() || "غير متوفر";
+  const cancelledByLabel =
+    orderData.cancelledBy === 'admin'
+      ? 'الأدمن'
+      : orderData.cancelledBy === 'guest'
+      ? 'زائر'
+      : 'المستخدم';
+
+  try {
+    await resend.emails.send({
+      from: 'Manajel Store <info@manajel.works>',
+      to: adminEmails,
+      subject: `⚠️ تم إلغاء طلب #${orderData.id}`,
+      html: `
+        <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #b91c1c; text-align: center;">⚠️ تم إلغاء طلب</h2>
+          <p>تم إلغاء الطلب التالي ويحتاج متابعة من الإدارة:</p>
+
+          <div style="padding: 14px; background: #fff7ed; border-right: 4px solid #f97316; margin: 16px 0;">
+            <p><strong>رقم الطلب:</strong> ${orderData.id}</p>
+            <p><strong>اسم الزبون:</strong> ${customerName}</p>
+            <p><strong>البريد الإلكتروني:</strong> ${customerEmail}</p>
+            <p><strong>الإجمالي:</strong> ₪${orderData.total}</p>
+            <p><strong>تم الإلغاء بواسطة:</strong> ${cancelledByLabel}</p>
+            <p><strong>التاريخ:</strong> ${new Date(orderData.cancelledAt).toLocaleString('ar-PS')}</p>
+          </div>
+
+          <p style="text-align: center; margin-top: 20px;">
+            <a href="${adminOrdersUrl}" style="background-color: #2d5016; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+              فتح الطلبات في لوحة التحكم
+            </a>
+          </p>
+        </div>
+      `,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Order cancellation email error:', error);
+    throw error;
+  }
+}

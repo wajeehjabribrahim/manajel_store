@@ -12,7 +12,7 @@ interface User {
   phone: string | null;
   city: string | null;
   address: string | null;
-  password: string | null;
+  hasPassword: boolean;
   role: string;
   createdAt: string;
   _count: {
@@ -35,7 +35,6 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [showPassword, setShowPassword] = useState<string | null>(null);
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [resetUserId, setResetUserId] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState("");
@@ -197,6 +196,9 @@ export default function UsersPage() {
                       {language === "ar" ? "المدينة" : "City"}
                     </th>
                     <th className="px-6 py-4 text-right font-semibold text-gray-700">
+                      {language === "ar" ? "العنوان" : "Address"}
+                    </th>
+                    <th className="px-6 py-4 text-right font-semibold text-gray-700">
                       {language === "ar" ? "كلمة السر" : "Password"}
                     </th>
                     <th className="px-6 py-4 text-right font-semibold text-gray-700">
@@ -230,51 +232,16 @@ export default function UsersPage() {
                       <td className="px-6 py-4 text-gray-600">
                         {user.city || "-"}
                       </td>
+                      <td className="px-6 py-4 text-gray-600 max-w-[220px] truncate" title={user.address || "-"}>
+                        {user.address || "-"}
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2 flex-wrap">
-                          {user.password ? (
+                          {user.hasPassword ? (
                             <>
-                              <input
-                                type="text"
-                                value={
-                                  showPassword === user.id
-                                    ? user.password
-                                    : "•".repeat(20)
-                                }
-                                readOnly
-                                className="text-xs font-mono bg-gray-100 rounded px-2 py-1 w-32 truncate"
-                              />
-                              <button
-                                onClick={() => {
-                                  navigator.clipboard.writeText(
-                                    user.password || ""
-                                  );
-                                }}
-                                className="px-2 py-1 bg-blue-200 hover:bg-blue-300 rounded text-xs whitespace-nowrap"
-                                title={
-                                  language === "ar"
-                                    ? "نسخ كلمة السر"
-                                    : "Copy Password"
-                                }
-                              >
-                                {language === "ar" ? "نسخ" : "Copy"}
-                              </button>
-                              <button
-                                onClick={() =>
-                                  setShowPassword(
-                                    showPassword === user.id ? null : user.id
-                                  )
-                                }
-                                className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs whitespace-nowrap"
-                              >
-                                {showPassword === user.id
-                                  ? language === "ar"
-                                    ? "إخفاء"
-                                    : "Hide"
-                                  : language === "ar"
-                                  ? "إظهار"
-                                  : "Show"}
-                              </button>
+                              <span className="text-green-700 text-sm font-semibold">
+                                {language === "ar" ? "مُعينة" : "Set"}
+                              </span>
                               <button
                                 onClick={() => {
                                   setResetUserId(user.id);
@@ -291,9 +258,25 @@ export default function UsersPage() {
                               </button>
                             </>
                           ) : (
-                            <span className="text-yellow-600 text-sm">
-                              {language === "ar" ? "غير معرّف" : "Not Set"}
-                            </span>
+                            <>
+                              <span className="text-yellow-600 text-sm">
+                                {language === "ar" ? "غير مُعينة" : "Not Set"}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  setResetUserId(user.id);
+                                  setResetModalOpen(true);
+                                }}
+                                className="px-2 py-1 bg-red-200 hover:bg-red-300 rounded text-xs whitespace-nowrap"
+                                title={
+                                  language === "ar"
+                                    ? "تعيين كلمة السر"
+                                    : "Set Password"
+                                }
+                              >
+                                {language === "ar" ? "تعيين" : "Set"}
+                              </button>
+                            </>
                           )}
                         </div>
                       </td>

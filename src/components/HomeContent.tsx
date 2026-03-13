@@ -83,15 +83,6 @@ export default function HomeContent() {
           <p className="text-lg max-w-3xl mx-auto mb-8 opacity-85">
             {STORE_DESCRIPTION}
           </p>
-          <Link
-            href={isAdmin ? "/admin" : "/shop"}
-            className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
-            style={{ backgroundColor: COLORS.accent, color: COLORS.primary }}
-          >
-            {isAdmin
-              ? "لوحة التحكم"
-              : t("common.shopNow")}
-          </Link>
         </div>
         {/* Bottom Wave Decoration */}
         <div className="hero-wave-bottom"></div>
@@ -130,6 +121,19 @@ export default function HomeContent() {
                   isFirstProduct={index === 0}
                 />
               ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <Link
+            href={isAdmin ? "/admin" : "/shop"}
+            className="inline-block px-10 py-4 text-lg rounded-xl font-bold transition-transform hover:scale-105 shadow-lg hover:shadow-2xl ring-2 ring-red-200"
+            style={{
+              background: "linear-gradient(135deg, #b23a2b 0%, #8f2d21 100%)",
+              color: "#ffffff",
+            }}
+          >
+            {isAdmin ? "لوحة التحكم" : t("common.shopNow")}
+          </Link>
         </div>
       </section>
 

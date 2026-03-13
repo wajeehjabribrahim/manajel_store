@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
+import { sendOrderCancellationNotification } from "@/lib/email";
 
 export async function POST(
   req: NextRequest,
@@ -71,6 +72,26 @@ export async function POST(
       where: { id: orderId },
       data: { status: "cancelled" },
     });
+
+    const cancelledBy: "admin" | "user" | "guest" = isAdmin
+      ? "admin"
+      : order.userId
+      ? "user"
+      : "guest";
+
+    try {
+      await sendOrderCancellationNotification({
+        id: updatedOrder.id,
+        customerName: updatedOrder.shippingName,
+        customerEmail: updatedOrder.email,
+        total: updatedOrder.total,
+        cancelledBy,
+        cancelledAt: new Date(),
+      });
+    } catch (emailError) {
+      console.error("Failed to send order cancellation email:", emailError);
+      // Do not fail cancellation if email fails
+    }
 
     return NextResponse.json(updatedOrder);
   } catch (error) {

@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
         phone: true,
         city: true,
         address: true,
+        password: true,
         role: true,
         createdAt: true,
         _count: {
@@ -65,9 +66,16 @@ export async function GET(request: NextRequest) {
     });
 
     const safeUsers = users.map((user) => ({
-      ...user,
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
       city: user.city ? decryptData(user.city) : user.city,
       address: user.address ? decryptData(user.address) : user.address,
+      role: user.role,
+      createdAt: user.createdAt,
+      hasPassword: Boolean(user.password),
+      _count: user._count,
     }));
 
     let response = NextResponse.json({
