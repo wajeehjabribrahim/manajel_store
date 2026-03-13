@@ -176,7 +176,7 @@ export async function sendOrderCancellationNotification(
       subject: `⚠️ تم إلغاء طلب #${orderData.id}`,
       html: `
         <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #b91c1c; text-align: center;">⚠️ .تم إلغاء طلب</h2>
+          <h2 style="color: #b91c1c; text-align: center;">⚠️ تم إلغاء طلب</h2>
           <p>تم إلغاء الطلب التالي ويحتاج متابعة من الإدارة:</p>
 
           <div style="padding: 14px; background: #fff7ed; border-right: 4px solid #f97316; margin: 16px 0;">
