@@ -19,6 +19,7 @@ export default function HomeContent() {
   const feature1 = useScrollAnimation({ delay: 0 });
   const feature2 = useScrollAnimation({ delay: 100 });
   const feature3 = useScrollAnimation({ delay: 200 });
+  const shopCta = useScrollAnimation({ delay: 150 });
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -123,7 +124,10 @@ export default function HomeContent() {
               ))}
         </div>
 
-        <div className="text-center mt-10">
+        <div
+          ref={shopCta.elementRef}
+          className={`text-center mt-10 scroll-animate ${shopCta.isVisible ? "visible" : ""}`}
+        >
           <p className="text-2xl md:text-3xl font-extrabold mb-3" style={{ color: COLORS.primary }}>
             {language === "ar" ? "لاستكشاف كل منتجاتنا" : "Explore all our products"}
           </p>
