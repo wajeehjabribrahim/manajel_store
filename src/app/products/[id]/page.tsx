@@ -24,6 +24,7 @@ export default function ProductPage({ params }: PageProps) {
   const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("medium");
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -76,7 +77,8 @@ export default function ProductPage({ params }: PageProps) {
       ? sizeEntries[0][0]
       : "medium";
     const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
-    const price = product.sizes?.[activeSize]?.price ?? product.price;
+    const rawPrice = product.sizes?.[activeSize]?.price ?? product.price;
+    const price = product.sizes?.[activeSize]?.salePrice ?? rawPrice;
 
     const rawImage = typeof product.image === "string" ? product.image : "";
     const safeImage = rawImage && !rawImage.startsWith("data:") && rawImage.length < 2000
@@ -137,6 +139,42 @@ export default function ProductPage({ params }: PageProps) {
     setTimeout(() => {
       router.push("/cart");
     }, 300);
+  };
+
+  const handleShareProduct = async () => {
+    if (!product || typeof window === "undefined") return;
+
+    const shareUrl = `${window.location.origin}/products/${product.id}`;
+    const shareTitle = name;
+    const shareText = description.length > 120
+      ? `${description.slice(0, 120)}...`
+      : description;
+
+    setIsSharing(true);
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert(language === "ar" ? "تم نسخ رابط المنتج" : "Product link copied");
+        return;
+      }
+
+      alert(shareUrl);
+    } catch (error) {
+      if ((error as Error)?.name !== "AbortError") {
+        alert(language === "ar" ? "تعذر مشاركة المنتج" : "Unable to share product");
+      }
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   if (isLoading) {
@@ -256,7 +294,23 @@ export default function ProductPage({ params }: PageProps) {
 
             {/* Rating */}
             <div className="mb-4 flex items-center gap-2">
-              <span className="text-lg">★★★★★</span>
+              {product && (() => {
+                let hash = 0;
+                for (let i = 0; i < product.id.length; i++) hash = (hash * 31 + product.id.charCodeAt(i)) >>> 0;
+                const rating = 4.5 + ((hash % 5) / 10);
+                return (
+                  <>
+                    <div className="flex text-yellow-400">
+                      {[1,2,3,4,5].map((star) => {
+                        if (rating >= star) return <span key={star}>★</span>;
+                        if (rating >= star - 0.5) return <span key={star} className="relative inline-block"><span className="absolute inset-0 overflow-hidden w-1/2">★</span>☆</span>;
+                        return <span key={star} className="text-gray-300">★</span>;
+                      })}
+                    </div>
+                    <span className="text-sm text-gray-500">{rating.toFixed(1)}</span>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Stock Status */}
@@ -319,12 +373,20 @@ export default function ProductPage({ params }: PageProps) {
                     <div className="text-xs text-gray-600">
                       {product.sizes?.[size]?.weight || ""}
                     </div>
-                    <div
-                      style={{ color: COLORS.secondary }}
-                      className="font-bold text-sm"
-                    >
-                      {CURRENCY_SYMBOL}{product.sizes?.[size]?.price ?? product.price}
-                    </div>
+                    {product.sizes?.[size]?.salePrice ? (
+                      <>
+                        <div className="text-xs line-through" style={{ color: "#dc2626" }}>
+                          {CURRENCY_SYMBOL}{product.sizes?.[size]?.price}
+                        </div>
+                        <div style={{ color: COLORS.secondary }} className="font-bold text-sm">
+                          {CURRENCY_SYMBOL}{product.sizes?.[size]?.salePrice}
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ color: COLORS.secondary }} className="font-bold text-sm">
+                        {CURRENCY_SYMBOL}{product.sizes?.[size]?.price ?? product.price}
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
@@ -378,16 +440,23 @@ export default function ProductPage({ params }: PageProps) {
             >
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-900">{t("product.pricePerUnit")}</span>
-                <span style={{ color: COLORS.primary }} className="font-bold">
-                  {CURRENCY_SYMBOL}{currentSize.price}
-                </span>
+                {currentSize.salePrice ? (
+                  <span className="flex items-center gap-2">
+                    <span className="line-through text-sm" style={{ color: "#dc2626" }}>{CURRENCY_SYMBOL}{currentSize.price}</span>
+                    <span style={{ color: COLORS.primary }} className="font-bold">{CURRENCY_SYMBOL}{currentSize.salePrice}</span>
+                  </span>
+                ) : (
+                  <span style={{ color: COLORS.primary }} className="font-bold">
+                    {CURRENCY_SYMBOL}{currentSize.price}
+                  </span>
+                )}
               </div>
               <div className="flex justify-between items-center border-t pt-2" style={{ borderColor: COLORS.border }}>
                 <span style={{ color: COLORS.primary }} className="font-bold text-lg">
                   {t("product.total")}
                 </span>
                 <span style={{ color: COLORS.primary }} className="font-bold text-2xl">
-                  {CURRENCY_SYMBOL}{currentSize.price * quantity}
+                  {CURRENCY_SYMBOL}{(currentSize.salePrice ?? currentSize.price) * quantity}
                 </span>
               </div>
             </div>
@@ -401,6 +470,38 @@ export default function ProductPage({ params }: PageProps) {
             >
               {isAdding ? t("product.adding") : t("product.addToCart")}
             </button>
+
+            <div className="flex gap-3 mb-4">
+              <button
+                onClick={handleShareProduct}
+                disabled={isSharing}
+                className="flex-1 py-2 px-3 rounded-lg font-semibold text-sm transition-all border-2 disabled:opacity-50"
+                style={{
+                  color: COLORS.primary,
+                  borderColor: COLORS.primary,
+                  backgroundColor: "white",
+                }}
+              >
+                {isSharing
+                  ? language === "ar"
+                    ? "جاري..."
+                    : "Sharing..."
+                  : language === "ar"
+                  ? "🔗 مشاركة"
+                  : "🔗 Share"}
+              </button>
+              <Link
+                href="/shipping-policy"
+                className="flex-1 py-2 px-3 rounded-lg font-semibold text-sm text-center border-2 transition-all"
+                style={{
+                  color: COLORS.primary,
+                  borderColor: COLORS.primary,
+                  backgroundColor: COLORS.accent,
+                }}
+              >
+                {language === "ar" ? "🚚 أسعار التوصيل" : "🚚 Delivery Prices"}
+              </Link>
+            </div>
 
             {/* Continue Shopping */}
             <Link

@@ -16,6 +16,7 @@ interface SizeState {
   enabled: boolean;
   weight: string;
   price: string;
+  salePrice: string;
 }
 
 const getCategoryTranslationKey = (categoryId: string): string => {
@@ -50,9 +51,9 @@ export default function AdminAddProductPage() {
   const [featured, setFeatured] = useState(false);
   const [inStock, setInStock] = useState(true);
   const [sizes, setSizes] = useState<Record<"small" | "medium" | "large", SizeState>>({
-    small: { enabled: false, weight: "", price: "" },
-    medium: { enabled: true, weight: "", price: "" },
-    large: { enabled: false, weight: "", price: "" },
+    small: { enabled: false, weight: "", price: "", salePrice: "" },
+    medium: { enabled: true, weight: "", price: "", salePrice: "" },
+    large: { enabled: false, weight: "", price: "", salePrice: "" },
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -114,15 +115,20 @@ export default function AdminAddProductPage() {
   }, [imageFiles]);
 
   const buildSizesPayload = () => {
-    const payload: Record<string, { weight: string; price: number }> = {};
+    const payload: Record<string, { weight: string; price: number; salePrice?: number }> = {};
     (Object.keys(sizes) as Array<"small" | "medium" | "large">).forEach((key) => {
       const size = sizes[key];
       const numericPrice = Number(size.price);
       if (size.enabled && Number.isFinite(numericPrice) && numericPrice > 0) {
-        payload[key] = {
+        const entry: { weight: string; price: number; salePrice?: number } = {
           weight: size.weight.trim(),
           price: numericPrice,
         };
+        const numericSalePrice = Number(size.salePrice);
+        if (size.salePrice && Number.isFinite(numericSalePrice) && numericSalePrice > 0 && numericSalePrice < numericPrice) {
+          entry.salePrice = numericSalePrice;
+        }
+        payload[key] = entry;
       }
     });
     return payload;
@@ -228,9 +234,9 @@ export default function AdminAddProductPage() {
       setFeatured(false);
       setInStock(true);
       setSizes({
-        small: { enabled: false, weight: "", price: "" },
-        medium: { enabled: true, weight: "", price: "" },
-        large: { enabled: false, weight: "", price: "" },
+        small: { enabled: false, weight: "", price: "", salePrice: "" },
+        medium: { enabled: true, weight: "", price: "", salePrice: "" },
+        large: { enabled: false, weight: "", price: "", salePrice: "" },
       });
     } catch {
       setError("حدث خطأ أثناء الحفظ");
@@ -478,8 +484,18 @@ export default function AdminAddProductPage() {
                   type="number"
                   value={sizes[key].price}
                   onChange={(e) => updateSize(key, { price: e.target.value })}
-                  className="w-full border rounded-lg px-3 py-2"
+                  className="w-full border rounded-lg px-3 py-2 mb-2"
                   placeholder="السعر"
+                  min="0"
+                  step="0.01"
+                  disabled={!sizes[key].enabled}
+                />
+                <input
+                  type="number"
+                  value={sizes[key].salePrice}
+                  onChange={(e) => updateSize(key, { salePrice: e.target.value })}
+                  className="w-full border border-red-300 rounded-lg px-3 py-2"
+                  placeholder="سعر العرض (اختياري)"
                   min="0"
                   step="0.01"
                   disabled={!sizes[key].enabled}

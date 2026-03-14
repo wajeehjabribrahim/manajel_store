@@ -14,6 +14,34 @@ interface ProductCardProps {
   isFirstProduct?: boolean;
 }
 
+const getStableRating = (id: string): number => {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return 4.5 + ((hash % 5) / 10);
+};
+
+const StarRating = ({ id }: { id: string }) => {
+  const rating = getStableRating(id);
+  return (
+    <div className="flex items-center gap-1">
+      <div className="flex text-yellow-400 text-sm">
+        {[1, 2, 3, 4, 5].map((star) => {
+          if (rating >= star) return <span key={star}>★</span>;
+          if (rating >= star - 0.5)
+            return (
+              <span key={star} className="relative inline-block">
+                <span className="absolute inset-0 overflow-hidden" style={{ width: "50%" }}>★</span>
+                <span className="text-gray-300">★</span>
+              </span>
+            );
+          return <span key={star} className="text-gray-300">★</span>;
+        })}
+      </div>
+      <span className="text-xs text-gray-500">{rating.toFixed(1)}</span>
+    </div>
+  );
+};
+
 export default function ProductCard({ product, animationDelay = 0, isFirstProduct = false }: ProductCardProps) {
   const { t } = useLanguage();
   // Add extra delay for first product to ensure image loads
@@ -99,24 +127,33 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
 
           {/* Rating */}
           <div className="flex items-center gap-1 mb-3">
-            <div className="flex text-yellow-400">
-              {[...Array(5)].map((_, i) => (
-                <span key={i}>
-                  {i < Math.floor(product.rating) ? "★" : "☆"}
-                </span>
-              ))}
-            </div>
+            <StarRating id={product.id} />
           </div>
 
           {/* Price */}
           <div className="flex justify-between items-center mt-auto">
             <div>
-              <p
-                style={{ color: COLORS.primary }}
-                className="font-bold text-lg"
-              >
-                {CURRENCY_SYMBOL}{product.price}
-              </p>
+              {(() => {
+                const sizesArr = Object.values(product.sizes || {}).filter(Boolean);
+                const hasSale = sizesArr.some((s: any) => s?.salePrice);
+                const lowestSale = hasSale
+                  ? Math.min(...sizesArr.filter((s: any) => s?.salePrice).map((s: any) => s.salePrice))
+                  : null;
+                return hasSale ? (
+                  <>
+                    <p className="text-sm line-through" style={{ color: "#dc2626" }}>
+                      {CURRENCY_SYMBOL}{product.price}
+                    </p>
+                    <p style={{ color: COLORS.primary }} className="font-bold text-lg">
+                      {CURRENCY_SYMBOL}{lowestSale}
+                    </p>
+                  </>
+                ) : (
+                  <p style={{ color: COLORS.primary }} className="font-bold text-lg">
+                    {CURRENCY_SYMBOL}{product.price}
+                  </p>
+                );
+              })()}
               <p className="text-xs text-gray-600">{t("product.fromSmallestSize")}</p>
             </div>
             {product.inStock ? (

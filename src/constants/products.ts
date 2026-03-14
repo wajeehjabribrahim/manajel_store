@@ -18,9 +18,9 @@ export interface Product {
   descriptionEn?: string;
   price: number;
   sizes: {
-    small?: { weight: string; price: number };
-    medium?: { weight: string; price: number };
-    large?: { weight: string; price: number };
+    small?: { weight: string; price: number; salePrice?: number };
+    medium?: { weight: string; price: number; salePrice?: number };
+    large?: { weight: string; price: number; salePrice?: number };
   };
   image: string;
   images?: string[];

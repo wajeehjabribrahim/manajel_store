@@ -315,6 +315,8 @@ export const translations = {
       ordersUnderDesc: "30 ILS",
       international: "48 areas:",
       internationalDesc: "70 ILS",
+      deliveryTime: "Delivery Time",
+      deliveryTimeDesc: "Delivery takes 2-4 business days after order confirmation.",
       specialHandling: "Special Handling",
       specialHandlingDesc: "All our products are carefully packaged to ensure they arrive in perfect condition. Our olive oil and other liquid products are specially sealed to prevent leakage.",
       // Return Policy
@@ -717,7 +719,7 @@ export const translations = {
       privacyPolicy: "سياسة الخصوصية",
       // Shipping Policy
       shippingInfo: "معلومات الشحن",
-      shippingDesc: "في مناجل، نحن ملتزمون بتوصيل منتجاتك الفلسطينية بأمان وكفاءة. إليك ما تحتاج معرفته حول سياسة الشحن لدينا.",
+      shippingDesc: "في مناجل، احنا ملتزمين نوصل منتجاتك الفلسطينية بأمان وكفاءة. إليك ما تحتاج معرفته حول سياسة الشحن لدينا.",
       deliveryAreas: "مناطق التوصيل",
       area1: "الضفة الغربية",
       area2: "القدس وأراضي 48",
@@ -729,6 +731,8 @@ export const translations = {
       ordersUnderDesc: "30 شيكل",
       international: "مناطق 48: ",
       internationalDesc: "70 شيكل",
+      deliveryTime: "وقت التوصيل",
+      deliveryTimeDesc: "التوصيل من 2-4 أيام عمل بعد تأكيد الطلب.",
       specialHandling: "معالجة خاصة",
       specialHandlingDesc: "جميع منتجاتنا معبأة بعناية لضمان وصولها في حالة مثالية. زيت الزيتون وغيره من المنتجات السائلة محكمة الإغلاق بشكل خاص لمنع التسرب.",
       // Return Policy

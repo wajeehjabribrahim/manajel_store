@@ -56,6 +56,13 @@ export default function ShippingPolicy() {
             </ul>
           </div>
 
+          <div>
+            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
+              {t.policies.deliveryTime}
+            </h3>
+            <p className="text-gray-900">{t.policies.deliveryTimeDesc}</p>
+          </div>
+
           <div
             style={{ backgroundColor: COLORS.accent }}
             className="rounded-lg p-6"

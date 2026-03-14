@@ -17,16 +17,19 @@ const normalizeSizes = (sizes: any, fallbackPrice: number) => {
       : {};
   }
 
-  const normalized: Record<string, { weight: string; price: number }> = {};
+  const normalized: Record<string, { weight: string; price: number; salePrice?: number }> = {};
   ("small,medium,large" as const).split(",").forEach((key) => {
     const raw = sizes[key];
     if (raw && typeof raw === "object") {
       const price = toNumber(raw.price);
       if (price > 0) {
-        normalized[key] = {
+        const entry: { weight: string; price: number; salePrice?: number } = {
           weight: typeof raw.weight === "string" ? raw.weight.trim() : "",
           price,
         };
+        const salePrice = toNumber(raw.salePrice);
+        if (salePrice > 0 && salePrice < price) entry.salePrice = salePrice;
+        normalized[key] = entry;
       }
     }
   });

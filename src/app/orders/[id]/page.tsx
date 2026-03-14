@@ -34,7 +34,7 @@ interface Order {
 }
 
 export default function OrderDetailsPage() {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const { id } = useParams();
   const searchParams = useSearchParams();
   const guestToken = searchParams.get("guestToken") || "";
@@ -326,9 +326,18 @@ export default function OrderDetailsPage() {
                 <span style={{ color: COLORS.primary }} className="font-bold text-lg">
                   {t("cart.totalPrice")}
                 </span>
-                <span style={{ color: COLORS.primary }} className="font-bold text-2xl">
-                  {CURRENCY_SYMBOL}{order.total.toFixed(2)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span style={{ color: COLORS.primary }} className="font-bold text-2xl">
+                    {CURRENCY_SYMBOL}{order.total.toFixed(2)}
+                  </span>
+                  <Link
+                    href="/shipping-policy"
+                    className="px-2 py-1 rounded-md text-xs font-semibold border"
+                    style={{ borderColor: COLORS.primary, color: COLORS.primary }}
+                  >
+                    {language === "ar" ? "+ سعر التوصيل" : "+ Delivery Price"}
+                  </Link>
+                </div>
               </div>
             </div>
 
