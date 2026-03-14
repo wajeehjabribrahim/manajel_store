@@ -124,6 +124,9 @@ export default function HomeContent() {
         </div>
 
         <div className="text-center mt-10">
+          <p className="text-2xl md:text-3xl font-extrabold mb-3" style={{ color: COLORS.primary }}>
+            {language === "ar" ? "لاستكشاف كل منتجاتنا" : "Explore all our products"}
+          </p>
           <Link
             href={isAdmin ? "/admin" : "/shop"}
             className="inline-block px-10 py-4 text-lg rounded-xl font-bold transition-transform hover:scale-105 shadow-lg hover:shadow-2xl ring-2 ring-red-200"

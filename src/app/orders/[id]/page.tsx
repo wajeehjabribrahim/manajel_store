@@ -343,7 +343,7 @@ export default function OrderDetailsPage() {
 
             <Link
               href="/shop"
-              className="block text-center px-6 py-3 rounded-lg font-semibold mt-6"
+              className="block text-center px-6 py-3 rounded-lg font-semibold mt-2"
               style={{ backgroundColor: COLORS.primary, color: "white" }}
             >
               {t("cart.continueShop")}
