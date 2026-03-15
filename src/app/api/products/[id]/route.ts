@@ -60,6 +60,12 @@ const mapDbProduct = (db: any, language?: string): Product => {
   // استخدام اللغة الإنجليزية إذا كانت متوفرة واللغة المطلوبة هي الإنجليزية
   const name = (language === 'en' && db.nameEn) ? String(db.nameEn) : String(db.name);
   const description = (language === 'en' && db.descriptionEn) ? String(db.descriptionEn) : String(db.description);
+  const ingredients =
+    language === 'en' && db.ingredientsEn
+      ? String(db.ingredientsEn)
+      : db.ingredients
+      ? String(db.ingredients)
+      : undefined;
 
   // Parse images JSON
   let images: string[] = [];
@@ -79,6 +85,8 @@ const mapDbProduct = (db: any, language?: string): Product => {
     category: db.category as Product["category"],
     description,
     descriptionEn: db.descriptionEn ? String(db.descriptionEn) : undefined,
+    ingredients,
+    ingredientsEn: db.ingredientsEn ? String(db.ingredientsEn) : undefined,
     price: Number.isFinite(minPrice) && minPrice !== Infinity ? minPrice : price,
     sizes,
     image: db.imageData ? String(db.imageData) : (db.image ? String(db.image) : ""),
@@ -165,6 +173,8 @@ export async function PUT(
     const nameEn = typeof body?.nameEn === "string" ? body.nameEn.trim() : null;
     const description = typeof body?.description === "string" ? body.description.trim() : "";
     const descriptionEn = typeof body?.descriptionEn === "string" ? body.descriptionEn.trim() : null;
+    const ingredients = typeof body?.ingredients === "string" ? body.ingredients.trim() : null;
+    const ingredientsEn = typeof body?.ingredientsEn === "string" ? body.ingredientsEn.trim() : null;
     const category = typeof body?.category === "string" ? body.category.trim() : "";
     const image = typeof body?.image === "string" ? body.image.trim() : "";
     const imageData = typeof body?.imageData === "string" ? body.imageData.trim() : "";
@@ -191,6 +201,8 @@ export async function PUT(
         nameEn: nameEn !== null && nameEn !== "" ? nameEn : null,
         description,
         descriptionEn: descriptionEn !== null && descriptionEn !== "" ? descriptionEn : null,
+        ingredients: ingredients !== null && ingredients !== "" ? ingredients : null,
+        ingredientsEn: ingredientsEn !== null && ingredientsEn !== "" ? ingredientsEn : null,
         category,
         image: image || null,
         imageData: imageData || null,
@@ -199,7 +211,7 @@ export async function PUT(
         sizes: sizes && Object.keys(sizes).length ? JSON.stringify(sizes) : null,
         featured: Boolean(body?.featured),
         inStock: body?.inStock === false ? false : true,
-      },
+      } as any,
     });
 
     return NextResponse.json({ product: mapDbProduct(updated) }, { status: 200 });

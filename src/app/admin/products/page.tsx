@@ -39,12 +39,15 @@ export default function AdminAddProductPage() {
   const [nameEn, setNameEn] = useState("");
   const [description, setDescription] = useState("");
   const [descriptionEn, setDescriptionEn] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [ingredientsEn, setIngredientsEn] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [category, setCategory] = useState("");
   const [customCategory, setCustomCategory] = useState("");
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
@@ -191,14 +194,18 @@ export default function AdminAddProductPage() {
       }
 
       const sizesPayload = buildSizesPayload();
+      const cleanImageUrl = imageUrl.trim();
       const payload = {
         name: name.trim(),
         nameEn: nameEn.trim() || undefined,
         description: description.trim(),
         descriptionEn: descriptionEn.trim() || undefined,
+        ingredients: ingredients.trim() || undefined,
+        ingredientsEn: ingredientsEn.trim() || undefined,
         category: finalCategory,
         price: Number(price) || 0,
-        imageData,
+        image: imageData ? undefined : cleanImageUrl || undefined,
+        imageData: imageData || undefined,
         images: imagesData.length > 0 ? JSON.stringify(imagesData) : undefined,
         sizes: Object.keys(sizesPayload).length ? sizesPayload : undefined,
         featured,
@@ -223,11 +230,14 @@ export default function AdminAddProductPage() {
       setNameEn("");
       setDescription("");
       setDescriptionEn("");
+      setIngredients("");
+      setIngredientsEn("");
       setCategory(CATEGORIES[0]?.id || "olive-oil");
       setCustomCategory("");
       setShowCustomCategory(false);
       setPrice("");
       setImageFile(null);
+      setImageUrl("");
       setImagePreview(null);
       setImageFiles([]);
       setImagePreviews([]);
@@ -370,6 +380,28 @@ export default function AdminAddProductPage() {
           />
         </div>
 
+        <div>
+          <label className="block text-sm font-semibold mb-2">المكونات (اختياري)</label>
+          <textarea
+            value={ingredients}
+            onChange={(e) => setIngredients(e.target.value)}
+            rows={3}
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="مثال: زيت زيتون بكر 100%"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-2">Ingredients (Optional)</label>
+          <textarea
+            value={ingredientsEn}
+            onChange={(e) => setIngredientsEn(e.target.value)}
+            rows={3}
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="e.g: 100% Extra Virgin Olive Oil"
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-semibold mb-2">السعر الأساسي</label>
@@ -391,6 +423,15 @@ export default function AdminAddProductPage() {
               accept="image/*"
               onChange={(e) => setImageFile(e.target.files?.[0] || null)}
               className="w-full border rounded-lg px-3 py-2"
+            />
+            <p className="text-xs text-gray-500 mt-1">أو أدخل رابط صورة مباشر (اختياري)</p>
+            <input
+              type="url"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2 mt-2"
+              placeholder="https://example.com/product.webp"
+              dir="ltr"
             />
           </div>
         </div>

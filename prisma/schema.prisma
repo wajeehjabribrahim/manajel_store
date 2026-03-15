@@ -95,6 +95,8 @@ model Product {
   nameEn        String?
   description   String
   descriptionEn String?
+  ingredients   String?
+  ingredientsEn String?
   category      String
   price         Float
   image         String?

@@ -16,6 +16,8 @@ export interface Product {
   category: Category;
   description: string;
   descriptionEn?: string;
+  ingredients?: string;
+  ingredientsEn?: string;
   price: number;
   sizes: {
     small?: { weight: string; price: number; salePrice?: number };

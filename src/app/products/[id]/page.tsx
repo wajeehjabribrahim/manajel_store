@@ -344,6 +344,18 @@ export default function ProductPage({ params }: PageProps) {
             {/* Description */}
             <p className="text-gray-700 mb-6">{description}</p>
 
+            {product.ingredients && (
+              <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: "white" }}>
+                <h3
+                  style={{ color: COLORS.primary }}
+                  className="font-bold text-lg mb-2"
+                >
+                  {language === "ar" ? "المكونات" : "Ingredients"}
+                </h3>
+                <p className="text-gray-700 whitespace-pre-line">{product.ingredients}</p>
+              </div>
+            )}
+
             {/* Size Selection */}
             <div className="mb-6">
               <h3
@@ -588,7 +600,7 @@ export default function ProductPage({ params }: PageProps) {
           dir={language === "ar" ? "rtl" : "ltr"}
         >
           <h3 className="text-lg font-bold mb-1" style={{ color: COLORS.primary }}>
-            {language === "ar" ? "🔔 إشعارني عند التوفر" : "🔔 Notify Me When Available"}
+            {language === "ar" ? "🔔 قم بإشعاري عند التوفر" : "🔔 Notify Me When Available"}
           </h3>
           <p className="text-gray-500 text-xs mb-4">{name}</p>
 
@@ -606,7 +618,7 @@ export default function ProductPage({ params }: PageProps) {
                   setWhatsappInput("");
                 }
               }}
-              placeholder={language === "ar" ? "05XXXXXXXX" : "+970 5XXXXXXXX"}
+              placeholder={language === "ar" ? "+970 5XXXXXXXX" : "+970 5XXXXXXXX"}
               className="flex-1 border-2 rounded-xl px-4 py-3 text-lg focus:outline-none"
               style={{ borderColor: COLORS.primary }}
               dir="ltr"

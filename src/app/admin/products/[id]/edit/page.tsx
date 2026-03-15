@@ -41,6 +41,8 @@ export default function AdminEditProductPage() {
   const [nameEn, setNameEn] = useState("");
   const [description, setDescription] = useState("");
   const [descriptionEn, setDescriptionEn] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [ingredientsEn, setIngredientsEn] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
@@ -92,6 +94,8 @@ export default function AdminEditProductPage() {
             setNameEn(product.nameEn || "");
             setDescription(product.description || "");
             setDescriptionEn(product.descriptionEn || "");
+            setIngredients(product.ingredients || "");
+            setIngredientsEn(product.ingredientsEn || "");
             setCategory(product.category || CATEGORIES[0]?.id);
             setPrice(String(product.price || ""));
             setExistingImage(product.image || null);
@@ -229,6 +233,8 @@ export default function AdminEditProductPage() {
         nameEn: nameEn.trim() || undefined,
         description: description.trim(),
         descriptionEn: descriptionEn.trim() || undefined,
+        ingredients: ingredients.trim() || undefined,
+        ingredientsEn: ingredientsEn.trim() || undefined,
         category,
         price: Number(price) || 0,
         imageData,
@@ -350,6 +356,28 @@ export default function AdminEditProductPage() {
             rows={4}
             className="w-full border rounded-lg px-3 py-2"
             placeholder="Write a brief description in English"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-2">المكونات (اختياري)</label>
+          <textarea
+            value={ingredients}
+            onChange={(e) => setIngredients(e.target.value)}
+            rows={3}
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="مثال: زيت زيتون بكر 100%"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold mb-2">Ingredients (Optional)</label>
+          <textarea
+            value={ingredientsEn}
+            onChange={(e) => setIngredientsEn(e.target.value)}
+            rows={3}
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="e.g: 100% Extra Virgin Olive Oil"
           />
         </div>
 
