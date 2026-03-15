@@ -135,3 +135,12 @@ model NewsletterSubscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 }
+
+model StockNotification {
+  id          String   @id @default(cuid())
+  productId   String
+  productName String?
+  whatsapp    String
+  notified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}

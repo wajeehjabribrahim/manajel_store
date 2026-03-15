@@ -95,6 +95,13 @@ export default function AdminDashboard() {
       href: "/admin/subscribers",
       color: "from-emerald-500 to-emerald-600",
     },
+    {
+      title: "طلبات الإشعار عند التوفر",
+      description: "عرض أرقام العملاء الذين طلبوا إشعارهم عند توفر منتج",
+      icon: "🔔",
+      href: "/admin/notifications",
+      color: "from-yellow-500 to-yellow-600",
+    },
   ];
 
   return (

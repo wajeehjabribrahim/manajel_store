@@ -4,6 +4,23 @@ import { prisma } from "@/lib/prisma";
 import { decryptData } from "@/lib/encryption";
 import { requireAdminAccess } from "@/lib/adminAuth";
 
+function isEncryptedLike(value: string): boolean {
+  return /^[a-fA-F0-9]{32}:[a-fA-F0-9]+$/.test(value);
+}
+
+function safeDecryptOptional(value: string | null): string | null {
+  if (!value) return value;
+
+  const decrypted = decryptData(value);
+
+  // If it still looks like ciphertext after decrypt attempt, hide it.
+  if (isEncryptedLike(decrypted)) {
+    return null;
+  }
+
+  return decrypted;
+}
+
 export async function GET(request: NextRequest) {
   // CORS preflight
   // @ts-ignore
@@ -70,8 +87,8 @@ export async function GET(request: NextRequest) {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      city: user.city ? decryptData(user.city) : user.city,
-      address: user.address ? decryptData(user.address) : user.address,
+      city: safeDecryptOptional(user.city),
+      address: safeDecryptOptional(user.address),
       role: user.role,
       createdAt: user.createdAt,
       hasPassword: Boolean(user.password),

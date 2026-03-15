@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
+import { CATEGORIES } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   DndContext,
@@ -31,13 +32,20 @@ interface Product {
   displayOrder: number;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  nameAr: string;
+}
+
 interface SortableRowProps {
   product: Product;
+  categoryLabel: string;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-function SortableRow({ product, onEdit, onDelete }: SortableRowProps) {
+function SortableRow({ product, categoryLabel, onEdit, onDelete }: SortableRowProps) {
   const {
     attributes,
     listeners,
@@ -82,7 +90,7 @@ function SortableRow({ product, onEdit, onDelete }: SortableRowProps) {
         <div className="text-sm font-medium text-gray-900">{product.name}</div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-500">{product.category}</div>
+        <div className="text-sm text-gray-500">{categoryLabel}</div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-sm text-gray-900">{CURRENCY_SYMBOL}{product.price.toFixed(2)}</div>
@@ -108,9 +116,10 @@ function SortableRow({ product, onEdit, onDelete }: SortableRowProps) {
 }
 
 export default function ManageProductsPage() {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -124,7 +133,50 @@ export default function ManageProductsPage() {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch("/api/categories");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setCategories(data);
+          return;
+        }
+      }
+
+      const fallbackCategories = CATEGORIES.map((c) => ({
+        id: c.id,
+        name: c.name,
+        nameAr: c.name,
+      }));
+      setCategories(fallbackCategories);
+    } catch {
+      const fallbackCategories = CATEGORIES.map((c) => ({
+        id: c.id,
+        name: c.name,
+        nameAr: c.name,
+      }));
+      setCategories(fallbackCategories);
+    }
+  };
+
+  const getCategoryLabel = (categoryValue: string) => {
+    const match = categories.find(
+      (c) =>
+        c.id === categoryValue ||
+        c.name === categoryValue ||
+        c.nameAr === categoryValue
+    );
+
+    if (match) {
+      return language === "ar" ? (match.nameAr || match.name) : match.name;
+    }
+
+    return categoryValue;
+  };
 
   const fetchProducts = async () => {
     try {
@@ -283,6 +335,7 @@ export default function ManageProductsPage() {
                       <SortableRow
                         key={product.id}
                         product={product}
+                        categoryLabel={getCategoryLabel(product.category)}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                       />

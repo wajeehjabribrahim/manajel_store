@@ -25,6 +25,8 @@ export default function ProductPage({ params }: PageProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [showNotifyModal, setShowNotifyModal] = useState(false);
+  const [whatsappInput, setWhatsappInput] = useState("");
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -239,7 +241,8 @@ export default function ProductPage({ params }: PageProps) {
   }
 
   return (
-    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
+    <>
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-600">
         <Link href="/shop" className="hover:underline" style={{ color: COLORS.primary }}>
@@ -464,11 +467,22 @@ export default function ProductPage({ params }: PageProps) {
             {/* Add to Cart Button */}
             <button
               className="w-full py-3 rounded-lg font-bold text-white text-lg transition-opacity hover:opacity-90 mb-4 disabled:opacity-50"
-              style={{ backgroundColor: COLORS.primary }}
-              onClick={handleAddToCart}
-              disabled={isAdding || !product.inStock}
+              style={{ backgroundColor: product.inStock ? COLORS.primary : "#d97706" }}
+              onClick={() => {
+                if (!product.inStock) {
+                  setWhatsappInput("");
+                  setShowNotifyModal(true);
+                } else {
+                  handleAddToCart();
+                }
+              }}
+              disabled={isAdding}
             >
-              {isAdding ? t("product.adding") : t("product.addToCart")}
+              {isAdding
+                ? t("product.adding")
+                : !product.inStock
+                ? (language === "ar" ? "🔔 إرسال إشعار عند التوفر" : "🔔 Notify When Available")
+                : t("product.addToCart")}
             </button>
 
             <div className="flex gap-3 mb-4">
@@ -555,5 +569,80 @@ export default function ProductPage({ params }: PageProps) {
         </div>
       </div>
     </div>
+
+    {/* WhatsApp Notify Modal */}
+    {showNotifyModal && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center px-4"
+        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setShowNotifyModal(false);
+            setWhatsappInput("");
+          }
+        }}
+      >
+        <div
+          className="bg-white rounded-2xl p-6 w-full shadow-2xl"
+          style={{ maxWidth: 360 }}
+          dir={language === "ar" ? "rtl" : "ltr"}
+        >
+          <h3 className="text-lg font-bold mb-1" style={{ color: COLORS.primary }}>
+            {language === "ar" ? "🔔 إشعارني عند التوفر" : "🔔 Notify Me When Available"}
+          </h3>
+          <p className="text-gray-500 text-xs mb-4">{name}</p>
+
+          <label className="block text-sm font-semibold mb-2" style={{ color: COLORS.primary }}>
+            {language === "ar" ? "رقم الواتساب" : "WhatsApp Number"}
+          </label>
+          <div className="flex gap-2 mb-5" dir="ltr">
+            <input
+              type="tel"
+              value={whatsappInput}
+              onChange={(e) => setWhatsappInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && whatsappInput.trim().length >= 7) {
+                  setShowNotifyModal(false);
+                  setWhatsappInput("");
+                }
+              }}
+              placeholder={language === "ar" ? "05XXXXXXXX" : "+970 5XXXXXXXX"}
+              className="flex-1 border-2 rounded-xl px-4 py-3 text-lg focus:outline-none"
+              style={{ borderColor: COLORS.primary }}
+              dir="ltr"
+              autoFocus
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              disabled={whatsappInput.trim().length < 7}
+              onClick={async () => {
+                const phone = whatsappInput.trim();
+                await fetch(`/api/products/${product.id}/notify`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ whatsapp: phone }),
+                });
+                setShowNotifyModal(false);
+                setWhatsappInput("");
+              }}
+              className="flex-1 py-3 rounded-xl font-bold text-white disabled:opacity-40"
+              style={{ backgroundColor: COLORS.primary }}
+            >
+              {language === "ar" ? "✔ تأكيد" : "✔ Confirm"}
+            </button>
+            <button
+              onClick={() => { setShowNotifyModal(false); setWhatsappInput(""); }}
+              className="flex-1 py-3 rounded-xl font-bold border-2 hover:bg-gray-50"
+              style={{ color: COLORS.primary, borderColor: COLORS.primary }}
+            >
+              {language === "ar" ? "إلغاء" : "Cancel"}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

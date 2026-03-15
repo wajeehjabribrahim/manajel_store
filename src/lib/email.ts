@@ -203,3 +203,51 @@ export async function sendOrderCancellationNotification(
     throw error;
   }
 }
+
+export async function sendStockRequestNotification(
+  data: {
+    productId: string;
+    productName?: string | null;
+    whatsapp: string;
+    requestedAt: Date;
+  }
+) {
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
+  const adminNotificationsUrl = "https://www.mnajel.com/admin/notifications";
+  const productUrl = `https://www.mnajel.com/products/${data.productId}`;
+  const productName = data.productName?.trim() || "منتج غير محدد";
+
+  try {
+    await resend.emails.send({
+      from: 'Manajel Store <info@manajel.works>',
+      to: adminEmails,
+      subject: `🔔 طلب إشعار عند التوفر - ${productName}`,
+      html: `
+        <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2d5016; text-align: center;">🔔 طلب إشعار جديد عند التوفر</h2>
+          <p>قام أحد المستخدمين بطلب إشعار عند توفر منتج:</p>
+
+          <div style="padding: 14px; background: #f0fdf4; border-right: 4px solid #22c55e; margin: 16px 0;">
+            <p><strong>المنتج:</strong> ${productName}</p>
+            <p><strong>رقم الواتساب:</strong> ${data.whatsapp}</p>
+            <p><strong>التاريخ:</strong> ${new Date(data.requestedAt).toLocaleString('ar-PS')}</p>
+          </div>
+
+          <p style="text-align: center; margin-top: 20px;">
+            <a href="${adminNotificationsUrl}" style="background-color: #2d5016; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-left: 8px;">
+              فتح طلبات الإشعارات
+            </a>
+            <a href="${productUrl}" style="background-color: #1d4ed8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+              فتح صفحة المنتج
+            </a>
+          </p>
+        </div>
+      `,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Stock request email error:', error);
+    throw error;
+  }
+}

@@ -514,7 +514,7 @@ export const translations = {
     // Shop Page
     shop: {
       title: "منتجاتنا",
-      subtitle: "منتجات فلسطينية أصلية من سلفيت",
+      subtitle: "منتجات فلسطينية أصيلة من سلفيت",
       categories: "الفئات",
       allProducts: "جميع المنتجات",
       products: "منتجات",
