@@ -619,7 +619,7 @@ export default function ProductPage({ params }: PageProps) {
                 }
               }}
               placeholder={language === "ar" ? "+970 5XXXXXXXX" : "+970 5XXXXXXXX"}
-              className="flex-1 border-2 rounded-xl px-4 py-3 text-lg focus:outline-none"
+              className="flex-1 border-2 rounded-xl px-4 py-3 text-lg text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none"
               style={{ borderColor: COLORS.primary }}
               dir="ltr"
               autoFocus
