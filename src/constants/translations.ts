@@ -294,7 +294,7 @@ export const translations = {
       q9: "How should I store the products?",
       a9: "Store in cool, dry places away from direct sunlight. Oils should be kept away from heat sources. Dried products last 1-2 years when properly stored.",
       q10: "Can I track my order?",
-      a10: "Yes! Once shipped, you'll receive a tracking number via email to monitor your package in real-time.",
+      a10: "After confirming your order, you will be redirected to an order tracking page where you can monitor its status (Pending, Processing, Shipped, Delivered, Cancelled).",
     },
     // Policy Pages
     policies: {
