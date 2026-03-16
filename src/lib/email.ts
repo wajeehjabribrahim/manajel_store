@@ -74,7 +74,36 @@ export async function sendContactNotification(
     message: string;
   }
 ) {
+  const adminMessagesUrl = "https://www.mnajel.com/admin/messages";
+
   try {
+    await resend.emails.send({
+      from: 'Manajel Store <info@manajel.works>',
+      to: adminEmails,
+      subject: `📩 رسالة جديدة من ${contactData.name}`,
+      html: `
+        <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2d5016; text-align: center;">📩 رسالة جديدة وصلت!</h2>
+          <p>لديك رسالة تواصل جديدة تحتاج المراجعة</p>
+
+          <h3 style="color: #2d5016; margin-top: 20px;">بيانات المرسل:</h3>
+          <p><strong>الاسم:</strong> ${contactData.name}</p>
+          <p><strong>البريد الإلكتروني:</strong> ${contactData.email}</p>
+
+          <h3 style="color: #2d5016; margin-top: 20px;">الرسالة:</h3>
+          <div style="padding: 15px; background-color: #f9f9f9; border-right: 3px solid #2d5016; margin: 10px 0; white-space: pre-wrap;">
+            ${contactData.message}
+          </div>
+
+          <p style="text-align: center; margin-top: 25px;">
+            <a href="${adminMessagesUrl}" style="background-color: #2d5016; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+              عرض الرسائل في لوحة التحكم
+            </a>
+          </p>
+        </div>
+      `,
+    });
+
     return { success: true };
   } catch (error) {
     console.error('Email send error:', error);
