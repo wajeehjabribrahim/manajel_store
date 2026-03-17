@@ -7,6 +7,7 @@ import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { Product } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
+import { getProductSizeLabel } from "@/lib/productSizes";
 
 interface CartItem {
   id: string;
@@ -168,12 +169,7 @@ export default function Cart() {
   };
 
   const sizeLabel = (size: string) => {
-    const sizeMap: { [key: string]: string } = {
-      small: t("product.small"),
-      medium: t("product.medium"),
-      large: t("product.large"),
-    };
-    return sizeMap[size] || size;
+    return getProductSizeLabel(size, undefined, t);
   };
 
   if (isLoading) {
@@ -452,6 +448,7 @@ export default function Cart() {
                   const productName = product?.name || item.name;
                   const productImage = product?.image || item.image || "";
                   const productPrice = getResolvedPrice(item);
+                  const productSizeLabel = getProductSizeLabel(item.size, product?.sizes, t);
                   return (
                   <div
                     key={`${item.id}-${item.size}`}
@@ -499,7 +496,7 @@ export default function Cart() {
                         {productName}
                       </h3>
                       <p className="text-gray-900 text-sm mb-4">
-                        {t("cart.size")}: <span className="font-semibold">{sizeLabel(item.size)}</span>
+                        {t("cart.size")}: <span className="font-semibold">{productSizeLabel || sizeLabel(item.size)}</span>
                       </p>
 
                       {/* Quantity Controls */}

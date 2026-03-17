@@ -1,3 +1,5 @@
+import { ProductSizes } from "@/lib/productSizes";
+
 // Product categories
 export type Category =
   | "olive-oil"
@@ -19,11 +21,7 @@ export interface Product {
   ingredients?: string;
   ingredientsEn?: string;
   price: number;
-  sizes: {
-    small?: { weight: string; price: number; salePrice?: number };
-    medium?: { weight: string; price: number; salePrice?: number };
-    large?: { weight: string; price: number; salePrice?: number };
-  };
+  sizes: ProductSizes;
   image: string;
   images?: string[];
   featured: boolean;

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { CATEGORIES } from "@/constants/products";
 import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SIZE_KEYS, SizeKey, getFallbackSizeLabel } from "@/lib/productSizes";
 
 interface Category {
   id: string;
@@ -14,6 +15,7 @@ interface Category {
 
 interface SizeState {
   enabled: boolean;
+  label: string;
   weight: string;
   price: string;
   salePrice: string;
@@ -36,6 +38,11 @@ export default function AdminEditProductPage() {
   const { t, dir } = useLanguage();
   const router = useRouter();
   const { id } = useParams();
+  const initialSizes = (): Record<SizeKey, SizeState> => ({
+    small: { enabled: false, label: "", weight: "", price: "", salePrice: "" },
+    medium: { enabled: true, label: "", weight: "", price: "", salePrice: "" },
+    large: { enabled: false, label: "", weight: "", price: "", salePrice: "" },
+  });
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [nameEn, setNameEn] = useState("");
@@ -54,11 +61,7 @@ export default function AdminEditProductPage() {
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [featured, setFeatured] = useState(false);
   const [inStock, setInStock] = useState(true);
-  const [sizes, setSizes] = useState<Record<"small" | "medium" | "large", SizeState>>({
-    small: { enabled: false, weight: "", price: "", salePrice: "" },
-    medium: { enabled: true, weight: "", price: "", salePrice: "" },
-    large: { enabled: false, weight: "", price: "", salePrice: "" },
-  });
+  const [sizes, setSizes] = useState<Record<SizeKey, SizeState>>(initialSizes);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -104,11 +107,12 @@ export default function AdminEditProductPage() {
             setInStock(Boolean(product.inStock));
 
             if (product.sizes && typeof product.sizes === "object") {
-              const newSizes = { ...sizes };
-              (Object.keys(newSizes) as Array<"small" | "medium" | "large">).forEach((key) => {
+              const newSizes = initialSizes();
+              SIZE_KEYS.forEach((key) => {
                 if (product.sizes[key]) {
                   newSizes[key] = {
                     enabled: true,
+                    label: product.sizes[key].label || "",
                     weight: product.sizes[key].weight || "",
                     price: String(product.sizes[key].price || ""),
                     salePrice: String(product.sizes[key].salePrice || ""),
@@ -155,15 +159,19 @@ export default function AdminEditProductPage() {
   }, [imageFiles]);
 
   const buildSizesPayload = () => {
-    const payload: Record<string, { weight: string; price: number; salePrice?: number }> = {};
-    (Object.keys(sizes) as Array<"small" | "medium" | "large">).forEach((key) => {
+    const payload: Record<string, { label?: string; weight: string; price: number; salePrice?: number }> = {};
+    SIZE_KEYS.forEach((key) => {
       const size = sizes[key];
       const numericPrice = Number(size.price);
       if (size.enabled && Number.isFinite(numericPrice) && numericPrice > 0) {
-        const entry: { weight: string; price: number; salePrice?: number } = {
+        const entry: { label?: string; weight: string; price: number; salePrice?: number } = {
           weight: size.weight.trim(),
           price: numericPrice,
         };
+        const customLabel = size.label.trim();
+        if (customLabel) {
+          entry.label = customLabel;
+        }
         const numericSalePrice = Number(size.salePrice);
         if (size.salePrice && Number.isFinite(numericSalePrice) && numericSalePrice > 0 && numericSalePrice < numericPrice) {
           entry.salePrice = numericSalePrice;
@@ -268,7 +276,7 @@ export default function AdminEditProductPage() {
     }
   };
 
-  const updateSize = (key: "small" | "medium" | "large", patch: Partial<SizeState>) => {
+  const updateSize = (key: SizeKey, patch: Partial<SizeState>) => {
     setSizes((prev) => ({
       ...prev,
       [key]: { ...prev[key], ...patch },
@@ -500,7 +508,7 @@ export default function AdminEditProductPage() {
             الأحجام (اختياري)
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {(Object.keys(sizes) as Array<"small" | "medium" | "large">).map((key) => (
+            {SIZE_KEYS.map((key) => (
               <div key={key} className="border rounded-lg p-4">
                 <label className="flex items-center gap-2 mb-3">
                   <input
@@ -509,11 +517,17 @@ export default function AdminEditProductPage() {
                     onChange={(e) => updateSize(key, { enabled: e.target.checked })}
                   />
                   <span className="font-semibold">
-                    {t(`product.${key}`) === `product.${key}`
-                      ? key
-                      : t(`product.${key}`)}
+                    {getFallbackSizeLabel(key, t)}
                   </span>
                 </label>
+                <input
+                  type="text"
+                  value={sizes[key].label}
+                  onChange={(e) => updateSize(key, { label: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2 mb-2"
+                  placeholder={`اسم الحجم المعروض (${getFallbackSizeLabel(key, t)})`}
+                  disabled={!sizes[key].enabled}
+                />
                 <input
                   type="text"
                   value={sizes[key].weight}

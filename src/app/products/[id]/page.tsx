@@ -9,6 +9,7 @@ import { PRODUCTS, Product } from "@/constants/products";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
+import { DEFAULT_SIZE_KEY, ProductSize, SizeKey, getProductSizeLabel } from "@/lib/productSizes";
 
 interface PageProps {
   params: {
@@ -21,7 +22,7 @@ export default function ProductPage({ params }: PageProps) {
   const { t, language } = useLanguage();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("medium");
+  const [selectedSize, setSelectedSize] = useState<SizeKey>(DEFAULT_SIZE_KEY);
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
@@ -57,7 +58,7 @@ export default function ProductPage({ params }: PageProps) {
 
   useEffect(() => {
     if (!product) return;
-    const availableSizes = (Object.keys(product.sizes || {}) as Array<"small" | "medium" | "large">)
+    const availableSizes = (Object.keys(product.sizes || {}) as SizeKey[])
       .filter((key) => product.sizes?.[key]?.price);
     if (availableSizes.length && !availableSizes.includes(selectedSize)) {
       setSelectedSize(availableSizes[0]);
@@ -71,13 +72,13 @@ export default function ProductPage({ params }: PageProps) {
     
     // Add item to cart
     const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
-      "small" | "medium" | "large",
-      { weight: string; price: number }
+      SizeKey,
+      ProductSize
     ]>).filter(([, value]) => value?.price);
 
     const fallbackSize = sizeEntries.length
       ? sizeEntries[0][0]
-      : "medium";
+      : DEFAULT_SIZE_KEY;
     const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
     const rawPrice = product.sizes?.[activeSize]?.price ?? product.price;
     const price = product.sizes?.[activeSize]?.salePrice ?? rawPrice;
@@ -210,13 +211,13 @@ export default function ProductPage({ params }: PageProps) {
   }
 
   const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
-    "small" | "medium" | "large",
-    { weight: string; price: number }
+    SizeKey,
+    ProductSize
   ]>).filter(([, value]) => value?.price);
 
   const fallbackSize = sizeEntries.length
     ? sizeEntries[0][0]
-    : "medium";
+    : DEFAULT_SIZE_KEY;
   const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
   const currentSize = product.sizes?.[activeSize] || { weight: "", price: product.price };
 
@@ -365,7 +366,7 @@ export default function ProductPage({ params }: PageProps) {
                 {t("product.selectSize")}
               </h3>
               <div className="grid grid-cols-3 gap-3">
-                {(sizeEntries.length ? sizeEntries.map(([size]) => size) : (["medium"] as const)).map((size) => (
+                {(sizeEntries.length ? sizeEntries.map(([size]) => size) : ([DEFAULT_SIZE_KEY] as const)).map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -383,7 +384,7 @@ export default function ProductPage({ params }: PageProps) {
                       style={{ color: COLORS.primary }}
                       className="font-bold capitalize"
                     >
-                      {t(`product.${size}`)}
+                      {getProductSizeLabel(size, product.sizes, t)}
                     </div>
                     <div className="text-xs text-gray-600">
                       {product.sizes?.[size]?.weight || ""}

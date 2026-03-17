@@ -3,6 +3,7 @@ import { corsMiddleware, applyCorsHeaders } from "@/lib/cors";
 import { prisma } from "@/lib/prisma";
 import { PRODUCTS, Product } from "@/constants/products";
 import { requireAdminAccess } from "@/lib/adminAuth";
+import { ProductSizes, SIZE_KEYS } from "@/lib/productSizes";
 
 const toNumber = (value: unknown) => {
   const num = Number(value);
@@ -16,16 +17,19 @@ const normalizeSizes = (sizes: any, fallbackPrice: number) => {
       : undefined;
   }
 
-  const normalized: Record<string, { weight: string; price: number; salePrice?: number }> = {};
-  ("small,medium,large" as const).split(",").forEach((key) => {
+  const normalized: ProductSizes = {};
+  SIZE_KEYS.forEach((key) => {
     const raw = sizes[key];
     if (raw && typeof raw === "object") {
       const price = toNumber(raw.price);
       if (price > 0) {
-        const entry: { weight: string; price: number; salePrice?: number } = {
+        const entry: { label?: string; weight: string; price: number; salePrice?: number } = {
           weight: typeof raw.weight === "string" ? raw.weight.trim() : "",
           price,
         };
+        if (typeof raw.label === "string" && raw.label.trim()) {
+          entry.label = raw.label.trim();
+        }
         const salePrice = toNumber(raw.salePrice);
         if (salePrice > 0 && salePrice < price) entry.salePrice = salePrice;
         normalized[key] = entry;
