@@ -24,12 +24,15 @@ const normalizeSizes = (sizes: any, fallbackPrice: number) => {
     if (raw && typeof raw === "object") {
       const price = toNumber(raw.price);
       if (price > 0) {
-        const entry: { label?: string; weight: string; price: number; salePrice?: number } = {
+        const entry: { label?: string; labelEn?: string; weight: string; price: number; salePrice?: number } = {
           weight: typeof raw.weight === "string" ? raw.weight.trim() : "",
           price,
         };
         if (typeof raw.label === "string" && raw.label.trim()) {
           entry.label = raw.label.trim();
+        }
+        if (typeof raw.labelEn === "string" && raw.labelEn.trim()) {
+          entry.labelEn = raw.labelEn.trim();
         }
         const salePrice = toNumber(raw.salePrice);
         if (salePrice > 0 && salePrice < price) entry.salePrice = salePrice;

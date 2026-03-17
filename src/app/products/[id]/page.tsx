@@ -384,7 +384,7 @@ export default function ProductPage({ params }: PageProps) {
                       style={{ color: COLORS.primary }}
                       className="font-bold capitalize"
                     >
-                      {getProductSizeLabel(size, product.sizes, t)}
+                      {getProductSizeLabel(size, product.sizes, t, language)}
                     </div>
                     <div className="text-xs text-gray-600">
                       {product.sizes?.[size]?.weight || ""}

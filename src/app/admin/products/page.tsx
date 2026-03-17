@@ -16,6 +16,7 @@ interface Category {
 interface SizeState {
   enabled: boolean;
   label: string;
+  labelEn: string;
   weight: string;
   price: string;
   salePrice: string;
@@ -38,9 +39,9 @@ export default function AdminAddProductPage() {
   const { t, dir } = useLanguage();
   const router = useRouter();
   const initialSizes = (): Record<SizeKey, SizeState> => ({
-    small: { enabled: false, label: "", weight: "", price: "", salePrice: "" },
-    medium: { enabled: true, label: "", weight: "", price: "", salePrice: "" },
-    large: { enabled: false, label: "", weight: "", price: "", salePrice: "" },
+    small: { enabled: false, label: "", labelEn: "", weight: "", price: "", salePrice: "" },
+    medium: { enabled: true, label: "", labelEn: "", weight: "", price: "", salePrice: "" },
+    large: { enabled: false, label: "", labelEn: "", weight: "", price: "", salePrice: "" },
   });
   const [name, setName] = useState("");
   const [nameEn, setNameEn] = useState("");
@@ -121,18 +122,22 @@ export default function AdminAddProductPage() {
   }, [imageFiles]);
 
   const buildSizesPayload = () => {
-    const payload: Record<string, { label?: string; weight: string; price: number; salePrice?: number }> = {};
+    const payload: Record<string, { label?: string; labelEn?: string; weight: string; price: number; salePrice?: number }> = {};
     SIZE_KEYS.forEach((key) => {
       const size = sizes[key];
       const numericPrice = Number(size.price);
       if (size.enabled && Number.isFinite(numericPrice) && numericPrice > 0) {
-        const entry: { label?: string; weight: string; price: number; salePrice?: number } = {
+        const entry: { label?: string; labelEn?: string; weight: string; price: number; salePrice?: number } = {
           weight: size.weight.trim(),
           price: numericPrice,
         };
         const customLabel = size.label.trim();
         if (customLabel) {
           entry.label = customLabel;
+        }
+        const customLabelEn = size.labelEn.trim();
+        if (customLabelEn) {
+          entry.labelEn = customLabelEn;
         }
         const numericSalePrice = Number(size.salePrice);
         if (size.salePrice && Number.isFinite(numericSalePrice) && numericSalePrice > 0 && numericSalePrice < numericPrice) {
@@ -519,7 +524,15 @@ export default function AdminAddProductPage() {
                   value={sizes[key].label}
                   onChange={(e) => updateSize(key, { label: e.target.value })}
                   className="w-full border rounded-lg px-3 py-2 mb-2"
-                  placeholder={`اسم الحجم المعروض (${getFallbackSizeLabel(key, t)})`}
+                  placeholder={`اسم الحجم بالعربي (${getFallbackSizeLabel(key, t)})`}
+                  disabled={!sizes[key].enabled}
+                />
+                <input
+                  type="text"
+                  value={sizes[key].labelEn}
+                  onChange={(e) => updateSize(key, { labelEn: e.target.value })}
+                  className="w-full border rounded-lg px-3 py-2 mb-2"
+                  placeholder={`Size name in English (${key})`}
                   disabled={!sizes[key].enabled}
                 />
                 <input

@@ -169,7 +169,7 @@ export default function Cart() {
   };
 
   const sizeLabel = (size: string) => {
-    return getProductSizeLabel(size, undefined, t);
+    return getProductSizeLabel(size, undefined, t, language);
   };
 
   if (isLoading) {
@@ -448,7 +448,7 @@ export default function Cart() {
                   const productName = product?.name || item.name;
                   const productImage = product?.image || item.image || "";
                   const productPrice = getResolvedPrice(item);
-                  const productSizeLabel = getProductSizeLabel(item.size, product?.sizes, t);
+                  const productSizeLabel = getProductSizeLabel(item.size, product?.sizes, t, language);
                   return (
                   <div
                     key={`${item.id}-${item.size}`}

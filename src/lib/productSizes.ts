@@ -6,6 +6,7 @@ export const DEFAULT_SIZE_KEY: SizeKey = "medium";
 
 export interface ProductSize {
   label?: string;
+  labelEn?: string;
   weight: string;
   price: number;
   salePrice?: number;
@@ -24,10 +25,14 @@ export const getFallbackSizeLabel = (
 
 export const getProductSizeLabel = (
   size: string,
-  sizes?: Record<string, { label?: string } | undefined> | null,
-  t?: (key: string) => string
+  sizes?: Record<string, { label?: string; labelEn?: string } | undefined> | null,
+  t?: (key: string) => string,
+  language?: string
 ) => {
-  const customLabel = sizes?.[size]?.label?.trim();
+  const customLabel =
+    language === "en"
+      ? sizes?.[size]?.labelEn?.trim() || sizes?.[size]?.label?.trim()
+      : sizes?.[size]?.label?.trim() || sizes?.[size]?.labelEn?.trim();
   return customLabel || getFallbackSizeLabel(size, t);
 };
 
