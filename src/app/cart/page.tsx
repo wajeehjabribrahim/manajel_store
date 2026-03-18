@@ -70,7 +70,9 @@ export default function Cart() {
 
     const loadProducts = async () => {
       try {
-        const res = await fetch(`/api/products?lang=${language}`);
+        const res = await fetch(`/api/products?lang=${language}&_ts=${Date.now()}`, {
+          cache: "no-store",
+        });
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data?.products) && mounted) {
@@ -104,6 +106,22 @@ export default function Cart() {
       setIsLoading(false);
     }
   }, [productsLoaded]);
+
+  // Auto-remove out-of-stock items whenever fresh product data is available
+  useEffect(() => {
+    if (!productsLoaded) return;
+
+    setCartItems((prev) => {
+      if (!prev.length) return prev;
+
+      const next = prev.filter((item) => {
+        const product = productMap[item.id];
+        return product?.inStock !== false;
+      });
+
+      return next.length === prev.length ? prev : next;
+    });
+  }, [productsLoaded, productMap]);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
