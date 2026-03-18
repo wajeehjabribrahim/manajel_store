@@ -279,6 +279,37 @@ export default function Cart() {
     setOrderError("");
     setOrderLoading(true);
 
+    // Refresh stock status before creating order, then remove unavailable items from cart
+    try {
+      const latestProductsRes = await fetch(`/api/products?lang=${language}`, { cache: "no-store" });
+      if (latestProductsRes.ok) {
+        const latestData = await latestProductsRes.json();
+        if (Array.isArray(latestData?.products)) {
+          const latestMap = (latestData.products as Product[]).reduce<Record<string, Product>>((acc, item) => {
+            acc[item.id] = item;
+            return acc;
+          }, {});
+
+          setProductMap(latestMap);
+
+          const unavailableItems = cartItems.filter((item) => latestMap[item.id]?.inStock === false);
+          if (unavailableItems.length > 0) {
+            const availableItems = cartItems.filter((item) => latestMap[item.id]?.inStock !== false);
+            setCartItems(availableItems);
+            setOrderError(
+              language === "ar"
+                ? "تم حذف المنتجات غير المتوفرة من السلة. يرجى مراجعة السلة ثم إعادة التأكيد."
+                : "Out-of-stock items were removed from your cart. Please review your cart and confirm again."
+            );
+            setOrderLoading(false);
+            return;
+          }
+        }
+      }
+    } catch {
+      // If stock refresh fails, continue with server-side validation
+    }
+
     const payload = {
       items: cartItems.map((item) => {
         const product = productMap[item.id];
