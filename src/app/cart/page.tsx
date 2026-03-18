@@ -279,28 +279,36 @@ export default function Cart() {
     setOrderError("");
     setOrderLoading(true);
 
+    const removeUnavailableItems = (latestProducts: Product[]) => {
+      const latestMap = latestProducts.reduce<Record<string, Product>>((acc, item) => {
+        acc[item.id] = item;
+        return acc;
+      }, {});
+
+      setProductMap(latestMap);
+
+      const unavailableItems = cartItems.filter((item) => latestMap[item.id]?.inStock === false);
+      if (!unavailableItems.length) {
+        return false;
+      }
+
+      const availableItems = cartItems.filter((item) => latestMap[item.id]?.inStock !== false);
+      setCartItems(availableItems);
+      setOrderError(
+        language === "ar"
+          ? "تم حذف المنتجات غير المتوفرة من السلة. يرجى مراجعة السلة ثم إعادة التأكيد."
+          : "Out-of-stock items were removed from your cart. Please review your cart and confirm again."
+      );
+      return true;
+    };
+
     // Refresh stock status before creating order, then remove unavailable items from cart
     try {
-      const latestProductsRes = await fetch(`/api/products?lang=${language}`, { cache: "no-store" });
+      const latestProductsRes = await fetch(`/api/products?lang=${language}&_ts=${Date.now()}`, { cache: "no-store" });
       if (latestProductsRes.ok) {
         const latestData = await latestProductsRes.json();
         if (Array.isArray(latestData?.products)) {
-          const latestMap = (latestData.products as Product[]).reduce<Record<string, Product>>((acc, item) => {
-            acc[item.id] = item;
-            return acc;
-          }, {});
-
-          setProductMap(latestMap);
-
-          const unavailableItems = cartItems.filter((item) => latestMap[item.id]?.inStock === false);
-          if (unavailableItems.length > 0) {
-            const availableItems = cartItems.filter((item) => latestMap[item.id]?.inStock !== false);
-            setCartItems(availableItems);
-            setOrderError(
-              language === "ar"
-                ? "تم حذف المنتجات غير المتوفرة من السلة. يرجى مراجعة السلة ثم إعادة التأكيد."
-                : "Out-of-stock items were removed from your cart. Please review your cart and confirm again."
-            );
+          if (removeUnavailableItems(latestData.products as Product[])) {
             setOrderLoading(false);
             return;
           }
@@ -378,6 +386,21 @@ export default function Cart() {
     }
 
     const data = await res.json().catch(() => ({}));
+
+    // In case stock changed between checks, try one more forced refresh and prune unavailable items
+    try {
+      const latestProductsRes = await fetch(`/api/products?lang=${language}&_ts=${Date.now()}`, { cache: "no-store" });
+      if (latestProductsRes.ok) {
+        const latestData = await latestProductsRes.json();
+        if (Array.isArray(latestData?.products) && removeUnavailableItems(latestData.products as Product[])) {
+          setOrderLoading(false);
+          return;
+        }
+      }
+    } catch {
+      // ignore and show backend error
+    }
+
     setOrderError(data?.error ? String(data.error) : t("cart.orderFailed"));
     setOrderLoading(false);
   };
