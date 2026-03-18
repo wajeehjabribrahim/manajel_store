@@ -190,6 +190,11 @@ export default function Cart() {
     return getProductSizeLabel(size, undefined, t, language);
   };
 
+  const normalizeToWesternDigits = (value: string) =>
+    value
+      .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+      .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+
   if (isLoading) {
     return (
       <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
@@ -590,17 +595,17 @@ export default function Cart() {
                           −
                         </button>
                         <input
-                          type="number"
+                          type="text"
                           value={item.quantity}
                           onChange={(e) =>
-                            updateQuantity(
-                              item.id,
-                              item.size,
-                              parseInt(e.target.value) || 1
-                            )
+                            updateQuantity(item.id, item.size, Math.max(1, Number(normalizeToWesternDigits(e.target.value).replace(/\D/g, "")) || 1))
                           }
+                          pattern="[0-9]*"
+                          lang="en"
+                          dir="ltr"
+                          inputMode="numeric"
                           className="w-12 px-2 py-1 text-center border rounded text-gray-900"
-                          style={{ borderColor: COLORS.border }}
+                          style={{ borderColor: COLORS.border, fontFamily: "Arial, sans-serif" }}
                         />
                         <button
                           onClick={() =>

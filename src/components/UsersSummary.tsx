@@ -230,7 +230,7 @@ export default function UsersSummary() {
                       </div>
                       <div className="text-xs text-gray-600 mt-2 text-center whitespace-nowrap">
                         {new Date(day.date).toLocaleDateString(
-                          language === "ar" ? "ar-SA" : "en-US",
+                          language === "ar" ? "ar-SA-u-nu-latn" : "en-US",
                           { month: "2-digit", day: "2-digit" }
                         )}
                       </div>
@@ -253,7 +253,7 @@ export default function UsersSummary() {
                       <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
                         <td className="px-4 py-2 text-gray-700">
                           {new Date(day.date).toLocaleDateString(
-                            language === "ar" ? "ar-SA" : "en-US",
+                            language === "ar" ? "ar-SA-u-nu-latn" : "en-US",
                             { weekday: "short", month: "short", day: "numeric" }
                           )}
                         </td>

@@ -173,7 +173,7 @@ export default function AdminNotificationsPage() {
                       </a>
                     </td>
                     <td className="px-4 py-3 text-gray-500">
-                      {new Date(n.createdAt).toLocaleDateString("ar-SA", {
+                      {new Date(n.createdAt).toLocaleDateString("ar-SA-u-nu-latn", {
                         year: "numeric", month: "short", day: "numeric",
                         hour: "2-digit", minute: "2-digit",
                       })}

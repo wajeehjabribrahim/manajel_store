@@ -570,7 +570,7 @@ export const translations = {
       backToShop: "العودة للمتجر",
       breadcrumb: "المتجر",
       inStock: "متوفر الآن",
-      outOfStock: "غير متوفر",
+      outOfStock: "نفذ المخزون",
       selectSize: "اختر الحجم",
       small: "صغير",
       medium: "متوسط",

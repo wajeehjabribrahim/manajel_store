@@ -115,7 +115,7 @@ export default function AdminMessagesPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("ar-SA", {
+    return date.toLocaleDateString("ar-SA-u-nu-latn", {
       year: "numeric",
       month: "long",
       day: "numeric",

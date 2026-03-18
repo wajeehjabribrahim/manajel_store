@@ -52,7 +52,7 @@ export default function OrdersYearlyPage() {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat(language === "ar" ? "ar-SA" : "en-US", {
+    return new Intl.NumberFormat(language === "ar" ? "ar-SA-u-nu-latn" : "en-US", {
       style: "currency",
       currency: "ILS",
       minimumFractionDigits: 0,

@@ -111,7 +111,7 @@ export default function UsersPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(language === "ar" ? "ar-SA" : "en-US");
+    return date.toLocaleDateString(language === "ar" ? "ar-SA-u-nu-latn" : "en-US");
   };
 
   if (loading && users.length === 0) {

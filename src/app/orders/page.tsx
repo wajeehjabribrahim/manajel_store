@@ -32,7 +32,7 @@ interface GuestOrderRef {
 }
 
 export default function OrdersPage() {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const { status } = useSession();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -200,7 +200,7 @@ export default function OrdersPage() {
                       {t("orders.order")} #{order.id.slice(0, 8)}
                     </h3>
                     <p className="text-gray-900 text-sm">
-                      {new Date(order.createdAt).toLocaleDateString()}
+                      {new Date(order.createdAt).toLocaleDateString(language === "ar" ? "ar-SA-u-nu-latn" : "en-US")}
                     </p>
                   </div>
                   <span

@@ -180,6 +180,11 @@ export default function ProductPage({ params }: PageProps) {
     }
   };
 
+  const normalizeToWesternDigits = (value: string) =>
+    value
+      .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+      .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+
   if (isLoading) {
     return (
       <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
@@ -428,13 +433,22 @@ export default function ProductPage({ params }: PageProps) {
                   −
                 </button>
                 <input
-                  type="number"
+                  type="text"
                   value={quantity}
                   onChange={(e) =>
-                    setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+                    setQuantity(
+                      Math.max(
+                        1,
+                        Number(normalizeToWesternDigits(e.target.value).replace(/\D/g, "")) || 1
+                      )
+                    )
                   }
+                  pattern="[0-9]*"
+                  lang="en"
+                  dir="ltr"
+                  inputMode="numeric"
                   className="w-16 px-3 py-2 text-center border-2 rounded-lg text-gray-900"
-                  style={{ borderColor: COLORS.border }}
+                  style={{ borderColor: COLORS.border, fontFamily: "Arial, sans-serif" }}
                 />
                 <button
                   onClick={() => setQuantity(quantity + 1)}

@@ -270,7 +270,7 @@ export default function CategoriesManagementPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-gray-800">
-                    {new Date(category.createdAt).toLocaleDateString("ar")}
+                    {new Date(category.createdAt).toLocaleDateString("ar-u-nu-latn")}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex justify-center gap-2">

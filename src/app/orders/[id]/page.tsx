@@ -197,7 +197,7 @@ export default function OrderDetailsPage() {
                 </span>
               </div>
               <p className="text-gray-900 text-sm">
-                {t("orders.orderDate")}: {new Date(order.createdAt).toLocaleDateString()}
+                {t("orders.orderDate")}: {new Date(order.createdAt).toLocaleDateString(language === "ar" ? "ar-SA-u-nu-latn" : "en-US")}
               </p>
             </div>
 

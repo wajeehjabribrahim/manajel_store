@@ -38,7 +38,7 @@ interface Order {
 }
 
 export default function AdminOrdersPage() {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -254,7 +254,7 @@ export default function AdminOrdersPage() {
                     </span>
                   </div>
                   <p className="text-sm text-gray-900">
-                    {new Date(order.createdAt).toLocaleString("ar-EG")}
+                    {new Date(order.createdAt).toLocaleString(language === "ar" ? "ar-EG-u-nu-latn" : "en-US")}
                   </p>
                 </div>
                 <div className="text-right">
