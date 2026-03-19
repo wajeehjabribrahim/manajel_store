@@ -7,7 +7,7 @@ import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { Product } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
-import { getProductSizeLabel } from "@/lib/productSizes";
+import { getProductSizeLabel, getProductSizeWeight } from "@/lib/productSizes";
 
 interface CartItem {
   id: string;
@@ -36,6 +36,7 @@ export default function Cart() {
   const [guestCity, setGuestCity] = useState("");
   const [guestAddress, setGuestAddress] = useState("");
   const [guestNotes, setGuestNotes] = useState("");
+  const [authenticatedNotes, setAuthenticatedNotes] = useState("");
   const [guestError, setGuestError] = useState("");
   const [orderError, setOrderError] = useState("");
   const [orderLoading, setOrderLoading] = useState(false);
@@ -293,10 +294,10 @@ export default function Cart() {
   }
 
   const submitOrder = async (guestData?: {
-    name: string;
-    phone: string;
-    city: string;
-    address: string;
+    name?: string;
+    phone?: string;
+    city?: string;
+    address?: string;
     notes?: string;
   }) => {
     setOrderError("");
@@ -437,7 +438,9 @@ export default function Cart() {
       }, 100);
       return;
     }
-    submitOrder();
+    submitOrder({
+      notes: authenticatedNotes,
+    });
   };
 
   const handleGuestSubmit = (e: React.FormEvent) => {
@@ -573,7 +576,7 @@ export default function Cart() {
                         {productName}
                       </h3>
                       <p className="text-gray-900 text-sm mb-4">
-                        {t("cart.size")}: <span className="font-semibold">{productSizeLabel || sizeLabel(item.size)}</span>
+                        {t("cart.weight")}: <span className="font-semibold">{getProductSizeWeight(item.size, product?.sizes)}</span>
                       </p>
 
                       {/* Quantity Controls */}
@@ -697,13 +700,38 @@ export default function Cart() {
                   <span style={{ color: COLORS.primary }} className="font-bold text-lg">
                     {t("cart.totalPrice")}
                   </span>
-                  <span
-                    style={{ color: COLORS.primary }}
-                    className="font-bold text-2xl"
-                  >
-                    {CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      style={{ color: COLORS.primary }}
+                      className="font-bold text-2xl"
+                    >
+                      {CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}
+                    </span>
+                    <Link
+                      href="/shipping-policy"
+                      className="px-2 py-1 rounded-md text-xs font-semibold border"
+                      style={{ borderColor: COLORS.primary, color: COLORS.primary }}
+                    >
+                      {language === "ar" ? "+ سعر التوصيل" : "+ Delivery Price"}
+                    </Link>
+                  </div>
                 </div>
+
+                {isAuthenticated && (
+                  <div className="mb-6">
+                    <label className="block text-sm text-gray-900 mb-2 font-semibold">
+                      {t("cart.notes")} <span className="text-xs text-gray-600">({t("common.optional") || "اختيارية"})</span>
+                    </label>
+                    <textarea
+                      value={authenticatedNotes}
+                      onChange={(e) => setAuthenticatedNotes(e.target.value)}
+                      placeholder={t("cart.notesPlaceholder") || "أضف أي ملاحظات على الطلب..."}
+                      className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500 resize-none"
+                      style={{ borderColor: COLORS.border }}
+                      rows={3}
+                    />
+                  </div>
+                )}
 
                 <button
                   onClick={handlePlaceOrder}

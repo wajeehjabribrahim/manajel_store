@@ -54,3 +54,11 @@ export const parseProductSizes = (sizes: unknown): Record<string, ProductSize> |
 
   return typeof sizes === "object" ? (sizes as Record<string, ProductSize>) : undefined;
 };
+
+export const getProductSizeWeight = (
+  size: string,
+  sizes?: Record<string, { weight?: string } | undefined> | null
+): string => {
+  const sizeData = sizes?.[size];
+  return sizeData?.weight?.trim() || size;
+};

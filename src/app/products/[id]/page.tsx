@@ -28,6 +28,8 @@ export default function ProductPage({ params }: PageProps) {
   const [isSharing, setIsSharing] = useState(false);
   const [showNotifyModal, setShowNotifyModal] = useState(false);
   const [whatsappInput, setWhatsappInput] = useState("");
+  const [notifyError, setNotifyError] = useState("");
+  const [notifySuccess, setNotifySuccess] = useState("");
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -184,6 +186,68 @@ export default function ProductPage({ params }: PageProps) {
     value
       .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
       .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+
+  const getDigitsCount = (value: string) =>
+    normalizeToWesternDigits(value).replace(/\D/g, "").length;
+
+  const handleNotifySubmit = async () => {
+    if (!product) return;
+
+    const phone = normalizeToWesternDigits(whatsappInput).trim();
+    const digitsCount = phone.replace(/\D/g, "").length;
+
+    if (digitsCount < 10) {
+      setNotifySuccess("");
+      setNotifyError(
+        language === "ar"
+          ? "رقم الواتساب يجب أن يحتوي على 10 أرقام على الأقل"
+          : "WhatsApp number must contain at least 10 digits"
+      );
+      return;
+    }
+
+    setNotifyError("");
+    try {
+      const res = await fetch(`/api/products/${product.id}/notify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ whatsapp: phone }),
+      });
+
+      const data = await res.json().catch(() => ({} as { error?: string; message?: string }));
+
+      if (!res.ok) {
+        setNotifySuccess("");
+        setNotifyError(
+          data?.error ||
+            (language === "ar"
+              ? "حدث خطأ، حاول مرة أخرى"
+              : "Something went wrong. Please try again")
+        );
+        return;
+      }
+
+      setNotifyError("");
+      setNotifySuccess(
+        language === "ar"
+          ? "تم تسجيل طلب التذكير الخاص بك"
+          : "Your reminder request has been registered"
+      );
+      setWhatsappInput("");
+
+      setTimeout(() => {
+        setShowNotifyModal(false);
+        setNotifySuccess("");
+      }, 1500);
+    } catch {
+      setNotifySuccess("");
+      setNotifyError(
+        language === "ar"
+          ? "حدث خطأ، حاول مرة أخرى"
+          : "Something went wrong. Please try again"
+      );
+    }
+  };
 
   if (isLoading) {
     return (
@@ -498,6 +562,8 @@ export default function ProductPage({ params }: PageProps) {
               onClick={() => {
                 if (!product.inStock) {
                   setWhatsappInput("");
+                  setNotifyError("");
+                  setNotifySuccess("");
                   setShowNotifyModal(true);
                 } else {
                   handleAddToCart();
@@ -606,6 +672,8 @@ export default function ProductPage({ params }: PageProps) {
           if (e.target === e.currentTarget) {
             setShowNotifyModal(false);
             setWhatsappInput("");
+            setNotifyError("");
+            setNotifySuccess("");
           }
         }}
       >
@@ -626,11 +694,14 @@ export default function ProductPage({ params }: PageProps) {
             <input
               type="tel"
               value={whatsappInput}
-              onChange={(e) => setWhatsappInput(e.target.value)}
+              onChange={(e) => {
+                setWhatsappInput(e.target.value);
+                if (notifyError) setNotifyError("");
+              }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && whatsappInput.trim().length >= 7) {
-                  setShowNotifyModal(false);
-                  setWhatsappInput("");
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleNotifySubmit();
                 }
               }}
               placeholder={language === "ar" ? "+970 5XXXXXXXX" : "+970 5XXXXXXXX"}
@@ -641,26 +712,34 @@ export default function ProductPage({ params }: PageProps) {
             />
           </div>
 
+          {notifyError && (
+            <p className="text-sm mb-3" style={{ color: "#dc2626" }}>
+              {notifyError}
+            </p>
+          )}
+
+          {notifySuccess && (
+            <p className="text-sm mb-3" style={{ color: "#16a34a" }}>
+              {notifySuccess}
+            </p>
+          )}
+
           <div className="flex gap-3">
             <button
-              disabled={whatsappInput.trim().length < 7}
-              onClick={async () => {
-                const phone = whatsappInput.trim();
-                await fetch(`/api/products/${product.id}/notify`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ whatsapp: phone }),
-                });
-                setShowNotifyModal(false);
-                setWhatsappInput("");
-              }}
+              disabled={getDigitsCount(whatsappInput) < 10}
+              onClick={handleNotifySubmit}
               className="flex-1 py-3 rounded-xl font-bold text-white disabled:opacity-40"
               style={{ backgroundColor: COLORS.primary }}
             >
               {language === "ar" ? "✔ تأكيد" : "✔ Confirm"}
             </button>
             <button
-              onClick={() => { setShowNotifyModal(false); setWhatsappInput(""); }}
+              onClick={() => {
+                setShowNotifyModal(false);
+                setWhatsappInput("");
+                setNotifyError("");
+                setNotifySuccess("");
+              }}
               className="flex-1 py-3 rounded-xl font-bold border-2 hover:bg-gray-50"
               style={{ color: COLORS.primary, borderColor: COLORS.primary }}
             >

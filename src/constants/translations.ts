@@ -182,6 +182,7 @@ export const translations = {
       continueShop: "Continue Shopping",
       loading: "Loading cart...",
       size: "Size:",
+      weight: "Weight",
       remove: "Remove",
       pricePerUnit: "Price per Unit",
       total: "Total",
@@ -196,7 +197,8 @@ export const translations = {
       phone: "Phone Number",
       city: "City",
       address: "Full Address",
-      notes: "Notes (optional)",
+      notes: "Notes",
+      notesPlaceholder: "Add any notes about your order...",
       placeOrder: "Place Order",
       deliveryRequired: "Please fill in all required delivery fields.",
       orderPlaced: "Your order was received. We will contact you shortly.",
@@ -408,6 +410,7 @@ export const translations = {
     // Common
     common: {
       loading: "Loading...",
+      optional: "Optional",
       shopNow: "Shop now",
       error: "An error occurred",
       success: "Success",
@@ -598,6 +601,7 @@ export const translations = {
       continueShop: "متابعة التسوق",
       loading: "جاري تحميل السلة...",
       size: "الحجم:",
+      weight: "الوزن",
       remove: "حذف",
       pricePerUnit: "السعر للوحدة",
       total: "الإجمالي",
@@ -612,7 +616,8 @@ export const translations = {
       phone: "رقم الهاتف",
       city: "المدينة",
       address: "العنوان الكامل",
-      notes: "ملاحظات (اختياري)",
+      notes: "ملاحظات",
+      notesPlaceholder: "أضف أي ملاحظات على الطلب...",
       placeOrder: "إرسال الطلب",
       deliveryRequired: "يرجى تعبئة جميع حقول التوصيل المطلوبة.",
       orderPlaced: "تم استلام طلبك. سنقوم بالتواصل معك قريباً.",
@@ -824,6 +829,7 @@ export const translations = {
     // Common
     common: {
       loading: "جاري التحميل...",
+      optional: "اختياري",
       shopNow: "تسوق الآن",
       error: "حدث خطأ",
       success: "نجاح",

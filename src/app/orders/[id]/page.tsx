@@ -6,6 +6,7 @@ import Link from "next/link";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { PRODUCTS } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getProductSizeWeight } from "@/lib/productSizes";
 
 interface OrderItem {
   id: string;
@@ -245,7 +246,7 @@ export default function OrderDetailsPage() {
                       {item.name}
                     </h3>
                     <p className="text-gray-900 text-sm">
-                      {t("cart.size")}: {sizeLabel(item.size)}
+                      {t("cart.weight")}: {getProductSizeWeight(item.size, product?.sizes)}
                     </p>
                     <p className="text-gray-900 text-sm">
                       {t("product.quantity")}: {item.quantity}

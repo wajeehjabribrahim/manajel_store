@@ -9,10 +9,12 @@ export async function POST(
   try {
     const prismaClient = prisma as any;
     const { whatsapp } = await req.json();
+    const normalizedWhatsapp = typeof whatsapp === "string" ? whatsapp.trim() : "";
+    const whatsappDigits = normalizedWhatsapp.replace(/\D/g, "").length;
 
-    if (!whatsapp || whatsapp.trim().length < 8) {
+    if (!normalizedWhatsapp || whatsappDigits < 10) {
       return NextResponse.json(
-        { error: "رقم واتساب غير صحيح" },
+        { error: "رقم الواتساب يجب أن يحتوي على 10 أرقام على الأقل" },
         { status: 400 }
       );
     }
@@ -30,7 +32,7 @@ export async function POST(
     const existing = await prismaClient.stockNotification.findFirst({
       where: {
         productId: params.id,
-        whatsapp: whatsapp.trim(),
+        whatsapp: normalizedWhatsapp,
         notified: false,
       },
     });
@@ -46,7 +48,7 @@ export async function POST(
       data: {
         productId: params.id,
         productName: product.name,
-        whatsapp: whatsapp.trim(),
+        whatsapp: normalizedWhatsapp,
       },
     });
 
@@ -54,7 +56,7 @@ export async function POST(
       await sendStockRequestNotification({
         productId: params.id,
         productName: product.name,
-        whatsapp: whatsapp.trim(),
+        whatsapp: normalizedWhatsapp,
         requestedAt: notification.createdAt,
       });
     } catch (emailError) {
@@ -63,7 +65,7 @@ export async function POST(
     }
 
     return NextResponse.json(
-      { message: "تم تسجيل طلبك بنجاح" },
+      { message: "تم تسجيل طلب التذكير الخاص بك" },
       { status: 201 }
     );
   } catch (error) {
