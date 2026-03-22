@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { COLORS } from "@/constants/store";
 import Link from "next/link";
 
 export default function SignupPrompt() {
@@ -46,7 +45,7 @@ export default function SignupPrompt() {
       {/* Backdrop */}
       <div
         onClick={handleClose}
-        className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+        className="fixed inset-0 z-40 bg-black/65 backdrop-blur-[2px] transition-opacity"
         style={{ opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? "auto" : "none" }}
       />
 
@@ -56,11 +55,11 @@ export default function SignupPrompt() {
           isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
-        <div className="bg-white rounded-2xl shadow-2xl p-8" style={{ direction: "rtl" }}>
+        <div className="rounded-2xl border border-white/10 bg-[#171a1d] p-8 text-[#F2ECE2] shadow-2xl" style={{ direction: "rtl" }}>
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl"
+            className="absolute right-4 top-4 text-2xl text-white/50 hover:text-white"
           >
             ✕
           </button>
@@ -71,15 +70,12 @@ export default function SignupPrompt() {
           </div>
 
           {/* Title */}
-          <h2
-            style={{ color: COLORS.primary }}
-            className="text-2xl font-bold text-center mb-4"
-          >
+          <h2 className="mb-4 text-center text-2xl font-bold text-[#C9A66B]">
             إنشاء حساب خاص بك
           </h2>
 
           {/* Description */}
-          <p className="text-gray-600 text-center mb-6 leading-relaxed">
+          <p className="mb-6 text-center leading-relaxed text-white/80">
             قم بإنشاء حساب لحفظ معلوماتك الشخصية ومتابعة طلباتك بسهولة. استمتع بتجربة تسوق أفضل!
           </p>
 
@@ -87,15 +83,15 @@ export default function SignupPrompt() {
           <div className="space-y-3 mb-8">
             <div className="flex items-start gap-3">
               <span className="text-green-500 font-bold text-xl">✓</span>
-              <p className="text-gray-700">حفظ معلوماتك الشخصية وعنوانك</p>
+              <p className="text-white/85">حفظ معلوماتك الشخصية وعنوانك</p>
             </div>
             <div className="flex items-start gap-3">
               <span className="text-green-500 font-bold text-xl">✓</span>
-              <p className="text-gray-700">متابعة طلباتك بكل سهولة</p>
+              <p className="text-white/85">متابعة طلباتك بكل سهولة</p>
             </div>
             <div className="flex items-start gap-3">
               <span className="text-green-500 font-bold text-xl">✓</span>
-              <p className="text-gray-700">عروض حصرية وتخفيفات خاصة</p>
+              <p className="text-white/85">عروض حصرية وتخفيفات خاصة</p>
             </div>
           </div>
 
@@ -103,24 +99,25 @@ export default function SignupPrompt() {
           <div className="space-y-3">
             <button
               onClick={handleRegisterClick}
-              className="w-full text-white font-semibold py-3 rounded-lg transition-opacity hover:opacity-90"
-              style={{ backgroundColor: COLORS.primary }}
+              className="w-full rounded-lg border py-3 font-semibold text-[#14171a] transition-opacity hover:opacity-90"
+              style={{ backgroundColor: "#C9A66B", borderColor: "rgba(201,166,107,0.75)" }}
             >
               إنشاء حساب جديد
             </button>
             <button
               onClick={handleLoginClick}
-              className="w-full font-semibold py-3 rounded-lg transition-colors border-2"
+              className="w-full rounded-lg border-2 py-3 font-semibold transition-colors"
               style={{
-                borderColor: COLORS.primary,
-                color: COLORS.primary,
+                borderColor: "rgba(201,166,107,0.6)",
+                color: "#F2ECE2",
+                backgroundColor: "#121416",
               }}
             >
               تسجيل الدخول
             </button>
             <button
               onClick={handleClose}
-              className="w-full text-gray-600 font-medium py-2 hover:text-gray-800 transition-colors"
+              className="w-full py-2 font-medium text-white/65 transition-colors hover:text-white"
             >
               متابعة التصفح
             </button>

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AccountPage() {
@@ -72,78 +71,80 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-12" style={{ direction: dir, color: COLORS.dark }}>
-      <h1 className="text-2xl font-bold mb-4" style={{ color: COLORS.primary }}>
-        {t("account.title") || "Account"}
-      </h1>
+    <div className="bg-[#121416] text-[#F2ECE2]" style={{ direction: dir, minHeight: "calc(100vh - 200px)" }}>
+      <div className="mx-auto max-w-md px-4 py-12">
+        <div className="rounded-2xl border border-white/10 bg-[#171a1d] p-6 shadow-md">
+          <h1 className="mb-4 text-2xl font-bold text-[#F2ECE2]">{t("account.title") || "Account"}</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.email")}</label>
-          <input
-            type="email"
-            value={email || ((session?.user as { email?: string } | undefined)?.email ?? "")}
-            readOnly
-            className="w-full border rounded-lg px-3 py-2 bg-gray-100 text-gray-700 cursor-not-allowed"
-            style={{ borderColor: COLORS.border }}
-          />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-white/80">{t("auth.email")}</label>
+              <input
+                type="email"
+                value={email || ((session?.user as { email?: string } | undefined)?.email ?? "")}
+                readOnly
+                className="w-full cursor-not-allowed rounded-lg border px-3 py-2 text-white/60"
+                style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "#121416" }}
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-white/80">{t("auth.phone")}</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                dir="ltr"
+                className="w-full rounded-lg border px-3 py-2 text-right text-[#F2ECE2]"
+                style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416" }}
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-white/80">{t("auth.city")}</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full rounded-lg border px-3 py-2 text-[#F2ECE2]"
+                style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416" }}
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-white/80">{t("auth.address")}</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full rounded-lg border px-3 py-2 text-[#F2ECE2]"
+                style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416" }}
+              />
+            </div>
+
+            {error && <div className="text-sm text-red-300">{error}</div>}
+            {success && <div className="text-sm text-emerald-300">{success}</div>}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="mb-2 w-full rounded-lg py-2 font-semibold text-[#14171a] transition-opacity"
+              style={{ backgroundColor: "#C9A66B", opacity: loading ? 0.7 : 1 }}
+            >
+              {loading ? t("common.loading") : t("account.save") || "Save"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => signOut()}
+              className="w-full rounded-lg border py-2 font-semibold text-[#F2ECE2] transition-colors hover:bg-[#1b2024]"
+              style={{ borderColor: "rgba(201,166,107,0.5)", backgroundColor: "#121416" }}
+            >
+              {t("auth.logout")}
+            </button>
+          </form>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.phone")}</label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            dir="ltr"
-            className="w-full border rounded-lg px-3 py-2 text-right"
-            style={{ borderColor: COLORS.border }}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.city")}</label>
-          <input
-            type="text"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
-            style={{ borderColor: COLORS.border }}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: COLORS.dark }}>{t("auth.address")}</label>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2"
-            style={{ borderColor: COLORS.border }}
-          />
-        </div>
-
-        {error && <div className="text-sm text-red-600">{error}</div>}
-        {success && <div className="text-sm text-green-600">{success}</div>}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 rounded-lg text-white transition-opacity mb-2"
-          style={{ backgroundColor: COLORS.primary, opacity: loading ? 0.7 : 1 }}
-        >
-          {loading ? t("common.loading") : t("account.save") || "Save"}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => signOut()}
-          className="w-full py-2 rounded-lg text-white transition-opacity"
-          style={{ backgroundColor: COLORS.secondary }}
-        >
-          {t("auth.logout")}
-        </button>
-      </form>
+      </div>
     </div>
   );
 }
