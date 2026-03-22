@@ -1,11 +1,130 @@
 "use client";
 
-import { useEffect, useState } from "react";
+
+
+// AdminFeedbackItem component for feedback edit/delete
+interface AdminFeedbackItemProps {
+  item: ManualFeedbackItem;
+  productId: string;
+  onDelete: (id: string) => void;
+  onEdit: (id: string, note: string) => void;
+}
+
+const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, onDelete, onEdit }) => {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editNote, setEditNote] = React.useState(item.note);
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  const handleDelete = async () => {
+    if (!confirm("هل أنت متأكد من حذف هذا الفيدباك؟")) return;
+    setSaving(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/products/${productId}/feedbacks/${item.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        setError("فشل حذف الفيدباك");
+        setSaving(false);
+        return;
+      }
+      onDelete(item.id);
+    } catch {
+      setError("حدث خطأ أثناء حذف الفيدباك");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEdit = async () => {
+    if (!editNote.trim()) {
+      setError("لا يمكن أن يكون النص فارغًا");
+      return;
+    }
+    setSaving(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/products/${productId}/feedbacks/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note: editNote }),
+      });
+      if (!res.ok) {
+        setError("فشل تعديل الفيدباك");
+        setSaving(false);
+        return;
+      }
+      onEdit(item.id, editNote);
+      setIsEditing(false);
+    } catch {
+      setError("حدث خطأ أثناء تعديل الفيدباك");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="border rounded-lg p-3 bg-white flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-gray-200 text-gray-600 mr-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 1115 0v.75A2.25 2.25 0 0117.25 22.5h-10.5A2.25 2.25 0 014.5 20.25v-.75z" />
+          </svg>
+        </span>
+        <span className="font-semibold">user</span>
+        <span className="text-xs text-gray-500 ml-2">{new Date(item.createdAt).toLocaleDateString("ar-EG")}</span>
+      </div>
+      {item.images && item.images.length > 0 && (
+        <div className="flex gap-2 mt-2">
+          {item.images.map((img, idx) => (
+            <img key={idx} src={img} alt="feedback" className="w-16 h-16 object-cover rounded-lg border" />
+          ))}
+        </div>
+      )}
+      {isEditing ? (
+        <>
+          <textarea
+            className="w-full border rounded-lg px-2 py-1"
+            value={editNote}
+            onChange={e => setEditNote(e.target.value)}
+            rows={2}
+          />
+          <div className="flex gap-2 mt-2">
+            <button type="button" className="px-3 py-1 rounded bg-green-600 text-white" disabled={saving} onClick={handleEdit}>
+              حفظ
+            </button>
+            <button type="button" className="px-3 py-1 rounded bg-gray-300" disabled={saving} onClick={() => setIsEditing(false)}>
+              إلغاء
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="whitespace-pre-line text-gray-800">{item.note}</div>
+      )}
+      <div className="flex gap-2 mt-2">
+        <button type="button" className="px-3 py-1 rounded bg-blue-600 text-white" disabled={saving} onClick={() => setIsEditing(true)}>
+          تعديل
+        </button>
+        <button type="button" className="px-3 py-1 rounded bg-red-600 text-white" disabled={saving} onClick={handleDelete}>
+          حذف
+        </button>
+      </div>
+      {error && <div className="text-xs text-red-600 mt-1">{error}</div>}
+    </div>
+  );
+};
+import React, { useEffect, useState, type ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CATEGORIES } from "@/constants/products";
 import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SIZE_KEYS, SizeKey, getFallbackSizeLabel } from "@/lib/productSizes";
+
+interface AdminFeedbackItemProps {
+  item: ManualFeedbackItem;
+  productId: string;
+  onDelete: (id: string) => void;
+  onEdit: (id: string, note: string) => void;
+}
 
 interface Category {
   id: string;
@@ -20,6 +139,14 @@ interface SizeState {
   weight: string;
   price: string;
   salePrice: string;
+}
+
+interface ManualFeedbackItem {
+  id: string;
+  author: string;
+  note: string;
+  images: string[];
+  createdAt: string;
 }
 
 const getCategoryTranslationKey = (categoryId: string): string => {
@@ -66,6 +193,14 @@ export default function AdminEditProductPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [manualFeedback, setManualFeedback] = useState("");
+  const [manualFeedbackDate, setManualFeedbackDate] = useState<string>("");
+  const [manualFeedbackImageFiles, setManualFeedbackImageFiles] = useState<File[]>([]);
+  const [manualFeedbackImagePreviews, setManualFeedbackImagePreviews] = useState<string[]>([]);
+  const [manualFeedbackSaving, setManualFeedbackSaving] = useState(false);
+  const [manualFeedbackError, setManualFeedbackError] = useState("");
+  const [manualFeedbackSuccess, setManualFeedbackSuccess] = useState("");
+  const [manualFeedbackItems, setManualFeedbackItems] = useState<ManualFeedbackItem[]>([]);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -132,9 +267,21 @@ export default function AdminEditProductPage() {
       }
     };
 
+    const loadManualFeedback = async () => {
+      try {
+        const res = await fetch(`/api/products/${id}/feedbacks`);
+        if (!res.ok) return;
+        const data = await res.json();
+        setManualFeedbackItems(Array.isArray(data?.feedbacks) ? data.feedbacks : []);
+      } catch {
+        // ignore feedback loading error
+      }
+    };
+
     if (id) {
       loadCategories();
       loadProduct();
+      loadManualFeedback();
     }
   }, [id]);
 
@@ -159,6 +306,103 @@ export default function AdminEditProductPage() {
       urls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [imageFiles]);
+
+  useEffect(() => {
+    if (manualFeedbackImageFiles.length === 0) {
+      setManualFeedbackImagePreviews([]);
+      return;
+    }
+    const urls = manualFeedbackImageFiles.map((file) => URL.createObjectURL(file));
+    setManualFeedbackImagePreviews(urls);
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [manualFeedbackImageFiles]);
+
+  const readFileAsDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(new Error("Failed to read file"));
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
+
+  const handleManualFeedbackImages = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length > 3) {
+      setManualFeedbackError("الحد الأقصى 3 صور للفيدباك");
+      return;
+    }
+    const invalidFile = files.find((file) => !file.type.startsWith("image/"));
+    if (invalidFile) {
+      setManualFeedbackError("يرجى اختيار صور فقط");
+      return;
+    }
+    const tooLarge = files.find((file) => file.size > 2 * 1024 * 1024);
+    if (tooLarge) {
+      setManualFeedbackError("حجم الصورة يجب أن يكون أقل من 2MB");
+      return;
+    }
+    setManualFeedbackError("");
+    setManualFeedbackImageFiles(files);
+  };
+
+  const handleManualFeedbackSubmit = async () => {
+    if (!id || manualFeedbackSaving) return;
+
+    if (!manualFeedback.trim() && manualFeedbackImageFiles.length === 0) {
+      setManualFeedbackError("أدخل نص الفيدباك أو أضف صورة واحدة على الأقل");
+      return;
+    }
+    if (!manualFeedbackDate) {
+      setManualFeedbackError("يرجى اختيار تاريخ للفيدباك");
+      return;
+    }
+
+    setManualFeedbackSaving(true);
+    setManualFeedbackError("");
+    setManualFeedbackSuccess("");
+
+    try {
+      const encodedImages = manualFeedbackImageFiles.length
+        ? await Promise.all(manualFeedbackImageFiles.map(readFileAsDataUrl))
+        : [];
+
+      const res = await fetch(`/api/products/${id}/feedbacks`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          note: manualFeedback,
+          images: encodedImages,
+          createdAt: new Date(manualFeedbackDate).toISOString(),
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setManualFeedbackError(data?.error || "فشل حفظ الفيدباك");
+        return;
+      }
+
+      if (data?.feedback) {
+        setManualFeedbackItems((prev) => [data.feedback, ...prev]);
+      }
+      setManualFeedback("");
+      setManualFeedbackDate("");
+      setManualFeedbackImageFiles([]);
+      setManualFeedbackSuccess("تم إضافة الفيدباك بنجاح");
+    } catch {
+      setManualFeedbackError("حدث خطأ أثناء إضافة الفيدباك");
+    } finally {
+      setManualFeedbackSaving(false);
+    }
+  };
 
   const buildSizesPayload = () => {
     const payload: Record<string, { label?: string; labelEn?: string; weight: string; price: number; salePrice?: number }> = {};
@@ -575,6 +819,94 @@ export default function AdminEditProductPage() {
           </div>
         </div>
 
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <h3 style={{ color: COLORS.primary }} className="font-bold text-lg mb-3">
+            فيدباك يدوي (يظهر أسفل المنتج)
+          </h3>
+
+          {manualFeedbackError ? (
+            <div className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{manualFeedbackError}</div>
+          ) : null}
+          {manualFeedbackSuccess ? (
+            <div className="mb-3 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">{manualFeedbackSuccess}</div>
+          ) : null}
+
+
+          <textarea
+            value={manualFeedback}
+            onChange={(e) => setManualFeedback(e.target.value)}
+            rows={3}
+            className="w-full border rounded-lg px-3 py-2 mb-3"
+            placeholder="اكتب تقييم/فيديو باك لطيف للمنتج..."
+          />
+          <div className="mb-3">
+            <label className="block text-sm font-semibold mb-1">تاريخ الفيدباك</label>
+            <input
+              type="date"
+              value={manualFeedbackDate}
+              onChange={e => setManualFeedbackDate(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2"
+            />
+          </div>
+
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleManualFeedbackImages}
+            className="w-full border rounded-lg px-3 py-2"
+          />
+          <p className="mt-1 text-xs text-gray-500">حد أقصى 3 صور (كل صورة أقل من 2MB)</p>
+
+          {manualFeedbackImagePreviews.length > 0 ? (
+            <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3">
+              {manualFeedbackImagePreviews.map((preview, idx) => (
+                <div key={idx} className="relative">
+                  <img src={preview} alt={`manual feedback ${idx + 1}`} className="h-24 w-full rounded-lg border object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setManualFeedbackImageFiles((prev) => prev.filter((_, i) => i !== idx))}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={handleManualFeedbackSubmit}
+              disabled={manualFeedbackSaving}
+              className="px-5 py-2 rounded-lg text-white font-semibold disabled:opacity-50"
+              style={{ backgroundColor: COLORS.primary }}
+            >
+              {manualFeedbackSaving ? "جاري الإضافة..." : "إضافة فيدباك"}
+            </button>
+          </div>
+
+
+
+
+
+          {manualFeedbackItems.length > 0 ? (
+            <div className="mt-5 space-y-3">
+              <p className="text-sm font-semibold text-gray-700">الفيدباك المضافة ({manualFeedbackItems.length})</p>
+              {manualFeedbackItems.slice(0, 5).map((item) => (
+                <AdminFeedbackItem
+                  key={item.id}
+                  item={item}
+                  productId={id as string}
+                  onDelete={id => setManualFeedbackItems(prev => prev.filter(fb => fb.id !== id))}
+                  onEdit={(id, note) => setManualFeedbackItems(prev => prev.map(fb => fb.id === id ? { ...fb, note } : fb))}
+                />
+              ))}
+            </div>
+          ) : null}
+
+        </div>
         <div className="flex flex-col md:flex-row gap-4">
           <label className="flex items-center gap-2">
             <input

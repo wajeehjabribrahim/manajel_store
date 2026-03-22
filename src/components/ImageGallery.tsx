@@ -9,7 +9,7 @@ interface ImageGalleryProps {
 }
 
 export default function ImageGallery({ images, alt }: ImageGalleryProps) {
-    const { t } = useLanguage();
+  const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);

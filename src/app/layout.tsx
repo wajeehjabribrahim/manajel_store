@@ -3,6 +3,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { COLORS } from "@/constants/store";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import AuthProvider from "@/components/AuthProvider";
@@ -34,7 +35,7 @@ export default function RootLayout({
         <meta property="og:locale" content="ar_PS" />
         <meta property="og:locale:alternate" content="en_US" />
       </head>
-      <body style={{ backgroundColor: COLORS.light }} className="flex flex-col min-h-screen antialiased">
+      <body style={{ backgroundColor: "#121416" }} className="flex flex-col min-h-screen antialiased">
         <AuthProvider>
           <LanguageProvider>
             <Header />
@@ -42,6 +43,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <FloatingWhatsApp />
             <CookieConsent />
           </LanguageProvider>
         </AuthProvider>

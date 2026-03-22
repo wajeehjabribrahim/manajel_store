@@ -14,9 +14,24 @@ export default function Header() {
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement>(null);
   const gold = "#C9A66B";
+
+  const getCartCount = () => {
+    try {
+      const raw = localStorage.getItem("manajel-cart");
+      const parsed = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(parsed)) return 0;
+      return parsed.reduce((sum, item) => {
+        const qty = Number(item?.quantity);
+        return sum + (Number.isFinite(qty) && qty > 0 ? qty : 0);
+      }, 0);
+    } catch {
+      return 0;
+    }
+  };
 
   // إغلاق القائمة عند الضغط خارجها
   useEffect(() => {
@@ -46,6 +61,30 @@ export default function Header() {
       document.body.style.overflow = 'auto';
     };
   }, [showUserMenu]);
+
+  useEffect(() => {
+    const updateCartCount = () => setCartCount(getCartCount());
+
+    updateCartCount();
+
+    const handleStorage = (event: StorageEvent) => {
+      if (!event.key || event.key === "manajel-cart") {
+        updateCartCount();
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("focus", updateCartCount);
+    document.addEventListener("visibilitychange", updateCartCount);
+    window.addEventListener("manajel-cart-updated", updateCartCount as EventListener);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("focus", updateCartCount);
+      document.removeEventListener("visibilitychange", updateCartCount);
+      window.removeEventListener("manajel-cart-updated", updateCartCount as EventListener);
+    };
+  }, []);
 
   const navItems = [
     { name: t("nav.home"), href: "/" },
@@ -119,6 +158,11 @@ export default function Header() {
                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                   />
                 </svg>
+                {cartCount > 0 ? (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold leading-[18px] text-center border border-white/20">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                ) : null}
               </button>
 
               {showUserMenu && (
@@ -299,7 +343,7 @@ export default function Header() {
             <div className="relative z-50" ref={mobileUserMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity w-10 h-10 flex items-center justify-center text-white/85 hover:text-white"
+                className="transition-opacity relative w-10 h-10 flex items-center justify-center text-white/85 hover:text-white"
                 title="السلة والطلبات"
               >
                 <svg
@@ -315,6 +359,11 @@ export default function Header() {
                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                   />
                 </svg>
+                {cartCount > 0 ? (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold leading-[18px] text-center border border-white/20">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                ) : null}
               </button>
 
               {showUserMenu && (

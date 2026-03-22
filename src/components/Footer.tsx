@@ -115,14 +115,7 @@ export default function Footer() {
       className="text-sm"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="mb-10 flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-[#C9A66B]">
-            Curated Palestinian Heritage
-          </p>
-          <p className="text-xs text-white/70">
-            {t("footer.tagline")}
-          </p>
-        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>

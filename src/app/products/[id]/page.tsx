@@ -16,6 +16,14 @@ interface PageProps {
   };
 }
 
+interface ProductManualFeedback {
+  id: string;
+  author: string;
+  note: string;
+  images: string[];
+  createdAt: string;
+}
+
 export default function ProductPage({ params }: PageProps) {
   const router = useRouter();
   const { t, language } = useLanguage();
@@ -28,6 +36,7 @@ export default function ProductPage({ params }: PageProps) {
   const [notifyWhatsapp, setNotifyWhatsapp] = useState("");
   const [isNotifying, setIsNotifying] = useState(false);
   const [notifyMessage, setNotifyMessage] = useState<string | null>(null);
+  const [manualFeedbacks, setManualFeedbacks] = useState<ProductManualFeedback[]>([]);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -64,6 +73,25 @@ export default function ProductPage({ params }: PageProps) {
       setSelectedSize(availableSizes[0]);
     }
   }, [product, selectedSize]);
+
+  useEffect(() => {
+    const loadManualFeedbacks = async () => {
+      try {
+        const res = await fetch(`/api/products/${params.id}/feedbacks`);
+        if (!res.ok) {
+          setManualFeedbacks([]);
+          return;
+        }
+
+        const data = await res.json();
+        setManualFeedbacks(Array.isArray(data?.feedbacks) ? data.feedbacks : []);
+      } catch {
+        setManualFeedbacks([]);
+      }
+    };
+
+    loadManualFeedbacks();
+  }, [params.id]);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -272,6 +300,8 @@ export default function ProductPage({ params }: PageProps) {
     }
   }
 
+  const ingredients = typeof product.ingredients === "string" ? product.ingredients.trim() : "";
+
   const formatNumber = (value: number) =>
     new Intl.NumberFormat(language === "ar" ? "ar-PS-u-nu-latn" : "en-US", {
       maximumFractionDigits: 2,
@@ -331,7 +361,7 @@ export default function ProductPage({ params }: PageProps) {
 
           {/* Product Info */}
           <div>
-            <h1 className="mb-2 text-4xl font-bold text-[#F2ECE2]">
+            <h1 className="mb-2 text-2xl md:text-3xl font-bold text-[#F2ECE2]">
               {name}
             </h1>
 
@@ -382,7 +412,16 @@ export default function ProductPage({ params }: PageProps) {
             </div>
 
             {/* Description */}
-            <p className="mb-6 text-white/80">{description}</p>
+            <p className="mb-6 text-sm md:text-base text-white/80">{description}</p>
+
+            {ingredients ? (
+              <div className="mb-6 rounded-xl border border-white/10 bg-[#171a1d] p-4">
+                <h3 className="mb-2 text-lg font-bold text-[#C9A66B]">
+                  {language === "ar" ? "المكونات" : "Ingredients"}
+                </h3>
+                <p className="text-sm leading-7 text-white/85 whitespace-pre-wrap">{ingredients}</p>
+              </div>
+            ) : null}
 
             {/* Size Selection */}
             <div className="mb-6">
@@ -596,6 +635,50 @@ export default function ProductPage({ params }: PageProps) {
             </Link>
           </div>
         </div>
+
+        {manualFeedbacks.length > 0 ? (
+          <div className="mt-12">
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-[#C9A66B]">
+              {language === "ar" ? "تجارب وآراء العملاء" : "Customer Moments"}
+            </h3>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {manualFeedbacks.slice(0, 6).map((feedback) => (
+                <div key={feedback.id} className="rounded-xl border border-white/10 bg-[#171a1d] p-4">
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-white/10 text-white/80">
+                      👤
+                    </span>
+                    <span className="text-xs font-semibold uppercase tracking-[0.12em] text-white/70">
+                      user
+                    </span>
+                  </div>
+
+                  {feedback.note ? (
+                    <p className="text-sm leading-7 text-white/85 whitespace-pre-wrap">{feedback.note}</p>
+                  ) : null}
+
+                  {feedback.images?.length ? (
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      {feedback.images.slice(0, 3).map((img, idx) => (
+                        <img
+                          key={`${feedback.id}-${idx}`}
+                          src={img}
+                          alt={`feedback-${idx + 1}`}
+                          className="h-16 w-full rounded-md border border-white/10 object-cover"
+                        />
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <p className="mt-3 text-[11px] text-white/50">
+                    {new Date(feedback.createdAt).toLocaleDateString(language === "ar" ? "ar-SA-u-nu-latn" : "en-US")}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {/* Product Details Section */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">

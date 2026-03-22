@@ -102,6 +102,13 @@ export default function AdminDashboard() {
       href: "/admin/notifications",
       color: "from-yellow-500 to-yellow-600",
     },
+    {
+      title: "فيدباك الطلبات",
+      description: "عرض تقييمات وملاحظات العملاء بعد تسليم الطلب",
+      icon: "⭐",
+      href: "/admin/feedback",
+      color: "from-rose-500 to-rose-600",
+    },
   ];
 
   return (

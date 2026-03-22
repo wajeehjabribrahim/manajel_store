@@ -280,3 +280,61 @@ export async function sendStockRequestNotification(
     throw error;
   }
 }
+
+export async function sendOrderFeedbackNotification(
+  data: {
+    orderId: string;
+    customerName: string;
+    customerEmail?: string | null;
+    customerPhone?: string | null;
+    note: string;
+    imagesCount: number;
+    createdAt: Date;
+  }
+) {
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
+  const adminFeedbackUrl = "https://www.mnajel.com/admin/feedback";
+  const orderUrl = `https://www.mnajel.com/orders/${data.orderId}`;
+
+  try {
+    await resend.emails.send({
+      from: 'Manajel Store <info@manajel.works>',
+      to: adminEmails,
+      subject: `⭐ فيدباك جديد على الطلب #${data.orderId}`,
+      html: `
+        <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2d5016; text-align: center;">⭐ وصل فيدباك جديد</h2>
+          <p>تم إرسال تقييم جديد بعد تسليم الطلب:</p>
+
+          <div style="padding: 14px; background: #f8fafc; border-right: 4px solid #0ea5e9; margin: 16px 0;">
+            <p><strong>رقم الطلب:</strong> ${data.orderId}</p>
+            <p><strong>اسم العميل:</strong> ${data.customerName || 'غير متوفر'}</p>
+            <p><strong>البريد الإلكتروني:</strong> ${data.customerEmail || 'غير متوفر'}</p>
+            <p><strong>رقم الهاتف:</strong> ${data.customerPhone || 'غير متوفر'}</p>
+            <p><strong>عدد الصور المرفقة:</strong> ${data.imagesCount}</p>
+            <p><strong>وقت الإرسال:</strong> ${new Date(data.createdAt).toLocaleString('ar-PS-u-nu-latn')}</p>
+          </div>
+
+          <h3 style="color: #2d5016; margin-top: 20px;">الملاحظة:</h3>
+          <div style="padding: 12px; background: #f9fafb; border-right: 3px solid #2d5016; white-space: pre-wrap;">
+            ${data.note || '(بدون ملاحظة نصية)'}
+          </div>
+
+          <p style="text-align: center; margin-top: 22px;">
+            <a href="${adminFeedbackUrl}" style="background-color: #2d5016; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-left: 8px;">
+              فتح صفحة الفيدباك
+            </a>
+            <a href="${orderUrl}" style="background-color: #1d4ed8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+              فتح الطلب
+            </a>
+          </p>
+        </div>
+      `,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Order feedback email error:', error);
+    throw error;
+  }
+}

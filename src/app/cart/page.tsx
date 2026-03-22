@@ -129,6 +129,7 @@ export default function Cart() {
     if (!isLoading) {
       try {
         localStorage.setItem("manajel-cart", JSON.stringify(cartItems));
+        window.dispatchEvent(new Event("manajel-cart-updated"));
       } catch (error) {
         const isQuotaError = error instanceof DOMException && error.name === "QuotaExceededError";
         if (isQuotaError) {
@@ -138,6 +139,7 @@ export default function Cart() {
           }));
           try {
             localStorage.setItem("manajel-cart", JSON.stringify(trimmedCart));
+            window.dispatchEvent(new Event("manajel-cart-updated"));
           } catch {
             // ignore if still failing
           }
@@ -397,6 +399,7 @@ export default function Cart() {
         setOrderId(newOrderId);
         setCartItems([]);
         localStorage.removeItem("manajel-cart");
+        window.dispatchEvent(new Event("manajel-cart-updated"));
         router.push(
           !isAuthenticated && guestToken
             ? `/orders/${newOrderId}?guestToken=${encodeURIComponent(guestToken)}`

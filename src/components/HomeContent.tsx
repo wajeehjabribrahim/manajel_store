@@ -54,8 +54,6 @@ export default function HomeContent() {
 
   const featuredProducts = products.filter((p) => p.featured).slice(0, 4);
 
-  const curatorLabel = language === "ar" ? "ملاحظات القيّم" : "Curator Note";
-
   return (
     <div className="bg-[#121416] text-[#F2ECE2]">
       <SignupPrompt />
@@ -100,7 +98,7 @@ export default function HomeContent() {
               </p>
           </div>
 
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-4 md:mt-6 flex flex-wrap gap-4">
             <Link
               href={isAdmin ? "/admin" : "/shop"}
               className="rounded-xl px-8 py-3 font-bold"
@@ -184,7 +182,6 @@ export default function HomeContent() {
                       </span>
                     </span>
                   </div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-[#C9A66B] mb-2">{curatorLabel}</p>
                   <p className="text-sm text-white/72 leading-7 line-clamp-3">
                     {t(`products.${product.id}.description`) === `products.${product.id}.description`
                       ? product.description

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
@@ -34,15 +34,29 @@ interface Order {
   items: OrderItem[];
 }
 
+interface OrderFeedback {
+  note: string;
+  images: string[];
+  createdAt: string;
+}
+
 export default function OrderDetailsPage() {
   const { t, dir, language } = useLanguage();
   const { id } = useParams();
   const searchParams = useSearchParams();
   const guestToken = searchParams.get("guestToken") || "";
+  const shouldOpenFeedback = searchParams.get("feedback") === "1";
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [cancelling, setCancelling] = useState(false);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [feedbackNote, setFeedbackNote] = useState("");
+  const [feedbackImages, setFeedbackImages] = useState<string[]>([]);
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackError, setFeedbackError] = useState("");
+  const [feedbackSuccess, setFeedbackSuccess] = useState("");
+  const [existingFeedback, setExistingFeedback] = useState<OrderFeedback | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -56,6 +70,21 @@ export default function OrderDetailsPage() {
         if (res.ok) {
           const data = await res.json();
           setOrder(data.order);
+
+          try {
+            const feedbackRes = await fetch(`/api/orders/${id}/feedback${query}`);
+            if (feedbackRes.ok) {
+              const feedbackData = await feedbackRes.json();
+              if (feedbackData?.feedback) {
+                setExistingFeedback(feedbackData.feedback);
+                setShowFeedbackForm(false);
+              } else if (data?.order?.status === "delivered" && shouldOpenFeedback) {
+                setShowFeedbackForm(true);
+              }
+            }
+          } catch {
+            // ignore feedback fetch errors
+          }
         } else {
           setError(t("orders.notFound"));
         }
@@ -67,7 +96,7 @@ export default function OrderDetailsPage() {
     };
 
     fetchOrder();
-  }, [id, guestToken, t]);
+  }, [id, guestToken, shouldOpenFeedback, t]);
 
   if (loading) {
     return (
@@ -168,6 +197,98 @@ export default function OrderDetailsPage() {
       large: t("product.large"),
     };
     return sizeMap[size] || size;
+  };
+
+  const readFileAsDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(new Error("Failed to encode image"));
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read image"));
+      reader.readAsDataURL(file);
+    });
+
+  const handleFeedbackImagesChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+
+    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+    if (!imageFiles.length) {
+      setFeedbackError(language === "ar" ? "يرجى اختيار صور صالحة" : "Please choose valid image files");
+      return;
+    }
+
+    const limitedFiles = imageFiles.slice(0, 3);
+    const tooLarge = limitedFiles.find((file) => file.size > 2 * 1024 * 1024);
+    if (tooLarge) {
+      setFeedbackError(language === "ar" ? "حجم الصورة يجب أن يكون أقل من 2MB" : "Each image must be under 2MB");
+      return;
+    }
+
+    try {
+      const encodedImages = await Promise.all(limitedFiles.map(readFileAsDataUrl));
+      setFeedbackImages(encodedImages);
+      setFeedbackError("");
+    } catch {
+      setFeedbackError(language === "ar" ? "تعذر قراءة الصور، حاول مرة أخرى" : "Unable to read images, try again");
+    }
+  };
+
+  const handleSubmitFeedback = async () => {
+    if (!order || feedbackSubmitting) return;
+
+    if (!feedbackNote.trim() && feedbackImages.length === 0) {
+      setFeedbackError(language === "ar" ? "أدخل ملاحظة أو أضف صورة واحدة على الأقل" : "Please add a note or at least one image");
+      return;
+    }
+
+    setFeedbackSubmitting(true);
+    setFeedbackError("");
+    setFeedbackSuccess("");
+
+    try {
+      const query = guestToken
+        ? `?guestToken=${encodeURIComponent(guestToken)}`
+        : "";
+
+      const res = await fetch(`/api/orders/${order.id}/feedback${query}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          note: feedbackNote,
+          images: feedbackImages,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setFeedbackError(data?.error || (language === "ar" ? "فشل إرسال التقييم" : "Failed to submit feedback"));
+        return;
+      }
+
+      const createdAt = typeof data?.feedback?.createdAt === "string"
+        ? data.feedback.createdAt
+        : new Date().toISOString();
+
+      setExistingFeedback({
+        note: feedbackNote.trim(),
+        images: feedbackImages,
+        createdAt,
+      });
+      setFeedbackSuccess(language === "ar" ? "شكراً! تم إرسال تقييمك بنجاح" : "Thanks! Your feedback has been submitted");
+      setShowFeedbackForm(false);
+      setFeedbackNote("");
+      setFeedbackImages([]);
+    } catch {
+      setFeedbackError(language === "ar" ? "حدث خطأ أثناء الإرسال" : "An error occurred while submitting");
+    } finally {
+      setFeedbackSubmitting(false);
+    }
   };
 
   return (
@@ -365,6 +486,114 @@ export default function OrderDetailsPage() {
                 {cancelling ? t("common.loading") : t("orders.cancelOrder")}
               </button>
             )}
+
+            {order.status === "delivered" && !existingFeedback && (
+              <button
+                onClick={() => {
+                  setShowFeedbackForm((prev) => !prev);
+                  setFeedbackError("");
+                  setFeedbackSuccess("");
+                }}
+                className="w-full text-center px-6 py-3 rounded-lg font-semibold mt-4 border"
+                style={{
+                  borderColor: "rgba(201,166,107,0.55)",
+                  color: "#F2ECE2",
+                  backgroundColor: "#171a1d",
+                }}
+              >
+                {language === "ar" ? "⭐ تقييم وفيدباك" : "⭐ Review & Feedback"}
+              </button>
+            )}
+
+            {feedbackSuccess ? (
+              <p className="mt-3 text-sm text-[#C9A66B]">{feedbackSuccess}</p>
+            ) : null}
+
+            {existingFeedback ? (
+              <div className="mt-4 rounded-xl border border-white/10 bg-[#171a1d] p-4">
+                <p className="mb-2 text-sm font-semibold text-[#C9A66B]">
+                  {language === "ar" ? "تم إرسال تقييمك" : "Your feedback is submitted"}
+                </p>
+                {existingFeedback.note ? (
+                  <p className="text-sm text-white/80 whitespace-pre-wrap">{existingFeedback.note}</p>
+                ) : null}
+                {existingFeedback.images?.length ? (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {existingFeedback.images.map((img, idx) => (
+                      <img key={`${idx}-${img.slice(0, 16)}`} src={img} alt={`feedback-${idx + 1}`} className="h-20 w-full rounded-md object-cover border border-white/10" />
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
+            {order.status === "delivered" && showFeedbackForm && !existingFeedback ? (
+              <div className="mt-4 rounded-xl border border-white/10 bg-[#171a1d] p-4">
+                <h4 className="mb-3 text-sm font-bold text-[#C9A66B]">
+                  {language === "ar" ? "شاركنا ملاحظاتك بعد الاستلام" : "Share your feedback after delivery"}
+                </h4>
+
+                <textarea
+                  value={feedbackNote}
+                  onChange={(e) => setFeedbackNote(e.target.value)}
+                  rows={4}
+                  className="w-full rounded-lg border px-3 py-2 text-sm text-[#F2ECE2]"
+                  style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "#121416" }}
+                  placeholder={language === "ar" ? "اكتب تقييمك أو ملاحظاتك..." : "Write your review or notes..."}
+                />
+
+                <div className="mt-3">
+                  <label className="mb-2 block text-xs text-white/70">
+                    {language === "ar" ? "أضف صور بعد الاستلام (حد أقصى 3 صور)" : "Add post-delivery photos (up to 3 images)"}
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFeedbackImagesChange}
+                    className="block w-full text-xs text-white/70 file:mr-3 file:rounded-md file:border file:border-white/20 file:bg-[#121416] file:px-3 file:py-2 file:text-xs file:text-[#F2ECE2]"
+                  />
+                </div>
+
+                {feedbackImages.length ? (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {feedbackImages.map((img, index) => (
+                      <div key={`${index}-${img.slice(0, 16)}`} className="relative">
+                        <img src={img} alt={`preview-${index + 1}`} className="h-20 w-full rounded-md object-cover border border-white/10" />
+                        <button
+                          type="button"
+                          onClick={() => setFeedbackImages((prev) => prev.filter((_, i) => i !== index))}
+                          className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-600 text-[10px] text-white"
+                          aria-label="Remove image"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {feedbackError ? (
+                  <p className="mt-3 text-xs text-red-400">{feedbackError}</p>
+                ) : null}
+
+                <button
+                  type="button"
+                  onClick={handleSubmitFeedback}
+                  disabled={feedbackSubmitting}
+                  className="mt-4 w-full rounded-lg px-4 py-2 text-sm font-semibold text-[#F2ECE2] disabled:opacity-60"
+                  style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
+                >
+                  {feedbackSubmitting
+                    ? language === "ar"
+                      ? "جاري الإرسال..."
+                      : "Submitting..."
+                    : language === "ar"
+                    ? "إرسال التقييم"
+                    : "Submit Feedback"}
+                </button>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

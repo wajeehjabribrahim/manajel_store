@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import Link from "next/link";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { PRODUCTS } from "@/constants/products";
@@ -31,11 +31,23 @@ interface GuestOrderRef {
   createdAt?: string;
 }
 
+interface OrderFeedback {
+  note: string;
+  images: string[];
+  createdAt: string;
+}
+
 export default function OrdersPage() {
   const { t, dir, language } = useLanguage();
   const { status } = useSession();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openFeedbackOrderId, setOpenFeedbackOrderId] = useState<string | null>(null);
+  const [feedbackNote, setFeedbackNote] = useState("");
+  const [feedbackImages, setFeedbackImages] = useState<string[]>([]);
+  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
+  const [feedbackError, setFeedbackError] = useState("");
+  const [feedbackByOrder, setFeedbackByOrder] = useState<Record<string, OrderFeedback>>({});
 
   useEffect(() => {
     if (status === "loading") {
@@ -151,6 +163,117 @@ export default function OrdersPage() {
     return colorMap[status] || "#666";
   };
 
+  const readFileAsDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(new Error("Failed to encode image"));
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read image"));
+      reader.readAsDataURL(file);
+    });
+
+  const handleFeedbackImagesChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+
+    const imageFiles = files.filter((file) => file.type.startsWith("image/")).slice(0, 3);
+    const tooLarge = imageFiles.find((file) => file.size > 2 * 1024 * 1024);
+    if (tooLarge) {
+      setFeedbackError(language === "ar" ? "حجم الصورة يجب أن يكون أقل من 2MB" : "Each image must be under 2MB");
+      return;
+    }
+
+    try {
+      const encoded = await Promise.all(imageFiles.map(readFileAsDataUrl));
+      setFeedbackImages(encoded);
+      setFeedbackError("");
+    } catch {
+      setFeedbackError(language === "ar" ? "تعذر قراءة الصور" : "Unable to read images");
+    }
+  };
+
+  const openFeedbackForm = async (order: Order) => {
+    if (openFeedbackOrderId === order.id) {
+      setOpenFeedbackOrderId(null);
+      return;
+    }
+
+    setOpenFeedbackOrderId(order.id);
+    setFeedbackError("");
+    setFeedbackNote("");
+    setFeedbackImages([]);
+
+    if (feedbackByOrder[order.id]) {
+      return;
+    }
+
+    try {
+      const query = order.guestToken
+        ? `?guestToken=${encodeURIComponent(order.guestToken)}`
+        : "";
+      const res = await fetch(`/api/orders/${order.id}/feedback${query}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data?.feedback) {
+        setFeedbackByOrder((prev) => ({ ...prev, [order.id]: data.feedback as OrderFeedback }));
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const submitFeedback = async (order: Order) => {
+    if (feedbackSubmitting) return;
+
+    if (!feedbackNote.trim() && feedbackImages.length === 0) {
+      setFeedbackError(language === "ar" ? "أدخل ملاحظة أو أضف صورة" : "Add a note or at least one image");
+      return;
+    }
+
+    setFeedbackSubmitting(true);
+    setFeedbackError("");
+    try {
+      const query = order.guestToken
+        ? `?guestToken=${encodeURIComponent(order.guestToken)}`
+        : "";
+      const res = await fetch(`/api/orders/${order.id}/feedback${query}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note: feedbackNote, images: feedbackImages }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setFeedbackError(data?.error || (language === "ar" ? "فشل إرسال التقييم" : "Failed to submit feedback"));
+        return;
+      }
+
+      const createdAt = typeof data?.feedback?.createdAt === "string"
+        ? data.feedback.createdAt
+        : new Date().toISOString();
+
+      setFeedbackByOrder((prev) => ({
+        ...prev,
+        [order.id]: {
+          note: feedbackNote.trim(),
+          images: feedbackImages,
+          createdAt,
+        },
+      }));
+      setOpenFeedbackOrderId(null);
+      setFeedbackNote("");
+      setFeedbackImages([]);
+    } catch {
+      setFeedbackError(language === "ar" ? "حدث خطأ أثناء الإرسال" : "An error occurred while submitting");
+    } finally {
+      setFeedbackSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
@@ -252,18 +375,117 @@ export default function OrdersPage() {
                         {CURRENCY_SYMBOL}{order.total.toFixed(2)}
                       </span>
                     </div>
-                    <Link
-                      href={
-                        order.guestToken
-                          ? `/orders/${order.id}?guestToken=${encodeURIComponent(order.guestToken)}`
-                          : `/orders/${order.id}`
-                      }
-                      className="rounded-lg border px-6 py-2 font-semibold"
-                      style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", borderColor: "rgba(201,166,107,0.45)" }}
-                    >
-                      {t("orders.viewDetails")}
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={
+                          order.guestToken
+                            ? `/orders/${order.id}?guestToken=${encodeURIComponent(order.guestToken)}`
+                            : `/orders/${order.id}`
+                        }
+                        className="rounded-lg border px-6 py-2 font-semibold"
+                        style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", borderColor: "rgba(201,166,107,0.45)" }}
+                      >
+                        {t("orders.viewDetails")}
+                      </Link>
+
+                      {order.status === "delivered" ? (
+                        <button
+                          type="button"
+                          onClick={() => openFeedbackForm(order)}
+                          className="rounded-lg border px-4 py-2 text-sm font-semibold"
+                          style={{ backgroundColor: "#171a1d", color: "#F2ECE2", borderColor: "rgba(201,166,107,0.55)" }}
+                        >
+                          {language === "ar" ? "⭐ تقييم" : "⭐ Review"}
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
+
+                  {order.status === "delivered" && feedbackByOrder[order.id] ? (
+                    <div className="mt-4 rounded-xl border border-white/10 bg-[#121416] p-4">
+                      <p className="mb-2 text-sm font-semibold text-[#C9A66B]">
+                        {language === "ar" ? "تم إرسال تقييمك" : "Your feedback is submitted"}
+                      </p>
+                      {feedbackByOrder[order.id].note ? (
+                        <p className="text-sm text-white/80 whitespace-pre-wrap">{feedbackByOrder[order.id].note}</p>
+                      ) : null}
+                      {feedbackByOrder[order.id].images?.length ? (
+                        <div className="mt-3 grid grid-cols-3 gap-2">
+                          {feedbackByOrder[order.id].images.map((img, idx) => (
+                            <img key={`${idx}-${img.slice(0, 16)}`} src={img} alt={`feedback-${idx + 1}`} className="h-20 w-full rounded-md object-cover border border-white/10" />
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {order.status === "delivered" && openFeedbackOrderId === order.id && !feedbackByOrder[order.id] ? (
+                    <div className="mt-4 rounded-xl border border-white/10 bg-[#121416] p-4">
+                      <h4 className="mb-3 text-sm font-bold text-[#C9A66B]">
+                        {language === "ar" ? "شاركنا ملاحظاتك بعد الاستلام" : "Share your feedback after delivery"}
+                      </h4>
+
+                      <textarea
+                        value={feedbackNote}
+                        onChange={(e) => setFeedbackNote(e.target.value)}
+                        rows={4}
+                        className="w-full rounded-lg border px-3 py-2 text-sm text-[#F2ECE2]"
+                        style={{ borderColor: "rgba(255,255,255,0.2)", backgroundColor: "#171a1d" }}
+                        placeholder={language === "ar" ? "اكتب تقييمك أو ملاحظاتك..." : "Write your review or notes..."}
+                      />
+
+                      <div className="mt-3">
+                        <label className="mb-2 block text-xs text-white/70">
+                          {language === "ar" ? "أضف صور بعد الاستلام (حد أقصى 3 صور)" : "Add post-delivery photos (up to 3 images)"}
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFeedbackImagesChange}
+                          className="block w-full text-xs text-white/70 file:mr-3 file:rounded-md file:border file:border-white/20 file:bg-[#171a1d] file:px-3 file:py-2 file:text-xs file:text-[#F2ECE2]"
+                        />
+                      </div>
+
+                      {feedbackImages.length ? (
+                        <div className="mt-3 grid grid-cols-3 gap-2">
+                          {feedbackImages.map((img, index) => (
+                            <div key={`${index}-${img.slice(0, 16)}`} className="relative">
+                              <img src={img} alt={`preview-${index + 1}`} className="h-20 w-full rounded-md object-cover border border-white/10" />
+                              <button
+                                type="button"
+                                onClick={() => setFeedbackImages((prev) => prev.filter((_, i) => i !== index))}
+                                className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-red-600 text-[10px] text-white"
+                                aria-label="Remove image"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+
+                      {feedbackError ? (
+                        <p className="mt-3 text-xs text-red-400">{feedbackError}</p>
+                      ) : null}
+
+                      <button
+                        type="button"
+                        onClick={() => submitFeedback(order)}
+                        disabled={feedbackSubmitting}
+                        className="mt-4 w-full rounded-lg px-4 py-2 text-sm font-semibold text-[#F2ECE2] disabled:opacity-60"
+                        style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
+                      >
+                        {feedbackSubmitting
+                          ? language === "ar"
+                            ? "جاري الإرسال..."
+                            : "Submitting..."
+                          : language === "ar"
+                          ? "إرسال التقييم"
+                          : "Submit Feedback"}
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             ))}
