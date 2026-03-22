@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { COLORS } from "@/constants/store";
+import { COLORS, CONTACT_INFO } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useState } from "react";
 
@@ -28,13 +28,16 @@ export default function Footer() {
     zatar: "zatar",
     freekeh: "freekeh",
   });
-  const [subscribeEmail, setSubscribeEmail] = useState("");
-  const [subscribeState, setSubscribeState] = useState<"idle" | "success" | "error">("idle");
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subscribeMessage, setSubscribeMessage] = useState("");
 
   const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const email = subscribeEmail.trim().toLowerCase();
-    if (!email) return;
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubscribeMessage("");
 
     try {
       const res = await fetch("/api/subscribers", {
@@ -44,14 +47,16 @@ export default function Footer() {
       });
 
       if (!res.ok) {
-        setSubscribeState("error");
+        setSubscribeMessage((t as any).footer.subscribeError);
         return;
       }
 
-      setSubscribeEmail("");
-      setSubscribeState("success");
+      setSubscribeMessage((t as any).footer.subscribeSuccess);
+      setEmail("");
     } catch {
-      setSubscribeState("error");
+      setSubscribeMessage((t as any).footer.subscribeError);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -103,38 +108,47 @@ export default function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: COLORS.primary,
-        color: COLORS.accent,
+        background: "linear-gradient(180deg, #131619 0%, #101214 100%)",
+        color: "#F2ECE2",
+        borderTop: "1px solid rgba(201,166,107,0.28)",
       }}
       className="text-sm"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="mb-10 flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
+          <p className="text-[11px] uppercase tracking-[0.22em] text-[#C9A66B]">
+            Curated Palestinian Heritage
+          </p>
+          <p className="text-xs text-white/70">
+            {t("footer.tagline")}
+          </p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold mb-4">{(t as any).footer.brandName}</h3>
-            <p className="mb-4 text-xs opacity-80">
+            <h3 className="text-lg font-black mb-4 tracking-wide">{(t as any).footer.brandName}</h3>
+            <p className="mb-4 text-xs text-white/70 leading-6">
               {(t as any).footer.tagline}
             </p>
-            <p className="text-xs opacity-80">{(t as any).footer.location}</p>
+            <p className="text-xs text-white/70">{(t as any).footer.location}</p>
           </div>
 
           {/* Shop */}
           <div>
-            <h4 className="font-semibold mb-4">{(t as any).footer.shopTitle}</h4>
-            <ul className="space-y-2">
+            <h4 className="font-semibold mb-4 text-[#C9A66B]">{(t as any).footer.shopTitle}</h4>
+            <ul className="space-y-2 text-white/80">
               <li>
-                <Link href="/shop" className="opacity-100">
+                <Link href="/shop" className="hover:text-white transition-colors">
                   {(t as any).footer.allProducts}
                 </Link>
               </li>
               <li>
-                <Link href={`/shop?category=${encodeURIComponent(categoryParams.oliveOil)}`} className="opacity-100">
+                <Link href={`/shop?category=${encodeURIComponent(categoryParams.oliveOil)}`} className="hover:text-white transition-colors">
                   {(t as any).footer.oliveOil}
                 </Link>
               </li>
               <li>
-                <Link href={`/shop?category=${encodeURIComponent(categoryParams.zatar)}`} className="opacity-100">
+                <Link href={`/shop?category=${encodeURIComponent(categoryParams.zatar)}`} className="hover:text-white transition-colors">
                   {(t as any).footer.zatar}
                 </Link>
               </li>
@@ -143,20 +157,20 @@ export default function Footer() {
 
           {/* Information */}
           <div>
-            <h4 className="font-semibold mb-4">{(t as any).footer.infoTitle}</h4>
-            <ul className="space-y-2">
+            <h4 className="font-semibold mb-4 text-[#C9A66B]">{(t as any).footer.infoTitle}</h4>
+            <ul className="space-y-2 text-white/80">
               <li>
-                <Link href="/about" className="opacity-100">
+                <Link href="/about" className="hover:text-white transition-colors">
                   {(t as any).footer.aboutUs}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="opacity-100">
+                <Link href="/contact" className="hover:text-white transition-colors">
                   {(t as any).footer.contact}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="opacity-100">
+                <Link href="/faq" className="hover:text-white transition-colors">
                   {(t as any).footer.faq}
                 </Link>
               </li>
@@ -165,20 +179,20 @@ export default function Footer() {
 
           {/* Policies */}
           <div>
-            <h4 className="font-semibold mb-4">{(t as any).footer.policiesTitle}</h4>
-            <ul className="space-y-2">
+            <h4 className="font-semibold mb-4 text-[#C9A66B]">{(t as any).footer.policiesTitle}</h4>
+            <ul className="space-y-2 text-white/80">
               <li>
-                <Link href="/shipping-policy" className="opacity-100">
+                <Link href="/shipping-policy" className="hover:text-white transition-colors">
                   {(t as any).footer.shippingPolicy}
                 </Link>
               </li>
               <li>
-                <Link href="/return-policy" className="opacity-100">
+                <Link href="/return-policy" className="hover:text-white transition-colors">
                   {(t as any).footer.returnPolicy}
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="opacity-100">
+                <Link href="/privacy-policy" className="hover:text-white transition-colors">
                   {(t as any).footer.privacyPolicy}
                 </Link>
               </li>
@@ -186,12 +200,36 @@ export default function Footer() {
           </div>
         </div>
 
+        <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
+          <p className="mb-3 text-sm text-white/80">{(t as any).footer.subscribeText}</p>
+          <form onSubmit={handleSubscribe} className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder={(t as any).footer.subscribePlaceholder}
+              className="h-11 w-full rounded-xl border border-white/20 bg-[#0f1214] px-4 text-sm text-[#F2ECE2] placeholder:text-white/45 focus:border-[#C9A66B]/70 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="h-11 rounded-xl border border-[#C9A66B]/60 px-6 text-sm font-semibold text-[#F2ECE2] transition-colors hover:bg-[#C9A66B]/15 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSubmitting ? "..." : (t as any).footer.subscribeButton}
+            </button>
+          </form>
+          {subscribeMessage ? (
+            <p className="mt-3 text-xs text-[#C9A66B]">{subscribeMessage}</p>
+          ) : null}
+        </div>
+
         {/* Divider */}
         <div
-          style={{ borderTopColor: COLORS.secondary }}
+          style={{ borderTopColor: "rgba(201,166,107,0.28)" }}
           className="border-t pt-8"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center text-xs opacity-70 gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/70 gap-4">
             <div className="flex items-center gap-3">
               <span className="opacity-100 font-semibold">{t("footer.followUs")}</span>
               <a href="https://www.facebook.com/share/1HQyJVC8Bz/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="opacity-100 hover:opacity-80">
@@ -210,38 +248,11 @@ export default function Footer() {
                 </svg>
               </a>
             </div>
-            <div className="flex flex-col gap-3 w-full md:w-auto md:min-w-[340px]">
+            <div className="flex flex-col md:flex-row gap-4">
               <p>
                 {t("footer.copyright")}
               </p>
-              <div>
-                <p className="mb-2 opacity-100">
-                  {t("footer.subscribeText")}
-                </p>
-                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    type="email"
-                    value={subscribeEmail}
-                    onChange={(e) => setSubscribeEmail(e.target.value)}
-                    placeholder={t("footer.subscribePlaceholder")}
-                    className="px-3 py-2 rounded-md text-gray-900 w-full sm:w-56"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-md font-semibold text-white"
-                    style={{ backgroundColor: COLORS.secondary }}
-                  >
-                    {t("footer.subscribeButton")}
-                  </button>
-                </form>
-                {subscribeState === "success" && (
-                  <p className="mt-2 text-[11px] text-green-200">{t("footer.subscribeSuccess")}</p>
-                )}
-                {subscribeState === "error" && (
-                  <p className="mt-2 text-[11px] text-red-200">{t("footer.subscribeError")}</p>
-                )}
-              </div>
+              
             </div>
           </div>
         </div>

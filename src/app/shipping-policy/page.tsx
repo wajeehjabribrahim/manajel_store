@@ -7,32 +7,36 @@ export default function ShippingPolicy() {
   const { language } = useLanguage();
   const t = translations[language];
   return (
-    <div>
+    <div className="bg-[#121416] text-[#F2ECE2]">
       <section
-        style={{ backgroundColor: COLORS.primary }}
+        style={{
+          background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+          borderBottom: "1px solid rgba(201,166,107,0.25)",
+        }}
         className="text-white py-12 px-4"
       >
         <div className="max-w-4xl mx-auto">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Policies</p>
           <h1 className="text-4xl font-bold">{t.policies.shippingPolicy}</h1>
         </div>
       </section>
 
       <section className="max-w-4xl mx-auto px-4 py-12">
-        <div className="space-y-8">
+        <div className="space-y-8 rounded-xl border border-white/10 bg-[#171a1d] p-6 md:p-8">
           <div>
-            <h2 style={{ color: COLORS.primary }} className="text-2xl font-bold mb-4">
+            <h2 className="text-2xl font-bold mb-4 text-[#C9A66B]">
               {t.policies.shippingInfo}
             </h2>
-            <p className="text-gray-900 mb-4">
+            <p className="text-white/80 mb-4">
               {t.policies.shippingDesc}
             </p>
           </div>
 
           <div>
-            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
+            <h3 className="text-xl font-bold mb-3 text-[#C9A66B]">
               {t.policies.deliveryAreas}
             </h3>
-            <ul className="list-disc list-inside text-gray-900 space-y-2">
+            <ul className="list-disc list-inside text-white/80 space-y-2">
               <li>{t.policies.area1}</li>
               <li>{t.policies.area2}</li>
               <li>{t.policies.area3}</li>
@@ -40,10 +44,10 @@ export default function ShippingPolicy() {
           </div>
 
           <div>
-            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
+            <h3 className="text-xl font-bold mb-3 text-[#C9A66B]">
               {t.policies.shippingCosts}
             </h3>
-            <ul className="text-gray-900 space-y-2">
+            <ul className="text-white/80 space-y-2">
               <li>
                 <strong>{t.policies.localOrders}</strong> {t.policies.localOrdersDesc}
               </li>
@@ -57,20 +61,19 @@ export default function ShippingPolicy() {
           </div>
 
           <div>
-            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
+            <h3 className="text-xl font-bold mb-3 text-[#C9A66B]">
               {t.policies.deliveryTime}
             </h3>
-            <p className="text-gray-900">{t.policies.deliveryTimeDesc}</p>
+            <p className="text-white/80">{t.policies.deliveryTimeDesc}</p>
           </div>
 
           <div
-            style={{ backgroundColor: COLORS.accent }}
-            className="rounded-lg p-6"
+            className="rounded-lg border border-[#C9A66B]/35 bg-[#121416] p-6"
           >
-            <h3 style={{ color: COLORS.primary }} className="text-xl font-bold mb-3">
+            <h3 className="text-xl font-bold mb-3 text-[#C9A66B]">
               {t.policies.specialHandling}
             </h3>
-            <p className="text-gray-900">
+            <p className="text-white/80">
               {t.policies.specialHandlingDesc}
             </p>
           </div>

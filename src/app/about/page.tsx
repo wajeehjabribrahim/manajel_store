@@ -1,5 +1,4 @@
 "use client";
-import { COLORS, STORE_DESCRIPTION, CONTACT_INFO } from "@/constants/store";
 import Link from "next/link";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
@@ -9,17 +8,19 @@ export default function About() {
   const { language } = useLanguage();
   const t = translations[language];
   return (
-    <div>
+    <div className="bg-[#121416] text-[#F2ECE2]">
       {/* Hero */}
       <section
         style={{
-          backgroundColor: COLORS.primary,
+          background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+          borderBottom: "1px solid rgba(201,166,107,0.25)",
         }}
         className="text-white py-20 px-4"
       >
         <div className="max-w-7xl mx-auto">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Manajel</p>
           <h1 className="text-5xl font-bold mb-4">{t.about.title}</h1>
-          <p className="text-xl opacity-90">
+          <p className="text-xl text-white/80">
             {t.about.subtitle}
           </p>
         </div>
@@ -29,34 +30,27 @@ export default function About() {
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
           <AnimatedSection animationType="fade-left">
-            <h2
-              style={{ color: COLORS.primary }}
-              className="text-3xl font-bold mb-6"
-            >
+            <h2 className="text-3xl font-bold mb-6 text-[#C9A66B]">
               {t.about.ourStory}
             </h2>
-            <p className="text-gray-900 mb-4 leading-relaxed">
+            <p className="text-white/80 mb-4 leading-relaxed">
               {t.about.storyPara1}
             </p>
-            <p className="text-gray-900 mb-4 leading-relaxed">
+            <p className="text-white/80 mb-4 leading-relaxed">
               {t.about.storyPara2}
             </p>
-            <p className="text-gray-900 mb-4 leading-relaxed">
+            <p className="text-white/80 mb-4 leading-relaxed">
               {t.about.storyPara3}
             </p>
-            <p className="text-gray-900 leading-relaxed">
+            <p className="text-white/80 leading-relaxed">
               {t.about.storyPara4}
             </p>
           </AnimatedSection>
           <AnimatedSection animationType="fade-right" delay={100}>
             <div
-              style={{ backgroundColor: COLORS.accent }}
-              className="rounded-lg p-8 flex flex-col justify-center"
+              className="rounded-xl border border-white/10 bg-[#171a1d] p-8 flex flex-col justify-center"
             >
-              <h3
-                style={{ color: COLORS.primary }}
-                className="text-2xl font-bold mb-4"
-              >
+              <h3 className="text-2xl font-bold mb-4 text-[#C9A66B]">
                 {t.about.ourValues}
               </h3>
               <ul className="space-y-3">
@@ -69,13 +63,10 @@ export default function About() {
                   t.about.value6,
                 ].map((value, i) => (
                   <li key={i} className="flex items-start">
-                    <span
-                      style={{ color: COLORS.primary }}
-                      className="font-bold mr-3"
-                    >
+                    <span className="font-bold mr-3 text-[#C9A66B]">
                       ✓
                     </span>
-                    <span className="text-gray-900">{value}</span>
+                    <span className="text-white/80">{value}</span>
                   </li>
                 ))}
               </ul>
@@ -86,10 +77,7 @@ export default function About() {
         {/* Products Section */}
         <AnimatedSection animationType="fade-up">
           <div className="mb-16">
-            <h2
-              style={{ color: COLORS.primary }}
-              className="text-3xl font-bold mb-8 text-center"
-            >
+            <h2 className="text-3xl font-bold mb-8 text-center text-[#C9A66B]">
               {t.about.products}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -103,13 +91,10 @@ export default function About() {
               ].map((product, i) => (
                 <div
                   key={i}
-                  style={{ borderLeft: `4px solid ${COLORS.primary}` }}
+                  style={{ borderLeft: "4px solid #C9A66B" }}
                   className="pl-4"
                 >
-                  <h4
-                    style={{ color: COLORS.primary }}
-                    className="font-bold mb-2"
-                  >
+                  <h4 className="font-bold mb-2 text-[#F2ECE2]">
                     {product}
                   </h4>
                 </div>
@@ -119,7 +104,7 @@ export default function About() {
               <Link
                 href="/shop"
                 className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
-                style={{ backgroundColor: COLORS.primary, color: "white" }}
+                style={{ backgroundColor: "#C9A66B", color: "#14171a", border: "1px solid rgba(201,166,107,0.75)" }}
               >
                 {t.common.shopNow}
               </Link>
@@ -130,22 +115,18 @@ export default function About() {
         {/* Contact CTA */}
         <AnimatedSection animationType="scale" delay={200}>
           <div
-            style={{ backgroundColor: COLORS.accent }}
-            className="rounded-lg p-12 text-center"
+            className="rounded-xl border border-white/10 bg-[#171a1d] p-12 text-center"
           >
-            <h3
-              style={{ color: COLORS.primary }}
-              className="text-2xl font-bold mb-4"
-            >
+            <h3 className="text-2xl font-bold mb-4 text-[#C9A66B]">
               {t.about.contactCTA}
             </h3>
-            <p className="text-gray-900 mb-6">
+            <p className="text-white/80 mb-6">
               {t.about.contactDesc}
             </p>
             <Link
               href="/contact"
               className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
-              style={{ backgroundColor: COLORS.primary, color: "white" }}
+              style={{ backgroundColor: "#C9A66B", color: "#14171a", border: "1px solid rgba(201,166,107,0.75)" }}
             >
               {t.about.contactButton}
             </Link>

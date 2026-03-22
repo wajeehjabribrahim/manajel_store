@@ -9,7 +9,6 @@ import { PRODUCTS, Product } from "@/constants/products";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
-import { DEFAULT_SIZE_KEY, ProductSize, SizeKey, getProductSizeLabel } from "@/lib/productSizes";
 
 interface PageProps {
   params: {
@@ -22,14 +21,13 @@ export default function ProductPage({ params }: PageProps) {
   const { t, language } = useLanguage();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState<SizeKey>(DEFAULT_SIZE_KEY);
+  const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("medium");
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
-  const [showNotifyModal, setShowNotifyModal] = useState(false);
-  const [whatsappInput, setWhatsappInput] = useState("");
-  const [notifyError, setNotifyError] = useState("");
-  const [notifySuccess, setNotifySuccess] = useState("");
+  const [notifyWhatsapp, setNotifyWhatsapp] = useState("");
+  const [isNotifying, setIsNotifying] = useState(false);
+  const [notifyMessage, setNotifyMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -60,7 +58,7 @@ export default function ProductPage({ params }: PageProps) {
 
   useEffect(() => {
     if (!product) return;
-    const availableSizes = (Object.keys(product.sizes || {}) as SizeKey[])
+    const availableSizes = (Object.keys(product.sizes || {}) as Array<"small" | "medium" | "large">)
       .filter((key) => product.sizes?.[key]?.price);
     if (availableSizes.length && !availableSizes.includes(selectedSize)) {
       setSelectedSize(availableSizes[0]);
@@ -74,16 +72,19 @@ export default function ProductPage({ params }: PageProps) {
     
     // Add item to cart
     const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
-      SizeKey,
-      ProductSize
+      "small" | "medium" | "large",
+      { weight: string; price: number }
     ]>).filter(([, value]) => value?.price);
 
     const fallbackSize = sizeEntries.length
       ? sizeEntries[0][0]
-      : DEFAULT_SIZE_KEY;
+      : "medium";
     const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
-    const rawPrice = product.sizes?.[activeSize]?.price ?? product.price;
-    const price = product.sizes?.[activeSize]?.salePrice ?? rawPrice;
+    const basePrice = product.sizes?.[activeSize]?.price ?? product.price;
+    const salePrice = product.sizes?.[activeSize]?.salePrice;
+    const price = typeof salePrice === "number" && salePrice > 0 && salePrice < basePrice
+      ? salePrice
+      : basePrice;
 
     const rawImage = typeof product.image === "string" ? product.image : "";
     const safeImage = rawImage && !rawImage.startsWith("data:") && rawImage.length < 2000
@@ -182,78 +183,39 @@ export default function ProductPage({ params }: PageProps) {
     }
   };
 
-  const normalizeToWesternDigits = (value: string) =>
-    value
-      .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-      .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+  const handleNotifyStock = async () => {
+    if (!product || isNotifying) return;
 
-  const getDigitsCount = (value: string) =>
-    normalizeToWesternDigits(value).replace(/\D/g, "").length;
-
-  const handleNotifySubmit = async () => {
-    if (!product) return;
-
-    const phone = normalizeToWesternDigits(whatsappInput).trim();
-    const digitsCount = phone.replace(/\D/g, "").length;
-
-    if (digitsCount < 10) {
-      setNotifySuccess("");
-      setNotifyError(
-        language === "ar"
-          ? "رقم الواتساب يجب أن يحتوي على 10 أرقام على الأقل"
-          : "WhatsApp number must contain at least 10 digits"
-      );
-      return;
-    }
-
-    setNotifyError("");
+    setIsNotifying(true);
+    setNotifyMessage(null);
     try {
       const res = await fetch(`/api/products/${product.id}/notify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ whatsapp: phone }),
+        body: JSON.stringify({ whatsapp: notifyWhatsapp }),
       });
 
-      const data = await res.json().catch(() => ({} as { error?: string; message?: string }));
+      const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setNotifySuccess("");
-        setNotifyError(
-          data?.error ||
-            (language === "ar"
-              ? "حدث خطأ، حاول مرة أخرى"
-              : "Something went wrong. Please try again")
-        );
+        setNotifyMessage(data?.error || (language === "ar" ? "حدث خطأ، حاول مرة أخرى" : "Something went wrong, try again"));
         return;
       }
 
-      setNotifyError("");
-      setNotifySuccess(
-        language === "ar"
-          ? "تم تسجيل طلب التذكير الخاص بك"
-          : "Your reminder request has been registered"
-      );
-      setWhatsappInput("");
-
-      setTimeout(() => {
-        setShowNotifyModal(false);
-        setNotifySuccess("");
-      }, 1500);
+      setNotifyMessage(data?.message || (language === "ar" ? "تم تسجيل طلب التذكير الخاص بك" : "Reminder request saved"));
+      setNotifyWhatsapp("");
     } catch {
-      setNotifySuccess("");
-      setNotifyError(
-        language === "ar"
-          ? "حدث خطأ، حاول مرة أخرى"
-          : "Something went wrong. Please try again"
-      );
+      setNotifyMessage(language === "ar" ? "حدث خطأ، حاول مرة أخرى" : "Something went wrong, try again");
+    } finally {
+      setIsNotifying(false);
     }
   };
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
         <div className="text-center">
-          <p style={{ color: COLORS.primary }} className="text-xl font-semibold">
+          <p className="text-xl font-semibold text-[#F2ECE2]">
             {t("common.loading")}
           </p>
         </div>
@@ -263,14 +225,14 @@ export default function ProductPage({ params }: PageProps) {
 
   if (!product) {
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">المنتج غير موجود</h1>
-          <p className="text-gray-600 mb-6">نعتصر، المنتج الذي تبحث عنه غير متوفر</p>
+          <h1 className="mb-4 text-4xl font-bold text-[#F2ECE2]">المنتج غير موجود</h1>
+          <p className="mb-6 text-white/70">نعتصر، المنتج الذي تبحث عنه غير متوفر</p>
           <Link
             href="/shop"
             className="inline-block px-6 py-2 rounded-lg font-semibold transition-transform hover:scale-105"
-            style={{ backgroundColor: COLORS.primary, color: COLORS.accent }}
+            style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
           >
             العودة للمتجر
           </Link>
@@ -280,13 +242,13 @@ export default function ProductPage({ params }: PageProps) {
   }
 
   const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
-    SizeKey,
-    ProductSize
+    "small" | "medium" | "large",
+    { weight: string; price: number }
   ]>).filter(([, value]) => value?.price);
 
   const fallbackSize = sizeEntries.length
     ? sizeEntries[0][0]
-    : DEFAULT_SIZE_KEY;
+    : "medium";
   const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
   const currentSize = product.sizes?.[activeSize] || { weight: "", price: product.price };
 
@@ -310,23 +272,38 @@ export default function ProductPage({ params }: PageProps) {
     }
   }
 
+  const formatNumber = (value: number) =>
+    new Intl.NumberFormat(language === "ar" ? "ar-PS-u-nu-latn" : "en-US", {
+      maximumFractionDigits: 2,
+    }).format(value);
+
+  const normalizeToLatinDigits = (value: string) =>
+    value
+      .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+      .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));
+
+  const parseQuantityInput = (raw: string) => {
+    const latin = normalizeToLatinDigits(raw).replace(/[^0-9]/g, "");
+    const parsed = parseInt(latin, 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+  };
+
   return (
-    <>
-      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
+    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2]">
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-600">
-        <Link href="/shop" className="hover:underline" style={{ color: COLORS.primary }}>
+      <div className="mx-auto max-w-7xl px-4 py-4 text-sm text-white/70">
+        <Link href="/shop" className="hover:text-white transition-colors" style={{ color: "#C9A66B" }}>
           {t("nav.shop")}
         </Link>
         {" > "}
-        <span>{name}</span>
+        <span className="text-white/85">{name}</span>
       </div>
 
       {/* Product Detail */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Gallery */}
-          <div className="rounded-lg overflow-hidden" style={{ backgroundColor: COLORS.accent }}>
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#171a1d]">
             {product.image || (product.images && product.images.length > 0) ? (
               <ImageGallery 
                 images={
@@ -340,15 +317,11 @@ export default function ProductPage({ params }: PageProps) {
               <div className="w-full h-96 flex items-center justify-center">
                 <div className="text-center">
                   <div
-                    style={{ color: COLORS.primary }}
-                    className="text-8xl font-bold mb-4"
+                    className="mb-4 text-8xl font-bold text-[#C9A66B]"
                   >
                     {name.split(" ")[0][0]}
                   </div>
-                  <p
-                    style={{ color: COLORS.secondary }}
-                    className="text-lg font-semibold"
-                  >
+                  <p className="text-lg font-semibold text-white/80">
                     {name}
                   </p>
                 </div>
@@ -358,10 +331,7 @@ export default function ProductPage({ params }: PageProps) {
 
           {/* Product Info */}
           <div>
-            <h1
-              style={{ color: COLORS.primary }}
-              className="text-4xl font-bold mb-2"
-            >
+            <h1 className="mb-2 text-4xl font-bold text-[#F2ECE2]">
               {name}
             </h1>
 
@@ -380,7 +350,7 @@ export default function ProductPage({ params }: PageProps) {
                         return <span key={star} className="text-gray-300">★</span>;
                       })}
                     </div>
-                    <span className="text-sm text-gray-500">{rating.toFixed(1)}</span>
+                    <span className="text-sm text-white/65">{rating.toFixed(1)}</span>
                   </>
                 );
               })()}
@@ -412,30 +382,15 @@ export default function ProductPage({ params }: PageProps) {
             </div>
 
             {/* Description */}
-            <p className="text-gray-700 mb-6">{description}</p>
-
-            {product.ingredients && (
-              <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: "white" }}>
-                <h3
-                  style={{ color: COLORS.primary }}
-                  className="font-bold text-lg mb-2"
-                >
-                  {language === "ar" ? "المكونات" : "Ingredients"}
-                </h3>
-                <p className="text-gray-700 whitespace-pre-line">{product.ingredients}</p>
-              </div>
-            )}
+            <p className="mb-6 text-white/80">{description}</p>
 
             {/* Size Selection */}
             <div className="mb-6">
-              <h3
-                style={{ color: COLORS.primary }}
-                className="font-bold text-lg mb-3"
-              >
+              <h3 className="mb-3 text-lg font-bold text-[#C9A66B]">
                 {t("product.selectSize")}
               </h3>
               <div className="grid grid-cols-3 gap-3">
-                {(sizeEntries.length ? sizeEntries.map(([size]) => size) : ([DEFAULT_SIZE_KEY] as const)).map((size) => (
+                {(sizeEntries.length ? sizeEntries.map(([size]) => size) : (["medium"] as const)).map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -445,33 +400,34 @@ export default function ProductPage({ params }: PageProps) {
                         : "border-dashed"
                     }`}
                     style={{
-                      borderColor: activeSize === size ? COLORS.primary : COLORS.border,
-                      backgroundColor: activeSize === size ? COLORS.accent : "white",
+                      borderColor: activeSize === size ? "#C9A66B" : "rgba(255,255,255,0.18)",
+                      backgroundColor: activeSize === size ? "rgba(201,166,107,0.16)" : "#171a1d",
                     }}
                   >
-                    <div
-                      style={{ color: COLORS.primary }}
-                      className="font-bold capitalize"
-                    >
-                      {getProductSizeLabel(size, product.sizes, t, language)}
+                    <div className="font-bold capitalize text-[#F2ECE2]">
+                      {t(`product.${size}`)}
                     </div>
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-white/65">
                       {product.sizes?.[size]?.weight || ""}
                     </div>
-                    {product.sizes?.[size]?.salePrice ? (
-                      <>
-                        <div className="text-xs line-through" style={{ color: "#dc2626" }}>
-                          {CURRENCY_SYMBOL}{product.sizes?.[size]?.price}
-                        </div>
+                    <div
+                      className="font-bold text-sm text-[#C9A66B]"
+                    >
+                      {product.sizes?.[size]?.salePrice ? (
+                        <>
+                          <div className="text-xs line-through" style={{ color: "#dc2626" }}>
+                              {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.price ?? product.price)}
+                          </div>
+                          <div style={{ color: COLORS.secondary }} className="font-bold text-sm">
+                              {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.salePrice ?? product.price)}
+                          </div>
+                        </>
+                      ) : (
                         <div style={{ color: COLORS.secondary }} className="font-bold text-sm">
-                          {CURRENCY_SYMBOL}{product.sizes?.[size]?.salePrice}
+                            {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.price ?? product.price)}
                         </div>
-                      </>
-                    ) : (
-                      <div style={{ color: COLORS.secondary }} className="font-bold text-sm">
-                        {CURRENCY_SYMBOL}{product.sizes?.[size]?.price ?? product.price}
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -479,10 +435,7 @@ export default function ProductPage({ params }: PageProps) {
 
             {/* Quantity */}
             <div className="mb-6">
-              <h3
-                style={{ color: COLORS.primary }}
-                className="font-bold text-lg mb-3"
-              >
+              <h3 className="mb-3 text-lg font-bold text-[#C9A66B]">
                 {t("product.quantity")}
               </h3>
               <div className="flex items-center gap-3">
@@ -490,36 +443,34 @@ export default function ProductPage({ params }: PageProps) {
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="px-4 py-2 rounded-lg font-bold"
                   style={{
-                    backgroundColor: COLORS.accent,
-                    color: COLORS.primary,
+                    backgroundColor: "#1b2024",
+                    color: "#F2ECE2",
+                    border: "1px solid rgba(201,166,107,0.3)",
                   }}
                 >
                   −
                 </button>
                 <input
                   type="text"
-                  value={quantity}
-                  onChange={(e) =>
-                    setQuantity(
-                      Math.max(
-                        1,
-                        Number(normalizeToWesternDigits(e.target.value).replace(/\D/g, "")) || 1
-                      )
-                    )
-                  }
                   pattern="[0-9]*"
-                  lang="en"
+                  lang="en-US"
                   dir="ltr"
                   inputMode="numeric"
-                  className="w-16 px-3 py-2 text-center border-2 rounded-lg text-gray-900"
-                  style={{ borderColor: COLORS.border, fontFamily: "Arial, sans-serif" }}
+                  value={String(quantity)}
+                  onChange={(e) =>
+                    setQuantity(parseQuantityInput(e.target.value))
+                  }
+                  onBlur={(e) => setQuantity(parseQuantityInput(e.target.value))}
+                  className="w-16 rounded-lg border px-3 py-2 text-center text-[#F2ECE2]"
+                  style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                 />
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-4 py-2 rounded-lg font-bold"
                   style={{
-                    backgroundColor: COLORS.accent,
-                    color: COLORS.primary,
+                    backgroundColor: "#1b2024",
+                    color: "#F2ECE2",
+                    border: "1px solid rgba(201,166,107,0.3)",
                   }}
                 >
                   +
@@ -529,54 +480,76 @@ export default function ProductPage({ params }: PageProps) {
 
             {/* Price Summary */}
             <div
-              className="p-4 rounded-lg mb-6"
-              style={{ backgroundColor: COLORS.accent }}
+              className="mb-6 rounded-xl border border-white/10 bg-[#171a1d] p-4"
             >
               <div className="flex justify-between items-center mb-2">
-                <span className="text-gray-900">{t("product.pricePerUnit")}</span>
+                <span className="text-white/75">{t("product.pricePerUnit")}</span>
                 {currentSize.salePrice ? (
                   <span className="flex items-center gap-2">
-                    <span className="line-through text-sm" style={{ color: "#dc2626" }}>{CURRENCY_SYMBOL}{currentSize.price}</span>
-                    <span style={{ color: COLORS.primary }} className="font-bold">{CURRENCY_SYMBOL}{currentSize.salePrice}</span>
+                    <span className="line-through text-sm" style={{ color: "#dc2626" }}>{CURRENCY_SYMBOL}{formatNumber(currentSize.price)}</span>
+                    <span className="font-bold text-[#C9A66B]">{CURRENCY_SYMBOL}{formatNumber(currentSize.salePrice)}</span>
                   </span>
                 ) : (
-                  <span style={{ color: COLORS.primary }} className="font-bold">
-                    {CURRENCY_SYMBOL}{currentSize.price}
+                  <span className="font-bold text-[#C9A66B]">
+                    {CURRENCY_SYMBOL}{formatNumber(currentSize.price)}
                   </span>
                 )}
               </div>
-              <div className="flex justify-between items-center border-t pt-2" style={{ borderColor: COLORS.border }}>
-                <span style={{ color: COLORS.primary }} className="font-bold text-lg">
+              <div className="flex justify-between items-center border-t pt-2" style={{ borderColor: "rgba(255,255,255,0.14)" }}>
+                <span className="text-lg font-bold text-[#F2ECE2]">
                   {t("product.total")}
                 </span>
-                <span style={{ color: COLORS.primary }} className="font-bold text-2xl">
-                  {CURRENCY_SYMBOL}{(currentSize.salePrice ?? currentSize.price) * quantity}
+                <span className="text-2xl font-bold text-[#C9A66B]">
+                  {CURRENCY_SYMBOL}{formatNumber((currentSize.salePrice ?? currentSize.price) * quantity)}
                 </span>
               </div>
             </div>
 
-            {/* Add to Cart Button */}
-            <button
-              className="w-full py-3 rounded-lg font-bold text-white text-lg transition-opacity hover:opacity-90 mb-4 disabled:opacity-50"
-              style={{ backgroundColor: product.inStock ? COLORS.primary : "#d97706" }}
-              onClick={() => {
-                if (!product.inStock) {
-                  setWhatsappInput("");
-                  setNotifyError("");
-                  setNotifySuccess("");
-                  setShowNotifyModal(true);
-                } else {
-                  handleAddToCart();
-                }
-              }}
-              disabled={isAdding}
-            >
-              {isAdding
-                ? t("product.adding")
-                : !product.inStock
-                ? (language === "ar" ? "🔔 إرسال إشعار عند التوفر" : "🔔 Notify When Available")
-                : t("product.addToCart")}
-            </button>
+            {/* Add to Cart / Notify */}
+            {product.inStock ? (
+              <button
+                className="w-full py-3 rounded-lg font-bold text-white text-lg transition-opacity hover:opacity-90 mb-4 disabled:opacity-50"
+                style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
+                onClick={handleAddToCart}
+                disabled={isAdding}
+              >
+                {isAdding ? t("product.adding") : t("product.addToCart")}
+              </button>
+            ) : (
+              <div className="mb-4 rounded-lg border p-4" style={{ borderColor: "rgba(201,166,107,0.35)", backgroundColor: "#171a1d" }}>
+                <p className="mb-3 text-sm text-white/80">
+                  {language === "ar" ? "أدخل رقم واتسابك وسنخبرك فور توفر المنتج" : "Enter your WhatsApp number and we will notify you once this product is back"}
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    value={notifyWhatsapp}
+                    onChange={(e) => setNotifyWhatsapp(e.target.value)}
+                    placeholder={language === "ar" ? "مثال: +9725XXXXXXXX" : "Example: +9725XXXXXXXX"}
+                    className="flex-1 rounded-lg border px-3 py-2 text-sm text-[#F2ECE2]"
+                    style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleNotifyStock}
+                    disabled={isNotifying}
+                    className="rounded-lg px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                    style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
+                  >
+                    {isNotifying
+                      ? language === "ar"
+                        ? "جاري..."
+                        : "Saving..."
+                      : language === "ar"
+                      ? "ذكرني عند التوفر"
+                      : "Notify me"}
+                  </button>
+                </div>
+                {notifyMessage ? (
+                  <p className="mt-2 text-xs text-[#C9A66B]">{notifyMessage}</p>
+                ) : null}
+              </div>
+            )}
 
             <div className="flex gap-3 mb-4">
               <button
@@ -584,9 +557,9 @@ export default function ProductPage({ params }: PageProps) {
                 disabled={isSharing}
                 className="flex-1 py-2 px-3 rounded-lg font-semibold text-sm transition-all border-2 disabled:opacity-50"
                 style={{
-                  color: COLORS.primary,
-                  borderColor: COLORS.primary,
-                  backgroundColor: "white",
+                  color: "#F2ECE2",
+                  borderColor: "rgba(201,166,107,0.55)",
+                  backgroundColor: "#171a1d",
                 }}
               >
                 {isSharing
@@ -601,9 +574,9 @@ export default function ProductPage({ params }: PageProps) {
                 href="/shipping-policy"
                 className="flex-1 py-2 px-3 rounded-lg font-semibold text-sm text-center border-2 transition-all"
                 style={{
-                  color: COLORS.primary,
-                  borderColor: COLORS.primary,
-                  backgroundColor: COLORS.accent,
+                  color: "#F2ECE2",
+                  borderColor: "rgba(201,166,107,0.55)",
+                  backgroundColor: "#171a1d",
                 }}
               >
                 {language === "ar" ? "🚚 أسعار التوصيل" : "🚚 Delivery Prices"}
@@ -615,8 +588,8 @@ export default function ProductPage({ params }: PageProps) {
               href="/shop"
               className="w-full block text-center py-3 rounded-lg font-bold border-2 transition-all"
               style={{
-                color: COLORS.primary,
-                borderColor: COLORS.primary,
+                color: "#F2ECE2",
+                borderColor: "rgba(201,166,107,0.55)",
               }}
             >
               {t("product.continueShop")}
@@ -626,129 +599,32 @@ export default function ProductPage({ params }: PageProps) {
 
         {/* Product Details Section */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-6 rounded-lg" style={{ backgroundColor: "white" }}>
-            <h4
-              style={{ color: COLORS.primary }}
-              className="font-bold text-lg mb-2"
-            >
+          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6">
+            <h4 className="mb-2 text-lg font-bold text-[#C9A66B]">
               {t.product.original}
             </h4>
-            <p className="text-gray-900 text-sm">
+            <p className="text-sm text-white/80">
               {t.product.originalDesc}
             </p>
           </div>
-          <div className="p-6 rounded-lg" style={{ backgroundColor: "white" }}>
-            <h4
-              style={{ color: COLORS.primary }}
-              className="font-bold text-lg mb-2"
-            >
+          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6">
+            <h4 className="mb-2 text-lg font-bold text-[#C9A66B]">
               {t.product.fastShip}
             </h4>
-            <p className="text-gray-900 text-sm">
+            <p className="text-sm text-white/80">
               {t.product.fastShipDesc}
             </p>
           </div>
-          <div className="p-6 rounded-lg" style={{ backgroundColor: "white" }}>
-            <h4
-              style={{ color: COLORS.primary }}
-              className="font-bold text-lg mb-2"
-            >
+          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6">
+            <h4 className="mb-2 text-lg font-bold text-[#C9A66B]">
               {t.product.satisfaction}
             </h4>
-            <p className="text-gray-900 text-sm">
+            <p className="text-sm text-white/80">
               {t.product.satisfactionDesc}
             </p>
           </div>
         </div>
       </div>
     </div>
-
-    {/* WhatsApp Notify Modal */}
-    {showNotifyModal && (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center px-4"
-        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            setShowNotifyModal(false);
-            setWhatsappInput("");
-            setNotifyError("");
-            setNotifySuccess("");
-          }
-        }}
-      >
-        <div
-          className="bg-white rounded-2xl p-6 w-full shadow-2xl"
-          style={{ maxWidth: 360 }}
-          dir={language === "ar" ? "rtl" : "ltr"}
-        >
-          <h3 className="text-lg font-bold mb-1" style={{ color: COLORS.primary }}>
-            {language === "ar" ? "🔔 قم بإشعاري عند التوفر" : "🔔 Notify Me When Available"}
-          </h3>
-          <p className="text-gray-500 text-xs mb-4">{name}</p>
-
-          <label className="block text-sm font-semibold mb-2" style={{ color: COLORS.primary }}>
-            {language === "ar" ? "رقم الواتساب" : "WhatsApp Number"}
-          </label>
-          <div className="flex gap-2 mb-5" dir="ltr">
-            <input
-              type="tel"
-              value={whatsappInput}
-              onChange={(e) => {
-                setWhatsappInput(e.target.value);
-                if (notifyError) setNotifyError("");
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleNotifySubmit();
-                }
-              }}
-              placeholder={language === "ar" ? "+970 5XXXXXXXX" : "+970 5XXXXXXXX"}
-              className="flex-1 border-2 rounded-xl px-4 py-3 text-lg text-gray-900 placeholder:text-gray-400 bg-white focus:outline-none"
-              style={{ borderColor: COLORS.primary }}
-              dir="ltr"
-              autoFocus
-            />
-          </div>
-
-          {notifyError && (
-            <p className="text-sm mb-3" style={{ color: "#dc2626" }}>
-              {notifyError}
-            </p>
-          )}
-
-          {notifySuccess && (
-            <p className="text-sm mb-3" style={{ color: "#16a34a" }}>
-              {notifySuccess}
-            </p>
-          )}
-
-          <div className="flex gap-3">
-            <button
-              disabled={getDigitsCount(whatsappInput) < 10}
-              onClick={handleNotifySubmit}
-              className="flex-1 py-3 rounded-xl font-bold text-white disabled:opacity-40"
-              style={{ backgroundColor: COLORS.primary }}
-            >
-              {language === "ar" ? "✔ تأكيد" : "✔ Confirm"}
-            </button>
-            <button
-              onClick={() => {
-                setShowNotifyModal(false);
-                setWhatsappInput("");
-                setNotifyError("");
-                setNotifySuccess("");
-              }}
-              className="flex-1 py-3 rounded-xl font-bold border-2 hover:bg-gray-50"
-              style={{ color: COLORS.primary, borderColor: COLORS.primary }}
-            >
-              {language === "ar" ? "إلغاء" : "Cancel"}
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-    </>
   );
 }

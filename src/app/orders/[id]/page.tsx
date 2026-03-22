@@ -71,9 +71,9 @@ export default function OrderDetailsPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
         <div className="text-center">
-          <p style={{ color: COLORS.primary }} className="text-xl font-semibold">
+          <p className="text-xl font-semibold text-[#F2ECE2]">
             {t("common.loading")}
           </p>
         </div>
@@ -83,8 +83,8 @@ export default function OrderDetailsPage() {
 
   if (error || !order) {
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
-        <section style={{ backgroundColor: COLORS.primary }} className="text-white py-12 px-4">
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2]">
+        <section style={{ background: "linear-gradient(180deg, #14171a 0%, #101214 100%)", borderBottom: "1px solid rgba(201,166,107,0.25)" }} className="text-white py-12 px-4">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-4xl font-bold">{t("orders.title")}</h1>
           </div>
@@ -98,7 +98,7 @@ export default function OrderDetailsPage() {
             <Link
               href="/shop"
               className="inline-block px-8 py-3 rounded-lg font-semibold mt-4"
-              style={{ backgroundColor: COLORS.primary, color: "white" }}
+              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
             >
               {t("cart.continueShop")}
             </Link>
@@ -171,11 +171,12 @@ export default function OrderDetailsPage() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light, direction: dir }}>
-      <section style={{ backgroundColor: COLORS.primary }} className="text-white py-12 px-4">
+    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416", direction: dir }} className="text-[#F2ECE2]">
+      <section style={{ background: "linear-gradient(180deg, #14171a 0%, #101214 100%)", borderBottom: "1px solid rgba(201,166,107,0.25)" }} className="text-white py-12 px-4">
         <div className="max-w-7xl mx-auto">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Order Tracking</p>
           <h1 className="text-4xl font-bold">{t("orders.orderDetails")}</h1>
-          <p className="mt-2 text-sm opacity-90">
+          <p className="mt-2 text-sm text-white/80">
             {t("orders.orderId")}: {order.id}
           </p>
         </div>
@@ -185,9 +186,9 @@ export default function OrderDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Order Items */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg p-6 shadow-md mb-6">
+            <div className="mb-6 rounded-xl border border-white/10 bg-[#171a1d] p-6 shadow-md">
               <div className="flex items-center justify-between mb-4">
-                <h2 style={{ color: COLORS.primary }} className="text-xl font-bold">
+                <h2 className="text-xl font-bold text-[#F2ECE2]">
                   {t("orders.orderStatus")}
                 </h2>
                 <span
@@ -197,14 +198,14 @@ export default function OrderDetailsPage() {
                   {getStatusText(order.status)}
                 </span>
               </div>
-              <p className="text-gray-900 text-sm">
+              <p className="text-sm text-white/70">
                 {t("orders.orderDate")}: {new Date(order.createdAt).toLocaleDateString(language === "ar" ? "ar-SA-u-nu-latn" : "en-US")}
               </p>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="p-6 border-b" style={{ borderColor: COLORS.border }}>
-                <h3 style={{ color: COLORS.primary }} className="font-bold text-lg">
+            <div className="overflow-hidden rounded-xl border border-white/10 bg-[#171a1d] shadow-md">
+              <div className="p-6 border-b" style={{ borderColor: "rgba(255,255,255,0.14)" }}>
+                <h3 className="font-bold text-lg text-[#C9A66B]">
                   {t("orders.items")}
                 </h3>
               </div>
@@ -220,7 +221,7 @@ export default function OrderDetailsPage() {
                     className={`p-6 flex gap-6 ${
                       index !== order.items.length - 1 ? "border-b" : ""
                     }`}
-                    style={{ borderColor: COLORS.border }}
+                    style={{ borderColor: "rgba(255,255,255,0.14)" }}
                   >
                   <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                     {itemImage ? (
@@ -232,9 +233,9 @@ export default function OrderDetailsPage() {
                     ) : (
                       <div
                         className="w-full h-full flex items-center justify-center"
-                        style={{ backgroundColor: COLORS.accent }}
+                        style={{ backgroundColor: "#1b2024" }}
                       >
-                        <div style={{ color: COLORS.primary }} className="text-xs font-bold">
+                        <div className="text-xs font-bold text-[#C9A66B]">
                           📦
                         </div>
                       </div>
@@ -242,31 +243,31 @@ export default function OrderDetailsPage() {
                   </div>
 
                   <div className="flex-1">
-                    <h3 style={{ color: COLORS.primary }} className="font-bold text-lg mb-1">
+                    <h3 className="mb-1 text-lg font-bold text-[#F2ECE2]">
                       {item.name}
                     </h3>
-                    <p className="text-gray-900 text-sm">
+                    <p className="text-sm text-white/70">
                       {t("cart.weight")}: {getProductSizeWeight(item.size, product?.sizes)}
                     </p>
-                    <p className="text-gray-900 text-sm">
+                    <p className="text-sm text-white/70">
                       {t("product.quantity")}: {item.quantity}
                     </p>
                   </div>
 
                   <div className="text-right">
-                    <p className="text-gray-900 text-sm">{t("cart.pricePerUnit")}</p>
-                    <p style={{ color: COLORS.primary }} className="font-bold">
+                    <p className="text-sm text-white/70">{t("cart.pricePerUnit")}</p>
+                    <p className="font-bold text-[#F2ECE2]">
                       {CURRENCY_SYMBOL}{item.price}
                     </p>
-                    <p className="text-gray-900 text-sm mt-2">{t("cart.total")}</p>
-                    <p style={{ color: COLORS.secondary }} className="font-bold">
+                    <p className="mt-2 text-sm text-white/70">{t("cart.total")}</p>
+                    <p className="font-bold text-[#C9A66B]">
                       {CURRENCY_SYMBOL}{item.total.toFixed(2)}
                     </p>
                   </div>
                 </div>
               );})
               ) : (
-                <div className="p-6 text-center text-gray-500">
+                <div className="p-6 text-center text-white/60">
                   لا توجد عناصر في الطلب
                 </div>
               )}
@@ -275,66 +276,66 @@ export default function OrderDetailsPage() {
 
           {/* Order Summary & Shipping Info */}
           <div>
-            <div className="bg-white rounded-lg p-6 shadow-md mb-6">
-              <h3 style={{ color: COLORS.primary }} className="font-bold text-lg mb-4">
+            <div className="mb-6 rounded-xl border border-white/10 bg-[#171a1d] p-6 shadow-md">
+              <h3 className="mb-4 text-lg font-bold text-[#C9A66B]">
                 {t("orders.shippingInfo")}
               </h3>
               <div className="space-y-2 text-sm">
                 <div>
-                  <span className="text-gray-900">{t("cart.fullName")}:</span>
-                  <p className="font-semibold text-gray-900">{order.shippingName}</p>
+                  <span className="text-white/70">{t("cart.fullName")}:</span>
+                  <p className="font-semibold text-[#F2ECE2]">{order.shippingName}</p>
                 </div>
                 <div>
-                  <span className="text-gray-900">{t("cart.phone")}:</span>
-                  <p className="font-semibold text-gray-900">{order.shippingPhone}</p>
+                  <span className="text-white/70">{t("cart.phone")}:</span>
+                  <p className="font-semibold text-[#F2ECE2]">{order.shippingPhone}</p>
                 </div>
                 <div>
-                  <span className="text-gray-900">{t("cart.city")}:</span>
-                  <p className="font-semibold text-gray-900">{order.shippingCity}</p>
+                  <span className="text-white/70">{t("cart.city")}:</span>
+                  <p className="font-semibold text-[#F2ECE2]">{order.shippingCity}</p>
                 </div>
                 <div>
-                  <span className="text-gray-900">{t("cart.address")}:</span>
-                  <p className="font-semibold text-gray-900">{order.shippingAddress}</p>
+                  <span className="text-white/70">{t("cart.address")}:</span>
+                  <p className="font-semibold text-[#F2ECE2]">{order.shippingAddress}</p>
                 </div>
                 {order.shippingNotes && (
                   <div>
-                    <span className="text-gray-900">{t("cart.notes")}:</span>
-                    <p className="font-semibold text-gray-900">{order.shippingNotes}</p>
+                    <span className="text-white/70">{t("cart.notes")}:</span>
+                    <p className="font-semibold text-[#F2ECE2]">{order.shippingNotes}</p>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <h3 style={{ color: COLORS.primary }} className="font-bold text-lg mb-4">
+            <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6 shadow-md">
+              <h3 className="mb-4 text-lg font-bold text-[#C9A66B]">
                 {t("cart.orderSummary")}
               </h3>
-              <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
+              <div className="mb-6 space-y-3 border-b pb-6" style={{ borderColor: "rgba(255,255,255,0.14)" }}>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-900">{t("cart.itemCount")}</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-white/70">{t("cart.itemCount")}</span>
+                  <span className="font-semibold text-[#F2ECE2]">
                     {order.items && order.items.length > 0 ? order.items.reduce((sum, item) => sum + item.quantity, 0) : 0}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-900">{t("cart.goodsPrice")}</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-white/70">{t("cart.goodsPrice")}</span>
+                  <span className="font-semibold text-[#F2ECE2]">
                     {CURRENCY_SYMBOL}{order.total.toFixed(2)}
                   </span>
                 </div>
               </div>
               <div className="flex justify-between items-center">
-                <span style={{ color: COLORS.primary }} className="font-bold text-lg">
+                <span className="text-lg font-bold text-[#F2ECE2]">
                   {t("cart.totalPrice")}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span style={{ color: COLORS.primary }} className="font-bold text-2xl">
+                  <span className="text-2xl font-bold text-[#C9A66B]">
                     {CURRENCY_SYMBOL}{order.total.toFixed(2)}
                   </span>
                   <Link
                     href="/shipping-policy"
                     className="px-2 py-1 rounded-md text-xs font-semibold border"
-                    style={{ borderColor: COLORS.primary, color: COLORS.primary }}
+                    style={{ borderColor: "rgba(201,166,107,0.55)", color: "#F2ECE2", backgroundColor: "#121416" }}
                   >
                     {language === "ar" ? "+ سعر التوصيل" : "+ Delivery Price"}
                   </Link>
@@ -345,7 +346,7 @@ export default function OrderDetailsPage() {
             <Link
               href="/shop"
               className="block text-center px-6 py-3 rounded-lg font-semibold mt-2"
-              style={{ backgroundColor: COLORS.primary, color: "white" }}
+              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
             >
               {t("cart.continueShop")}
             </Link>
@@ -357,8 +358,8 @@ export default function OrderDetailsPage() {
                 className="w-full text-center px-6 py-3 rounded-lg font-semibold mt-4 border-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ 
                   borderColor: "#F44336", 
-                  color: "#F44336",
-                  backgroundColor: "white"
+                  color: "#ff7b7b",
+                  backgroundColor: "rgba(244,67,54,0.14)"
                 }}
               >
                 {cancelling ? t("common.loading") : t("orders.cancelOrder")}

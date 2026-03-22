@@ -1,6 +1,5 @@
 "use client";
 
-import { COLORS } from "@/constants/store";
 import { PRODUCTS, Product, CATEGORIES } from "@/constants/products";
 import ProductCard from "@/components/ProductCard";
 import { useEffect, useState } from "react";
@@ -239,15 +238,20 @@ export default function ShopContent() {
   const isLoading = !categoriesLoaded || !productsLoaded;
 
   return (
-    <div>
+    <div className="bg-[#121416] text-[#F2ECE2]">
       {/* Header */}
       <section
-        style={{ backgroundColor: COLORS.primary }}
-        className="text-white py-12 px-4"
+        style={{
+          background:
+            "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+          borderBottom: "1px solid rgba(201,166,107,0.25)",
+        }}
+        className="px-4 py-12 text-white"
       >
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-2">{t("shop.title")}</h1>
-          <p className="text-lg opacity-90">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Manajel Shop</p>
+          <h1 className="mb-2 text-4xl font-black">{t("shop.title")}</h1>
+          <p className="text-lg text-white/80">
             {t("shop.subtitle")}
           </p>
         </div>
@@ -258,10 +262,7 @@ export default function ShopContent() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Categories */}
           <div className="lg:w-56 flex-shrink-0">
-            <h3
-              style={{ color: COLORS.primary }}
-              className="text-xl font-bold mb-6"
-            >
+            <h3 className="mb-6 text-xl font-bold text-[#C9A66B]">
               {t("shop.categories")}
             </h3>
             <div className="space-y-2">
@@ -270,7 +271,7 @@ export default function ShopContent() {
                 <>
                   {Array.from({ length: 5 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
-                      <div className="h-10 bg-gray-200 rounded w-full" />
+                      <div className="h-10 w-full rounded-xl border border-white/10 bg-white/10" />
                     </div>
                   ))}
                 </>
@@ -278,11 +279,11 @@ export default function ShopContent() {
                 <>
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    style={{
-                      backgroundColor: selectedCategory === null ? COLORS.primary : COLORS.light,
-                      color: selectedCategory === null ? "white" : COLORS.dark,
-                    }}
-                    className={`w-full px-4 py-2 rounded transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                    className={`w-full rounded-xl border px-4 py-2 transition-colors ${
+                      selectedCategory === null
+                        ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
+                        : "border-white/15 bg-[#171a1d] text-white/85 hover:border-white/30 hover:text-white"
+                    } ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                     type="button"
                   >
                     {t("shop.allProducts")}
@@ -297,15 +298,11 @@ export default function ShopContent() {
                           console.log('Selected category:', category.id);
                           setSelectedCategory(category.id);
                         }}
-                        style={{
-                          backgroundColor:
-                            selectedCategory === category.id
-                              ? COLORS.primary
-                              : COLORS.light,
-                          color:
-                            selectedCategory === category.id ? "white" : COLORS.dark,
-                        }}
-                        className={`w-full px-4 py-2 rounded transition-colors ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                        className={`w-full rounded-xl border px-4 py-2 transition-colors ${
+                          selectedCategory === category.id
+                            ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
+                            : "border-white/15 bg-[#171a1d] text-white/85 hover:border-white/30 hover:text-white"
+                        } ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                         type="button"
                       >
                         {displayName}
@@ -320,7 +317,7 @@ export default function ShopContent() {
           {/* Products Grid */}
           <div className="flex-1">
             {!isLoading && (
-              <div className="mb-4 text-sm text-gray-900">
+              <div className="mb-4 text-sm text-white/80">
                 {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
               </div>
             )}
@@ -328,11 +325,11 @@ export default function ShopContent() {
               {isLoading || filteredProducts.length === 0
                 ? Array.from({ length: 8 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
-                      <div className="rounded-lg bg-gray-200 h-48 w-full mb-4" />
-                      <div className="h-6 bg-gray-200 rounded mb-2 w-3/4" />
-                      <div className="h-4 bg-gray-200 rounded mb-2 w-1/2" />
-                      <div className="h-4 bg-gray-200 rounded mb-2 w-1/3" />
-                      <div className="h-8 bg-gray-200 rounded w-1/2 mt-auto" />
+                      <div className="mb-4 h-48 w-full rounded-lg border border-white/10 bg-white/10" />
+                      <div className="mb-2 h-6 w-3/4 rounded bg-white/10" />
+                      <div className="mb-2 h-4 w-1/2 rounded bg-white/10" />
+                      <div className="mb-2 h-4 w-1/3 rounded bg-white/10" />
+                      <div className="mt-auto h-8 w-1/2 rounded bg-white/10" />
                     </div>
                   ))
                 : filteredProducts.map((product, index) => (
@@ -346,7 +343,7 @@ export default function ShopContent() {
                         <div className="absolute top-2 right-2 flex gap-2 z-10">
                           <button
                             onClick={() => window.location.href = `/admin/products/${product.id}/edit`}
-                            className="bg-blue-600 text-white p-2 rounded-lg shadow-md hover:bg-blue-700"
+                            className="rounded-lg border border-[#C9A66B]/60 bg-[#14171a]/95 p-2 text-[#F2ECE2] shadow-md backdrop-blur hover:bg-[#1b1f23]"
                             title="تعديل المنتج"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -356,7 +353,7 @@ export default function ShopContent() {
                           <button
                             onClick={() => handleDelete(product.id)}
                             disabled={deleting === product.id}
-                            className="bg-red-600 text-white p-2 rounded-lg shadow-md hover:bg-red-700 disabled:opacity-50"
+                            className="rounded-lg border border-red-400/50 bg-red-500/20 p-2 text-red-200 shadow-md hover:bg-red-500/30 disabled:opacity-50"
                             title="حذف المنتج"
                           >
                             {deleting === product.id ? (

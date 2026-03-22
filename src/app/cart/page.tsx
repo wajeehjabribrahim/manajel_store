@@ -198,10 +198,10 @@ export default function Cart() {
 
   if (isLoading) {
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2]">
         {/* Header Skeleton */}
         <section
-          style={{ backgroundColor: COLORS.primary }}
+          style={{ background: "linear-gradient(180deg, #14171a 0%, #101214 100%)", borderBottom: "1px solid rgba(201,166,107,0.25)" }}
           className="text-white py-12 px-4"
         >
           <div className="max-w-7xl mx-auto">
@@ -214,7 +214,7 @@ export default function Cart() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items Skeleton */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
+              <div className="overflow-hidden rounded-xl border border-white/10 bg-[#171a1d] shadow-md">
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
@@ -227,27 +227,27 @@ export default function Cart() {
                       style={{ borderColor: COLORS.border }}
                     >
                       {/* Image Skeleton */}
-                      <div className="w-24 h-24 rounded-lg bg-gray-200 flex-shrink-0"></div>
+                      <div className="h-24 w-24 flex-shrink-0 rounded-lg bg-white/10"></div>
 
                       {/* Info Skeleton */}
                       <div className="flex-1 space-y-3">
-                        <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                        <div className="h-6 w-3/4 rounded bg-white/10"></div>
+                        <div className="h-4 w-1/4 rounded bg-white/10"></div>
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 bg-gray-200 rounded"></div>
-                          <div className="h-8 w-12 bg-gray-200 rounded"></div>
-                          <div className="h-8 w-8 bg-gray-200 rounded"></div>
+                          <div className="h-8 w-8 rounded bg-white/10"></div>
+                          <div className="h-8 w-12 rounded bg-white/10"></div>
+                          <div className="h-8 w-8 rounded bg-white/10"></div>
                         </div>
                       </div>
 
                       {/* Price Skeleton */}
                       <div className="text-right flex flex-col justify-between">
-                        <div className="h-4 w-16 bg-gray-200 rounded mb-4"></div>
+                        <div className="mb-4 h-4 w-16 rounded bg-white/10"></div>
                         <div className="space-y-2">
-                          <div className="h-4 bg-gray-200 rounded w-20 ml-auto"></div>
-                          <div className="h-6 bg-gray-200 rounded w-24 ml-auto"></div>
-                          <div className="h-4 bg-gray-200 rounded w-20 ml-auto mt-2"></div>
-                          <div className="h-6 bg-gray-200 rounded w-24 ml-auto"></div>
+                          <div className="ml-auto h-4 w-20 rounded bg-white/10"></div>
+                          <div className="ml-auto h-6 w-24 rounded bg-white/10"></div>
+                          <div className="ml-auto mt-2 h-4 w-20 rounded bg-white/10"></div>
+                          <div className="ml-auto h-6 w-24 rounded bg-white/10"></div>
                         </div>
                       </div>
                     </div>
@@ -257,34 +257,34 @@ export default function Cart() {
 
               {/* Continue Shopping Button Skeleton */}
               <div className="mt-6">
-                <div className="h-10 w-48 bg-gray-200 rounded-lg animate-pulse"></div>
+                <div className="h-10 w-48 rounded-lg bg-white/10 animate-pulse"></div>
               </div>
             </div>
 
             {/* Order Summary Skeleton */}
             <div>
-              <div className="bg-white rounded-lg p-6 shadow-md animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-1/2 mb-4"></div>
+              <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6 shadow-md animate-pulse">
+                <div className="mb-4 h-6 w-1/2 rounded bg-white/10"></div>
                 
                 <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
                   <div className="flex justify-between">
-                    <div className="h-4 bg-gray-200 rounded w-20"></div>
-                    <div className="h-4 bg-gray-200 rounded w-8"></div>
+                    <div className="h-4 w-20 rounded bg-white/10"></div>
+                    <div className="h-4 w-8 rounded bg-white/10"></div>
                   </div>
                   <div className="flex justify-between">
-                    <div className="h-4 bg-gray-200 rounded w-24"></div>
-                    <div className="h-4 bg-gray-200 rounded w-16"></div>
+                    <div className="h-4 w-24 rounded bg-white/10"></div>
+                    <div className="h-4 w-16 rounded bg-white/10"></div>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center mb-6">
-                  <div className="h-6 bg-gray-200 rounded w-24"></div>
-                  <div className="h-8 bg-gray-200 rounded w-28"></div>
+                  <div className="h-6 w-24 rounded bg-white/10"></div>
+                  <div className="h-8 w-28 rounded bg-white/10"></div>
                 </div>
 
-                <div className="h-12 bg-gray-200 rounded-lg"></div>
+                <div className="h-12 rounded-lg bg-white/10"></div>
                 
-                <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto mt-4"></div>
+                <div className="mx-auto mt-4 h-3 w-3/4 rounded bg-white/10"></div>
               </div>
             </div>
           </div>
@@ -462,13 +462,17 @@ export default function Cart() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light }}>
+    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2]">
       {/* Header */}
       <section
-        style={{ backgroundColor: COLORS.primary }}
+        style={{
+          background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+          borderBottom: "1px solid rgba(201,166,107,0.25)",
+        }}
         className="text-white py-12 px-4"
       >
         <div className="max-w-7xl mx-auto">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Secure Checkout</p>
           <h1 className="text-4xl font-bold">{t("cart.title")}</h1>
         </div>
       </section>
@@ -480,18 +484,17 @@ export default function Cart() {
           <div className="text-center">
             <div className="text-6xl mb-4">✅</div>
             <h2
-              style={{ color: COLORS.primary }}
-              className="text-2xl font-bold mb-4"
+              className="mb-4 text-2xl font-bold text-[#F2ECE2]"
             >
               {t("cart.orderConfirmed")}
             </h2>
-            <p className="text-gray-900 mb-8">
+            <p className="mb-8 text-white/75">
               {t("cart.orderConfirmedDesc")}
             </p>
             <Link
               href="/shop"
               className="inline-block px-8 py-3 rounded-lg font-semibold"
-              style={{ backgroundColor: COLORS.primary, color: "white" }}
+              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
             >
               {t("cart.continueShop")}
             </Link>
@@ -501,18 +504,17 @@ export default function Cart() {
           <div className="text-center">
             <div className="text-6xl mb-4">🛒</div>
             <h2
-              style={{ color: COLORS.primary }}
-              className="text-2xl font-bold mb-4"
+              className="mb-4 text-2xl font-bold text-[#F2ECE2]"
             >
               {t("cart.empty")}
             </h2>
-            <p className="text-gray-900 mb-8">
+            <p className="mb-8 text-white/75">
               {t("cart.emptyDesc")}
             </p>
             <Link
               href="/shop"
               className="inline-block px-8 py-3 rounded-lg font-semibold"
-              style={{ backgroundColor: COLORS.primary, color: "white" }}
+              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
             >
               {t("cart.continueShop")}
             </Link>
@@ -522,7 +524,7 @@ export default function Cart() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
+              <div className="overflow-hidden rounded-xl border border-white/10 bg-[#171a1d] shadow-md">
                 {cartItems.map((item, index) => {
                   const product = productMap[item.id];
                   const productName = product?.name || item.name;
@@ -538,7 +540,7 @@ export default function Cart() {
                         : ""
                     }`}
                     style={{
-                      borderColor: COLORS.border,
+                      borderColor: "rgba(255,255,255,0.14)",
                     }}
                   >
                     {/* Product Image */}
@@ -555,12 +557,9 @@ export default function Cart() {
                       ) : (
                         <div
                           className="w-full h-full flex items-center justify-center text-center"
-                          style={{ backgroundColor: COLORS.accent }}
+                          style={{ backgroundColor: "#1b2024" }}
                         >
-                          <div
-                            style={{ color: COLORS.primary }}
-                            className="text-2xl font-bold overflow-hidden"
-                          >
+                          <div className="overflow-hidden text-2xl font-bold text-[#C9A66B]">
                             {item.name.split(" ")[0]?.[0] || "📦"}
                           </div>
                         </div>
@@ -570,12 +569,11 @@ export default function Cart() {
                     {/* Product Info */}
                     <div className="flex-1 min-w-0">
                       <h3
-                        style={{ color: COLORS.primary }}
-                        className="font-bold text-lg mb-2"
+                        className="mb-2 text-lg font-bold text-[#F2ECE2]"
                       >
                         {productName}
                       </h3>
-                      <p className="text-gray-900 text-sm mb-4">
+                      <p className="mb-4 text-sm text-white/70">
                         {t("cart.weight")}: <span className="font-semibold">{getProductSizeWeight(item.size, product?.sizes)}</span>
                       </p>
 
@@ -591,8 +589,9 @@ export default function Cart() {
                           }
                           className="px-3 py-1 rounded border"
                           style={{
-                            borderColor: COLORS.primary,
-                            color: COLORS.primary,
+                            borderColor: "rgba(201,166,107,0.55)",
+                            color: "#F2ECE2",
+                            backgroundColor: "#121416",
                           }}
                         >
                           −
@@ -607,8 +606,8 @@ export default function Cart() {
                           lang="en"
                           dir="ltr"
                           inputMode="numeric"
-                          className="w-12 px-2 py-1 text-center border rounded text-gray-900"
-                          style={{ borderColor: COLORS.border, fontFamily: "Arial, sans-serif" }}
+                          className="w-12 rounded border px-2 py-1 text-center text-[#F2ECE2]"
+                          style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416", fontFamily: "Arial, sans-serif" }}
                         />
                         <button
                           onClick={() =>
@@ -620,8 +619,9 @@ export default function Cart() {
                           }
                           className="px-3 py-1 rounded border"
                           style={{
-                            borderColor: COLORS.primary,
-                            color: COLORS.primary,
+                            borderColor: "rgba(201,166,107,0.55)",
+                            color: "#F2ECE2",
+                            backgroundColor: "#121416",
                           }}
                         >
                           +
@@ -638,18 +638,12 @@ export default function Cart() {
                         {t("cart.remove")}
                       </button>
                       <div>
-                        <p className="text-gray-900 text-sm">{t("cart.pricePerUnit")}</p>
-                        <p
-                          style={{ color: COLORS.primary }}
-                          className="font-bold text-lg"
-                        >
+                        <p className="text-sm text-white/70">{t("cart.pricePerUnit")}</p>
+                        <p className="text-lg font-bold text-[#F2ECE2]">
                           {CURRENCY_SYMBOL}{productPrice}
                         </p>
-                        <p className="text-gray-900 text-sm mt-2">{t("cart.total")}</p>
-                        <p
-                          style={{ color: COLORS.secondary }}
-                          className="font-bold text-lg"
-                        >
+                        <p className="mt-2 text-sm text-white/70">{t("cart.total")}</p>
+                        <p className="text-lg font-bold text-[#C9A66B]">
                           {CURRENCY_SYMBOL}{productPrice * item.quantity}
                         </p>
                       </div>
@@ -664,8 +658,8 @@ export default function Cart() {
                   href="/shop"
                   className="inline-block px-6 py-2 rounded-lg font-semibold border-2"
                   style={{
-                    color: COLORS.primary,
-                    borderColor: COLORS.primary,
+                    color: "#F2ECE2",
+                    borderColor: "rgba(201,166,107,0.55)",
                   }}
                 >
                   ← {t("cart.continueShop")}
@@ -675,42 +669,38 @@ export default function Cart() {
 
             {/* Order Summary */}
             <div>
-              <div className="bg-white rounded-lg p-6 shadow-md sticky top-20">
+              <div className="sticky top-20 rounded-xl border border-white/10 bg-[#171a1d] p-6 shadow-md">
                 <h3
-                  style={{ color: COLORS.primary }}
-                  className="font-bold text-lg mb-4"
+                  className="mb-4 text-lg font-bold text-[#C9A66B]"
                 >
                   {t("cart.orderSummary")}
                 </h3>
 
-                <div className="space-y-3 mb-6 pb-6 border-b" style={{ borderColor: COLORS.border }}>
+                <div className="mb-6 space-y-3 border-b pb-6" style={{ borderColor: "rgba(255,255,255,0.14)" }}>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-900">{t("cart.itemCount")}</span>
-                    <span className="font-semibold text-gray-900">
+                    <span className="text-white/70">{t("cart.itemCount")}</span>
+                    <span className="font-semibold text-[#F2ECE2]">
                       {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-900">{t("cart.goodsPrice")}</span>
-                    <span className="font-semibold text-gray-900">{CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}</span>
+                    <span className="text-white/70">{t("cart.goodsPrice")}</span>
+                    <span className="font-semibold text-[#F2ECE2]">{CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center mb-6">
-                  <span style={{ color: COLORS.primary }} className="font-bold text-lg">
+                  <span className="text-lg font-bold text-[#F2ECE2]">
                     {t("cart.totalPrice")}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span
-                      style={{ color: COLORS.primary }}
-                      className="font-bold text-2xl"
-                    >
+                    <span className="text-2xl font-bold text-[#C9A66B]">
                       {CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}
                     </span>
                     <Link
                       href="/shipping-policy"
                       className="px-2 py-1 rounded-md text-xs font-semibold border"
-                      style={{ borderColor: COLORS.primary, color: COLORS.primary }}
+                      style={{ borderColor: "rgba(201,166,107,0.55)", color: "#F2ECE2", backgroundColor: "#121416" }}
                     >
                       {language === "ar" ? "+ سعر التوصيل" : "+ Delivery Price"}
                     </Link>
@@ -719,15 +709,15 @@ export default function Cart() {
 
                 {isAuthenticated && (
                   <div className="mb-6">
-                    <label className="block text-sm text-gray-900 mb-2 font-semibold">
-                      {t("cart.notes")} <span className="text-xs text-gray-600">({t("common.optional") || "اختيارية"})</span>
+                    <label className="mb-2 block text-sm font-semibold text-white/80">
+                      {t("cart.notes")} <span className="text-xs text-white/55">({t("common.optional") || "اختيارية"})</span>
                     </label>
                     <textarea
                       value={authenticatedNotes}
                       onChange={(e) => setAuthenticatedNotes(e.target.value)}
                       placeholder={t("cart.notesPlaceholder") || "أضف أي ملاحظات على الطلب..."}
-                      className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500 resize-none"
-                      style={{ borderColor: COLORS.border }}
+                      className="w-full resize-none rounded-lg border px-3 py-2 text-[#F2ECE2] placeholder:text-white/40"
+                      style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416" }}
                       rows={3}
                     />
                   </div>
@@ -737,12 +727,12 @@ export default function Cart() {
                   onClick={handlePlaceOrder}
                   disabled={orderLoading}
                   className="w-full py-3 rounded-lg font-bold text-white transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: COLORS.primary, opacity: orderLoading ? 0.7 : 1 }}
+                  style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)", opacity: orderLoading ? 0.7 : 1 }}
                 >
                   {orderLoading ? t("cart.orderSaving") : t("cart.buyNow")}
                 </button>
 
-                <p className="text-xs text-gray-900 text-center mt-4">
+                <p className="mt-4 text-center text-xs text-white/60">
                   {t("cart.willRedirect")}
                 </p>
 
@@ -750,12 +740,12 @@ export default function Cart() {
                   <div
                     ref={guestFormRef}
                     className="mt-8 p-6 rounded-lg border-2"
-                    style={{ borderColor: COLORS.primary, backgroundColor: "#f0f8ff" }}
+                    style={{ borderColor: "rgba(201,166,107,0.45)", backgroundColor: "#121416" }}
                   >
                     {/* رسالة تنبيه */}
                     <div
                       className="p-4 rounded-lg mb-6 text-sm font-semibold"
-                      style={{ backgroundColor: COLORS.primary, color: "white" }}
+                      style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2" }}
                     >
                       {t("cart.deliveryInfo")} - {t("cart.deliveryRequired")}
                     </div>
@@ -767,28 +757,28 @@ export default function Cart() {
                     >
                     <h4
                       className="font-semibold"
-                      style={{ color: COLORS.primary }}
+                      style={{ color: "#C9A66B" }}
                     >
                       {t("cart.deliveryInfo")}
                     </h4>
-                    <p className="text-xs text-gray-900">
+                    <p className="text-xs text-white/70">
                       {t("cart.loginToSkip")}
                     </p>
                     <div>
-                      <label className="block text-sm text-gray-900 mb-1">
+                      <label className="mb-1 block text-sm text-white/80">
                         {t("cart.fullName")}
                       </label>
                       <input
                         type="text"
                         value={guestName}
                         onChange={(e) => setGuestName(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
-                        style={{ borderColor: COLORS.border }}
+                        className="w-full rounded-lg border px-3 py-2 text-[#F2ECE2] placeholder:text-white/40"
+                        style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-900 mb-1">
+                      <label className="mb-1 block text-sm text-white/80">
                         {t("cart.phone")}
                       </label>
                       <input
@@ -796,46 +786,46 @@ export default function Cart() {
                         value={guestPhone}
                         onChange={(e) => setGuestPhone(e.target.value)}
                         placeholder={t.contact.phonePlaceholder}
-                         className="w-full border rounded-lg px-3 py-2 text-right text-gray-900 placeholder:text-gray-500"
-                        style={{ borderColor: COLORS.border }}
+                         className="w-full rounded-lg border px-3 py-2 text-right text-[#F2ECE2] placeholder:text-white/40"
+                        style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-900 mb-1">
+                      <label className="mb-1 block text-sm text-white/80">
                         {t("cart.city")}
                       </label>
                       <input
                         type="text"
                         value={guestCity}
                         onChange={(e) => setGuestCity(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
-                        style={{ borderColor: COLORS.border }}
+                        className="w-full rounded-lg border px-3 py-2 text-[#F2ECE2] placeholder:text-white/40"
+                        style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-900 mb-1">
+                      <label className="mb-1 block text-sm text-white/80">
                         {t("cart.address")}
                       </label>
                       <input
                         type="text"
                         value={guestAddress}
                         onChange={(e) => setGuestAddress(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
-                        style={{ borderColor: COLORS.border }}
+                        className="w-full rounded-lg border px-3 py-2 text-[#F2ECE2] placeholder:text-white/40"
+                        style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-900 mb-1">
+                      <label className="mb-1 block text-sm text-white/80">
                         {t("cart.notes")}
                       </label>
                       <textarea
                         value={guestNotes}
                         onChange={(e) => setGuestNotes(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2 text-gray-900 placeholder:text-gray-500"
-                        style={{ borderColor: COLORS.border }}
+                        className="w-full rounded-lg border px-3 py-2 text-[#F2ECE2] placeholder:text-white/40"
+                        style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                         rows={3}
                       />
                     </div>
@@ -849,7 +839,7 @@ export default function Cart() {
                       type="submit"
                       disabled={orderLoading}
                       className="w-full py-2 rounded-lg font-semibold text-white"
-                      style={{ backgroundColor: COLORS.secondary, opacity: orderLoading ? 0.7 : 1 }}
+                      style={{ backgroundColor: "#4d372a", opacity: orderLoading ? 0.7 : 1, border: "1px solid rgba(201,166,107,0.45)" }}
                     >
                       {orderLoading ? t("cart.orderSaving") : t("cart.placeOrder")}
                     </button>
@@ -858,7 +848,7 @@ export default function Cart() {
                 )}
 
                 {orderError && !orderPlaced && (
-                  <div className="mt-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg p-3">
+                  <div className="mt-4 rounded-lg border border-red-500/40 bg-red-500/15 p-3 text-sm text-red-200">
                     {orderError}
                   </div>
                 )}

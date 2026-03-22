@@ -33,7 +33,7 @@ export async function sendOrderNotification(
           <p><strong>رقم الطلب:</strong> ${orderData.id}</p>
           <p><strong>البريد الإلكتروني للزبون:</strong> ${customerEmail}</p>
           <p><strong>الإجمالي:</strong> ₪${orderData.total}</p>
-          <p><strong>التاريخ:</strong> ${new Date(orderData.createdAt).toLocaleString('ar-PS')}</p>
+          <p><strong>التاريخ:</strong> ${new Date(orderData.createdAt).toLocaleString('ar-PS-u-nu-latn')}</p>
           
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
             <tr style="background-color: #f0f0f0;">
@@ -143,7 +143,7 @@ export async function sendSecurityAlert(
             <p><strong>نوع التنبيه:</strong> ${alertData.type === 'blocked_login' ? '🔴 محاولات دخول متعددة (حساب مغلق)' : '🟡 محاولة دخول فاشلة'}</p>
             <p><strong>البريد الإلكتروني:</strong> ${alertData.email}</p>
             <p><strong>عدد المحاولات:</strong> ${alertData.attempts || 1}</p>
-            <p><strong>التاريخ والوقت:</strong> ${new Date(alertData.timestamp).toLocaleString('ar-PS')}</p>
+            <p><strong>التاريخ والوقت:</strong> ${new Date(alertData.timestamp).toLocaleString('ar-PS-u-nu-latn')}</p>
           </div>
           
           <h3 style="color: #2d5016; margin-top: 20px;">التفاصيل:</h3>
@@ -214,7 +214,7 @@ export async function sendOrderCancellationNotification(
             <p><strong>البريد الإلكتروني:</strong> ${customerEmail}</p>
             <p><strong>الإجمالي:</strong> ₪${orderData.total}</p>
             <p><strong>تم الإلغاء بواسطة:</strong> ${cancelledByLabel}</p>
-            <p><strong>التاريخ:</strong> ${new Date(orderData.cancelledAt).toLocaleString('ar-PS')}</p>
+            <p><strong>التاريخ:</strong> ${new Date(orderData.cancelledAt).toLocaleString('ar-PS-u-nu-latn')}</p>
           </div>
 
           <p style="text-align: center; margin-top: 20px;">
@@ -259,7 +259,7 @@ export async function sendStockRequestNotification(
           <div style="padding: 14px; background: #f0fdf4; border-right: 4px solid #22c55e; margin: 16px 0;">
             <p><strong>المنتج:</strong> ${productName}</p>
             <p><strong>رقم الواتساب:</strong> ${data.whatsapp}</p>
-            <p><strong>التاريخ:</strong> ${new Date(data.requestedAt).toLocaleString('ar-PS')}</p>
+            <p><strong>التاريخ:</strong> ${new Date(data.requestedAt).toLocaleString('ar-PS-u-nu-latn')}</p>
           </div>
 
           <p style="text-align: center; margin-top: 20px;">

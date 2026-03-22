@@ -16,6 +16,7 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement>(null);
+  const gold = "#C9A66B";
 
   // إغلاق القائمة عند الضغط خارجها
   useEffect(() => {
@@ -55,14 +56,17 @@ export default function Header() {
 
   return (
     <header
-      style={{ backgroundColor: COLORS.primary }}
-      className="text-white shadow-lg relative"
+      style={{
+        background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+        borderBottom: "1px solid rgba(201,166,107,0.25)",
+      }}
+      className="text-white shadow-2xl relative sticky top-0 z-40 backdrop-blur"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 relative z-10">
         <div className="flex justify-between items-center relative">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden border-2 transition-transform duration-300 group-hover:scale-110" style={{ borderColor: COLORS.accent }}>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
               <Image
                 src="/images/logo.jpg"
                 alt="Manajel Logo"
@@ -73,18 +77,18 @@ export default function Header() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-bold tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
-              <span className="text-xs opacity-70 font-medium tracking-widest">PALESTINE</span>
+              <span className="text-2xl font-black tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
+              <span className="text-[10px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-8">
+          <div className="hidden md:flex gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="transition-opacity"
+                className="text-sm font-semibold uppercase tracking-[0.12em] text-white/80 hover:text-white transition-colors"
               >
                 {item.name}
               </Link>
@@ -99,7 +103,7 @@ export default function Header() {
             <div className="relative z-50" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity relative w-10 h-10 flex items-center justify-center"
+                className="transition-opacity relative w-10 h-10 flex items-center justify-center text-white/85 hover:text-white"
                 title="السلة والطلبات"
               >
                 <svg
@@ -116,30 +120,31 @@ export default function Header() {
                   />
                 </svg>
               </button>
-              
+
               {showUserMenu && (
                 <div
-                  className="absolute rounded-lg shadow-xl border border-white/20 overflow-hidden"
-                  style={{ 
-                    backgroundColor: 'white',
+                  className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
+                  style={{
+                    backgroundColor: "#14171a",
+                    borderColor: "rgba(201,166,107,0.35)",
                     zIndex: 99999,
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-                    top: '100%',
-                    marginTop: '8px',
-                    width: '192px',
-                    [dir === 'rtl' ? 'left' : 'right']: 0
+                    boxShadow: "0 14px 34px rgba(0,0,0,0.45)",
+                    top: "100%",
+                    marginTop: "8px",
+                    width: "208px",
+                    [dir === "rtl" ? "left" : "right"]: 0,
                   }}
                 >
                   <Link
                     href="/cart"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors border-b"
-                    style={{ 
-                      color: COLORS.primary,
-                      borderColor: COLORS.border 
+                    style={{
+                      color: "#F2ECE2",
+                      borderColor: "rgba(201,166,107,0.2)",
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">
                       <svg
@@ -162,11 +167,11 @@ export default function Header() {
                     href="/orders"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors"
-                    style={{ 
-                      color: COLORS.primary 
+                    style={{
+                      color: "#F2ECE2",
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">
                       <svg
@@ -243,7 +248,7 @@ export default function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.644 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </Link>
-                <span className="text-sm" style={{ color: "#111" }}>
+                <span className="text-sm text-white/75">
                   {t("auth.welcome")}
                   {session?.user?.name ? `, ${session.user.name}` : ""}
                 </span>
@@ -252,13 +257,14 @@ export default function Header() {
               <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="px-3 py-1 rounded-md bg-white/10 hover:bg-white/20 transition-colors"
+                  className="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 transition-colors"
                 >
                   {t("auth.login")}
                 </Link>
                 <Link
                   href="/register"
-                  className="px-3 py-1 rounded-md border border-white/40 hover:bg-white/10 transition-colors"
+                  className="px-3 py-1.5 rounded-md border transition-colors"
+                  style={{ borderColor: `${gold}88`, color: "#F2ECE2" }}
                 >
                   {t("auth.register")}
                 </Link>
@@ -293,7 +299,7 @@ export default function Header() {
             <div className="relative z-50" ref={mobileUserMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity w-10 h-10 flex items-center justify-center"
+                className="transition-opacity w-10 h-10 flex items-center justify-center text-white/85 hover:text-white"
                 title="السلة والطلبات"
               >
                 <svg
@@ -310,30 +316,31 @@ export default function Header() {
                   />
                 </svg>
               </button>
-              
+
               {showUserMenu && (
                 <div
-                  className="absolute rounded-lg shadow-xl border border-white/20 overflow-hidden"
-                  style={{ 
-                    backgroundColor: 'white',
+                  className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
+                  style={{
+                    backgroundColor: "#14171a",
+                    borderColor: "rgba(201,166,107,0.35)",
                     zIndex: 99999,
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-                    top: '100%',
-                    marginTop: '8px',
-                    width: '192px',
-                    [dir === 'rtl' ? 'left' : 'right']: 0
+                    boxShadow: "0 14px 34px rgba(0,0,0,0.45)",
+                    top: "100%",
+                    marginTop: "8px",
+                    width: "208px",
+                    [dir === "rtl" ? "left" : "right"]: 0,
                   }}
                 >
                   <Link
                     href="/cart"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors border-b"
-                    style={{ 
-                      color: COLORS.primary,
-                      borderColor: COLORS.border 
+                    style={{
+                      color: "#F2ECE2",
+                      borderColor: "rgba(201,166,107,0.2)",
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">
                       <svg
@@ -356,11 +363,11 @@ export default function Header() {
                     href="/orders"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors"
-                    style={{ 
-                      color: COLORS.primary 
+                    style={{
+                      color: "#F2ECE2",
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = COLORS.light}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">
                       <svg

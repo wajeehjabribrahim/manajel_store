@@ -153,9 +153,9 @@ export default function OrdersPage() {
 
   if (loading) {
     return (
-      <div style={{ minHeight: "calc(100vh - 200px)" }} className="flex items-center justify-center">
+      <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
         <div className="text-center">
-          <p style={{ color: COLORS.primary }} className="text-xl font-semibold">
+          <p className="text-xl font-semibold text-[#F2ECE2]">
             {t("common.loading")}
           </p>
         </div>
@@ -164,9 +164,16 @@ export default function OrdersPage() {
   }
 
   return (
-    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: COLORS.light, direction: dir }}>
-      <section style={{ backgroundColor: COLORS.primary }} className="text-white py-12 px-4">
+    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416", direction: dir }} className="text-[#F2ECE2]">
+      <section
+        style={{
+          background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+          borderBottom: "1px solid rgba(201,166,107,0.25)",
+        }}
+        className="px-4 py-12 text-white"
+      >
         <div className="max-w-7xl mx-auto">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Order Tracking</p>
           <h1 className="text-4xl font-bold">{t("orders.myOrders")}</h1>
         </div>
       </section>
@@ -175,14 +182,14 @@ export default function OrdersPage() {
         {orders.length === 0 ? (
           <div className="text-center">
             <div className="text-6xl mb-4">📦</div>
-            <h2 style={{ color: COLORS.primary }} className="text-2xl font-bold mb-4">
+            <h2 className="mb-4 text-2xl font-bold text-[#F2ECE2]">
               {t("orders.noOrders")}
             </h2>
-            <p className="text-gray-900 mb-8">{t("orders.noOrdersDesc")}</p>
+            <p className="mb-8 text-white/75">{t("orders.noOrdersDesc")}</p>
             <Link
               href="/shop"
               className="inline-block px-8 py-3 rounded-lg font-semibold"
-              style={{ backgroundColor: COLORS.primary, color: "white" }}
+              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
             >
               {t("cart.continueShop")}
             </Link>
@@ -190,16 +197,16 @@ export default function OrdersPage() {
         ) : (
           <div className="grid gap-6">
             {orders.map((order) => (
-              <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div key={order.id} className="overflow-hidden rounded-xl border border-white/10 bg-[#171a1d] shadow-md">
                 <div
                   className="p-6 border-b flex justify-between items-center"
-                  style={{ borderColor: COLORS.border }}
+                  style={{ borderColor: "rgba(255,255,255,0.14)" }}
                 >
                   <div>
-                    <h3 style={{ color: COLORS.primary }} className="font-bold text-lg">
+                    <h3 className="font-bold text-lg text-[#F2ECE2]">
                       {t("orders.order")} #{order.id.slice(0, 8)}
                     </h3>
-                    <p className="text-gray-900 text-sm">
+                    <p className="text-sm text-white/65">
                       {new Date(order.createdAt).toLocaleDateString(language === "ar" ? "ar-SA-u-nu-latn" : "en-US")}
                     </p>
                   </div>
@@ -218,30 +225,30 @@ export default function OrdersPage() {
                       const itemImage = item.image || product?.image;
                       
                       return (
-                      <div key={item.id} className="flex gap-4 p-3 bg-gray-50 rounded-lg">
+                      <div key={item.id} className="flex gap-4 rounded-lg border border-white/10 bg-[#121416] p-3">
                         {itemImage && (
                           <img
                             src={itemImage}
                             alt={item.name}
                             className="w-20 h-20 object-cover rounded-md flex-shrink-0"
-                            style={{ border: `2px solid ${COLORS.border}` }}
+                            style={{ border: "1px solid rgba(255,255,255,0.15)" }}
                           />
                         )}
                         <div className="flex-1 flex justify-between items-start">
                           <div>
-                            <p className="font-semibold text-gray-900">{item.name}</p>
-                            <p className="text-sm text-gray-600">الكمية: {item.quantity}</p>
+                            <p className="font-semibold text-[#F2ECE2]">{item.name}</p>
+                            <p className="text-sm text-white/70">الكمية: {item.quantity}</p>
                           </div>
-                          <span className="font-semibold text-gray-900">{CURRENCY_SYMBOL}{item.total.toFixed(2)}</span>
+                          <span className="font-semibold text-[#C9A66B]">{CURRENCY_SYMBOL}{item.total.toFixed(2)}</span>
                         </div>
                       </div>
                     );})}
                   </div>
 
-                  <div className="flex justify-between items-center pt-4 border-t" style={{ borderColor: COLORS.border }}>
+                  <div className="flex justify-between items-center border-t pt-4" style={{ borderColor: "rgba(255,255,255,0.14)" }}>
                     <div>
-                      <span className="text-gray-900 text-sm">{t("cart.totalPrice")}:</span>
-                      <span style={{ color: COLORS.primary }} className="font-bold text-xl ml-2">
+                      <span className="text-sm text-white/70">{t("cart.totalPrice")}:</span>
+                      <span className="ml-2 text-xl font-bold text-[#C9A66B]">
                         {CURRENCY_SYMBOL}{order.total.toFixed(2)}
                       </span>
                     </div>
@@ -251,8 +258,8 @@ export default function OrdersPage() {
                           ? `/orders/${order.id}?guestToken=${encodeURIComponent(order.guestToken)}`
                           : `/orders/${order.id}`
                       }
-                      className="px-6 py-2 rounded-lg font-semibold"
-                      style={{ backgroundColor: COLORS.primary, color: "white" }}
+                      className="rounded-lg border px-6 py-2 font-semibold"
+                      style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", borderColor: "rgba(201,166,107,0.45)" }}
                     >
                       {t("orders.viewDetails")}
                     </Link>

@@ -77,15 +77,19 @@ export default function Contact() {
   };
 
   return (
-    <div>
+    <div className="bg-[#121416] text-[#F2ECE2]">
       {/* Header */}
       <section
-        style={{ backgroundColor: COLORS.primary }}
+        style={{
+          background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+          borderBottom: "1px solid rgba(201,166,107,0.25)",
+        }}
         className="text-white py-12 px-4"
       >
         <div className="max-w-7xl mx-auto">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Manajel Support</p>
           <h1 className="text-4xl font-bold mb-2">{t.contact.title}</h1>
-          <p className="text-lg opacity-90">
+          <p className="text-lg text-white/80">
             {t.contact.description}
           </p>
         </div>
@@ -115,10 +119,7 @@ export default function Contact() {
           ].map((item, i) => (
             <div key={i} className="text-center">
               <div className="text-4xl mb-3">{item.icon}</div>
-              <h3
-                style={{ color: COLORS.primary }}
-                className="font-bold mb-2"
-              >
+              <h3 className="font-bold mb-2 text-[#C9A66B]">
                 {item.title}
               </h3>
               {item.link ? (
@@ -126,12 +127,12 @@ export default function Contact() {
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-900 underline hover:opacity-80"
+                  className="text-white/80 underline hover:text-white"
                 >
                   {item.content}
                 </a>
               ) : (
-                <p className="text-gray-900">{item.content}</p>
+                <p className="text-white/80">{item.content}</p>
               )}
             </div>
           ))}
@@ -140,15 +141,12 @@ export default function Contact() {
         {/* Contact Form */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div>
-            <h2
-              style={{ color: COLORS.primary }}
-              className="text-3xl font-bold mb-6"
-            >
+            <h2 className="text-3xl font-bold mb-6 text-[#C9A66B]">
               {t.contact.sendMessage}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-white/80 mb-1">
                   {t.contact.name} {t.contact.required}
                 </label>
                 <input
@@ -158,14 +156,14 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
+                  style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
+                  className="w-full px-4 py-2 border rounded-lg text-[#F2ECE2] placeholder:text-white/40 focus:outline-none focus:ring-2"
                   placeholder={t.contact.namePlaceholder}
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-white/80 mb-1">
                   {t.contact.email} {t.contact.required}
                 </label>
                 <input
@@ -175,14 +173,14 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
+                  style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
+                  className="w-full px-4 py-2 border rounded-lg text-[#F2ECE2] placeholder:text-white/40 focus:outline-none focus:ring-2"
                   placeholder={t.contact.emailPlaceholder}
                 />
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-1">
+                <label htmlFor="phone" className="block text-sm font-medium text-white/80 mb-1">
                   {t.contact.phone}
                 </label>
                 <input
@@ -191,14 +189,14 @@ export default function Contact() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg text-right text-gray-900 focus:outline-none focus:ring-2"
+                  style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
+                  className="w-full px-4 py-2 border rounded-lg text-right text-[#F2ECE2] placeholder:text-white/40 focus:outline-none focus:ring-2"
                   placeholder={t.contact.phonePlaceholder}
                 />
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-900 mb-1">
+                <label htmlFor="subject" className="block text-sm font-medium text-white/80 mb-1">
                   {t.contact.subject} {t.contact.required}
                 </label>
                 <input
@@ -208,14 +206,14 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
+                  style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
+                  className="w-full px-4 py-2 border rounded-lg text-[#F2ECE2] placeholder:text-white/40 focus:outline-none focus:ring-2"
                   placeholder={t.contact.subjectPlaceholder}
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-900 mb-1">
+                <label htmlFor="message" className="block text-sm font-medium text-white/80 mb-1">
                   {t.contact.message} {t.contact.required}
                 </label>
                 <textarea
@@ -225,8 +223,8 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   rows={5}
-                  style={{ borderColor: COLORS.border }}
-                  className="w-full px-4 py-2 border rounded-lg text-gray-900 focus:outline-none focus:ring-2"
+                  style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
+                  className="w-full px-4 py-2 border rounded-lg text-[#F2ECE2] placeholder:text-white/40 focus:outline-none focus:ring-2"
                   placeholder={t.contact.messagePlaceholder}
                 />
               </div>
@@ -234,7 +232,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={loading}
-                style={{ backgroundColor: COLORS.primary }}
+                style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
                 className="w-full text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {loading ? "جاري الإرسال..." : t.contact.send}
@@ -262,52 +260,39 @@ export default function Contact() {
 
           {/* Info Section */}
           <div
-            style={{ backgroundColor: COLORS.accent }}
-            className="rounded-lg p-8"
+            className="rounded-xl border border-white/10 bg-[#171a1d] p-8"
           >
-            <h3
-              style={{ color: COLORS.primary }}
-              className="text-2xl font-bold mb-6"
-            >
+            <h3 className="text-2xl font-bold mb-6 text-[#C9A66B]">
               {t.contact.helpTitle}
             </h3>
-            <p className="text-gray-900 mb-6">
+            <p className="text-white/80 mb-6">
               {t.contact.helpDesc}
             </p>
 
             <div className="space-y-4">
               <div>
-                <h4
-                  style={{ color: COLORS.primary }}
-                  className="font-bold mb-2"
-                >
+                <h4 className="font-bold mb-2 text-[#C9A66B]">
                   {t.contact.hours}
                 </h4>
-                <p className="text-gray-900 text-sm whitespace-pre-line">
+                <p className="text-white/80 text-sm whitespace-pre-line">
                   {t.contact.hoursTime}
                 </p>
               </div>
 
               <div>
-                <h4
-                  style={{ color: COLORS.primary }}
-                  className="font-bold mb-2"
-                >
+                <h4 className="font-bold mb-2 text-[#C9A66B]">
                   {t.contact.responseTime}
                 </h4>
-                <p className="text-gray-900 text-sm">
+                <p className="text-white/80 text-sm">
                   {t.contact.responseDesc}
                 </p>
               </div>
 
               <div>
-                <h4
-                  style={{ color: COLORS.primary }}
-                  className="font-bold mb-2"
-                >
+                <h4 className="font-bold mb-2 text-[#C9A66B]">
                   {t.contact.bulkOrders}
                 </h4>
-                <p className="text-gray-900 text-sm">
+                <p className="text-white/80 text-sm">
                   {t.contact.bulkOrdersDesc}
                 </p>
               </div>

@@ -21,14 +21,18 @@ export default function FAQ() {
   ];
 
   return (
-    <div>
+    <div className="bg-[#121416] text-[#F2ECE2]">
       <section
-        style={{ backgroundColor: COLORS.primary }}
+        style={{
+          background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+          borderBottom: "1px solid rgba(201,166,107,0.25)",
+        }}
         className="text-white py-12 px-4"
       >
         <div className="max-w-4xl mx-auto">
+          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">FAQ</p>
           <h1 className="text-4xl font-bold mb-2">{t.faq.title}</h1>
-          <p className="text-lg opacity-90">
+          <p className="text-lg text-white/80">
             {t.faq.description}
           </p>
         </div>
@@ -39,17 +43,15 @@ export default function FAQ() {
           {faqs.map((faq, i) => (
             <details
               key={i}
-              className="border rounded-lg overflow-hidden"
-              style={{ borderColor: COLORS.border }}
+              className="overflow-hidden rounded-lg border border-white/10 bg-[#171a1d]"
             >
               <summary
-                style={{ backgroundColor: COLORS.accent, color: COLORS.primary }}
-                className="cursor-pointer p-4 font-semibold"
+                className="cursor-pointer p-4 font-semibold text-[#C9A66B] bg-[#121416]"
               >
                 {faq.question}
               </summary>
-              <div className="p-4 bg-white">
-                <p className="text-gray-900">{faq.answer}</p>
+              <div className="p-4">
+                <p className="text-white/80">{faq.answer}</p>
               </div>
             </details>
           ))}
@@ -57,22 +59,18 @@ export default function FAQ() {
 
         {/* Additional Help */}
         <div
-          style={{ backgroundColor: COLORS.accent }}
-          className="rounded-lg p-8 mt-12 text-center"
+          className="mt-12 rounded-xl border border-white/10 bg-[#171a1d] p-8 text-center"
         >
-          <h2
-            style={{ color: COLORS.primary }}
-            className="text-2xl font-bold mb-4"
-          >
+          <h2 className="mb-4 text-2xl font-bold text-[#C9A66B]">
             {t.faq.contactSection}
           </h2>
-          <p className="text-gray-900 mb-6">
+          <p className="mb-6 text-white/80">
             {t.faq.contactDesc}
           </p>
           <a
             href="/contact"
             className="inline-block px-8 py-3 rounded-lg font-semibold"
-            style={{ backgroundColor: COLORS.primary, color: "white" }}
+            style={{ backgroundColor: "#C9A66B", color: "#14171a", border: "1px solid rgba(201,166,107,0.75)" }}
           >
             {t.faq.contactCTA}
           </a>
