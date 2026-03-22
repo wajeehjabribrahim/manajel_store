@@ -4,6 +4,21 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "mnajel.com",
+          },
+        ],
+        destination: "https://www.mnajel.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || ['http://localhost:3000'];
     const csp = [
