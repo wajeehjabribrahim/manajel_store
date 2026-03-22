@@ -352,6 +352,14 @@ body {
   animation-fill-mode: forwards;
 }
 
+/* Keep hero image stable on mobile (no parallax / no zoom movement) */
+@media (max-width: 768px) {
+  .hero-section {
+    background-attachment: scroll !important;
+    animation: none !important;
+  }
+}
+
 .hero-content {
   animation: fadeInUp 1s ease-out 0.3s both;
 }
