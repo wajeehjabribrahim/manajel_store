@@ -14,14 +14,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar-u-nu-latn">
+    <html lang="ar" dir="rtl">
       <head>
+        <title>مناجل | Manajel</title>
+        <meta
+          name="description"
+          content="مناجل - Manajel: متجر فلسطيني لزيت الزيتون البكر الممتاز والمنتجات التراثية الطبيعية."
+        />
+        <meta
+          name="keywords"
+          content="مناجل, manajel, mnajel, زيت زيتون فلسطيني, متجر فلسطيني, زعتر بلدي, منتجات تراثية"
+        />
         <meta
           name="theme-color"
           content={COLORS.primary}
         />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:locale" content="ar_PS" />
+        <meta property="og:locale:alternate" content="en_US" />
       </head>
       <body style={{ backgroundColor: COLORS.light }} className="flex flex-col min-h-screen antialiased">
         <AuthProvider>

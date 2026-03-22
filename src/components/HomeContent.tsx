@@ -124,7 +124,7 @@ export default function HomeContent() {
           className={`mb-12 text-center scroll-animate ${arrivalsReveal.isVisible ? "visible" : ""}`}
         >
           <h2 className="text-2xl md:text-3xl font-black mb-4 text-white">
-            {language === "ar" ? "بعض المنتجات المميزة" : "Curated with an editorial eye"}
+            {language === "ar" ? "بعض المنتجات المميزة" : "Featured Products"}
           </h2>
           
         </div>
@@ -223,7 +223,9 @@ export default function HomeContent() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             <div className="lg:col-span-7 rounded-3xl border border-white/10 p-8 md:p-12 bg-[#171b1f]">
-              <p className="text-xs uppercase tracking-[0.24em] text-[#C9A66B] mb-4">Heritage Story</p>
+              <p className="text-xs uppercase tracking-[0.24em] text-[#C9A66B] mb-4">
+                {language === "ar" ? "حكاية التراث" : "Heritage Story"}
+              </p>
               <h2 className="text-4xl md:text-6xl font-black mb-6 leading-[1.02] text-white">
                 {language === "ar" ? "من قلب المعصرة" : "From the Heart of the mill"}
               </h2>
@@ -234,7 +236,7 @@ export default function HomeContent() {
               </p>
               <p className="text-white/72 leading-8">
                 {language === "ar"
-                  ? "من الزيت إلى كل منتج , كل قطعة تحمل سياقًا ثقافيًا واضحًا وتُقدّم كمشهد فني موثوق." 
+                  ? "من الزيت إلى كل منتج , كل قطعة تحمل سياقًا ثقافيًا واضحًا بنقدمها كمشهد فني موثوق." 
                   : "From olive oil to all products, each piece carries cultural context and is presented as a trustworthy art-like composition."}
               </p>
             </div>

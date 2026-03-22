@@ -18,12 +18,13 @@ export default function Home() {
       {
         "@type": "Organization",
         name: "Manajel",
+        alternateName: ["مناجل", "Mnajel", "Manajel"],
         url: siteUrl,
         logo: `${siteUrl}/images/logo.png`,
       },
       {
         "@type": "WebSite",
-        name: "Manajel",
+        name: "مناجل | Manajel",
         url: siteUrl,
         inLanguage: ["ar", "en"],
       },

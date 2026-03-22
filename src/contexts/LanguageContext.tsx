@@ -31,7 +31,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const currentDir = language === "ar" ? "rtl" : "ltr";
     try {
-      document.documentElement.lang = language === "ar" ? "ar-u-nu-latn" : "en-US";
+      document.documentElement.lang = language === "ar" ? "ar" : "en";
       document.documentElement.dir = currentDir;
     } catch (e) {
       // ignore in environments without document
