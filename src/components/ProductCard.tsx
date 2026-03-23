@@ -46,6 +46,10 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
   const salePrice = primarySize?.salePrice;
   const hasSale = typeof salePrice === "number" && salePrice > 0 && salePrice < basePrice;
   const displayPrice = hasSale ? salePrice : basePrice;
+  const ratingValue =
+    typeof product.rating === "number" && Number.isFinite(product.rating) && product.rating > 0
+      ? product.rating
+      : 4.5;
 
   return (
     <div
@@ -100,9 +104,9 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           {/* Rating */}
           <div className="flex items-center gap-1 mb-3">
             <div className="flex text-yellow-400">
-              {[...Array(5)].map((_, i) => (
-                <span key={i}>
-                  {i < Math.floor(product.rating) ? "★" : "☆"}
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span key={star} className={star <= Math.round(ratingValue) ? "text-yellow-400" : "text-white/30"}>
+                  ★
                 </span>
               ))}
             </div>

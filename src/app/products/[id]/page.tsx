@@ -9,6 +9,7 @@ import { PRODUCTS, Product } from "@/constants/products";
 import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
+import { getProductSizeLabel } from "@/lib/productSizes";
 
 interface PageProps {
   params: {
@@ -444,7 +445,7 @@ export default function ProductPage({ params }: PageProps) {
                     }}
                   >
                     <div className="font-bold capitalize text-[#F2ECE2]">
-                      {t(`product.${size}`)}
+                      {getProductSizeLabel(size, product.sizes as Record<string, { label?: string; labelEn?: string } | undefined>, t, language)}
                     </div>
                     <div className="text-xs text-white/65">
                       {product.sizes?.[size]?.weight || ""}
