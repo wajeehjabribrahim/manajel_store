@@ -75,8 +75,8 @@ export default function LoginPageClient() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg py-2 font-semibold text-[#14171a] transition-opacity"
-              style={{ backgroundColor: "#C9A66B", opacity: loading ? 0.7 : 1 }}
+              className="gold-button w-full rounded-lg py-2 font-semibold transition-opacity"
+              style={{ opacity: loading ? 0.7 : 1 }}
             >
               {loading ? t("common.loading") : t("auth.loginButton")}
             </button>

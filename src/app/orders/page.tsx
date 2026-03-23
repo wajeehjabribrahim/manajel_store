@@ -311,8 +311,7 @@ export default function OrdersPage() {
             <p className="mb-8 text-white/75">{t("orders.noOrdersDesc")}</p>
             <Link
               href="/shop"
-              className="inline-block px-8 py-3 rounded-lg font-semibold"
-              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
+              className="gold-button inline-block px-8 py-3 rounded-lg font-semibold"
             >
               {t("cart.continueShop")}
             </Link>
@@ -382,8 +381,7 @@ export default function OrdersPage() {
                             ? `/orders/${order.id}?guestToken=${encodeURIComponent(order.guestToken)}`
                             : `/orders/${order.id}`
                         }
-                        className="rounded-lg border px-6 py-2 font-semibold"
-                        style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", borderColor: "rgba(201,166,107,0.45)" }}
+                        className="gold-button rounded-lg px-6 py-2 font-semibold"
                       >
                         {t("orders.viewDetails")}
                       </Link>
@@ -473,8 +471,7 @@ export default function OrdersPage() {
                         type="button"
                         onClick={() => submitFeedback(order)}
                         disabled={feedbackSubmitting}
-                        className="mt-4 w-full rounded-lg px-4 py-2 text-sm font-semibold text-[#F2ECE2] disabled:opacity-60"
-                        style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
+                        className="gold-button mt-4 w-full rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60"
                       >
                         {feedbackSubmitting
                           ? language === "ar"

@@ -14,6 +14,12 @@ export default function HomeContent() {
   const { data: session } = useSession();
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const [heritageImageIndex, setHeritageImageIndex] = useState(0);
+  const heritageImages = [
+    "/images/mill.png",
+    "/images/mail.jpg",
+    "/images/oil.jpg",
+  ];
 
   const arrivalsReveal = useScrollAnimation({ delay: 100 });
   const heritageReveal = useScrollAnimation({ delay: 200 });
@@ -51,6 +57,16 @@ export default function HomeContent() {
     }
     loadProducts();
   }, [language]);
+
+  useEffect(() => {
+    if (heritageImages.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setHeritageImageIndex((prev) => (prev + 1) % heritageImages.length);
+    }, 4200);
+
+    return () => clearInterval(timer);
+  }, [heritageImages.length]);
 
   const featuredProducts = products.filter((p) => p.featured).slice(0, 4);
 
@@ -101,8 +117,7 @@ export default function HomeContent() {
           <div className="mt-4 md:mt-6 flex flex-wrap gap-4">
             <Link
               href={isAdmin ? "/admin" : "/shop"}
-              className="rounded-xl px-8 py-3 font-bold"
-              style={{ backgroundColor: "#C9A66B", color: "#14171a", border: "1px solid rgba(201,166,107,0.75)", boxShadow: "0 16px 30px rgba(201,166,107,0.2)" }}
+              className="gold-button rounded-xl px-8 py-3 font-bold"
             >
               {isAdmin ? "لوحة التحكم" : t("common.shopNow")}
             </Link>
@@ -127,11 +142,11 @@ export default function HomeContent() {
           
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 auto-rows-fr">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-6 auto-rows-fr">
           {featuredProducts.length === 0
             ? Array.from({ length: 4 }).map((_, idx) => (
-                <div key={idx} className={`relative h-full animate-pulse rounded-3xl border border-white/10 bg-white/5 p-5 ${idx % 2 === 0 ? "lg:col-span-7" : "lg:col-span-5"}`}>
-                  <div className="rounded-2xl bg-gray-700/50 h-56 w-full mb-4" />
+                <div key={idx} className={`relative h-full animate-pulse rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5 p-3 sm:p-5 ${idx % 2 === 0 ? "lg:col-span-7" : "lg:col-span-5"}`}>
+                  <div className="rounded-xl sm:rounded-2xl bg-gray-700/50 h-36 sm:h-56 w-full mb-3 sm:mb-4" />
                   <div className="h-6 bg-gray-700/50 rounded mb-2 w-3/4" />
                   <div className="h-4 bg-gray-700/50 rounded mb-2 w-2/3" />
                   <div className="h-4 bg-gray-700/50 rounded mb-2 w-1/2" />
@@ -160,29 +175,26 @@ export default function HomeContent() {
                 <Link
                   key={product.id}
                   href={`/products/${product.id}`}
-                  className={`group rounded-3xl border border-white/15 bg-[#171a1d] p-5 hover:border-[#C9A66B]/70 transition-all duration-300 ${index === 0 ? "lg:col-span-7" : index === 1 ? "lg:col-span-5" : index === 2 ? "lg:col-span-5" : "lg:col-span-7"}`}
+                  className={`group rounded-2xl sm:rounded-3xl border border-white/15 bg-[#171a1d] p-3 sm:p-5 hover:border-[#C9A66B]/70 transition-all duration-300 ${index === 0 ? "lg:col-span-7" : index === 1 ? "lg:col-span-5" : index === 2 ? "lg:col-span-5" : "lg:col-span-7"}`}
                 >
                   <div
-                    className="mb-4 h-56 rounded-2xl bg-cover bg-center"
+                    className="mb-3 sm:mb-4 h-36 sm:h-56 rounded-xl sm:rounded-2xl bg-cover bg-center"
                     style={{
                       backgroundImage: `linear-gradient(120deg, rgba(14,16,18,0.45), rgba(77,55,42,0.32)), url('${product.image || "/images/hero.jpg"}')`,
                     }}
                   />
                   <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="text-2xl font-extrabold text-white leading-tight">{t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}</h3>
+                    <h3 className="text-base sm:text-2xl font-extrabold text-white leading-tight">{t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}</h3>
                     <span className="text-right">
                       {hasSale ? (
                         <span className="block text-xs line-through" style={{ color: "rgb(220, 38, 38)" }}>₪{basePrice}</span>
                       ) : null}
-                      <span
-                        className="text-sm font-bold"
-                        style={{ color: "rgb(201, 166, 107)" }}
-                      >
+                      <span className="text-xs sm:text-sm font-bold text-[#C9A66B]">
                         ₪{hasSale ? salePrice : basePrice}
                       </span>
                     </span>
                   </div>
-                  <p className="text-sm text-white/72 leading-7 line-clamp-3">
+                  <p className="text-xs sm:text-sm text-white/72 leading-6 sm:leading-7 line-clamp-3">
                     {t(`products.${product.id}.description`) === `products.${product.id}.description`
                       ? product.description
                       : t(`products.${product.id}.description`)}
@@ -194,12 +206,7 @@ export default function HomeContent() {
         <div className="text-center mt-12">
           <Link
             href={isAdmin ? "/admin" : "/shop"}
-            className="inline-block px-10 py-4 text-lg rounded-xl font-bold transition-transform hover:scale-105 shadow-lg hover:shadow-2xl"
-            style={{
-              backgroundColor: "#C9A66B",
-              color: "#14171a",
-              border: "1px solid rgba(201,166,107,0.75)",
-            }}
+            className="gold-button inline-block px-10 py-4 text-lg rounded-xl font-bold transition-transform hover:scale-105 shadow-lg hover:shadow-2xl"
           >
             {isAdmin ? "لوحة التحكم" : t("common.shopNow")}
           </Link>
@@ -220,10 +227,10 @@ export default function HomeContent() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             <div className="lg:col-span-7 rounded-3xl border border-white/10 p-8 md:p-12 bg-[#171b1f]">
-              <p className="text-xs uppercase tracking-[0.24em] text-[#C9A66B] mb-4">
+              <p className="text-4xl uppercase tracking-[0.24em] text-[#C9A66B] mb-4">
                 {language === "ar" ? "حكاية التراث" : "Heritage Story"}
               </p>
-              <h2 className="text-4xl md:text-6xl font-black mb-6 leading-[1.02] text-white">
+              <h2 className="text-1.5xl md:text-6xl font-black mb-6 leading-[1.02] text-white">
                 {language === "ar" ? "من قلب المعصرة" : "From the Heart of the mill"}
               </h2>
               <p className="text-white/75 leading-8 mb-6">
@@ -231,29 +238,32 @@ export default function HomeContent() {
                   ? "هنا تبدأ الحكاية… حيث تتحول ثمار الزيتون إلى زيتٍ نقي يحمل روح الأرض, نحافظ على طرق العصر الأصيلة لنقدم لكم جودة تُحاكي التراث وطعمًا لا يُنسى."
                   : "Here is where the story begins… where olives are transformed into pure oil that carries the spirit of the land.We preserve traditional pressing methods to deliver quality that reflects heritage and a taste that is unforgettable"}
               </p>
-              <p className="text-white/72 leading-8">
+              <p className="text-white/75 leading-8">
                 {language === "ar"
                   ? "من الزيت إلى كل منتج , كل قطعة تحمل سياقًا ثقافيًا واضحًا بنقدمها كمشهد فني موثوق." 
                   : "From olive oil to all products, each piece carries cultural context and is presented as a trustworthy art-like composition."}
               </p>
             </div>
 
-            <div className="lg:col-span-5 rounded-3xl overflow-hidden border border-[#C9A66B]/35 bg-black/30">
-              <div
-                className="h-full min-h-[320px] bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.45)), url('/images/mill.png')",
-                  backgroundAttachment: "fixed",
-                }}
-              />
+            <div className="lg:col-span-5 relative rounded-3xl overflow-hidden border border-[#C9A66B]/35 bg-black/30 min-h-[320px]">
+              {heritageImages.map((imagePath, index) => (
+                <div
+                  key={imagePath}
+                  className={`absolute inset-0 h-full min-h-[320px] bg-cover bg-center transition-opacity duration-1000 ${
+                    index === heritageImageIndex ? "opacity-100" : "opacity-0"
+                  }`}
+                  style={{
+                    backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.45)), url('${imagePath}')`,
+                  }}
+                />
+              ))}
             </div>
           </div>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">🌿 {language === "ar" ? "مصدر طبيعي موثوق" : "Trusted natural sourcing"}</div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">🏺 {language === "ar" ? "تراث فلسطيني أصيل" : "Authentic Palestinian heritage"}</div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">🙌🏻 {language === "ar" ? "طرق تقليدية" : "Traditional methods"}</div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">🫒 {language === "ar" ? "تراث فلسطيني أصيل" : "Authentic Palestinian heritage"}</div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">✨ {language === "ar" ? "طرق تقليدية" : "Traditional methods"}</div>
           </div>
         </div>
       </section>

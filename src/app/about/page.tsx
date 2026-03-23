@@ -15,42 +15,42 @@ export default function About() {
           background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
           borderBottom: "1px solid rgba(201,166,107,0.25)",
         }}
-        className="text-white py-20 px-4"
+        className="text-white py-12 sm:py-20 px-4"
       >
         <div className="max-w-7xl mx-auto">
-          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Manajel</p>
-          <h1 className="text-5xl font-bold mb-4">{t.about.title}</h1>
-          <p className="text-xl text-white/80">
-            {t.about.subtitle}
-          </p>
+          <p className="gold-texture mb-2 text-xs uppercase tracking-[0.24em]">Manajel</p>
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-0 leading-tight">
+            {t.about.title}
+          </h1>
+          
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+      <section className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-0">
           <AnimatedSection animationType="fade-left">
-            <h2 className="text-3xl font-bold mb-6 text-[#C9A66B]">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-6 text-[#C9A66B] text-center">
               {t.about.ourStory}
             </h2>
-            <p className="text-white/80 mb-4 leading-relaxed">
+            <p className="text-[13px] sm:text-base text-white/80 mb-4 leading-relaxed">
               {t.about.storyPara1}
             </p>
-            <p className="text-white/80 mb-4 leading-relaxed">
+            <p className="text-[13px] sm:text-base text-white/80 mb-4 leading-relaxed">
               {t.about.storyPara2}
             </p>
-            <p className="text-white/80 mb-4 leading-relaxed">
+            <p className="text-[13px] sm:text-base text-white/80 mb-4 leading-relaxed">
               {t.about.storyPara3}
             </p>
-            <p className="text-white/80 leading-relaxed">
+            <p className="text-[13px] sm:text-base text-white/80 leading-relaxed">
               {t.about.storyPara4}
             </p>
           </AnimatedSection>
           <AnimatedSection animationType="fade-right" delay={100}>
             <div
-              className="rounded-xl border border-white/10 bg-[#171a1d] p-8 flex flex-col justify-center"
+              className="rounded-xl border border-white/10 bg-[#171a1d] p-6 sm:p-8 flex flex-col justify-center"
             >
-              <h3 className="text-2xl font-bold mb-4 text-[#C9A66B]">
+              <h3 className="text-lg sm:text-2xl font-bold mb-4 text-[#C9A66B]">
                 {t.about.ourValues}
               </h3>
               <ul className="space-y-3">
@@ -66,7 +66,7 @@ export default function About() {
                     <span className="font-bold mr-3 text-[#C9A66B]">
                       ✓
                     </span>
-                    <span className="text-white/80">{value}</span>
+                    <span className="text-[13px] sm:text-base text-white/80">{value}</span>
                   </li>
                 ))}
               </ul>
@@ -77,7 +77,7 @@ export default function About() {
         {/* Products Section */}
         <AnimatedSection animationType="fade-up">
           <div className="mb-16">
-            <h2 className="text-3xl font-bold mb-8 text-center text-[#C9A66B]">
+            <h2 className="text-xl sm:text-3xl font-bold mb-8 text-center text-[#C9A66B]">
               {t.about.products}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -86,15 +86,14 @@ export default function About() {
                 t.about.product2,
                 t.about.product3,
                 t.about.product4,
-                t.about.product5,
-                t.about.product6,
+                
               ].map((product, i) => (
                 <div
                   key={i}
                   style={{ borderLeft: "4px solid #C9A66B" }}
                   className="pl-4"
                 >
-                  <h4 className="font-bold mb-2 text-[#F2ECE2]">
+                  <h4 className="text-[13px] sm:text-base font-bold mb-2 text-[#F2ECE2]">
                     {product}
                   </h4>
                 </div>
@@ -103,8 +102,7 @@ export default function About() {
             <div className="text-center mt-8">
               <Link
                 href="/shop"
-                className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
-                style={{ backgroundColor: "#C9A66B", color: "#14171a", border: "1px solid rgba(201,166,107,0.75)" }}
+                className="gold-button inline-block px-7 py-2.5 rounded-lg text-sm sm:text-base font-semibold transition-transform hover:scale-105"
               >
                 {t.common.shopNow}
               </Link>
@@ -115,18 +113,15 @@ export default function About() {
         {/* Contact CTA */}
         <AnimatedSection animationType="scale" delay={200}>
           <div
-            className="rounded-xl border border-white/10 bg-[#171a1d] p-12 text-center"
+            className="rounded-xl border border-white/10 bg-[#171a1d] p-6 sm:p-12 text-center"
           >
-            <h3 className="text-2xl font-bold mb-4 text-[#C9A66B]">
-              {t.about.contactCTA}
-            </h3>
-            <p className="text-white/80 mb-6">
+            
+            <p className="text-[13px] sm:text-base text-white/80 mb-6">
               {t.about.contactDesc}
             </p>
             <Link
               href="/contact"
-              className="inline-block px-8 py-3 rounded-lg font-semibold transition-transform hover:scale-105"
-              style={{ backgroundColor: "#C9A66B", color: "#14171a", border: "1px solid rgba(201,166,107,0.75)" }}
+              className="gold-button inline-block px-7 py-2.5 rounded-lg text-sm sm:text-base font-semibold transition-transform hover:scale-105"
             >
               {t.about.contactButton}
             </Link>

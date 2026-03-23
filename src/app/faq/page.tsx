@@ -30,9 +30,9 @@ export default function FAQ() {
         className="text-white py-12 px-4"
       >
         <div className="max-w-4xl mx-auto">
-          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">FAQ</p>
-          <h1 className="text-4xl font-bold mb-2">{t.faq.title}</h1>
-          <p className="text-lg text-white/80">
+          <p className="mb-2 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.24em] text-[#C9A66B]">FAQ</p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 leading-tight">{t.faq.title}</h1>
+          <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
             {t.faq.description}
           </p>
         </div>
@@ -46,12 +46,12 @@ export default function FAQ() {
               className="overflow-hidden rounded-lg border border-white/10 bg-[#171a1d]"
             >
               <summary
-                className="cursor-pointer p-4 font-semibold text-[#C9A66B] bg-[#121416]"
+                className="cursor-pointer p-3 sm:p-4 text-sm sm:text-base font-semibold text-[#C9A66B] bg-[#121416]"
               >
                 {faq.question}
               </summary>
-              <div className="p-4">
-                <p className="text-white/80">{faq.answer}</p>
+              <div className="p-3 sm:p-4">
+                <p className="text-sm sm:text-base text-white/80">{faq.answer}</p>
               </div>
             </details>
           ))}
@@ -59,18 +59,17 @@ export default function FAQ() {
 
         {/* Additional Help */}
         <div
-          className="mt-12 rounded-xl border border-white/10 bg-[#171a1d] p-8 text-center"
+          className="mt-12 rounded-xl border border-white/10 bg-[#171a1d] p-5 sm:p-8 text-center"
         >
-          <h2 className="mb-4 text-2xl font-bold text-[#C9A66B]">
+          <h2 className="mb-4 text-xl sm:text-2xl font-bold text-[#C9A66B]">
             {t.faq.contactSection}
           </h2>
-          <p className="mb-6 text-white/80">
+          <p className="mb-6 text-sm sm:text-base text-white/80">
             {t.faq.contactDesc}
           </p>
           <a
             href="/contact"
-            className="inline-block px-8 py-3 rounded-lg font-semibold"
-            style={{ backgroundColor: "#C9A66B", color: "#14171a", border: "1px solid rgba(201,166,107,0.75)" }}
+            className="gold-button inline-block px-7 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-semibold"
           >
             {t.faq.contactCTA}
           </a>

@@ -729,8 +729,8 @@ export default function Cart() {
                 <button
                   onClick={handlePlaceOrder}
                   disabled={orderLoading}
-                  className="w-full py-3 rounded-lg font-bold text-white transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)", opacity: orderLoading ? 0.7 : 1 }}
+                  className="gold-button w-full py-3 rounded-lg font-bold transition-opacity hover:opacity-90"
+                  style={{ opacity: orderLoading ? 0.7 : 1 }}
                 >
                   {orderLoading ? t("cart.orderSaving") : t("cart.buyNow")}
                 </button>
@@ -758,10 +758,7 @@ export default function Cart() {
                       className="space-y-3"
                       style={{ direction: dir }}
                     >
-                    <h4
-                      className="font-semibold"
-                      style={{ color: "#C9A66B" }}
-                    >
+                    <h4 className="font-semibold text-[#C9A66B]">
                       {t("cart.deliveryInfo")}
                     </h4>
                     <p className="text-xs text-white/70">
@@ -841,8 +838,8 @@ export default function Cart() {
                     <button
                       type="submit"
                       disabled={orderLoading}
-                      className="w-full py-2 rounded-lg font-semibold text-white"
-                      style={{ backgroundColor: "#4d372a", opacity: orderLoading ? 0.7 : 1, border: "1px solid rgba(201,166,107,0.45)" }}
+                      className="gold-button w-full py-2 rounded-lg font-semibold"
+                      style={{ opacity: orderLoading ? 0.7 : 1 }}
                     >
                       {orderLoading ? t("cart.orderSaving") : t("cart.placeOrder")}
                     </button>

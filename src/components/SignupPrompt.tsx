@@ -99,8 +99,7 @@ export default function SignupPrompt() {
           <div className="space-y-3">
             <button
               onClick={handleRegisterClick}
-              className="w-full rounded-lg border py-3 font-semibold text-[#14171a] transition-opacity hover:opacity-90"
-              style={{ backgroundColor: "#C9A66B", borderColor: "rgba(201,166,107,0.75)" }}
+              className="gold-button w-full rounded-lg py-3 font-semibold transition-opacity hover:opacity-90"
             >
               إنشاء حساب جديد
             </button>

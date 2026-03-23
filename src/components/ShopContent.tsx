@@ -250,8 +250,8 @@ export default function ShopContent() {
       >
         <div className="max-w-7xl mx-auto">
           <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Manajel Shop</p>
-          <h1 className="mb-2 text-4xl font-black">{t("shop.title")}</h1>
-          <p className="text-lg text-white/80">
+          <h1 className="mb-2 text-3xl sm:text-4xl font-black leading-tight">{t("shop.title")}</h1>
+          <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
             {t("shop.subtitle")}
           </p>
         </div>
@@ -262,16 +262,16 @@ export default function ShopContent() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Categories */}
           <div className="lg:w-56 flex-shrink-0">
-            <h3 className="mb-6 text-xl font-bold text-[#C9A66B]">
+            <h3 className="mb-4 sm:mb-6 text-lg sm:text-xl font-bold text-[#C9A66B]">
               {t("shop.categories")}
             </h3>
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 sm:gap-2">
               {isLoading ? (
                 // Categories Skeleton
                 <>
                   {Array.from({ length: 5 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
-                      <div className="h-10 w-full rounded-xl border border-white/10 bg-white/10" />
+                      <div className="h-9 sm:h-10 w-full rounded-xl border border-white/10 bg-white/10" />
                     </div>
                   ))}
                 </>
@@ -279,7 +279,7 @@ export default function ShopContent() {
                 <>
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    className={`w-full rounded-xl border px-4 py-2 transition-colors ${
+                    className={`w-full rounded-xl border px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
                       selectedCategory === null
                         ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
                         : "border-white/15 bg-[#171a1d] text-white/85 hover:border-white/30 hover:text-white"
@@ -298,7 +298,7 @@ export default function ShopContent() {
                           console.log('Selected category:', category.id);
                           setSelectedCategory(category.id);
                         }}
-                        className={`w-full rounded-xl border px-4 py-2 transition-colors ${
+                        className={`w-full rounded-xl border px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
                           selectedCategory === category.id
                             ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
                             : "border-white/15 bg-[#171a1d] text-white/85 hover:border-white/30 hover:text-white"
@@ -321,7 +321,7 @@ export default function ShopContent() {
                 {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
               </div>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-8 auto-rows-fr">
               {isLoading || filteredProducts.length === 0
                 ? Array.from({ length: 8 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">

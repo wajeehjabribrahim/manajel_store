@@ -2,6 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes goldShimmer {
+  0% {
+    background-position: 0% 0%, 100% 100%, 0% 50%;
+  }
+  50% {
+    background-position: 45% 25%, 60% 80%, 100% 50%;
+  }
+  100% {
+    background-position: 100% 0%, 0% 100%, 0% 50%;
+  }
+}
+
+/* Realistic gold text effect (texture-like layered highlights) */
+.gold-texture,
+.text-\[\#C9A66B\] {
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255, 250, 209, 0.98) 0%, rgba(255, 250, 209, 0) 34%),
+    radial-gradient(circle at 82% 76%, rgba(255, 221, 132, 0.82) 0%, rgba(255, 221, 132, 0) 33%),
+    linear-gradient(
+      130deg,
+      #fff7cf 0%,
+      #ffe9a8 10%,
+      #efc96a 22%,
+      #9a6f1f 36%,
+      #f7d57f 50%,
+      #b17a23 64%,
+      #ffefb7 77%,
+      #c3872a 90%,
+      #fbe09a 100%
+    );
+  background-size: 220% 220%, 190% 190%, 100% 100%;
+  background-position: 0% 0%, 100% 100%, 0% 50%;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: goldShimmer 7.5s ease-in-out infinite;
+  text-shadow:
+    0 1px 0 rgba(255, 246, 200, 0.35),
+    0 0 10px rgba(229, 177, 63, 0.3),
+    0 0 18px rgba(190, 132, 32, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gold-texture,
+  .text-\[\#C9A66B\] {
+    animation: none;
+  }
+}
+
+.gold-button {
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255, 250, 209, 0.95) 0%, rgba(255, 250, 209, 0) 34%),
+    radial-gradient(circle at 82% 76%, rgba(255, 221, 132, 0.75) 0%, rgba(255, 221, 132, 0) 33%),
+    linear-gradient(
+      130deg,
+      #fff7cf 0%,
+      #ffe9a8 12%,
+      #efc96a 25%,
+      #9a6f1f 40%,
+      #f7d57f 54%,
+      #b17a23 69%,
+      #ffefb7 82%,
+      #c3872a 100%
+    );
+  background-size: 220% 220%, 190% 190%, 100% 100%;
+  background-position: 0% 0%, 100% 100%, 0% 50%;
+  border: 1px solid rgba(201, 166, 107, 0.75);
+  color: #14171a;
+  box-shadow:
+    0 12px 24px rgba(201, 166, 107, 0.2),
+    inset 0 1px 0 rgba(255, 247, 206, 0.6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.gold-button:hover {
+  filter: brightness(1.04);
+  box-shadow:
+    0 16px 30px rgba(201, 166, 107, 0.26),
+    inset 0 1px 0 rgba(255, 247, 206, 0.75);
+}
+
+.gold-button:disabled {
+  cursor: not-allowed;
+}
+
+.gold-texture-static {
+  animation: none !important;
+}
+
 /* Dropdown menu styles */
 .dropdown-menu {
   max-height: calc(100vh - 120px);

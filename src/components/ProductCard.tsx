@@ -54,11 +54,11 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
     >
       <Link href={`/products/${product.id}`} className="block h-full">
         <div
-          className="product-card group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-white/15 bg-[#171a1d] shadow-md transition-all duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
+          className="product-card group flex h-full cursor-pointer flex-col overflow-hidden rounded-lg sm:rounded-xl border border-white/15 bg-[#171a1d] shadow-md transition-all duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
         >
         {/* Image Container */}
         <div
-          className="w-full h-48 bg-gradient-to-br relative overflow-hidden"
+          className="w-full h-36 sm:h-48 bg-gradient-to-br relative overflow-hidden"
           style={{ backgroundColor: "#242a2f" }}
         >
           {product.image ? (
@@ -89,11 +89,11 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
         </div>
 
         {/* Content */}
-        <div className="p-4 flex flex-col flex-1">
-          <h3 className="mb-1 line-clamp-1 font-semibold text-[#F2ECE2]">
+        <div className="p-3 sm:p-4 flex flex-col flex-1">
+          <h3 className="gold-texture-static mb-1 line-clamp-1 text-sm sm:text-base font-semibold text-[#C9A66B]">
             {name}
           </h3>
-          <p className="mb-3 line-clamp-2 text-xs text-white/72">
+          <p className="mb-3 line-clamp-3 sm:line-clamp-2 text-[10px] sm:text-xs leading-4 sm:leading-5 text-white/72">
             {description.split(".")[0]}
           </p>
 
@@ -112,11 +112,14 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           <div className="flex justify-between items-center mt-auto">
             <div>
               {hasSale ? (
-                <p className="inline-block -translate-y-0.5 text-sm font-semibold text-red-300 line-through decoration-2 decoration-red-400">
+                <p
+                  className="inline-block -translate-y-0.5 text-sm font-semibold line-through decoration-2"
+                  style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
+                >
                   {CURRENCY_SYMBOL}{basePrice}
                 </p>
               ) : null}
-              <p className="text-lg font-bold text-[#C9A66B]">
+              <p className="text-base sm:text-lg font-bold text-[#C9A66B]">
                 {CURRENCY_SYMBOL}{displayPrice}
               </p>
               <p className="text-xs text-white/55">{t("product.fromSmallestSize")}</p>

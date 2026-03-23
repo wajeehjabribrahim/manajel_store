@@ -322,7 +322,7 @@ export default function ProductPage({ params }: PageProps) {
     <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2]">
       {/* Breadcrumb */}
       <div className="mx-auto max-w-7xl px-4 py-4 text-sm text-white/70">
-        <Link href="/shop" className="hover:text-white transition-colors" style={{ color: "#C9A66B" }}>
+        <Link href="/shop" className="text-[#C9A66B] hover:text-white transition-colors">
           {t("nav.shop")}
         </Link>
         {" > "}
@@ -335,13 +335,13 @@ export default function ProductPage({ params }: PageProps) {
           {/* Product Image Gallery */}
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#171a1d]">
             {product.image || (product.images && product.images.length > 0) ? (
-              <ImageGallery 
+              <ImageGallery
                 images={
-                  product.image 
+                  product.image
                     ? [product.image, ...(product.images || [])]
                     : (product.images || [])
-                } 
-                alt={name} 
+                }
+                alt={name}
               />
             ) : (
               <div className="w-full h-96 flex items-center justify-center">
@@ -449,20 +449,21 @@ export default function ProductPage({ params }: PageProps) {
                     <div className="text-xs text-white/65">
                       {product.sizes?.[size]?.weight || ""}
                     </div>
-                    <div
-                      className="font-bold text-sm text-[#C9A66B]"
-                    >
+                    <div className="font-bold text-sm">
                       {product.sizes?.[size]?.salePrice ? (
                         <>
-                          <div className="text-xs line-through" style={{ color: "#dc2626" }}>
+                          <div
+                            className="text-xs line-through font-semibold"
+                            style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
+                          >
                               {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.price ?? product.price)}
                           </div>
-                          <div style={{ color: COLORS.secondary }} className="font-bold text-sm">
+                          <div style={{ color: COLORS.secondary }} className="font-bold text-sm text-[#C9A66B]">
                               {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.salePrice ?? product.price)}
                           </div>
                         </>
                       ) : (
-                        <div style={{ color: COLORS.secondary }} className="font-bold text-sm">
+                        <div style={{ color: COLORS.secondary }} className="font-bold text-sm text-[#C9A66B]">
                             {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.price ?? product.price)}
                         </div>
                       )}
@@ -525,7 +526,12 @@ export default function ProductPage({ params }: PageProps) {
                 <span className="text-white/75">{t("product.pricePerUnit")}</span>
                 {currentSize.salePrice ? (
                   <span className="flex items-center gap-2">
-                    <span className="line-through text-sm" style={{ color: "#dc2626" }}>{CURRENCY_SYMBOL}{formatNumber(currentSize.price)}</span>
+                    <span
+                      className="line-through text-sm font-semibold"
+                      style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
+                    >
+                      {CURRENCY_SYMBOL}{formatNumber(currentSize.price)}
+                    </span>
                     <span className="font-bold text-[#C9A66B]">{CURRENCY_SYMBOL}{formatNumber(currentSize.salePrice)}</span>
                   </span>
                 ) : (
@@ -547,8 +553,7 @@ export default function ProductPage({ params }: PageProps) {
             {/* Add to Cart / Notify */}
             {product.inStock ? (
               <button
-                className="w-full py-3 rounded-lg font-bold text-white text-lg transition-opacity hover:opacity-90 mb-4 disabled:opacity-50"
-                style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
+                className="gold-button w-full py-3 rounded-lg font-bold text-lg transition-opacity hover:opacity-90 mb-4 disabled:opacity-50"
                 onClick={handleAddToCart}
                 disabled={isAdding}
               >
@@ -572,8 +577,7 @@ export default function ProductPage({ params }: PageProps) {
                     type="button"
                     onClick={handleNotifyStock}
                     disabled={isNotifying}
-                    className="rounded-lg px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
-                    style={{ backgroundColor: "#1f5d4e", border: "1px solid rgba(201,166,107,0.45)" }}
+                    className="gold-button rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60"
                   >
                     {isNotifying
                       ? language === "ar"
