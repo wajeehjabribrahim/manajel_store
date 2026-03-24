@@ -7,12 +7,13 @@ interface AdminFeedbackItemProps {
   item: ManualFeedbackItem;
   productId: string;
   onDelete: (id: string) => void;
-  onEdit: (id: string, note: string) => void;
+  onEdit: (id: string, note: string, noteEn: string) => void;
 }
 
 const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, onDelete, onEdit }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editNote, setEditNote] = React.useState(item.note);
+  const [editNoteEn, setEditNoteEn] = React.useState(item.noteEn || "");
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState("");
 
@@ -36,8 +37,8 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
   };
 
   const handleEdit = async () => {
-    if (!editNote.trim()) {
-      setError("لا يمكن أن يكون النص فارغًا");
+    if (!editNote.trim() && !editNoteEn.trim()) {
+      setError("لا يمكن أن يكون النص العربي والإنجليزي فارغين معًا");
       return;
     }
     setSaving(true);
@@ -46,14 +47,14 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
       const res = await fetch(`/api/products/${productId}/feedbacks/${item.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note: editNote }),
+        body: JSON.stringify({ note: editNote, noteEn: editNoteEn }),
       });
       if (!res.ok) {
         setError("فشل تعديل الفيدباك");
         setSaving(false);
         return;
       }
-      onEdit(item.id, editNote);
+      onEdit(item.id, editNote, editNoteEn);
       setIsEditing(false);
     } catch {
       setError("حدث خطأ أثناء تعديل الفيدباك");
@@ -87,6 +88,14 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
             value={editNote}
             onChange={e => setEditNote(e.target.value)}
             rows={2}
+            placeholder="نص الفيدباك بالعربي"
+          />
+          <textarea
+            className="w-full border rounded-lg px-2 py-1"
+            value={editNoteEn}
+            onChange={e => setEditNoteEn(e.target.value)}
+            rows={2}
+            placeholder="Feedback text in English (optional)"
           />
           <div className="flex gap-2 mt-2">
             <button type="button" className="px-3 py-1 rounded bg-green-600 text-white" disabled={saving} onClick={handleEdit}>
@@ -98,7 +107,12 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
           </div>
         </>
       ) : (
-        <div className="whitespace-pre-line text-gray-800">{item.note}</div>
+        <>
+          <div className="whitespace-pre-line text-gray-800">{item.note}</div>
+          {item.noteEn ? (
+            <div className="whitespace-pre-line text-gray-600 text-sm border-t pt-2 mt-2">{item.noteEn}</div>
+          ) : null}
+        </>
       )}
       <div className="flex gap-2 mt-2">
         <button type="button" className="px-3 py-1 rounded bg-blue-600 text-white" disabled={saving} onClick={() => setIsEditing(true)}>
@@ -123,7 +137,7 @@ interface AdminFeedbackItemProps {
   item: ManualFeedbackItem;
   productId: string;
   onDelete: (id: string) => void;
-  onEdit: (id: string, note: string) => void;
+  onEdit: (id: string, note: string, noteEn: string) => void;
 }
 
 interface Category {
@@ -145,6 +159,7 @@ interface ManualFeedbackItem {
   id: string;
   author: string;
   note: string;
+  noteEn?: string;
   images: string[];
   createdAt: string;
 }
@@ -194,6 +209,7 @@ export default function AdminEditProductPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [manualFeedback, setManualFeedback] = useState("");
+  const [manualFeedbackEn, setManualFeedbackEn] = useState("");
   const [manualFeedbackDate, setManualFeedbackDate] = useState<string>("");
   const [manualFeedbackImageFiles, setManualFeedbackImageFiles] = useState<File[]>([]);
   const [manualFeedbackImagePreviews, setManualFeedbackImagePreviews] = useState<string[]>([]);
@@ -356,8 +372,8 @@ export default function AdminEditProductPage() {
   const handleManualFeedbackSubmit = async () => {
     if (!id || manualFeedbackSaving) return;
 
-    if (!manualFeedback.trim() && manualFeedbackImageFiles.length === 0) {
-      setManualFeedbackError("أدخل نص الفيدباك أو أضف صورة واحدة على الأقل");
+    if (!manualFeedback.trim() && !manualFeedbackEn.trim() && manualFeedbackImageFiles.length === 0) {
+      setManualFeedbackError("أدخل نص الفيدباك (عربي أو إنجليزي) أو أضف صورة واحدة على الأقل");
       return;
     }
     if (!manualFeedbackDate) {
@@ -379,6 +395,7 @@ export default function AdminEditProductPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           note: manualFeedback,
+          noteEn: manualFeedbackEn,
           images: encodedImages,
           createdAt: new Date(manualFeedbackDate).toISOString(),
         }),
@@ -394,6 +411,7 @@ export default function AdminEditProductPage() {
         setManualFeedbackItems((prev) => [data.feedback, ...prev]);
       }
       setManualFeedback("");
+      setManualFeedbackEn("");
       setManualFeedbackDate("");
       setManualFeedbackImageFiles([]);
       setManualFeedbackSuccess("تم إضافة الفيدباك بنجاح");
@@ -544,12 +562,12 @@ export default function AdminEditProductPage() {
   }
 
   return (
-    <div style={{ direction: dir }}>
+    <div style={{ direction: dir }} className="text-gray-900">
       <h1 style={{ color: COLORS.primary }} className="text-3xl font-bold mb-6">
         تعديل المنتج
       </h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6 text-gray-900">
         {error && (
           <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg">{error}</div>
         )}
@@ -839,6 +857,13 @@ export default function AdminEditProductPage() {
             className="w-full border rounded-lg px-3 py-2 mb-3"
             placeholder="اكتب تقييم/فيديو باك لطيف للمنتج..."
           />
+          <textarea
+            value={manualFeedbackEn}
+            onChange={(e) => setManualFeedbackEn(e.target.value)}
+            rows={3}
+            className="w-full border rounded-lg px-3 py-2 mb-3"
+            placeholder="Write feedback translation in English (optional)..."
+          />
           <div className="mb-3">
             <label className="block text-sm font-semibold mb-1">تاريخ الفيدباك</label>
             <input
@@ -900,7 +925,7 @@ export default function AdminEditProductPage() {
                   item={item}
                   productId={id as string}
                   onDelete={id => setManualFeedbackItems(prev => prev.filter(fb => fb.id !== id))}
-                  onEdit={(id, note) => setManualFeedbackItems(prev => prev.map(fb => fb.id === id ? { ...fb, note } : fb))}
+                  onEdit={(id, note, noteEn) => setManualFeedbackItems(prev => prev.map(fb => fb.id === id ? { ...fb, note, noteEn } : fb))}
                 />
               ))}
             </div>

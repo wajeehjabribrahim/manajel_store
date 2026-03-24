@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import CookieConsent from "@/components/CookieConsent"; // لإعادة تشغيل رسالة الموافقة لاحقًا
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { COLORS } from "@/constants/store";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
@@ -28,8 +27,9 @@ export default function RootLayout({
         />
         <meta
           name="theme-color"
-          content={COLORS.primary}
+          content="#121416"
         />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta property="og:locale" content="ar_PS" />

@@ -43,7 +43,8 @@ export async function PUT(
     }
     const body = await req.json().catch(() => ({}));
     const note = typeof body?.note === "string" ? body.note.trim() : "";
-    if (!note) {
+    const noteEn = typeof body?.noteEn === "string" ? body.noteEn.trim() : "";
+    if (!note && !noteEn) {
       return NextResponse.json({ error: "Note required" }, { status: 400 });
     }
     // Fetch the old message to preserve images and createdAt
@@ -63,6 +64,7 @@ export async function PUT(
     const updatedMsg = JSON.stringify({
       ...parsed,
       note,
+      noteEn,
     });
     await prisma.contactMessage.update({
       where: { id: feedbackId, subject: `${PRODUCT_FEEDBACK_PREFIX}${productId}` },

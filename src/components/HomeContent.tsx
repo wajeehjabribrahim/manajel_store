@@ -352,7 +352,7 @@ export default function HomeContent() {
                       title={t("account.title") === "account.title" ? "الحساب" : t("account.title")}
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.644 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </Link>
                     <span className="text-xs text-white/75">
@@ -501,20 +501,14 @@ export default function HomeContent() {
 
         <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-4 text-center">
           <p
-            className="text-1xl sm:text-3xl md:text-5xl font-extrabold tracking-wide"
+            className="text-xl sm:text-3xl md:text-5xl font-extrabold tracking-wide"
             style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 25%, rgba(255,250,209,0.95) 0%, rgba(255,250,209,0) 36%), radial-gradient(circle at 82% 76%, rgba(255,221,132,0.78) 0%, rgba(255,221,132,0) 34%), linear-gradient(130deg, #fff7cf 0%, #ffe9a8 12%, #efc96a 26%, #9a6f1f 40%, #f7d57f 54%, #b17a23 68%, #ffefb7 82%, #c3872a 100%)",
-              backgroundSize: "220% 220%, 190% 190%, 100% 100%",
-              backgroundPosition: "45% 25%, 60% 80%, 0% 50%",
-              color: "transparent",
-              WebkitTextFillColor: "transparent",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              textShadow: "0 1px 0 rgba(255,246,200,0.28), 0 0 10px rgba(229,177,63,0.16)",
+              color: "#E6C88A",
+              WebkitTextFillColor: "#E6C88A",
+              textShadow: "0 1px 0 rgba(255,246,200,0.35), 0 0 8px rgba(201,166,107,0.15)",
             }}
           >
-            شركة ومعصرة مناجل للانتاج الزراعي
+            {language === "ar" ? "شركة ومعصرة مناجل للانتاج الزراعي" : "Manajel Company & Press for Agricultural Production"}
           </p>
           <p
             className="text-xs sm:text-base md:text-xl font-semibold"
@@ -530,7 +524,7 @@ export default function HomeContent() {
               textShadow: "0 1px 0 rgba(255, 246, 200, 0.25)",
             }}
           >
-            التراث الفلسطيني في كل منتج
+            {language === "ar" ? "التراث الفلسطيني في كل منتج" : "Palestinian heritage in every product"}
           </p>
         </div>
 
@@ -541,7 +535,7 @@ export default function HomeContent() {
               href={isAdmin ? "/admin" : "/shop"}
               className="gold-button rounded-xl px-6 py-2 text-sm font-bold"
             >
-              {isAdmin ? "لوحة التحكم" : "تسوق كل المنتجات"}
+              {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
             </Link>
             
           </div>
@@ -625,7 +619,7 @@ export default function HomeContent() {
             href={isAdmin ? "/admin" : "/shop"}
             className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform hover:scale-105 shadow-lg hover:shadow-2xl"
           >
-            {isAdmin ? "لوحة التحكم" : "تسوق كل المنتجات"}
+            {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
           </Link>
         </div>
       </section>

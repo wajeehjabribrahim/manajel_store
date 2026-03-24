@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,6 +21,7 @@ interface ProductManualFeedback {
   id: string;
   author: string;
   note: string;
+  noteEn?: string;
   images: string[];
   createdAt: string;
 }
@@ -32,6 +33,8 @@ export default function ProductPage({ params }: PageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState<"small" | "medium" | "large">("medium");
   const [quantity, setQuantity] = useState(1);
+  const [animatedTotal, setAnimatedTotal] = useState(0);
+  const animatedTotalRef = useRef(0);
   const [isAdding, setIsAdding] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [notifyWhatsapp, setNotifyWhatsapp] = useState("");
@@ -93,6 +96,63 @@ export default function ProductPage({ params }: PageProps) {
 
     loadManualFeedbacks();
   }, [params.id]);
+
+  useEffect(() => {
+    if (!product) {
+      animatedTotalRef.current = 0;
+      setAnimatedTotal(0);
+      return;
+    }
+
+    const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
+      "small" | "medium" | "large",
+      { weight: string; price: number }
+    ]>).filter(([, value]) => value?.price);
+
+    const fallbackSize = sizeEntries.length ? sizeEntries[0][0] : "medium";
+    const activeSize = product.sizes?.[selectedSize] ? selectedSize : fallbackSize;
+    const sizeData = product.sizes?.[activeSize];
+    const basePrice = sizeData?.price ?? product.price;
+    const unitPrice =
+      typeof sizeData?.salePrice === "number" &&
+      sizeData.salePrice > 0 &&
+      sizeData.salePrice < basePrice
+        ? sizeData.salePrice
+        : basePrice;
+
+    const targetTotal = unitPrice * quantity;
+    const startTotal = animatedTotalRef.current;
+
+    if (Math.abs(targetTotal - startTotal) < 0.01) {
+      animatedTotalRef.current = targetTotal;
+      setAnimatedTotal(targetTotal);
+      return;
+    }
+
+    const duration = 260;
+    const startTime = performance.now();
+    let rafId = 0;
+
+    const animate = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = startTotal + (targetTotal - startTotal) * eased;
+
+      animatedTotalRef.current = value;
+      setAnimatedTotal(value);
+
+      if (progress < 1) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        animatedTotalRef.current = targetTotal;
+        setAnimatedTotal(targetTotal);
+      }
+    };
+
+    rafId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(rafId);
+  }, [product, selectedSize, quantity]);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -307,6 +367,15 @@ export default function ProductPage({ params }: PageProps) {
     new Intl.NumberFormat(language === "ar" ? "ar-PS-u-nu-latn" : "en-US", {
       maximumFractionDigits: 2,
     }).format(value);
+
+  const formatFeedbackDate = (value: string) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   const normalizeToLatinDigits = (value: string) =>
     value
@@ -541,14 +610,16 @@ export default function ProductPage({ params }: PageProps) {
                   </span>
                 )}
               </div>
-              <div className="flex justify-between items-center border-t pt-2" style={{ borderColor: "rgba(255,255,255,0.14)" }}>
-                <span className="text-lg font-bold text-[#F2ECE2]">
-                  {t("product.total")}
-                </span>
-                <span className="text-2xl font-bold text-[#C9A66B]">
-                  {CURRENCY_SYMBOL}{formatNumber((currentSize.salePrice ?? currentSize.price) * quantity)}
-                </span>
-              </div>
+              {quantity >= 2 ? (
+                <div className="flex justify-between items-center border-t pt-2" style={{ borderColor: "rgba(255,255,255,0.14)" }}>
+                  <span className="text-lg font-bold text-[#F2ECE2]">
+                    {t("product.total")}
+                  </span>
+                  <span className="text-2xl font-bold text-[#C9A66B]">
+                    {CURRENCY_SYMBOL}{formatNumber(animatedTotal)}
+                  </span>
+                </div>
+              ) : null}
             </div>
 
             {/* Add to Cart / Notify */}
@@ -659,8 +730,12 @@ export default function ProductPage({ params }: PageProps) {
                     </span>
                   </div>
 
-                  {feedback.note ? (
-                    <p className="text-sm leading-7 text-white/85 whitespace-pre-wrap">{feedback.note}</p>
+                  {(feedback.note || feedback.noteEn) ? (
+                    <p className="text-sm leading-7 text-white/85 whitespace-pre-wrap">
+                      {language === "en"
+                        ? (feedback.noteEn?.trim() || feedback.note)
+                        : feedback.note}
+                    </p>
                   ) : null}
 
                   {feedback.images?.length ? (
@@ -677,7 +752,7 @@ export default function ProductPage({ params }: PageProps) {
                   ) : null}
 
                   <p className="mt-3 text-[11px] text-white/50">
-                    {new Date(feedback.createdAt).toLocaleDateString(language === "ar" ? "ar-SA-u-nu-latn" : "en-US")}
+                    {formatFeedbackDate(feedback.createdAt)}
                   </p>
                 </div>
               ))}

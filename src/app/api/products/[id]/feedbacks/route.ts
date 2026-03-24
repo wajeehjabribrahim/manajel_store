@@ -9,6 +9,7 @@ const parseFeedbackMessage = (raw: string) => {
     const parsed = JSON.parse(raw);
     return {
       note: typeof parsed?.note === "string" ? parsed.note : "",
+      noteEn: typeof parsed?.noteEn === "string" ? parsed.noteEn : "",
       images: Array.isArray(parsed?.images)
         ? parsed.images.filter((img: unknown): img is string => typeof img === "string")
         : [],
@@ -17,6 +18,7 @@ const parseFeedbackMessage = (raw: string) => {
   } catch {
     return {
       note: raw,
+      noteEn: "",
       images: [] as string[],
       createdAt: "",
     };
@@ -53,6 +55,7 @@ export async function GET(
         id: row.id,
         author: row.name || "Admin",
         note: parsed.note,
+        noteEn: parsed.noteEn,
         images: parsed.images,
         createdAt: parsed.createdAt || row.createdAt.toISOString(),
       };
@@ -81,16 +84,21 @@ export async function POST(
 
     const body = await req.json().catch(() => ({}));
     const note = typeof body?.note === "string" ? body.note.trim() : "";
+    const noteEn = typeof body?.noteEn === "string" ? body.noteEn.trim() : "";
     const images: string[] = Array.isArray(body?.images)
       ? body.images.filter((img: unknown) => typeof img === "string" && img.startsWith("data:image/"))
       : [];
 
-    if (!note && images.length === 0) {
+    if (!note && !noteEn && images.length === 0) {
       return NextResponse.json({ error: "Add note or at least one image" }, { status: 400 });
     }
 
     if (note.length > 2000) {
       return NextResponse.json({ error: "Note is too long" }, { status: 400 });
+    }
+
+    if (noteEn.length > 2000) {
+      return NextResponse.json({ error: "English note is too long" }, { status: 400 });
     }
 
     if (images.length > 3) {
@@ -116,6 +124,7 @@ export async function POST(
         subject: `${PRODUCT_FEEDBACK_PREFIX}${productId}`,
         message: JSON.stringify({
           note,
+          noteEn,
           images,
           createdAt,
         }),
@@ -133,6 +142,7 @@ export async function POST(
           id: created.id,
           author: created.name || "Admin",
           note,
+          noteEn,
           images,
           createdAt,
         },
