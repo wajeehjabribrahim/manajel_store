@@ -6,13 +6,18 @@ import { COLORS } from "@/constants/store";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 
 export default function Header() {
   const { t, language, dir } = useLanguage();
+  const pathname = usePathname();
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
+  const isHomePage = pathname === "/";
+
+  // Initialize hooks BEFORE any conditionals
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -86,6 +91,11 @@ export default function Header() {
     };
   }, []);
 
+  // Hide header on home page (hero has its own header overlay) - AFTER all hooks
+  if (isHomePage) {
+    return null;
+  }
+
   const navItems = [
     { name: t("nav.home"), href: "/" },
     { name: t("nav.shop"), href: "/shop" },
@@ -95,11 +105,7 @@ export default function Header() {
 
   return (
     <header
-      style={{
-        background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
-        borderBottom: "1px solid rgba(201,166,107,0.25)",
-      }}
-      className="text-white shadow-2xl relative sticky top-0 z-40 backdrop-blur"
+      className="text-white relative z-40 w-full"
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 relative z-10">
         <div className="flex justify-between items-center relative">
@@ -142,27 +148,29 @@ export default function Header() {
             <div className="relative z-50" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity relative w-10 h-10 flex items-center justify-center text-white/85 hover:text-white"
+                className="transition-opacity relative flex items-center gap-2 text-white/85 hover:text-white"
                 title="السلة والطلبات"
               >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                  />
-                </svg>
-                {cartCount > 0 ? (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold leading-[18px] text-center border border-white/20">
-                    {cartCount > 99 ? "99+" : cartCount}
-                  </span>
-                ) : null}
+                <div className="relative w-6 h-6 flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                  {cartCount > 0 ? (
+                    <span className="absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1.5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center border border-white/20">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  ) : null}
+                </div>
               </button>
 
               {showUserMenu && (
@@ -205,6 +213,11 @@ export default function Header() {
                         />
                       </svg>
                       <span className="font-semibold">{t("nav.cart")}</span>
+                      {cartCount > 0 && (
+                        <span className="min-w-[20px] h-[20px] px-1.5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center border border-white/20">
+                          {cartCount > 99 ? "99+" : cartCount}
+                        </span>
+                      )}
                     </div>
                   </Link>
                   <Link
@@ -406,6 +419,11 @@ export default function Header() {
                         />
                       </svg>
                       <span className="font-semibold">{t("nav.cart")}</span>
+                      {cartCount > 0 && (
+                        <span className="min-w-[20px] h-[20px] px-1.5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center border border-white/20">
+                          {cartCount > 99 ? "99+" : cartCount}
+                        </span>
+                      )}
                     </div>
                   </Link>
                   <Link

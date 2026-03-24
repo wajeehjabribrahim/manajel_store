@@ -338,8 +338,8 @@ html {
   background-size: cover;
 }
 
-/* Header bottom decoration */
-header::after {
+/* Header bottom decoration - REMOVED */
+/* header::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -354,7 +354,7 @@ header::after {
     #F5F5DC 100%
   );
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
+} */
 
 /* Hero section wave bottom */
 .hero-wave-bottom {
