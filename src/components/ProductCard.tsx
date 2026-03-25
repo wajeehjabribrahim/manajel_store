@@ -207,7 +207,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                 event.stopPropagation();
                 setShowQuickAdd((prev) => !prev);
               }}
-              className="absolute top-2 left-2 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-[#C9A66B]/60 bg-[#121416]/90 text-[#C9A66B] opacity-0 transition-all duration-200 group-hover:opacity-100 hover:scale-105"
+              className="hidden md:flex absolute top-2 left-2 z-20 h-9 w-9 items-center justify-center rounded-full border border-[#C9A66B]/60 bg-[#121416]/90 text-[#C9A66B] opacity-0 transition-all duration-200 group-hover:opacity-100 hover:scale-105"
               title={language === "ar" ? "إضافة سريعة" : "Quick add"}
               aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
             >
@@ -223,7 +223,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
 
             {showQuickAdd ? (
               <div
-                className="absolute inset-x-2 bottom-2 z-20 rounded-xl border border-[#C9A66B]/45 bg-[#121416]/95 p-2 backdrop-blur"
+                className="hidden md:block absolute inset-x-2 bottom-2 z-20 rounded-xl border border-[#C9A66B]/45 bg-[#121416]/95 p-2 backdrop-blur"
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();

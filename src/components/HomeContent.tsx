@@ -170,7 +170,7 @@ export default function HomeContent() {
       <SignupPrompt />
 
       <section
-        className="hero-section relative w-full aspect-[4/5] min-h-[97vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[5/4] md:min-h-[76vh] mt-0"
+        className="hero-section relative w-full aspect-[4/5] min-h-[100vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[5/4] md:min-h-[76vh] mt-0"
         style={{
           backgroundImage: "url('/images/hero.jpg')",
           backgroundSize: "cover",
@@ -564,7 +564,7 @@ export default function HomeContent() {
           </p>
         </div>
 
-        <div className="hero-content relative z-10 mx-auto flex min-h-[93vh] w-full max-w-7xl flex-col justify-end pb-6 sm:min-h-[44vh] md:h-full md:min-h-0 md:pb-4 pt-20">
+        <div className="hero-content relative z-10 mx-auto flex min-h-[96vh] w-full max-w-7xl flex-col justify-end pb-6 sm:min-h-[44vh] md:h-full md:min-h-0 md:pb-4 pt-20">
 
           <div className="mt-4 md:mt-6 flex justify-center">
             <Link
@@ -722,18 +722,18 @@ export default function HomeContent() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             <div className="lg:col-span-7 rounded-3xl border border-white/10 p-8 md:p-12 bg-[#171b1f]">
-              <p className={`text-4xl text-[#C9A66B] mb-4 leading-[1.25] ${language === "ar" ? "tracking-[0.06em]" : "uppercase tracking-[0.24em]"}`}>
+              <p className={`text-3xl sm:text-4xl text-[#C9A66B] mb-4 leading-[1.25] ${language === "ar" ? "tracking-[0.06em]" : "uppercase tracking-[0.24em]"}`}>
                 {language === "ar" ? "حكاية التراث" : "Heritage Story"}
               </p>
-              <h2 className="text-1.5x1 md:text-2xl font-black mb-6 leading-[1.02] text-white">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-black mb-6 leading-[1.15] text-white">
                 {language === "ar" ? "من قلب المعصرة" : "From the Heart of the mill"}
               </h2>
-              <p className="text-white/75 leading-8 mb-6">
+              <p className="text-sm sm:text-base text-white/75 leading-7 sm:leading-8 mb-6">
                 {language === "ar"
                   ? "هنا تبدأ الحكاية… حيث تتحول ثمار الزيتون إلى زيتٍ نقي يحمل روح الأرض, نحافظ على طرق العصر الأصيلة لنقدم لكم جودة تُحاكي التراث وطعمًا لا يُنسى."
                   : "Here is where the story begins… where olives are transformed into pure oil that carries the spirit of the land.We preserve traditional pressing methods to deliver quality that reflects heritage and a taste that is unforgettable"}
               </p>
-              <p className="text-white/75 leading-8">
+              <p className="text-sm sm:text-base text-white/75 leading-7 sm:leading-8">
                 {language === "ar"
                   ? "من الزيت إلى كل منتج , كل قطعة تحمل سياقًا ثقافيًا واضحًا بنقدمها كمشهد فني موثوق." 
                   : "From olive oil to all products, each piece carries cultural context and is presented as a trustworthy art-like composition."}
