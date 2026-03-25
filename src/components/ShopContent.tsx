@@ -282,7 +282,7 @@ export default function ShopContent() {
                     className={`w-full rounded-xl border px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
                       selectedCategory === null
                         ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
-                        : "border-white/15 bg-[#171a1d] text-white/85 hover:border-white/30 hover:text-white"
+                         : "border-white/15 bg-[#121416] text-white/85 hover:border-white/30 hover:text-white"
                     } ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                     type="button"
                   >
@@ -301,7 +301,7 @@ export default function ShopContent() {
                         className={`w-full rounded-xl border px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
                           selectedCategory === category.id
                             ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
-                            : "border-white/15 bg-[#171a1d] text-white/85 hover:border-white/30 hover:text-white"
+                             : "border-white/15 bg-[#121416] text-white/85 hover:border-white/30 hover:text-white"
                         } ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
                         type="button"
                       >
@@ -325,7 +325,7 @@ export default function ShopContent() {
               {isLoading || filteredProducts.length === 0
                 ? Array.from({ length: 8 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
-                      <div className="mb-4 h-48 w-full rounded-lg border border-white/10 bg-white/10" />
+                      <div className="mb-4 h-48 w-full rounded-lg bg-white/10" />
                       <div className="mb-2 h-6 w-3/4 rounded bg-white/10" />
                       <div className="mb-2 h-4 w-1/2 rounded bg-white/10" />
                       <div className="mb-2 h-4 w-1/3 rounded bg-white/10" />

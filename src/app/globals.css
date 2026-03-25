@@ -25,7 +25,7 @@
       #fff7cf 0%,
       #ffe9a8 10%,
       #efc96a 22%,
-      #9a6f1f 36%,
+
       #f7d57f 50%,
       #b17a23 64%,
       #ffefb7 77%,
@@ -476,4 +476,66 @@ html {
 
 .product-card:hover .product-image {
   animation: productHoverZoom 0.3s ease-in-out forwards;
+}
+
+@keyframes featuredImageVideoMotion {
+  0% {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.12) translate3d(2%, -1.5%, 0);
+  }
+  100% {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes featuredCardAutoRotate {
+  0% {
+    transform: perspective(1000px) rotateY(-1.2deg);
+  }
+  50% {
+    transform: perspective(1000px) rotateY(1.2deg);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(-1.2deg);
+  }
+}
+
+.featured-products-swiper--continuous .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
+.featured-product-image {
+  animation: featuredImageVideoMotion 8.5s ease-in-out infinite;
+  will-change: transform;
+  transform-origin: center;
+}
+
+.featured-product-card-auto {
+  animation: featuredCardAutoRotate 5.8s ease-in-out infinite;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.featured-products-swiper .swiper-slide:nth-child(2n) .featured-product-image {
+  animation-delay: 0.8s;
+}
+
+.featured-products-swiper .swiper-slide:nth-child(3n) .featured-product-image {
+  animation-delay: 1.6s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-product-image {
+    animation: none;
+  }
+
+  .featured-product-card-auto {
+    animation: none;
+  }
+
+  .featured-products-swiper--continuous .swiper-wrapper {
+    transition-timing-function: ease !important;
+  }
 }

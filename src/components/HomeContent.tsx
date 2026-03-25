@@ -6,11 +6,15 @@ import { PRODUCTS, Product } from "@/constants/products";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { useRef } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 
 export default function HomeContent() {
   const { t, language, dir } = useLanguage();
@@ -22,6 +26,7 @@ export default function HomeContent() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const featuredSwiperRef = useRef<SwiperType | null>(null);
   const gold = "#C9A66B";
 
   const getCartCount = () => {
@@ -128,13 +133,44 @@ export default function HomeContent() {
   }, [heritageImages.length]);
 
   const featuredProducts = products.filter((p) => p.featured).slice(0, 4);
+  const minimumLoopSlides = 8;
+  const featuredSlides =
+    featuredProducts.length === 0
+      ? []
+      : Array.from(
+          { length: Math.max(featuredProducts.length, minimumLoopSlides) },
+          (_, idx) => {
+            const product = featuredProducts[idx % featuredProducts.length];
+            return {
+              key:
+                idx < featuredProducts.length
+                  ? product.id
+                  : `${product.id}-dup-${idx}`,
+              product,
+            };
+          }
+        );
+
+  useEffect(() => {
+    const swiper = featuredSwiperRef.current;
+    if (!swiper) return;
+
+    swiper.update();
+
+    if (featuredSlides.length > 1) {
+      swiper.autoplay?.start();
+      return;
+    }
+
+    swiper.autoplay?.stop();
+  }, [featuredSlides.length]);
 
   return (
     <div className="bg-[#121416] text-[#F2ECE2]">
       <SignupPrompt />
 
       <section
-        className="hero-section relative w-full aspect-[4/5] min-h-[88vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[5/4] md:min-h-[76vh] mt-0"
+        className="hero-section relative w-full aspect-[4/5] min-h-[97vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[5/4] md:min-h-[76vh] mt-0"
         style={{
           backgroundImage: "url('/images/hero.jpg')",
           backgroundSize: "cover",
@@ -387,7 +423,7 @@ export default function HomeContent() {
                   className="transition-opacity w-8 h-8 flex items-center justify-center"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.644 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </Link>
                 <div className="relative z-50" ref={userMenuRef}>
@@ -508,7 +544,7 @@ export default function HomeContent() {
               textShadow: "0 1px 0 rgba(255,246,200,0.35), 0 0 8px rgba(201,166,107,0.15)",
             }}
           >
-            {language === "ar" ? "شركة ومعصرة مناجل للانتاج الزراعي" : "Manajel Company & Press for Agricultural Production"}
+            {language === "ar" ? "شركة ومعصرة مناجل للانتاج الزراعي" : "Manajel Company & Mill for Agricultural Production"}
           </p>
           <p
             className="text-xs sm:text-base md:text-xl font-semibold"
@@ -528,7 +564,7 @@ export default function HomeContent() {
           </p>
         </div>
 
-        <div className="hero-content relative z-10 mx-auto flex min-h-[88vh] w-full max-w-7xl flex-col justify-end pb-6 sm:min-h-[44vh] md:h-full md:min-h-0 md:pb-4 pt-20">
+        <div className="hero-content relative z-10 mx-auto flex min-h-[93vh] w-full max-w-7xl flex-col justify-end pb-6 sm:min-h-[44vh] md:h-full md:min-h-0 md:pb-4 pt-20">
 
           <div className="mt-4 md:mt-6 flex justify-center">
             <Link
@@ -547,23 +583,62 @@ export default function HomeContent() {
           ref={arrivalsReveal.elementRef}
           className={`mb-12 text-center scroll-animate ${arrivalsReveal.isVisible ? "visible" : ""}`}
         >
-          <h2 className="text-2xl md:text-3xl font-black mb-4 text-white">
+          <h2 className="text-2xl md:text-3xl font-black mb-4 gold-texture">
             {language === "ar" ? "بعض المنتجات المميزة" : "Featured Products"}
           </h2>
           
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-6 auto-rows-fr">
+        <Swiper
+          key={`featured-${language}-${dir}`}
+          modules={[Autoplay, Pagination]}
+          spaceBetween={20}
+          slidesPerView={1.2}
+          centeredSlides={false}
+          slidesPerGroup={1}
+          loop={featuredSlides.length > 1}
+          loopAdditionalSlides={featuredSlides.length}
+          rewind={false}
+          watchOverflow={false}
+          speed={1200}
+          allowTouchMove={true}
+          autoplay={
+            featuredSlides.length > 1
+              ? {
+                  delay: 1300,
+                  disableOnInteraction: false,
+                  pauseOnMouseEnter: false,
+                  stopOnLastSlide: false,
+                }
+              : false
+          }
+          onSwiper={(swiper) => {
+            featuredSwiperRef.current = swiper;
+            if (featuredSlides.length > 1) {
+              swiper.autoplay.start();
+            }
+          }}
+          pagination={{ clickable: true }}
+          dir={dir}
+          breakpoints={{
+            640: { slidesPerView: 1.8 },
+            1024: { slidesPerView: 2.4 },
+            1280: { slidesPerView: 3 },
+          }}
+          className="featured-products-swiper pb-10"
+        >
           {featuredProducts.length === 0
             ? Array.from({ length: 4 }).map((_, idx) => (
-                <div key={idx} className={`relative h-full animate-pulse rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5 p-3 sm:p-5 ${idx % 2 === 0 ? "lg:col-span-7" : "lg:col-span-5"}`}>
-                  <div className="rounded-xl sm:rounded-2xl bg-gray-700/50 h-36 sm:h-56 w-full mb-3 sm:mb-4" />
-                  <div className="h-6 bg-gray-700/50 rounded mb-2 w-3/4" />
-                  <div className="h-4 bg-gray-700/50 rounded mb-2 w-2/3" />
-                  <div className="h-4 bg-gray-700/50 rounded mb-2 w-1/2" />
-                </div>
+                <SwiperSlide key={idx}>
+                  <div className="relative h-[360px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5 p-3 sm:p-5 overflow-hidden animate-pulse">
+                    <div className="rounded-xl sm:rounded-2xl bg-gray-700/50 h-36 sm:h-56 w-full mb-3 sm:mb-4" />
+                    <div className="h-6 bg-gray-700/50 rounded mb-2 w-3/4" />
+                    <div className="h-4 bg-gray-700/50 rounded mb-2 w-2/3" />
+                    <div className="h-4 bg-gray-700/50 rounded mb-2 w-1/2" />
+                  </div>
+                </SwiperSlide>
               ))
-            : featuredProducts.map((product, index) => {
+            : featuredSlides.map(({ key, product }) => {
                 const sizeValues = Object.values(product.sizes || {}).filter(
                   (s) => typeof s?.price === "number" && s.price > 0
                 );
@@ -583,45 +658,54 @@ export default function HomeContent() {
                   : undefined;
 
                 return (
-                <Link
-                  key={product.id}
-                  href={`/products/${product.id}`}
-                  className={`group rounded-2xl sm:rounded-3xl border border-white/15 bg-[#171a1d] p-3 sm:p-5 hover:border-[#C9A66B]/70 transition-all duration-300 ${index === 0 ? "lg:col-span-7" : index === 1 ? "lg:col-span-5" : index === 2 ? "lg:col-span-5" : "lg:col-span-7"}`}
-                >
-                  <div
-                    className="mb-3 sm:mb-4 h-36 sm:h-56 rounded-xl sm:rounded-2xl bg-cover bg-center"
-                    style={{
-                      backgroundImage: `linear-gradient(120deg, rgba(14,16,18,0.45), rgba(77,55,42,0.32)), url('${product.image || "/images/hero.jpg"}')`,
-                    }}
-                  />
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="text-base sm:text-2xl font-extrabold text-white leading-tight">{t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}</h3>
-                    <span className="text-right">
-                      {hasSale ? (
-                        <span className="block text-xs line-through" style={{ color: "rgb(220, 38, 38)" }}>₪{basePrice}</span>
-                      ) : null}
-                      <span className="text-xs sm:text-sm font-bold text-[#C9A66B]">
-                        ₪{hasSale ? salePrice : basePrice}
-                      </span>
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-white/72 leading-6 sm:leading-7 line-clamp-3">
-                    {t(`products.${product.id}.description`) === `products.${product.id}.description`
-                      ? product.description
-                      : t(`products.${product.id}.description`)}
-                  </p>
-                </Link>
+                  <SwiperSlide key={key}>
+                    <Link
+                      href={`/products/${product.id}`}
+                      className="featured-product-card-auto group block h-[360px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-[#C9A66B]/40 bg-[#181b1e] p-0 hover:border-[#C9A66B] transition-all duration-300 shadow-lg overflow-hidden"
+                      style={{ boxShadow: "0 4px 32px 0 #0006" }}
+                    >
+                      <div className="h-44 sm:h-56 rounded-t-2xl sm:rounded-t-3xl overflow-hidden bg-[#23201c]">
+                        <Image
+                          src={product.image || "/images/hero.jpg"}
+                          alt={product.name}
+                          width={640}
+                          height={420}
+                          className="w-full h-full object-cover featured-product-image"
+                        />
+                      </div>
+                      <div className="px-5 pb-5 pt-2 flex flex-col gap-2">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="gold-texture-static text-[#C9A66B] text-lg sm:text-2xl font-extrabold leading-tight line-clamp-2">
+                            {t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}
+                          </h3>
+                          <span className="flex flex-col items-end min-w-[56px]">
+                            {hasSale ? (
+                              <span className="block text-xs line-through text-red-600">₪{basePrice}</span>
+                            ) : null}
+                            <span className="text-base sm:text-lg font-bold text-[#C9A66B] flex items-center gap-1">
+                              <span className="text-[1.1em]">₪</span>{hasSale ? salePrice : basePrice}
+                            </span>
+                          </span>
+                        </div>
+                        <p className={`text-sm sm:text-base text-white/80 leading-6 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
+                          {t(`products.${product.id}.description`) === `products.${product.id}.description`
+                            ? product.description
+                            : t(`products.${product.id}.description`)}
+                        </p>
+                      </div>
+                    </Link>
+                  </SwiperSlide>
               )})}
-        </div>
+        </Swiper>
 
-        <div className="text-center mt-12">
+        {/*<div className="text-center mt-12">
           <Link
             href={isAdmin ? "/admin" : "/shop"}
             className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform hover:scale-105 shadow-lg hover:shadow-2xl"
           >
             {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
           </Link>
-        </div>
+        </div>*/}
       </section>
 
       <section
@@ -638,7 +722,7 @@ export default function HomeContent() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
             <div className="lg:col-span-7 rounded-3xl border border-white/10 p-8 md:p-12 bg-[#171b1f]">
-              <p className="text-4xl uppercase tracking-[0.24em] text-[#C9A66B] mb-4">
+              <p className={`text-4xl text-[#C9A66B] mb-4 leading-[1.25] ${language === "ar" ? "tracking-[0.06em]" : "uppercase tracking-[0.24em]"}`}>
                 {language === "ar" ? "حكاية التراث" : "Heritage Story"}
               </p>
               <h2 className="text-1.5x1 md:text-2xl font-black mb-6 leading-[1.02] text-white">
