@@ -87,8 +87,7 @@ export default function Contact() {
         className="text-white py-12 px-4"
       >
         <div className="max-w-7xl mx-auto">
-          <p className="mb-2 text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.24em] text-[#C9A66B]">Manajel Support</p>
-          <h1 className="text-xl sm:text-3xl md:text-4xl font-bold mb-2 leading-tight">{t.contact.title}</h1>
+          <h1 className="text-xl sm:text-3xl md:text-4xl gold-texture font-bold  mb-2 leading-tight">{t.contact.title}</h1>
           <p className="text-xs sm:text-sm md:text-base text-white/80 leading-relaxed">
             {t.contact.description}
           </p>
@@ -201,7 +200,7 @@ export default function Contact() {
                   value={formData.phone}
                   onChange={handleChange}
                   style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
-                  className="w-full px-4 py-2 border rounded-lg text-right text-[#F2ECE2] placeholder:text-white/40 focus:outline-none focus:ring-2"
+                  className={`w-full px-4 py-2 border rounded-lg text-[#F2ECE2] placeholder:text-white/40 focus:outline-none focus:ring-2 ${language === 'ar' ? 'text-right' : 'text-left'}`}
                   placeholder={t.contact.phonePlaceholder}
                 />
               </div>

@@ -18,8 +18,7 @@ export default function About() {
         className="text-white py-12 sm:py-20 px-4"
       >
         <div className="max-w-7xl mx-auto">
-          <p className="gold-texture mb-2 text-xs uppercase tracking-[0.24em]">Manajel</p>
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold mb-0 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold gold-texture mb-0 leading-tight">
             {t.about.title}
           </h1>
           
@@ -77,25 +76,54 @@ export default function About() {
         {/* Products Section */}
         <AnimatedSection animationType="fade-up">
           <div className="mb-16">
-            <h2 className="text-xl sm:text-3xl font-bold mb-8 text-center text-[#C9A66B]">
+            <h2 className="text-xl sm:text-3xl font-bold mb-2 text-center text-[#C9A66B]">
               {t.about.products}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p className="text-center text-white/70 text-sm sm:text-base mb-8">
+              {language === "ar" 
+                ? "مجموعة منتقاة من أفضل المنتجات الفلسطينية الأصيلة"
+                : "A curated selection of the finest authentic Palestinian products"}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
               {[
-                t.about.product1,
-                t.about.product2,
-                t.about.product3,
-                t.about.product4,
-                
+                {
+                  name: t.about.product1,
+                  desc: language === "ar" 
+                    ? "زيت عالي الجودة معصور بطرق تقليدية"
+                    : "High-quality oil pressed traditionally"
+                },
+                {
+                  name: t.about.product2,
+                  desc: language === "ar"
+                    ? "مزيج عطري من الأعشاب الطبيعية"
+                    : "Aromatic blend of natural herbs"
+                },
+                {
+                  name: t.about.product3,
+                  desc: language === "ar"
+                    ? "أعشاب طبيعية من جبال فلسطين"
+                    : "Natural herbs from Palestinian mountains"
+                },
+                {
+                  name: t.about.product4,
+                  desc: language === "ar"
+                    ? "حبوب مقرومة بطريقة تقليدية"
+                    : "Grains roasted using traditional methods"
+                },
               ].map((product, i) => (
                 <div
                   key={i}
-                  style={{ borderLeft: "4px solid #C9A66B" }}
-                  className="pl-4"
+                  className="group rounded-lg border border-[#C9A66B]/40 bg-[#171a1d]/60 p-5 backdrop-blur-sm hover:border-[#C9A66B]/70 hover:bg-[#171a1d] transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A66B]/20"
                 >
-                  <h4 className="text-[13px] sm:text-base font-bold mb-2 text-[#F2ECE2]">
-                    {product}
-                  </h4>
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="text-sm sm:text-base font-bold text-[#F2ECE2] flex-1 group-hover:text-[#C9A66B] transition-colors">
+                      {product.name}
+                    </h4>
+                    <span className="text-[#C9A66B] text-lg ml-2">✓</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-white/60 leading-relaxed">
+                    {product.desc}
+                  </p>
                 </div>
               ))}
             </div>

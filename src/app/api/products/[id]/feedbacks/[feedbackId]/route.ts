@@ -44,9 +44,21 @@ export async function PUT(
     const body = await req.json().catch(() => ({}));
     const note = typeof body?.note === "string" ? body.note.trim() : "";
     const noteEn = typeof body?.noteEn === "string" ? body.noteEn.trim() : "";
+    const images = Array.isArray(body?.images)
+      ? body.images.filter((img: unknown): img is string => typeof img === "string" && img.startsWith("data:image/"))
+      : undefined;
     if (!note && !noteEn) {
       return NextResponse.json({ error: "Note required" }, { status: 400 });
     }
+
+    if (images && images.length > 3) {
+      return NextResponse.json({ error: "Maximum 3 images allowed" }, { status: 400 });
+    }
+
+    if (images && images.some((img: string) => img.length > 1_500_000)) {
+      return NextResponse.json({ error: "One or more images are too large" }, { status: 400 });
+    }
+
     // Fetch the old message to preserve images and createdAt
     const old = await prisma.contactMessage.findUnique({
       where: { id: feedbackId, subject: `${PRODUCT_FEEDBACK_PREFIX}${productId}` },
@@ -65,6 +77,7 @@ export async function PUT(
       ...parsed,
       note,
       noteEn,
+      images: images ?? parsed?.images ?? [],
     });
     await prisma.contactMessage.update({
       where: { id: feedbackId, subject: `${PRODUCT_FEEDBACK_PREFIX}${productId}` },

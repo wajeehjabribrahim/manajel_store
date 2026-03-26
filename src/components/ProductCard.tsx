@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Product } from "@/constants/products";
 import { CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -22,9 +23,14 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
   const totalDelay = isFirstProduct ? animationDelay + 500 : animationDelay;
   const { elementRef, isVisible } = useScrollAnimation({ delay: totalDelay });
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [selectedSize, setSelectedSize] = useState<SizeKey>(DEFAULT_SIZE_KEY);
   const [quantity, setQuantity] = useState(1);
   const [quickAddMessage, setQuickAddMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const availableSizes = (Object.keys(product.sizes || {}) as SizeKey[]).filter(
     (size) => typeof product.sizes?.[size]?.price === "number" && (product.sizes?.[size]?.price ?? 0) > 0
@@ -63,6 +69,30 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
   const salePrice = primarySize?.salePrice;
   const hasSale = typeof salePrice === "number" && salePrice > 0 && salePrice < basePrice;
   const displayPrice = hasSale ? salePrice : basePrice;
+  const fallbackSize = availableSizes[0] || DEFAULT_SIZE_KEY;
+  const activeQuickSize = product.sizes?.[selectedSize]?.price ? selectedSize : fallbackSize;
+  const activeQuickData = product.sizes?.[activeQuickSize];
+  const activeQuickBasePrice = activeQuickData?.price ?? product.price;
+  const activeQuickSalePrice = activeQuickData?.salePrice;
+  const activeQuickFinalPrice =
+    typeof activeQuickSalePrice === "number" &&
+    activeQuickSalePrice > 0 &&
+    activeQuickSalePrice < activeQuickBasePrice
+      ? activeQuickSalePrice
+      : activeQuickBasePrice;
+  const quickAddTotal = activeQuickFinalPrice * quantity;
+  const formatAmount = (amount: number) =>
+    Number.isInteger(amount) ? String(amount) : amount.toFixed(2);
+
+  useEffect(() => {
+    if (!showQuickAdd) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [showQuickAdd]);
 
   const handleQuickAddToCart = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -174,23 +204,35 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           {/* Price */}
           <div className="flex justify-between items-center mt-auto">
             <div>
-              {hasSale ? (
-                <p
-                    className="inline-block -translate-y-1 text-sm font-semibold line-through decoration-2"
-                  style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
-                >
-                  {CURRENCY_SYMBOL}{basePrice}
+              <div className="flex items-center gap-3">
+                {hasSale ? (
+                  <p
+                      className="text-sm font-semibold line-through decoration-2"
+                    style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
+                  >
+                    {CURRENCY_SYMBOL}{basePrice}
+                  </p>
+                ) : null}
+                <p className="text-base sm:text-lg font-bold text-[#C9A66B]">
+                  {CURRENCY_SYMBOL}{displayPrice}
                 </p>
-              ) : null}
-              <p className="text-base sm:text-lg font-bold text-[#C9A66B]">
-                {CURRENCY_SYMBOL}{displayPrice}
-              </p>
-              <p className="text-xs text-white/55">{t("product.fromSmallestSize")}</p>
+              </div>
+              <p className="text-xs text-white/55 mt-1">{t("product.fromSmallestSize")}</p>
             </div>
             {product.inStock ? (
-              <span className="rounded border border-[#C9A66B]/55 bg-[#C9A66B]/15 px-2 py-1 text-xs font-semibold text-[#F2ECE2]">
-                {t("product.inStock")}
-              </span>
+              <button
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setShowQuickAdd((prev) => !prev);
+                }}
+                type="button"
+                className="h-10 w-10 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/60 bg-[#121416]/90 text-[#C9A66B] transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-[#C9A66B]/20"
+                title={language === "ar" ? "إضافة سريعة" : "Quick add"}
+                aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
+              >
+                <span className="text-sm leading-none">🛒</span>
+              </button>
             ) : (
               <span className="rounded border border-red-400/45 bg-red-500/20 px-2 py-1 text-xs font-semibold text-red-200">
                 {t("product.outOfStock")}
@@ -199,81 +241,117 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           </div>
         </div>
 
-        {product.inStock ? (
-          <>
-            <button
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                setShowQuickAdd((prev) => !prev);
-              }}
-              className="hidden md:flex absolute top-2 left-2 z-20 h-9 w-9 items-center justify-center rounded-full border border-[#C9A66B]/60 bg-[#121416]/90 text-[#C9A66B] opacity-0 transition-all duration-200 group-hover:opacity-100 hover:scale-105"
-              title={language === "ar" ? "إضافة سريعة" : "Quick add"}
-              aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
-            >
-              <span className="text-sm leading-none">🛒</span>
-            </button>
-
-            {showQuickAdd ? (
+        {product.inStock && showQuickAdd && isMounted
+          ? createPortal(
               <div
-                className="hidden md:block absolute inset-x-2 bottom-2 z-20 rounded-xl border border-[#C9A66B]/45 bg-[#121416]/95 p-2 backdrop-blur"
+                className="fixed inset-0 z-[121] bg-[#0f1215]/96 backdrop-blur-sm"
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
+                  setShowQuickAdd(false);
                 }}
               >
-                <div className="mb-2 flex gap-2">
-                  <select
-                    value={selectedSize}
-                    onChange={(event) => setSelectedSize(event.target.value as SizeKey)}
-                    className="flex-1 rounded-md border border-white/20 bg-[#121416] px-2 py-1 text-xs text-white"
+                <div className="h-full w-full overflow-y-auto p-4 sm:p-6">
+                  <div
+                    className="mx-auto flex min-h-full w-full max-w-2xl items-center justify-center"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
                   >
-                    {(availableSizes.length ? availableSizes : [DEFAULT_SIZE_KEY]).map((size) => (
-                      <option key={size} value={size}>
-                        {product.sizes?.[size]?.weight || (language === "ar" ? "وزن غير محدد" : "Weight not set")}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="flex items-center gap-1 rounded-md border border-white/20 bg-[#121416] px-1">
-                    <button
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setQuantity((prev) => Math.max(1, prev - 1));
-                      }}
-                      className="h-6 w-6 text-sm text-white/85"
-                      type="button"
-                    >
-                      -
-                    </button>
-                    <span className="min-w-[20px] text-center text-xs text-white">{quantity}</span>
-                    <button
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setQuantity((prev) => Math.min(99, prev + 1));
-                      }}
-                      className="h-6 w-6 text-sm text-white/85"
-                      type="button"
-                    >
-                      +
-                    </button>
+                    <div className="w-full rounded-2xl border border-[#C9A66B]/45 bg-[#121416]/95 p-4 sm:p-6 shadow-2xl">
+                      <div className="mb-4 flex items-center justify-between">
+                        <p className="text-base font-bold text-[#C9A66B]">
+                          {language === "ar" ? "إضافة سريعة" : "Quick Add"}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            setShowQuickAdd(false);
+                          }}
+                          className="h-8 w-8 rounded-full border border-white/20 text-sm text-white/75 hover:bg-white/10"
+                          aria-label={language === "ar" ? "إغلاق" : "Close"}
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
+                        <select
+                          value={selectedSize}
+                          onChange={(event) => setSelectedSize(event.target.value as SizeKey)}
+                          className="w-full rounded-md border border-white/20 bg-[#121416] px-3 py-2 text-sm text-white"
+                        >
+                          {(availableSizes.length ? availableSizes : [DEFAULT_SIZE_KEY]).map((size) => (
+                            <option key={size} value={size}>
+                              {product.sizes?.[size]?.weight || (language === "ar" ? "وزن غير محدد" : "Weight not set")}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="flex items-center justify-center gap-1 rounded-md border border-white/20 bg-[#121416] px-2 py-1">
+                          <button
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              setQuantity((prev) => Math.max(1, prev - 1));
+                            }}
+                            className="h-8 w-8 text-base text-white/85"
+                            type="button"
+                          >
+                            -
+                          </button>
+                          <span className="min-w-[30px] text-center text-sm text-white">{quantity}</span>
+                          <button
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              setQuantity((prev) => Math.min(99, prev + 1));
+                            }}
+                            className="h-8 w-8 text-base text-white/85"
+                            type="button"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mb-4 rounded-lg border border-[#C9A66B]/35 bg-[#1a1f23] px-4 py-3 text-sm text-white/85">
+                        <div className="flex items-center justify-between">
+                          <span>{language === "ar" ? "سعر الوحدة" : "Unit price"}</span>
+                          <span className="font-semibold text-[#C9A66B]">{CURRENCY_SYMBOL}{formatAmount(activeQuickFinalPrice)}</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between">
+                          <span>{language === "ar" ? "المجموع" : "Total"}</span>
+                          <span className="text-lg font-extrabold text-[#C9A66B]">{CURRENCY_SYMBOL}{formatAmount(quickAddTotal)}</span>
+                        </div>
+                        <p className="mt-1 text-[11px] text-white/60">
+                          {CURRENCY_SYMBOL}{formatAmount(activeQuickFinalPrice)} × {quantity}
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={handleQuickAddToCart}
+                        className="gold-button w-full rounded-md py-2.5 text-sm font-bold"
+                        type="button"
+                      >
+                        {language === "ar"
+                          ? `إضافة للسلة • ${CURRENCY_SYMBOL}${formatAmount(quickAddTotal)}`
+                          : `Add to cart • ${CURRENCY_SYMBOL}${formatAmount(quickAddTotal)}`}
+                      </button>
+
+                      {quickAddMessage ? (
+                        <p className="mt-2 text-center text-xs text-[#C9A66B]">{quickAddMessage}</p>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
-                <button
-                  onClick={handleQuickAddToCart}
-                  className="gold-button w-full rounded-md py-1.5 text-xs font-bold"
-                  type="button"
-                >
-                  {language === "ar" ? "إضافة للسلة" : "Add to cart"}
-                </button>
-                {quickAddMessage ? (
-                  <p className="mt-1 text-center text-[10px] text-[#C9A66B]">{quickAddMessage}</p>
-                ) : null}
-              </div>
-            ) : null}
-          </>
-        ) : null}
+              </div>,
+              document.body
+            )
+          : null}
       </div>
     </Link>
     </div>

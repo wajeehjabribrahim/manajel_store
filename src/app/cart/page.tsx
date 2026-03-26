@@ -40,6 +40,8 @@ export default function Cart() {
   const [guestError, setGuestError] = useState("");
   const [orderError, setOrderError] = useState("");
   const [orderLoading, setOrderLoading] = useState(false);
+  const [animatedCartTotal, setAnimatedCartTotal] = useState(0);
+  const animatedCartTotalRef = useRef(0);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -153,14 +155,11 @@ export default function Cart() {
   };
 
   const updateQuantity = (id: string, size: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItem(id, size);
-      return;
-    }
+    const safeQuantity = Math.max(1, newQuantity);
     setCartItems(
       cartItems.map((item) =>
         item.id === id && item.size === size
-          ? { ...item, quantity: newQuantity }
+          ? { ...item, quantity: safeQuantity }
           : item
       )
     );
@@ -192,6 +191,41 @@ export default function Cart() {
   const sizeLabel = (size: string) => {
     return getProductSizeLabel(size, undefined, t, language);
   };
+
+  useEffect(() => {
+    const targetTotal = calculateTotal();
+    const startTotal = animatedCartTotalRef.current;
+
+    if (Math.abs(targetTotal - startTotal) < 0.01) {
+      animatedCartTotalRef.current = targetTotal;
+      setAnimatedCartTotal(targetTotal);
+      return;
+    }
+
+    const duration = 260;
+    const startTime = performance.now();
+    let rafId = 0;
+
+    const animate = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = startTotal + (targetTotal - startTotal) * eased;
+
+      animatedCartTotalRef.current = value;
+      setAnimatedCartTotal(value);
+
+      if (progress < 1) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        animatedCartTotalRef.current = targetTotal;
+        setAnimatedCartTotal(targetTotal);
+      }
+    };
+
+    rafId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(rafId);
+  }, [cartItems, productMap]);
 
   const normalizeToWesternDigits = (value: string) =>
     value
@@ -475,8 +509,7 @@ export default function Cart() {
         className="text-white py-12 px-4"
       >
         <div className="max-w-7xl mx-auto">
-          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Secure Checkout</p>
-          <h1 className="text-4xl font-bold">{t("cart.title")}</h1>
+          <h1 className="text-4xl text-[#C9A66B] font-bold">{t("cart.title")}</h1>
         </div>
       </section>
 
@@ -570,7 +603,7 @@ export default function Cart() {
                     {/* Product Info */}
                     <div className="flex-1 min-w-0">
                       <h3
-                        className="mb-2 text-lg font-bold text-[#F2ECE2]"
+                        className="gold-texture-static mb-2 text-lg font-bold text-[#C9A66B]"
                       >
                         {productName}
                       </h3>
@@ -686,7 +719,7 @@ export default function Cart() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-white/70">{t("cart.goodsPrice")}</span>
-                    <span className="font-semibold text-[#F2ECE2]">{CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}</span>
+                    <span className="font-semibold text-[#F2ECE2]">{CURRENCY_SYMBOL}{animatedCartTotal.toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -696,7 +729,7 @@ export default function Cart() {
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="text-2xl font-bold text-[#C9A66B]">
-                      {CURRENCY_SYMBOL}{calculateTotal().toFixed(2)}
+                      {CURRENCY_SYMBOL}{animatedCartTotal.toFixed(2)}
                     </span>
                     <Link
                       href="/shipping-policy"

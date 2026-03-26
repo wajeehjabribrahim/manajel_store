@@ -16,8 +16,7 @@ export default function PrivacyPolicy() {
         className="text-white py-12 px-4"
       >
         <div className="max-w-4xl mx-auto">
-          <p className="mb-2 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.24em] text-[#C9A66B]">Policies</p>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">{t.policies.privacyPolicy}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl text-[#C9A66B] font-bold leading-tight">{t.policies.privacyPolicy}</h1>
         </div>
       </section>
 
@@ -43,9 +42,7 @@ export default function PrivacyPolicy() {
               <li>
                 <strong>{t.policies.shippingInfo2}</strong> {t.policies.shippingInfoDesc}
               </li>
-              <li>
-                <strong>{t.policies.paymentInfo}</strong> {t.policies.paymentInfoDesc}
-              </li>
+              
               <li>
                 <strong>{t.policies.browsingData}</strong> {t.policies.browsingDataDesc}
               </li>

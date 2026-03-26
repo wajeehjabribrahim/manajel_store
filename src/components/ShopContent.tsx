@@ -249,8 +249,7 @@ export default function ShopContent() {
         className="px-4 py-12 text-white"
       >
         <div className="max-w-7xl mx-auto">
-          <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#C9A66B]">Manajel Shop</p>
-          <h1 className="mb-2 text-3xl sm:text-4xl font-black leading-tight">{t("shop.title")}</h1>
+          <h1 className="mb-2 text-3xl sm:text-4xl text-[#C9A66B] leading-tight">{t("shop.title")}</h1>
           <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
             {t("shop.subtitle")}
           </p>

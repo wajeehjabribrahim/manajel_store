@@ -32,7 +32,7 @@
       #c3872a 90%,
       #fbe09a 100%
     );
-  background-size: 220% 220%, 190% 190%, 100% 100%;
+  background-size: 280% 280%, 240% 240%, 100% 100%;
   background-position: 0% 0%, 100% 100%, 0% 50%;
   color: transparent;
   -webkit-text-fill-color: transparent;
@@ -43,6 +43,16 @@
     0 1px 0 rgba(255, 246, 200, 0.35),
     0 0 10px rgba(229, 177, 63, 0.3),
     0 0 18px rgba(190, 132, 32, 0.18);
+  /* Ensure coverage for large text */
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
+}
+
+/* Extra large text coverage */
+.text-6xl.gold-texture {
+  background-size: 350% 350%, 300% 300%, 100% 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -249,16 +259,7 @@
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
-/* Product card hover effects */
-.product-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-}
-
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
+/* Product card hover effects are defined later (single source of truth) */
 
 /* Smooth transitions for all interactive elements */
 button, a {
@@ -296,19 +297,7 @@ button, a {
 .grid > *:nth-child(5) { transition-delay: 0.4s; }
 .grid > *:nth-child(6) { transition-delay: 0.5s; }
 
-/* Hover pulse effect for buttons and links */
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-button:hover, a:hover {
-  animation: pulse 0.5s ease-in-out;
-}
+/* Removed generic hover pulse to avoid conflicting transforms on product cards */
 
 /* Shimmer effect for loading states */
 @keyframes shimmer {
@@ -320,10 +309,7 @@ button:hover, a:hover {
   }
 }
 
-/* Add glow effect on hover for primary elements */
-.product-card:hover {
-  box-shadow: 0 20px 25px -5px rgba(139, 115, 85, 0.15), 0 10px 10px -5px rgba(139, 115, 85, 0.1);
-}
+/* Product card glow/hover handled in component classes + final product-card rules */
 
 /* Smooth scroll behavior */
 html {
@@ -474,8 +460,19 @@ html {
   transition: transform 0.3s ease-in-out;
 }
 
-.product-card:hover .product-image {
-  animation: productHoverZoom 0.3s ease-in-out forwards;
+.product-card {
+  transform: scale(1);
+  transition: transform 0.9s ease-in-out;
+}
+
+.product-card:hover {
+  transform: scale(1.04);
+}
+
+/* Hide native password reveal/clear icons (Edge/IE) to avoid duplicate eye icon */
+.hide-native-password-toggle::-ms-reveal,
+.hide-native-password-toggle::-ms-clear {
+  display: none;
 }
 
 @keyframes featuredImageVideoMotion {
@@ -507,23 +504,25 @@ html {
 }
 
 .featured-product-image {
-  animation: featuredImageVideoMotion 8.5s ease-in-out infinite;
+  animation: none;
+  transition: transform 0.05s ease-out;
   will-change: transform;
   transform-origin: center;
 }
 
 .featured-product-card-auto {
-  animation: featuredCardAutoRotate 5.8s ease-in-out infinite;
+  transform: scale(1);
+  transition: transform 0.5s ease-in-out;
   transform-style: preserve-3d;
   will-change: transform;
 }
 
-.featured-products-swiper .swiper-slide:nth-child(2n) .featured-product-image {
-  animation-delay: 0.8s;
+.featured-product-card-auto:hover {
+  transform: scale(1.05);
 }
 
-.featured-products-swiper .swiper-slide:nth-child(3n) .featured-product-image {
-  animation-delay: 1.6s;
+.featured-product-card-auto:hover .featured-product-image {
+  transform: scale(1.08);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -533,9 +532,63 @@ html {
 
   .featured-product-card-auto {
     animation: none;
+    transition: none;
   }
+}
 
-  .featured-products-swiper--continuous .swiper-wrapper {
-    transition-timing-function: ease !important;
+/* Heritage Image Slider Container */
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+/* Individual Slider Images */
+.slider-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  animation: fade-in-out 9s infinite;
+}
+
+/* Image animation delays (for 3 images) */
+.slider-img:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.slider-img:nth-child(2) {
+  animation-delay: 3s;
+}
+
+.slider-img:nth-child(3) {
+  animation-delay: 6s;
+}
+
+/* Fade in and out animation */
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
   }
+  10% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.featured-products-swiper--continuous .swiper-wrapper {
+  transition-timing-function: ease !important;
 }

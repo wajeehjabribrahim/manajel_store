@@ -23,6 +23,7 @@ export default function AdminFeedbackPage() {
   const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -115,7 +116,8 @@ export default function AdminFeedbackPage() {
                         key={`${item.id}-${idx}`}
                         src={img}
                         alt={`feedback-${idx + 1}`}
-                        className="h-24 w-full rounded-lg border border-gray-200 object-cover"
+                        className="h-24 w-full rounded-lg border border-gray-200 object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => setSelectedImage(img)}
                       />
                     ))}
                   </div>
@@ -125,6 +127,31 @@ export default function AdminFeedbackPage() {
           </div>
         )}
       </div>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className="relative max-h-[90vh] max-w-[90vw]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedImage}
+              alt="feedback-full"
+              className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain"
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-lg font-semibold hover:bg-red-700"
+            >
+              ✕ إغلاق
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

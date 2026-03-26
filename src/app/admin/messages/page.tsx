@@ -107,7 +107,13 @@ export default function AdminMessagesPage() {
     }
   };
 
+  // Hide feedback messages (those that are feedback, not contact)
   const filteredMessages = messages.filter((msg) => {
+    // Hide if message is feedback (e.g., has a feedback marker or subject)
+    // Assuming feedback messages have subject like 'Feedback' or a known marker
+    if (msg.subject && (msg.subject.toLowerCase().includes('feedback') || msg.subject.includes('فيدباك'))) {
+      return false;
+    }
     if (filter === "new") return msg.status === "new";
     if (filter === "read") return msg.status === "read";
     return true;

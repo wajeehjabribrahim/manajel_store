@@ -16,8 +16,7 @@ export default function ReturnPolicy() {
         className="text-white py-12 px-4"
       >
         <div className="max-w-4xl mx-auto">
-          <p className="mb-2 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.24em] text-[#C9A66B]">Policies</p>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">{t.policies.returnPolicy}</h1>
+            <h1 className="inline-block pb-2 text-2xl sm:text-3xl md:text-4xl font-bold leading-[1.3] tracking-tight text-[#C9A66B]" style={{ textShadow: "0 1px 0 rgba(255,246,200,0.22), 0 0 10px rgba(201,166,107,0.14)" }}>{t.policies.returnPolicy}</h1>
         </div>
       </section>
 

@@ -22,7 +22,6 @@ export default function HomeContent() {
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
-  const [heritageImageIndex, setHeritageImageIndex] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const desktopUserMenuRef = useRef<HTMLDivElement>(null);
@@ -126,16 +125,6 @@ export default function HomeContent() {
     }
     loadProducts();
   }, [language]);
-
-  useEffect(() => {
-    if (heritageImages.length <= 1) return;
-
-    const timer = setInterval(() => {
-      setHeritageImageIndex((prev) => (prev + 1) % heritageImages.length);
-    }, 4200);
-
-    return () => clearInterval(timer);
-  }, [heritageImages.length]);
 
   const featuredProducts = products.filter((p) => p.featured).slice(0, 4);
   const minimumLoopSlides = 8;
@@ -636,7 +625,7 @@ export default function HomeContent() {
             ? Array.from({ length: 4 }).map((_, idx) => (
                 <SwiperSlide key={idx}>
                   <div className="relative h-[360px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5 p-3 sm:p-5 overflow-hidden animate-pulse">
-                    <div className="rounded-xl sm:rounded-2xl bg-gray-700/50 h-36 sm:h-56 w-full mb-3 sm:mb-4" />
+                    <div className="rounded-xl sm:rounded-2xl bg-gray-700/50 aspect-video w-full mb-3 sm:mb-4" />
                     <div className="h-6 bg-gray-700/50 rounded mb-2 w-3/4" />
                     <div className="h-4 bg-gray-700/50 rounded mb-2 w-2/3" />
                     <div className="h-4 bg-gray-700/50 rounded mb-2 w-1/2" />
@@ -669,30 +658,30 @@ export default function HomeContent() {
                       className="featured-product-card-auto group block h-[360px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-[#C9A66B]/40 bg-[#181b1e] p-0 hover:border-[#C9A66B] transition-all duration-300 shadow-lg overflow-hidden"
                       style={{ boxShadow: "0 4px 32px 0 #0006" }}
                     >
-                      <div className="h-44 sm:h-56 rounded-t-2xl sm:rounded-t-3xl overflow-hidden bg-[#23201c]">
+                      <div className="aspect-video rounded-t-2xl sm:rounded-t-3xl overflow-hidden bg-[#23201c]">
                         <Image
                           src={product.image || "/images/hero.jpg"}
                           alt={product.name}
-                          width={640}
-                          height={420}
+                          width={1280}
+                          height={720}
                           className="w-full h-full object-cover featured-product-image"
                         />
                       </div>
-                      <div className="px-5 pb-5 pt-2 flex flex-col gap-2">
-                        <div className="flex items-center justify-between mb-1">
+                      <div className="px-5 pb-5 pt-2 flex flex-col gap-1">
+                        <div className="flex items-center justify-between">
                           <h3 className="gold-texture-static text-[#C9A66B] text-lg sm:text-2xl font-extrabold leading-tight line-clamp-2">
                             {t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}
                           </h3>
-                          <span className="flex flex-col items-end min-w-[56px]">
+                          <div className="flex items-center gap-2 min-w-fit">
                             {hasSale ? (
-                              <span className="block text-xs line-through text-red-600">₪{basePrice}</span>
+                              <span className="text-xs sm:text-sm line-through text-red-600 font-semibold">₪{basePrice}</span>
                             ) : null}
                             <span className="text-base sm:text-lg font-bold text-[#C9A66B] flex items-center gap-1">
                               <span className="text-[1.1em]">₪</span>{hasSale ? salePrice : basePrice}
                             </span>
-                          </span>
+                          </div>
                         </div>
-                        <p className={`text-sm sm:text-base text-white/80 leading-6 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
+                        <p className={`text-sm sm:text-base text-white/80 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
                           {t(`products.${product.id}.description`) === `products.${product.id}.description`
                             ? product.description
                             : t(`products.${product.id}.description`)}
@@ -715,7 +704,7 @@ export default function HomeContent() {
 
       <section
         id="heritage-story"
-        className="py-24 px-4"
+        className="py-15 px-4"
         style={{
           background:
             "linear-gradient(180deg, rgba(17,20,22,1) 0%, rgba(26,30,33,1) 52%, rgba(20,19,18,1) 100%)",
@@ -726,45 +715,65 @@ export default function HomeContent() {
           className={`max-w-7xl mx-auto scroll-animate ${heritageReveal.isVisible ? "visible" : ""}`}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            <div className="lg:col-span-7 rounded-3xl border border-white/10 p-8 md:p-12 bg-[#171b1f]">
-              <p className={`text-3xl sm:text-4xl text-[#C9A66B] mb-4 leading-[1.25] ${language === "ar" ? "tracking-[0.06em]" : "uppercase tracking-[0.24em]"}`}>
-                {language === "ar" ? "حكاية التراث" : "Heritage Story"}
-              </p>
-              <h2 className="text-lg sm:text-xl md:text-2xl font-black mb-6 leading-[1.15] text-white">
-                {language === "ar" ? "من قلب المعصرة" : "From the Heart of the mill"}
-              </h2>
-              <p className="text-sm sm:text-base text-white/75 leading-7 sm:leading-8 mb-6">
-                {language === "ar"
-                  ? "هنا تبدأ الحكاية… حيث تتحول ثمار الزيتون إلى زيتٍ نقي يحمل روح الأرض, نحافظ على طرق العصر الأصيلة لنقدم لكم جودة تُحاكي التراث وطعمًا لا يُنسى."
-                  : "Here is where the story begins… where olives are transformed into pure oil that carries the spirit of the land.We preserve traditional pressing methods to deliver quality that reflects heritage and a taste that is unforgettable"}
-              </p>
-              <p className="text-sm sm:text-base text-white/75 leading-7 sm:leading-8">
-                {language === "ar"
-                  ? "من الزيت إلى كل منتج , كل قطعة تحمل سياقًا ثقافيًا واضحًا بنقدمها كمشهد فني موثوق." 
-                  : "From olive oil to all products, each piece carries cultural context and is presented as a trustworthy art-like composition."}
-              </p>
+            <div className="order-1 lg:order-1 lg:col-span-6 group relative rounded-2xl overflow-hidden border border-[#C9A66B]/35 bg-black/30 min-h-[280px] shadow-[0_18px_38px_rgba(0,0,0,0.35)] transition-transform duration-500 hover:-translate-y-1 hover:scale-[1.01]">
+              <div className="slider-container relative w-full h-full rounded-xl border border-[#C9A66B]/40 overflow-hidden shadow-[0_10px_26px_rgba(0,0,0,0.35)]">
+                {heritageImages.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`Heritage image ${idx + 1}`}
+                    className="slider-img"
+                  />
+                ))}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/15 to-black/70 rounded-xl" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent rounded-xl" />
+
+              <div className="absolute inset-x-0 bottom-0 z-10 pb-6 pl-6 pr-4 sm:pb-8 sm:pl-8 sm:pr-6">
+                
+
+                <div className="flex flex-wrap gap-2 justify-start">
+                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-3 py-1.5 text-xs sm:text-sm text-[#F2ECE2] backdrop-blur-md">
+                    🌿 {language === "ar" ? "مصدر طبيعي" : "Natural Source"}
+                  </span>
+                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-3 py-1.5 text-xs sm:text-sm text-[#F2ECE2] backdrop-blur-md">
+                    🫒 {language === "ar" ? "تراث فلسطيني" : "Palestinian Heritage"}
+                  </span>
+                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-3 py-1.5 text-xs sm:text-sm text-[#F2ECE2] backdrop-blur-md">
+                    ✨ {language === "ar" ? "طرق تقليدية" : "Traditional Methods"}
+                  </span>
+                </div>
+              </div>
             </div>
 
-            <div className="lg:col-span-5 relative rounded-3xl overflow-hidden border border-[#C9A66B]/35 bg-black/30 min-h-[320px]">
-              {heritageImages.map((imagePath, index) => (
-                <div
-                  key={imagePath}
-                  className={`absolute inset-0 h-full min-h-[320px] bg-cover bg-center transition-opacity duration-1000 ${
-                    index === heritageImageIndex ? "opacity-100" : "opacity-0"
-                  }`}
-                  style={{
-                    backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.45)), url('${imagePath}')`,
-                  }}
-                />
-              ))}
+            <div className={`order-2 lg:order-2 lg:col-span-6 p-2 sm:p-4 md:p-6 lg:p-0 ${language === "ar" ? "text-right" : "text-left"}`}>
+              <p className={`text-3xl sm:text-4xl md:text-10xl mb-5 leading-[1.2] font-extrabold gold-texture ${language === "ar" ? "tracking-[0.06em]" : "tracking-[0.02em]"}`}>
+                <span className="block w-full">{language === "ar" ? "حكاية التراث" : "Heritage Story"}</span>
+              </p>
+              
+              <p className={`text-base sm:text-lg text-white/80 leading-8 sm:leading-9 mb-6 ${language === "ar" ? "" : "max-w-xl"}`}>
+                {language === "ar"
+                  ? "من قلب المعصرة تبدأ الحكاية…"
+                  : "From the heart of the mill, the story begins…"}
+              </p>
+              <p className={`text-sm sm:text-base text-white/75 leading-7 sm:leading-8 max-w-3xl ${language === "ar" ? "lg:ms-auto" : ""}`}>
+                {language === "ar"
+                  ? "زيت زيتون نقي يُعصر بطرق أصيلة، ليحمل لك طعم الأرض وروحها." 
+                : "Pure olive oil, pressed using traditional methods, carrying the taste of the land and its soul."}
+              </p>
+
+              <div className="mt-6">
+                <Link
+                  href="/about"
+                  className="inline-flex items-center rounded-lg border border-[#C9A66B]/60 bg-[#C9A66B]/10 px-4 py-2 text-sm font-semibold text-[#C9A66B] transition-colors hover:bg-[#C9A66B]/20"
+                >
+                  {language === "ar" ? "اكتشف المزيد" : "Read More"}
+                </Link>
+              </div>
             </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">🌿 {language === "ar" ? "مصدر طبيعي موثوق" : "Trusted natural sourcing"}</div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">🫒 {language === "ar" ? "تراث فلسطيني أصيل" : "Authentic Palestinian heritage"}</div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white/80">✨ {language === "ar" ? "طرق تقليدية" : "Traditional methods"}</div>
-          </div>
+          <div className="mb-10 md:mb-14" />
         </div>
       </section>
 

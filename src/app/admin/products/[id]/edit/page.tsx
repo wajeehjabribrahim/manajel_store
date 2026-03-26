@@ -7,15 +7,69 @@ interface AdminFeedbackItemProps {
   item: ManualFeedbackItem;
   productId: string;
   onDelete: (id: string) => void;
-  onEdit: (id: string, note: string, noteEn: string) => void;
+  onEdit: (id: string, note: string, noteEn: string, images: string[]) => void;
 }
 
 const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, onDelete, onEdit }) => {
   const [isEditing, setIsEditing] = React.useState(false);
   const [editNote, setEditNote] = React.useState(item.note);
   const [editNoteEn, setEditNoteEn] = React.useState(item.noteEn || "");
+  const [editImages, setEditImages] = React.useState<string[]>(item.images || []);
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState("");
+
+  React.useEffect(() => {
+    if (!isEditing) return;
+    setEditNote(item.note);
+    setEditNoteEn(item.noteEn || "");
+    setEditImages(item.images || []);
+  }, [isEditing, item.note, item.noteEn, item.images]);
+
+  const readFileAsDataUrl = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        } else {
+          reject(new Error("Failed to read file"));
+        }
+      };
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
+
+  const handleEditImages = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+
+    const invalidFile = files.find((file) => !file.type.startsWith("image/"));
+    if (invalidFile) {
+      setError("يرجى اختيار صور فقط");
+      return;
+    }
+
+    const tooLarge = files.find((file) => file.size > 2 * 1024 * 1024);
+    if (tooLarge) {
+      setError("حجم الصورة يجب أن يكون أقل من 2MB");
+      return;
+    }
+
+    if (editImages.length + files.length > 3) {
+      setError("الحد الأقصى 3 صور للفيدباك");
+      return;
+    }
+
+    try {
+      const encoded = await Promise.all(files.map(readFileAsDataUrl));
+      setEditImages((prev) => [...prev, ...encoded].slice(0, 3));
+      setError("");
+    } catch {
+      setError("فشل قراءة الصور");
+    } finally {
+      event.target.value = "";
+    }
+  };
 
   const handleDelete = async () => {
     if (!confirm("هل أنت متأكد من حذف هذا الفيدباك؟")) return;
@@ -47,14 +101,14 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
       const res = await fetch(`/api/products/${productId}/feedbacks/${item.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note: editNote, noteEn: editNoteEn }),
+        body: JSON.stringify({ note: editNote, noteEn: editNoteEn, images: editImages }),
       });
       if (!res.ok) {
         setError("فشل تعديل الفيدباك");
         setSaving(false);
         return;
       }
-      onEdit(item.id, editNote, editNoteEn);
+      onEdit(item.id, editNote, editNoteEn, editImages);
       setIsEditing(false);
     } catch {
       setError("حدث خطأ أثناء تعديل الفيدباك");
@@ -97,6 +151,34 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
             rows={2}
             placeholder="Feedback text in English (optional)"
           />
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleEditImages}
+              className="w-full border rounded-lg px-2 py-1"
+            />
+            <p className="text-xs text-gray-500 mt-1">حد أقصى 3 صور</p>
+          </div>
+
+          {editImages.length > 0 ? (
+            <div className="flex gap-2 mt-2 flex-wrap">
+              {editImages.map((img, idx) => (
+                <div key={idx} className="relative">
+                  <img src={img} alt="feedback preview" className="w-16 h-16 object-cover rounded-lg border" />
+                  <button
+                    type="button"
+                    onClick={() => setEditImages((prev) => prev.filter((_, i) => i !== idx))}
+                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px]"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
           <div className="flex gap-2 mt-2">
             <button type="button" className="px-3 py-1 rounded bg-green-600 text-white" disabled={saving} onClick={handleEdit}>
               حفظ
@@ -137,7 +219,7 @@ interface AdminFeedbackItemProps {
   item: ManualFeedbackItem;
   productId: string;
   onDelete: (id: string) => void;
-  onEdit: (id: string, note: string, noteEn: string) => void;
+  onEdit: (id: string, note: string, noteEn: string, images: string[]) => void;
 }
 
 interface Category {
@@ -925,7 +1007,7 @@ export default function AdminEditProductPage() {
                   item={item}
                   productId={id as string}
                   onDelete={id => setManualFeedbackItems(prev => prev.filter(fb => fb.id !== id))}
-                  onEdit={(id, note, noteEn) => setManualFeedbackItems(prev => prev.map(fb => fb.id === id ? { ...fb, note, noteEn } : fb))}
+                  onEdit={(id, note, noteEn, images) => setManualFeedbackItems(prev => prev.map(fb => fb.id === id ? { ...fb, note, noteEn, images } : fb))}
                 />
               ))}
             </div>

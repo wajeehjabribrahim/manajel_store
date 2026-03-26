@@ -1,11 +1,10 @@
-"use client";
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import CookieConsent from "@/components/CookieConsent"; // لإعادة تشغيل رسالة الموافقة لاحقًا
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import AuthProvider from "@/components/AuthProvider";
+import DisableContextMenu from "@/components/DisableContextMenu";
 import "./globals.css";
 
 export default function RootLayout({
@@ -14,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         <title>مناجل | Manajel</title>
         <meta
@@ -38,6 +37,7 @@ export default function RootLayout({
       <body style={{ backgroundColor: "#121416" }} className="flex flex-col min-h-screen antialiased">
         <AuthProvider>
           <LanguageProvider>
+            <DisableContextMenu />
             <Header />
             <main className="flex-1">
               {children}

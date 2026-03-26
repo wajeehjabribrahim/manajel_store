@@ -7,13 +7,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 
 export default function LoginPageClient() {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -31,6 +32,12 @@ export default function LoginPageClient() {
 
     if (result?.ok) {
       router.push(callbackUrl);
+      return;
+    }
+
+    if (result?.error?.includes("EMAIL_NOT_REGISTERED")) {
+      setError(t("auth.emailNotRegistered"));
+      setLoading(false);
       return;
     }
 
@@ -60,14 +67,33 @@ export default function LoginPageClient() {
             </div>
             <div>
               <label className="mb-1 block text-sm font-medium text-white/80">{t("auth.password")}</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border px-3 py-2 text-[#F2ECE2] focus:outline-none focus:ring-2 focus:ring-[#C9A66B]/40"
-                style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416" }}
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`hide-native-password-toggle w-full rounded-lg border px-3 py-2 ${dir === "rtl" ? "pl-10" : "pr-10"} text-[#F2ECE2] focus:outline-none focus:ring-2 focus:ring-[#C9A66B]/40`}
+                  style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#121416" }}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className={`absolute inset-y-0 ${dir === "rtl" ? "left-2" : "right-2"} flex items-center text-white/70 hover:text-[#F2ECE2]`}
+                  aria-label={showPassword ? (language === "ar" ? "إخفاء كلمة المرور" : "Hide password") : (language === "ar" ? "إظهار كلمة المرور" : "Show password")}
+                >
+                  {showPassword ? (
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10 0-1.41.292-2.752.825-3.975M6.223 6.223A9.956 9.956 0 0112 4c5.523 0 10 4.477 10 10 0 2.213-.72 4.257-1.938 5.913M9.88 9.88a3 3 0 104.243 4.243M3 3l18 18" />
+                    </svg>
+                  ) : (
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
 
             {error && <div className="text-sm text-red-300">{error}</div>}

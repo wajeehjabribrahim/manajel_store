@@ -41,6 +41,8 @@ export default function ProductPage({ params }: PageProps) {
   const [isNotifying, setIsNotifying] = useState(false);
   const [notifyMessage, setNotifyMessage] = useState<string | null>(null);
   const [manualFeedbacks, setManualFeedbacks] = useState<ProductManualFeedback[]>([]);
+  const [selectedFeedbackImage, setSelectedFeedbackImage] = useState<string | null>(null);
+  const [showAddedToCartPrompt, setShowAddedToCartPrompt] = useState(false);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -96,6 +98,17 @@ export default function ProductPage({ params }: PageProps) {
 
     loadManualFeedbacks();
   }, [params.id]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedFeedbackImage(null);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   useEffect(() => {
     if (!product) {
@@ -154,10 +167,11 @@ export default function ProductPage({ params }: PageProps) {
     return () => cancelAnimationFrame(rafId);
   }, [product, selectedSize, quantity]);
 
-  const handleAddToCart = async () => {
-    if (!product) return;
+  const handleAddToCart = () => {
+    if (!product || isAdding) return;
     
     setIsAdding(true);
+    setShowAddedToCartPrompt(false);
     
     // Add item to cart
     const sizeEntries = (Object.entries(product.sizes || {}) as Array<[
@@ -190,12 +204,18 @@ export default function ProductPage({ params }: PageProps) {
     };
     
     // Get existing cart
-    const existingCart = localStorage.getItem("manajel-cart");
-    const cart = existingCart ? JSON.parse(existingCart) : [];
+    let cart: any[] = [];
+    try {
+      const existingCart = localStorage.getItem("manajel-cart");
+      const parsed = existingCart ? JSON.parse(existingCart) : [];
+      cart = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      cart = [];
+    }
     
     // Check if item already exists
     const existingItemIndex = cart.findIndex(
-      (item: any) => item.id === product.id && item.size === selectedSize
+      (item: any) => item.id === product.id && item.size === activeSize
     );
     
     if (existingItemIndex > -1) {
@@ -230,10 +250,9 @@ export default function ProductPage({ params }: PageProps) {
       }
     }
     
-    // Redirect to cart
-    setTimeout(() => {
-      router.push("/cart");
-    }, 300);
+    window.dispatchEvent(new Event("manajel-cart-updated"));
+    setIsAdding(false);
+    setShowAddedToCartPrompt(true);
   };
 
   const handleShareProduct = async () => {
@@ -431,33 +450,10 @@ export default function ProductPage({ params }: PageProps) {
 
           {/* Product Info */}
           <div>
-            <h1 className="mb-2 text-2xl md:text-3xl font-bold text-[#F2ECE2]">
-              {name}
-            </h1>
-
-            {/* Rating */}
-            <div className="mb-4 flex items-center gap-2">
-              {product && (() => {
-                let hash = 0;
-                for (let i = 0; i < product.id.length; i++) hash = (hash * 31 + product.id.charCodeAt(i)) >>> 0;
-                const rating = 4.5 + ((hash % 5) / 10);
-                return (
-                  <>
-                    <div className="flex text-yellow-400">
-                      {[1,2,3,4,5].map((star) => {
-                        if (rating >= star) return <span key={star}>★</span>;
-                        if (rating >= star - 0.5) return <span key={star} className="relative inline-block"><span className="absolute inset-0 overflow-hidden w-1/2">★</span>☆</span>;
-                        return <span key={star} className="text-gray-300">★</span>;
-                      })}
-                    </div>
-                    <span className="text-sm text-white/65">{rating.toFixed(1)}</span>
-                  </>
-                );
-              })()}
-            </div>
-
-            {/* Stock Status */}
-            <div className="mb-4">
+            <div className="mb-2 flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl md:text-3xl font-bold text-[#F2ECE2]">
+                {name}
+              </h1>
               {product.inStock ? (
                 <span
                   className="inline-block px-3 py-1 rounded-full text-sm font-semibold"
@@ -479,6 +475,27 @@ export default function ProductPage({ params }: PageProps) {
                   {t("product.outOfStock")}
                 </span>
               )}
+            </div>
+
+            {/* Rating */}
+            <div className="mb-4 flex items-center gap-2">
+              {product && (() => {
+                let hash = 0;
+                for (let i = 0; i < product.id.length; i++) hash = (hash * 31 + product.id.charCodeAt(i)) >>> 0;
+                const rating = 4.5 + ((hash % 5) / 10);
+                return (
+                  <>
+                    <div className="flex text-yellow-400">
+                      {[1,2,3,4,5].map((star) => {
+                        if (rating >= star) return <span key={star}>★</span>;
+                        if (rating >= star - 0.5) return <span key={star} className="relative inline-block"><span className="absolute inset-0 overflow-hidden w-1/2">★</span>☆</span>;
+                        return <span key={star} className="text-gray-300">★</span>;
+                      })}
+                    </div>
+                    <span className="text-sm text-white/65">{rating.toFixed(1)}</span>
+                  </>
+                );
+              })()}
             </div>
 
             {/* Description */}
@@ -715,7 +732,7 @@ export default function ProductPage({ params }: PageProps) {
         {manualFeedbacks.length > 0 ? (
           <div className="mt-12">
             <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-[#C9A66B]">
-              {language === "ar" ? "تجارب وآراء العملاء" : "Customer Moments"}
+              {language === "ar" ? "تجارب وآراء العملاء" : "Customer Feedbacks"}
             </h3>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -741,12 +758,18 @@ export default function ProductPage({ params }: PageProps) {
                   {feedback.images?.length ? (
                     <div className="mt-3 grid grid-cols-3 gap-2">
                       {feedback.images.slice(0, 3).map((img, idx) => (
-                        <img
+                        <button
                           key={`${feedback.id}-${idx}`}
-                          src={img}
-                          alt={`feedback-${idx + 1}`}
-                          className="h-16 w-full rounded-md border border-white/10 object-cover"
-                        />
+                          type="button"
+                          onClick={() => setSelectedFeedbackImage(img)}
+                          className="overflow-hidden rounded-md border border-white/10"
+                        >
+                          <img
+                            src={img}
+                            alt={`feedback-${idx + 1}`}
+                            className="h-16 w-full object-cover transition-transform duration-200 hover:scale-105"
+                          />
+                        </button>
                       ))}
                     </div>
                   ) : null}
@@ -788,6 +811,57 @@ export default function ProductPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {selectedFeedbackImage ? (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/85 p-4"
+          onClick={() => setSelectedFeedbackImage(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setSelectedFeedbackImage(null)}
+            className="absolute top-4 right-4 rounded-full border border-white/25 bg-black/50 px-3 py-1.5 text-sm text-white"
+          >
+            ✕
+          </button>
+          <img
+            src={selectedFeedbackImage}
+            alt="feedback-full"
+            className="max-h-[90vh] max-w-[95vw] rounded-lg object-contain"
+            onClick={(event) => event.stopPropagation()}
+          />
+        </div>
+      ) : null}
+
+      {showAddedToCartPrompt ? (
+        <div className="fixed inset-0 z-[121] flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-[#C9A66B]/40 bg-[#171a1d] p-6 text-center shadow-2xl">
+            <h3 className="mb-2 text-xl font-bold text-[#C9A66B]">
+              {language === "ar" ? "تمت الاضافه للسلة بنجاح" : "Added to cart successfully"}
+            </h3>
+            <p className="mb-5 text-sm text-white/75">
+              {language === "ar" ? "ماذا تريد أن تفعل الآن؟" : "What would you like to do now?"}
+            </p>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setShowAddedToCartPrompt(false)}
+                className="rounded-lg border border-white/20 bg-[#121416] px-4 py-2.5 text-sm font-semibold text-[#F2ECE2] hover:border-white/35"
+              >
+                {language === "ar" ? "اكمال التسوق" : "Continue shopping"}
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/cart")}
+                className="gold-button rounded-lg px-4 py-2.5 text-sm font-semibold"
+              >
+                {language === "ar" ? "اتمام الطلب" : "Checkout"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

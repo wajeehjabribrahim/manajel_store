@@ -87,7 +87,7 @@ export const authOptions: NextAuthOptions = {
             email,
             reason: "User not found",
           });
-          return null;
+          throw new Error("EMAIL_NOT_REGISTERED");
         }
 
         const isValid = await bcrypt.compare(password, user.password);

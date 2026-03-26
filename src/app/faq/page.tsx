@@ -1,5 +1,4 @@
 "use client";
-import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
 
@@ -27,11 +26,10 @@ export default function FAQ() {
           background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
           borderBottom: "1px solid rgba(201,166,107,0.25)",
         }}
-        className="text-white py-12 px-4"
+        className="py-12 px-4 text-white"
       >
         <div className="max-w-4xl mx-auto">
-          <p className="mb-2 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.24em] text-[#C9A66B]">FAQ</p>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 leading-tight">{t.faq.title}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl gold-texture font-bold mb-2 leading-tight">{t.faq.title}</h1>
           <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
             {t.faq.description}
           </p>
@@ -39,19 +37,25 @@ export default function FAQ() {
       </section>
 
       <section className="max-w-4xl mx-auto px-4 py-12">
-        <div className="space-y-6">
+        <div className="border-t border-b border-white/15 bg-transparent">
           {faqs.map((faq, i) => (
             <details
               key={i}
-              className="overflow-hidden rounded-lg border border-white/10 bg-[#171a1d]"
+              className="group border-b border-white/10 last:border-b-0"
             >
               <summary
-                className="cursor-pointer p-3 sm:p-4 text-sm sm:text-base font-semibold text-[#C9A66B] bg-[#121416]"
+                className="cursor-pointer list-none py-5 text-base sm:text-[1.35rem] font-bold text-[#C9A66B] flex items-center justify-between gap-3"
               >
-                {faq.question}
+                <span>{faq.question}</span>
+                <span
+                  aria-hidden="true"
+                  className="text-[#C9A66B] text-sm transition-transform duration-200 group-open:rotate-180"
+                >
+                  ▼
+                </span>
               </summary>
-              <div className="p-3 sm:p-4">
-                <p className="text-sm sm:text-base text-white/80">{faq.answer}</p>
+              <div className="pb-5 pr-1 sm:pr-2">
+                <p className="text-sm sm:text-base text-white/80 leading-7">{faq.answer}</p>
               </div>
             </details>
           ))}
