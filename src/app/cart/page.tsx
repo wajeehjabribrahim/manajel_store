@@ -496,8 +496,7 @@ export default function Cart() {
             </p>
             <Link
               href="/shop"
-              className="inline-block px-8 py-3 rounded-lg font-semibold"
-              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
+              className="gold-button inline-block px-8 py-3 rounded-lg font-semibold"
             >
               {t("cart.continueShop")}
             </Link>
@@ -516,8 +515,7 @@ export default function Cart() {
             </p>
             <Link
               href="/shop"
-              className="inline-block px-8 py-3 rounded-lg font-semibold"
-              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
+              className="gold-button inline-block px-8 py-3 rounded-lg font-semibold"
             >
               {t("cart.continueShop")}
             </Link>

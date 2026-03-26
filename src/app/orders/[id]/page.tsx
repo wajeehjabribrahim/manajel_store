@@ -57,6 +57,7 @@ export default function OrderDetailsPage() {
   const [feedbackError, setFeedbackError] = useState("");
   const [feedbackSuccess, setFeedbackSuccess] = useState("");
   const [existingFeedback, setExistingFeedback] = useState<OrderFeedback | null>(null);
+  const [localizedProductNames, setLocalizedProductNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!id) return;
@@ -98,6 +99,33 @@ export default function OrderDetailsPage() {
     fetchOrder();
   }, [id, guestToken, shouldOpenFeedback, t]);
 
+  useEffect(() => {
+    const loadLocalizedProductNames = async () => {
+      try {
+        const res = await fetch(`/api/products?lang=${language}`);
+        if (!res.ok) {
+          setLocalizedProductNames({});
+          return;
+        }
+
+        const data = await res.json();
+        const products = Array.isArray(data?.products) ? data.products : [];
+        const namesMap = products.reduce((acc: Record<string, string>, product: { id?: string; name?: string }) => {
+          if (product?.id && product?.name) {
+            acc[product.id] = product.name;
+          }
+          return acc;
+        }, {});
+
+        setLocalizedProductNames(namesMap);
+      } catch {
+        setLocalizedProductNames({});
+      }
+    };
+
+    loadLocalizedProductNames();
+  }, [language]);
+
   if (loading) {
     return (
       <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
@@ -126,8 +154,7 @@ export default function OrderDetailsPage() {
             </h2>
             <Link
               href="/shop"
-              className="inline-block px-8 py-3 rounded-lg font-semibold mt-4"
-              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
+              className="gold-button inline-block px-8 py-3 rounded-lg font-semibold mt-4"
             >
               {t("cart.continueShop")}
             </Link>
@@ -335,6 +362,7 @@ export default function OrderDetailsPage() {
                   // محاولة الحصول على الصورة من المنتج إذا لم تكن موجودة في الطلب
                   const product = PRODUCTS.find(p => p.id === item.productId);
                   const itemImage = item.image || product?.image;
+                  const displayItemName = localizedProductNames[item.productId] || item.name;
                   
                   return (
                   <div
@@ -348,7 +376,7 @@ export default function OrderDetailsPage() {
                     {itemImage ? (
                       <img
                         src={itemImage}
-                        alt={item.name}
+                        alt={displayItemName}
                         className="object-cover w-full h-full"
                       />
                     ) : (
@@ -365,7 +393,7 @@ export default function OrderDetailsPage() {
 
                   <div className="flex-1">
                     <h3 className="mb-1 text-lg font-bold text-[#F2ECE2]">
-                      {item.name}
+                      {displayItemName}
                     </h3>
                     <p className="text-sm text-white/70">
                       {t("cart.weight")}: {getProductSizeWeight(item.size, product?.sizes)}
@@ -466,8 +494,7 @@ export default function OrderDetailsPage() {
 
             <Link
               href="/shop"
-              className="block text-center px-6 py-3 rounded-lg font-semibold mt-2"
-              style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
+              className="gold-button block text-center px-6 py-3 rounded-lg font-semibold mt-2"
             >
               {t("cart.continueShop")}
             </Link>

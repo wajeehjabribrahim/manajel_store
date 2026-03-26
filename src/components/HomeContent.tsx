@@ -25,7 +25,8 @@ export default function HomeContent() {
   const [heritageImageIndex, setHeritageImageIndex] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const userMenuRef = useRef<HTMLDivElement>(null);
+  const desktopUserMenuRef = useRef<HTMLDivElement>(null);
+  const mobileUserMenuRef = useRef<HTMLDivElement>(null);
   const featuredSwiperRef = useRef<SwiperType | null>(null);
   const gold = "#C9A66B";
 
@@ -45,7 +46,11 @@ export default function HomeContent() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isInsideDesktop = desktopUserMenuRef.current?.contains(target);
+      const isInsideMobile = mobileUserMenuRef.current?.contains(target);
+
+      if (!isInsideDesktop && !isInsideMobile) {
         setShowUserMenu(false);
       }
     };
@@ -231,7 +236,7 @@ export default function HomeContent() {
                 <LanguageSwitcher />
                 
                 {/* قائمة السلة والطلبات - للجميع */}
-                <div className="relative z-50" ref={userMenuRef}>
+                <div className="relative z-50" ref={desktopUserMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="transition-opacity relative flex items-center gap-2 text-white/85 hover:text-white"
@@ -426,7 +431,7 @@ export default function HomeContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </Link>
-                <div className="relative z-50" ref={userMenuRef}>
+                <div className="relative z-50" ref={mobileUserMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="transition-opacity relative flex items-center justify-center text-white/85 hover:text-white"
