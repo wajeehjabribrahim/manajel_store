@@ -8,7 +8,7 @@ import { CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { DEFAULT_SIZE_KEY, getProductSizeLabel, SizeKey } from "@/lib/productSizes";
+import { DEFAULT_SIZE_KEY, SizeKey } from "@/lib/productSizes";
 
 interface ProductCardProps {
   product: Product;
@@ -211,14 +211,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
               title={language === "ar" ? "إضافة سريعة" : "Quick add"}
               aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
             >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 11V7a4 4 0 10-8 0v4M5 11h14l-1 9H6l-1-9z"
-                />
-              </svg>
+              <span className="text-sm leading-none">🛒</span>
             </button>
 
             {showQuickAdd ? (
@@ -237,7 +230,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                   >
                     {(availableSizes.length ? availableSizes : [DEFAULT_SIZE_KEY]).map((size) => (
                       <option key={size} value={size}>
-                        {getProductSizeLabel(size, product.sizes as any, t, language)}
+                        {product.sizes?.[size]?.weight || (language === "ar" ? "وزن غير محدد" : "Weight not set")}
                       </option>
                     ))}
                   </select>
@@ -269,7 +262,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                 </div>
                 <button
                   onClick={handleQuickAddToCart}
-                  className="w-full rounded-md bg-[#C9A66B] py-1.5 text-xs font-bold text-[#121416]"
+                  className="gold-button w-full rounded-md py-1.5 text-xs font-bold"
                   type="button"
                 >
                   {language === "ar" ? "إضافة للسلة" : "Add to cart"}

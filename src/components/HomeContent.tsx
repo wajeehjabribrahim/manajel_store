@@ -188,11 +188,11 @@ export default function HomeContent() {
 
         {/* Header overlay on hero */}
         <header className="absolute top-0 left-0 right-0 z-50 w-full text-white">
-          <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 md:py-4 relative z-10">
-            <div className="flex justify-between items-center relative">
+          <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 md:py-5 relative z-10">
+            <div className="flex justify-between items-center relative md:gap-8">
               {/* Logo */}
-              <Link href="/" className="flex items-center gap-2 group">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
+              <Link href="/" className="flex items-center gap-2 md:gap-3 group md:translate-x-2 lg:translate-x-3">
+                <div className="w-10 h-10 md:w-11 md:h-11 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
                   <Image
                     src="/images/logo.jpg"
                     alt="Manajel Logo"
@@ -203,13 +203,13 @@ export default function HomeContent() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-lg sm:text-xl font-black tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
-                  <span className="text-[8px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
+                  <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
+                  <span className="text-[8px] md:text-[9px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
                 </div>
               </Link>
 
               {/* Desktop Navigation */}
-              <div className="hidden md:flex gap-6 lg:gap-8">
+              <div className="hidden md:flex items-center gap-6 lg:gap-9 md:-translate-x-2 lg:-translate-x-3">
                 {[
                   { name: t("nav.home"), href: "/" },
                   { name: t("nav.shop"), href: "/shop" },
@@ -219,7 +219,7 @@ export default function HomeContent() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-xs font-semibold uppercase tracking-[0.1em] text-white/80 hover:text-white transition-colors"
+                    className="text-xs md:text-sm font-semibold uppercase tracking-[0.1em] text-white/80 hover:text-white transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -227,7 +227,7 @@ export default function HomeContent() {
               </div>
 
               {/* Language Switcher, Auth & Cart */}
-              <div className="hidden md:flex items-center gap-4 lg:gap-5">
+              <div className="hidden md:flex items-center gap-5 lg:gap-6">
                 <LanguageSwitcher />
                 
                 {/* قائمة السلة والطلبات - للجميع */}
