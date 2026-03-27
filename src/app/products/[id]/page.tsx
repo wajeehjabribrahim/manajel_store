@@ -784,28 +784,28 @@ export default function ProductPage({ params }: PageProps) {
         ) : null}
 
         {/* Product Details Section */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6">
-            <h4 className="mb-2 text-lg font-bold text-[#C9A66B]">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-3 md:p-6">
+            <h4 className="mb-1 md:mb-2 text-base md:text-lg font-bold text-[#C9A66B]">
               {t.product.original}
             </h4>
-            <p className="text-sm text-white/80">
+            <p className="text-xs md:text-sm text-white/80">
               {t.product.originalDesc}
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6">
-            <h4 className="mb-2 text-lg font-bold text-[#C9A66B]">
+          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-3 md:p-6">
+            <h4 className="mb-1 md:mb-2 text-base md:text-lg font-bold text-[#C9A66B]">
               {t.product.fastShip}
             </h4>
-            <p className="text-sm text-white/80">
+            <p className="text-xs md:text-sm text-white/80">
               {t.product.fastShipDesc}
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-6">
-            <h4 className="mb-2 text-lg font-bold text-[#C9A66B]">
+          <div className="rounded-xl border border-white/10 bg-[#171a1d] p-3 md:p-6">
+            <h4 className="mb-1 md:mb-2 text-base md:text-lg font-bold text-[#C9A66B]">
               {t.product.satisfaction}
             </h4>
-            <p className="text-sm text-white/80">
+            <p className="text-xs md:text-sm text-white/80">
               {t.product.satisfactionDesc}
             </p>
           </div>

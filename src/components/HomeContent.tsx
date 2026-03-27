@@ -597,6 +597,7 @@ export default function HomeContent() {
             </h2>
             <span className="h-px flex-1 bg-[#C9A66B]/70" />
           </div>
+        
           
         </div>
 
@@ -672,15 +673,15 @@ export default function HomeContent() {
                   <SwiperSlide key={key}>
                     <Link
                       href={`/products/${product.id}`}
-                      className="featured-product-card-auto group block h-[310px] sm:h-[360px] border border-transparent bg-transparent p-0 hover:border-[#C9A66B] transition-all duration-300 shadow-lg overflow-hidden"
-                      style={{ boxShadow: "0 4px 32px 0 #0006" }}
+                      className="featured-product-card-auto group block h-full border border-transparent bg-transparent p-0 hover:border-[#C9A66B] transition-all duration-300 shadow-lg overflow-hidden"
+                      style={{ boxShadow: "0 4px 32px 0 #0006", maxWidth: '320px', minWidth: '0' }}
                     >
-                      <div className="aspect-video overflow-hidden bg-[#23201c]">
+                      <div className="aspect-[4/5] overflow-hidden bg-[#23201c] w-full">
                         <Image
                           src={product.image || "/images/hero.jpg"}
                           alt={product.name}
-                          width={1280}
-                          height={720}
+                          width={800}
+                          height={800}
                           className="w-full h-full object-cover featured-product-image"
                         />
                       </div>
@@ -708,6 +709,20 @@ export default function HomeContent() {
                   </SwiperSlide>
               )})}
         </Swiper>
+
+        <div className="mt-12 sm:mt-14 mb-6 flex items-center justify-center gap-3 sm:gap-5">
+          <span className="h-px w-12 sm:w-20 bg-[#C9A66B]/45" />
+          <Image
+            src="/images/split.png"
+            alt="decorative separator"
+            width={2008}
+            height={512}
+            className="h-auto w-full max-w-[220px] sm:max-w-[320px] md:max-w-[420px] opacity-90"
+            loading="lazy"
+          />
+          <span className="h-px w-12 sm:w-20 bg-[#C9A66B]/45" />
+        </div>
+
 
         {/*<div className="text-center mt-12">
           <Link

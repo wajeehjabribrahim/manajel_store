@@ -110,20 +110,20 @@ export default function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 relative z-10">
         <div className="flex justify-between items-center relative">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
+          <Link href="/" className="flex items-center gap-2 md:gap-3 group">
+            <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
               <Image
                 src="/images/logo.jpg"
                 alt="Manajel Logo"
-                width={48}
-                height={48}
+                width={36}
+                height={36}
                 priority
                 className="object-cover w-full h-full"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-black tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
-              <span className="text-[10px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
+              <span className="text-lg md:text-2xl font-black tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
+              <span className="text-[8px] md:text-[10px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
             </div>
           </Link>
 
@@ -330,15 +330,15 @@ export default function Header() {
           </div>
 
           {/* Mobile Icons - Language, Account & Cart */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="md:hidden flex items-center gap-2">
             <LanguageSwitcher />
             <Link
               href={isAuthenticated ? "/account" : "/login"}
-              className="transition-opacity w-10 h-10 flex items-center justify-center"
+              className="transition-opacity w-8 h-8 flex items-center justify-center md:w-10 md:h-10"
               title={isAuthenticated ? (t("account.title") === "account.title" ? "الحساب" : t("account.title")) : t("auth.login")}
             >
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5 md:w-6 md:h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -356,11 +356,11 @@ export default function Header() {
             <div className="relative z-50" ref={mobileUserMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity relative w-10 h-10 flex items-center justify-center text-white/85 hover:text-white"
+                className="transition-opacity relative w-8 h-8 flex items-center justify-center text-white/85 hover:text-white md:w-10 md:h-10"
                 title="السلة والطلبات"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-5 h-5 md:w-6 md:h-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -373,7 +373,7 @@ export default function Header() {
                   />
                 </svg>
                 {cartCount > 0 ? (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[10px] font-bold leading-[18px] text-center border border-white/20">
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full bg-red-600 text-white text-[9px] font-bold leading-[16px] text-center border border-white/20 md:min-w-[18px] md:h-[18px] md:text-[10px] md:leading-[18px]">
                     {cartCount > 99 ? "99+" : cartCount}
                   </span>
                 ) : null}
