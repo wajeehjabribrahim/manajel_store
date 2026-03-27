@@ -164,7 +164,7 @@ export default function HomeContent() {
       <SignupPrompt />
 
       <section
-        className="hero-section relative w-full aspect-[4/5] min-h-[100vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[5/4] md:min-h-[76vh] mt-0"
+        className="hero-section relative w-full aspect-[4/5] min-h-[72vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[15/8] md:min-h-[44vh] mt-0"
         style={{
           backgroundImage: "url('/images/hero.jpg')",
           backgroundSize: "cover",
@@ -181,7 +181,7 @@ export default function HomeContent() {
         />
 
         {/* Header overlay on hero */}
-        <header className="absolute top-0 left-0 right-0 z-50 w-full text-white">
+        <header className="absolute top-0 left-0 right-0 z-50 w-full text-white tajawal-regular-all">
           <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 md:py-5 relative z-10">
             <div className="flex justify-between items-center relative md:gap-8">
               {/* Logo */}
@@ -324,7 +324,7 @@ export default function HomeContent() {
                               d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                             />
                           </svg>
-                          <span className="font-semibold text-sm">{t("orders.myOrders")}</span>
+                          <span className="font-semibold text-sm">{t("admin.orders") === "admin.orders" ? "الطلبات" : t("admin.orders")}</span>
                         </div>
                       </Link>
                     </div>
@@ -531,7 +531,7 @@ export default function HomeContent() {
 
         <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-4 text-center">
           <p
-            className="text-xl sm:text-3xl md:text-5xl font-extrabold tracking-wide"
+            className="text-xl sm:text-5xl md:text-5xl tajawal-regular-all font-extrabold tracking-wide "
             style={{
               color: "#E6C88A",
               WebkitTextFillColor: "#E6C88A",
@@ -541,7 +541,7 @@ export default function HomeContent() {
             {language === "ar" ? "شركة ومعصرة مناجل للانتاج الزراعي" : "Manajel Company & Mill for Agricultural Production"}
           </p>
           <p
-            className="text-xs sm:text-base md:text-xl font-semibold"
+            className="text-xs sm:text-base md:text-2xl font-semibold tajawal-regular-all tracking-wide max-w-3xl"
             style={{
               backgroundImage:
                 "radial-gradient(circle at 18% 22%, rgba(255, 250, 209, 0.98) 0%, rgba(255, 250, 209, 0) 34%), radial-gradient(circle at 82% 76%, rgba(255, 221, 132, 0.82) 0%, rgba(255, 221, 132, 0) 33%), linear-gradient(130deg, #fff7cf 0%, #ffe9a8 10%, #efc96a 22%, #9a6f1f 36%, #f7d57f 50%, #b17a23 64%, #ffefb7 77%, #c3872a 90%, #fbe09a 100%)",
@@ -559,27 +559,44 @@ export default function HomeContent() {
         </div>
 
         <div className="hero-content relative z-10 mx-auto flex min-h-[96vh] w-full max-w-7xl flex-col justify-end pb-6 sm:min-h-[44vh] md:h-full md:min-h-0 md:pb-4 pt-20">
+          {/* content inside centered container (kept empty to preserve vertical spacing) */}
+        </div>
 
-          <div className="mt-4 md:mt-6 flex justify-center">
-            <Link
-              href={isAdmin ? "/admin" : "/shop"}
-              className="gold-button rounded-xl px-6 py-2 text-sm font-bold"
-            >
-              {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
-            </Link>
-            
-          </div>
+        <div className="absolute left-0 right-0 bottom-6 z-40 flex justify-center pointer-events-auto">
+          <Link
+            href={isAdmin ? "/admin" : "/shop"}
+            className="gold-button rounded-xl px-6 py-2 text-sm font-bold"
+          >
+            {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
+          </Link>
         </div>
       </section>
 
-      <section id="new-arrivals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="mx-auto flex min-h-[180px] max-w-4xl flex-col items-center justify-center text-center">
+          <p className="text-2xl sm:text-5xl font-extrabold gold-texture tajawal-regular-all ">{language === "ar"
+              ? "من نحن"
+              : "Who We Are"}</p>
+          <p className="mt-4 mx-auto max-w-3xl text-sm sm:text-base font-normal tajawal-regular leading-8 text-white/80">
+            {language === "ar"
+              ? "أكثر من مجرد متجر… إحنا في مناجل شركة ومعصرة، بدايتنا كانت في 2021، لكن خبرتنا بهالمجال متوارثة من الأجداد. هدفنا نوصل لكم خير الأرض الفلسطينية زي ما هو، بطعم أصيل وجودة بنفتخر فيها."
+              : "More than just a store… At Manajel, we are a company and olive mill. Our journey began in 2021, but our experience in this field has been passed down through generations. Our goal is to bring you the goodness of Palestinian land as it is—authentic in taste and quality we are proud of."}
+          </p>
+        </div>
+      </section>
+
+      <section id="new-arrivals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-20">
         <div
           ref={arrivalsReveal.elementRef}
           className={`mb-12 text-center scroll-animate ${arrivalsReveal.isVisible ? "visible" : ""}`}
         >
-          <h2 className="text-2xl md:text-3xl font-black mb-4 gold-texture">
-            {language === "ar" ? "بعض المنتجات المميزة" : "Featured Products"}
-          </h2>
+          <div className="mb-4 flex w-full items-center justify-center gap-3 sm:gap-4 overflow-hidden">
+            <span className="h-px flex-1 bg-[#C9A66B]/70" />
+            <h2 className="whitespace-nowrap text-1xl md:text-3xl font-black gold-texture tajawal-regular-all">
+              {language === "ar" ? "بعض المنتجات المميزة" : "Featured Products"}
+            </h2>
+            <span className="h-px flex-1 bg-[#C9A66B]/70" />
+          </div>
           
         </div>
 
@@ -619,12 +636,12 @@ export default function HomeContent() {
             1024: { slidesPerView: 2.4 },
             1280: { slidesPerView: 3 },
           }}
-          className="featured-products-swiper pb-10"
+            className="featured-products-swiper pb-2"
         >
           {featuredProducts.length === 0
             ? Array.from({ length: 4 }).map((_, idx) => (
                 <SwiperSlide key={idx}>
-                  <div className="relative h-[360px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5 p-3 sm:p-5 overflow-hidden animate-pulse">
+                  <div className="relative h-[340px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5 p-3 sm:p-5 overflow-hidden animate-pulse">
                     <div className="rounded-xl sm:rounded-2xl bg-gray-700/50 aspect-video w-full mb-3 sm:mb-4" />
                     <div className="h-6 bg-gray-700/50 rounded mb-2 w-3/4" />
                     <div className="h-4 bg-gray-700/50 rounded mb-2 w-2/3" />
@@ -655,10 +672,10 @@ export default function HomeContent() {
                   <SwiperSlide key={key}>
                     <Link
                       href={`/products/${product.id}`}
-                      className="featured-product-card-auto group block h-[360px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-[#C9A66B]/40 bg-[#181b1e] p-0 hover:border-[#C9A66B] transition-all duration-300 shadow-lg overflow-hidden"
+                      className="featured-product-card-auto group block h-[310px] sm:h-[360px] border border-transparent bg-transparent p-0 hover:border-[#C9A66B] transition-all duration-300 shadow-lg overflow-hidden"
                       style={{ boxShadow: "0 4px 32px 0 #0006" }}
                     >
-                      <div className="aspect-video rounded-t-2xl sm:rounded-t-3xl overflow-hidden bg-[#23201c]">
+                      <div className="aspect-video overflow-hidden bg-[#23201c]">
                         <Image
                           src={product.image || "/images/hero.jpg"}
                           alt={product.name}
@@ -669,7 +686,7 @@ export default function HomeContent() {
                       </div>
                       <div className="px-5 pb-5 pt-2 flex flex-col gap-1">
                         <div className="flex items-center justify-between">
-                          <h3 className="gold-texture-static text-[#C9A66B] text-lg sm:text-2xl font-extrabold leading-tight line-clamp-2">
+                          <h3 className="gold-texture-static text-[#C9A66B] text-base sm:text-lg font-extrabold leading-tight line-clamp-2">
                             {t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}
                           </h3>
                           <div className="flex items-center gap-2 min-w-fit">
@@ -681,7 +698,7 @@ export default function HomeContent() {
                             </span>
                           </div>
                         </div>
-                        <p className={`text-sm sm:text-base text-white/80 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
+                        <p className={`text-sm sm:text-base tajawal-regular text-white/80 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
                           {t(`products.${product.id}.description`) === `products.${product.id}.description`
                             ? product.description
                             : t(`products.${product.id}.description`)}
@@ -733,20 +750,20 @@ export default function HomeContent() {
                 
 
                 <div className="flex flex-wrap gap-2 justify-start">
-                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-3 py-1.5 text-xs sm:text-sm text-[#F2ECE2] backdrop-blur-md">
+                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-2 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all ">
                     🌿 {language === "ar" ? "مصدر طبيعي" : "Natural Source"}
                   </span>
-                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-3 py-1.5 text-xs sm:text-sm text-[#F2ECE2] backdrop-blur-md">
+                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-2 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all">
                     🫒 {language === "ar" ? "تراث فلسطيني" : "Palestinian Heritage"}
                   </span>
-                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-3 py-1.5 text-xs sm:text-sm text-[#F2ECE2] backdrop-blur-md">
+                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-2 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all">
                     ✨ {language === "ar" ? "طرق تقليدية" : "Traditional Methods"}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className={`order-2 lg:order-2 lg:col-span-6 p-2 sm:p-4 md:p-6 lg:p-0 ${language === "ar" ? "text-right" : "text-left"}`}>
+            <div className={`order-2 lg:order-2 lg:col-span-6 p-2 sm:p-4 md:p-6 lg:p-0 tajawal-regular-all ${language === "ar" ? "text-right" : "text-left"}`}>
               <p className={`text-3xl sm:text-4xl md:text-10xl mb-5 leading-[1.2] font-extrabold gold-texture ${language === "ar" ? "tracking-[0.06em]" : "tracking-[0.02em]"}`}>
                 <span className="block w-full">{language === "ar" ? "حكاية التراث" : "Heritage Story"}</span>
               </p>

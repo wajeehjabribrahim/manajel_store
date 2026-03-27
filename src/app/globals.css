@@ -52,7 +52,7 @@
 
 /* Extra large text coverage */
 .text-6xl.gold-texture {
-  background-size: 350% 350%, 300% 300%, 100% 100%;
+  background-size: 4000% 4000%, 4000% 4000%, 400% 400%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -113,6 +113,35 @@
   src: url('/fonts/Tajawal-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
+}
+
+@font-face {
+  font-family: 'TajawalRegular';
+  src: url('/fonts/Tajawal-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+.tajawal-regular {
+  font-family: 'TajawalRegular', 'Tajawal', Arial, sans-serif !important;
+  font-weight: 400 !important;
+}
+
+.tajawal-bold {
+  font-family: 'Tajawal', Arial, sans-serif !important;
+  font-weight: 700 !important;
+}
+
+.tajawal-regular-all,
+.tajawal-regular-all * {
+  font-family: 'TajawalRegular', 'Tajawal', Arial, sans-serif !important;
+  font-weight: 400 !important;
+}
+
+.tajawal-regular-all .product-name-bold,
+.tajawal-regular-all .product-name-bold * {
+  font-family: 'Tajawal', Arial, sans-serif !important;
+  font-weight: 700 !important;
 }
 
 @keyframes heroZoom {
@@ -523,6 +552,18 @@ html {
 
 .featured-product-card-auto:hover .featured-product-image {
   transform: scale(1.08);
+}
+
+.featured-products-swiper {
+  padding-bottom: 16px !important;
+}
+
+.featured-products-swiper .swiper-pagination {
+  bottom: 2px !important;
+}
+
+.featured-products-swiper .swiper-pagination-bullet {
+  margin: 0 4px !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

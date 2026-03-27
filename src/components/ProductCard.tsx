@@ -148,7 +148,11 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
 
     window.dispatchEvent(new Event("manajel-cart-updated"));
     setQuickAddMessage(language === "ar" ? "تمت الإضافة للسلة" : "Added to cart");
-    setTimeout(() => setQuickAddMessage(null), 1500);
+    setTimeout(() => {
+      setShowQuickAdd(false);
+      setQuantity(1);
+      setQuickAddMessage(null);
+    }, 900);
   };
 
   return (
@@ -197,12 +201,12 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           <h3 className="gold-texture-static mb-1 line-clamp-1 text-sm sm:text-base font-semibold text-[#C9A66B]">
             {name}
           </h3>
-          <p className="mb-3 line-clamp-3 sm:line-clamp-2 text-[10px] sm:text-xs leading-4 sm:leading-5 text-white/72">
+          <p className="mb-3 line-clamp-3 sm:line-clamp-2 text-[10px] sm:text-xs leading-4 sm:leading-5 text-white/72 tajawal-regular">
             {description.split(".")[0]}
           </p>
 
           {/* Price */}
-          <div className="flex justify-between items-center mt-auto">
+          <div className="flex justify-between items-center mt-auto abo">
             <div>
               <div className="flex items-center gap-3">
                 {hasSale ? (
@@ -227,7 +231,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                   setShowQuickAdd((prev) => !prev);
                 }}
                 type="button"
-                className="h-10 w-10 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/60 bg-[#121416]/90 text-[#C9A66B] transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-[#C9A66B]/20"
+                className="h-6 w-6 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/60 bg-[#121416]/90 text-[#C9A66B] transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-[#C9A66B]/20"
                 title={language === "ar" ? "إضافة سريعة" : "Quick add"}
                 aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
               >

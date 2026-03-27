@@ -249,8 +249,8 @@ export default function ShopContent() {
         className="px-4 py-12 text-white"
       >
         <div className="max-w-7xl mx-auto">
-          <h1 className="mb-2 text-3xl sm:text-4xl text-[#C9A66B] leading-tight">{t("shop.title")}</h1>
-          <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed">
+          <h1 className="mb-2 text-3xl sm:text-4xl text-[#C9A66B] leading-tight tajawal-regular-all">{t("shop.title")}</h1>
+          <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed tajawal-regular-all">
             {t("shop.subtitle")}
           </p>
         </div>
@@ -261,10 +261,10 @@ export default function ShopContent() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar - Categories */}
           <div className="lg:w-56 flex-shrink-0">
-            <h3 className="mb-4 sm:mb-6 text-lg sm:text-xl font-bold text-[#C9A66B]">
+            <h3 className="mb-4 sm:mb-6 text-lg sm:text-xl font-bold text-[#C9A66B] tajawal-regular-all">
               {t("shop.categories")}
             </h3>
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 sm:gap-2">
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 sm:gap-2 tajawal-regular-all">
               {isLoading ? (
                 // Categories Skeleton
                 <>

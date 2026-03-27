@@ -8,7 +8,7 @@ export default function About() {
   const { language } = useLanguage();
   const t = translations[language];
   return (
-    <div className="bg-[#121416] text-[#F2ECE2]">
+    <div className="bg-[#121416] text-[#F2ECE2] tajawal-regular-all">
       {/* Hero */}
       <section
         style={{
@@ -27,7 +27,7 @@ export default function About() {
 
       {/* Main Content */}
       <section className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10 sm:mb-12">
           <AnimatedSection animationType="fade-left">
             <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-6 text-[#C9A66B] text-center">
               {t.about.ourStory}
@@ -76,7 +76,7 @@ export default function About() {
         {/* Products Section */}
         <AnimatedSection animationType="fade-up">
           <div className="mb-16">
-            <h2 className="text-xl sm:text-3xl font-bold mb-2 text-center text-[#C9A66B]">
+            <h2 className="mx-auto w-fit text-xl sm:text-3xl font-bold mb-2 text-center text-[#C9A66B]">
               {t.about.products}
             </h2>
             <p className="text-center text-white/70 text-sm sm:text-base mb-8">
@@ -84,7 +84,7 @@ export default function About() {
                 ? "مجموعة منتقاة من أفضل المنتجات الفلسطينية الأصيلة"
                 : "A curated selection of the finest authentic Palestinian products"}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {[
                 {
                   name: t.about.product1,
@@ -107,21 +107,21 @@ export default function About() {
                 {
                   name: t.about.product4,
                   desc: language === "ar"
-                    ? "حبوب مقرومة بطريقة تقليدية"
+                    ? "حبوب محضرة بطريقة تقليدية"
                     : "Grains roasted using traditional methods"
                 },
               ].map((product, i) => (
                 <div
                   key={i}
-                  className="group rounded-lg border border-[#C9A66B]/40 bg-[#171a1d]/60 p-5 backdrop-blur-sm hover:border-[#C9A66B]/70 hover:bg-[#171a1d] transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A66B]/20"
+                  className={`group h-full rounded-lg border border-[#C9A66B]/40 bg-[#171a1d]/60 p-4 sm:p-5 backdrop-blur-sm transition-all duration-300 hover:border-[#C9A66B]/70 hover:bg-[#171a1d] hover:shadow-lg hover:shadow-[#C9A66B]/20 text-center ${language === "ar" ? "sm:text-right" : "sm:text-left"}`}
                 >
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="text-sm sm:text-base font-bold text-[#F2ECE2] flex-1 group-hover:text-[#C9A66B] transition-colors">
+                  <div className="mb-3 flex items-start justify-between gap-2">
+                    <h4 className="flex-1 text-sm sm:text-base font-bold leading-6 text-[#F2ECE2] transition-colors group-hover:text-[#C9A66B] line-clamp-2">
                       {product.name}
                     </h4>
-                    <span className="text-[#C9A66B] text-lg ml-2">✓</span>
+                    <span className="mt-0.5 shrink-0 text-lg text-[#C9A66B]">✓</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-white/60 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-white/60 leading-7 line-clamp-3">
                     {product.desc}
                   </p>
                 </div>

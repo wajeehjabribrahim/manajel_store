@@ -20,7 +20,7 @@ export default function FAQ() {
   ];
 
   return (
-    <div className="bg-[#121416] text-[#F2ECE2]">
+    <div className="bg-[#121416] text-[#F2ECE2] tajawal-regular-all">
       <section
         style={{
           background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",
@@ -44,12 +44,12 @@ export default function FAQ() {
               className="group border-b border-white/10 last:border-b-0"
             >
               <summary
-                className="cursor-pointer list-none py-5 text-base sm:text-[1.35rem] font-bold text-[#C9A66B] flex items-center justify-between gap-3"
+                className="relative cursor-pointer list-none py-5 pl-8 pr-1 sm:pr-2 text-base sm:text-[1.35rem] font-bold text-[#C9A66B]"
               >
-                <span>{faq.question}</span>
+                <span className="block">{faq.question}</span>
                 <span
                   aria-hidden="true"
-                  className="text-[#C9A66B] text-sm transition-transform duration-200 group-open:rotate-180"
+                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[#C9A66B] text-sm transition-transform duration-200 group-open:rotate-180"
                 >
                   ▼
                 </span>

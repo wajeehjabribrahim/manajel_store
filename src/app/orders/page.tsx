@@ -287,7 +287,7 @@ export default function OrdersPage() {
   }
 
   return (
-    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416", direction: dir }} className="text-[#F2ECE2]">
+    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416", direction: dir }} className="text-[#F2ECE2] tajawal-regular-all">
       <section
         style={{
           background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",

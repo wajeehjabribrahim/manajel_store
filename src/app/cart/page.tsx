@@ -499,7 +499,7 @@ export default function Cart() {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2]">
+    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2] tajawal-regular-all">
       {/* Header */}
       <section
         style={{
@@ -577,8 +577,10 @@ export default function Cart() {
                       borderColor: "rgba(255,255,255,0.14)",
                     }}
                   >
-                    {/* Product Image */}
-                    <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                    {/* Product Image & Price Section (side by side on mobile) */}
+                    <div className="flex gap-4 sm:gap-6 flex-1">
+                      {/* Product Image */}
+                      <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
                       {productImage ? (
                         <img
                           src={productImage}
@@ -600,7 +602,26 @@ export default function Cart() {
                       )}
                     </div>
 
-                    {/* Product Info */}
+                      {/* Price & Remove (next to image on mobile) */}
+                      <div className="w-auto text-right flex flex-col gap-0 sm:hidden">
+                        <button
+                          onClick={() => removeItem(item.id, item.size)}
+                          className="text-red-500 hover:text-red-700 text-xs font-semibold mb-2"
+                        >
+                          {t("cart.remove")}
+                        </button>
+                        <div>
+                          <p className="text-xs text-white/70">{t("cart.pricePerUnit")}</p>
+                          <p className="text-sm font-bold text-[#F2ECE2]">
+                            {CURRENCY_SYMBOL}{productPrice}
+                          </p>
+                          <p className="mt-1 text-xs text-white/70">{t("cart.total")}</p>
+                          <p className="text-sm font-bold text-[#C9A66B]">
+                            {CURRENCY_SYMBOL}{productPrice * item.quantity}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                     <div className="flex-1 min-w-0">
                       <h3
                         className="gold-texture-static mb-2 text-lg font-bold text-[#C9A66B]"
@@ -663,8 +684,8 @@ export default function Cart() {
                       </div>
                     </div>
 
-                    {/* Price & Remove */}
-                    <div className="w-full sm:w-auto text-start sm:text-right flex flex-row sm:flex-col justify-between gap-4 sm:gap-0">
+                    {/* Price & Remove (desktop only) */}
+                    <div className="w-full sm:w-auto text-start sm:text-right hidden sm:flex flex-row sm:flex-col justify-between gap-4 sm:gap-0">
                       <button
                         onClick={() => removeItem(item.id, item.size)}
                         className="text-red-500 hover:text-red-700 text-sm font-semibold sm:mb-4"

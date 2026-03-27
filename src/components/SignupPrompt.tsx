@@ -55,7 +55,7 @@ export default function SignupPrompt() {
           isOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
         }`}
       >
-        <div className="max-h-[88vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#171a1d] p-4 sm:p-8 text-[#F2ECE2] shadow-2xl" style={{ direction: "rtl" }}>
+        <div className="max-h-[88vh] overflow-y-auto rounded-2xl border border-white/10 bg-[#171a1d] p-4 sm:p-8 text-[#F2ECE2] shadow-2xl tajawal-regular-all" style={{ direction: "rtl" }}>
           {/* Close Button */}
           <button
             onClick={handleClose}

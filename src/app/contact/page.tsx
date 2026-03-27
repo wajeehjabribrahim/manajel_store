@@ -77,7 +77,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="bg-[#121416] text-[#F2ECE2]">
+    <div className="bg-[#121416] text-[#F2ECE2] tajawal-regular-all">
       {/* Header */}
       <section
         style={{
@@ -137,12 +137,13 @@ export default function Contact() {
                   href={item.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[11px] sm:text-xs md:text-sm text-white/80 underline hover:text-white break-words"
+                  dir="ltr"
+                  className="mt-2 block text-[11px] sm:text-xs md:text-sm text-white/80 underline hover:text-white break-words"
                 >
                   {item.content}
                 </a>
               ) : (
-                <p className="text-[11px] sm:text-xs md:text-sm text-white/80 break-words">{item.content}</p>
+                <p className="mt-1 text-[11px] sm:text-xs md:text-sm text-white/80 break-words">{item.content}</p>
               )}
             </div>
           ))}

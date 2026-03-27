@@ -7,7 +7,7 @@ export default function ShippingPolicy() {
   const { language } = useLanguage();
   const t = translations[language];
   return (
-    <div className="bg-[#121416] text-[#F2ECE2]">
+    <div className="bg-[#121416] text-[#F2ECE2] tajawal-regular-all">
       <section
         style={{
           background: "linear-gradient(180deg, #14171a 0%, #101214 100%)",

@@ -112,7 +112,7 @@ export default function Footer() {
         color: "#F2ECE2",
         borderTop: "1px solid rgba(201,166,107,0.28)",
       }}
-      className="text-sm"
+      className="text-sm tajawal-regular-all"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         

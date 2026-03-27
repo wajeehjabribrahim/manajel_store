@@ -408,7 +408,7 @@ export default function ProductPage({ params }: PageProps) {
   };
 
   return (
-    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2]">
+    <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="text-[#F2ECE2] tajawal-regular-all">
       {/* Breadcrumb */}
       <div className="mx-auto max-w-7xl px-4 py-4 text-sm text-white/70">
         <Link href="/shop" className="text-[#C9A66B] hover:text-white transition-colors">
@@ -419,7 +419,7 @@ export default function ProductPage({ params }: PageProps) {
       </div>
 
       {/* Product Detail */}
-      <div className="mx-auto max-w-7xl px-4 py-12">
+      <div className="mx-auto max-w-7xl px-4 py-12 tajawal-regular">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Gallery */}
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#171a1d]">
@@ -449,9 +449,9 @@ export default function ProductPage({ params }: PageProps) {
           </div>
 
           {/* Product Info */}
-          <div>
+          <div className="tajawal-regular">
             <div className="mb-2 flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl md:text-3xl font-bold text-[#F2ECE2]">
+              <h1 className="text-2xl md:text-3xl gold-texture font-bold tajawal-bold product-name-bold" >
                 {name}
               </h1>
               {product.inStock ? (
@@ -499,7 +499,7 @@ export default function ProductPage({ params }: PageProps) {
             </div>
 
             {/* Description */}
-            <p className="mb-6 text-sm md:text-base text-white/80">{description}</p>
+            <p className="mb-6 text-sm md:text-base text-white/80 tajawal-regular">{description}</p>
 
             {ingredients ? (
               <div className="mb-6 rounded-xl border border-white/10 bg-[#171a1d] p-4">
