@@ -13,7 +13,7 @@ export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
   const {
     threshold = 0.1,
     rootMargin = "0px",
-    triggerOnce = true,
+    triggerOnce = false,
     delay = 0,
   } = options;
 

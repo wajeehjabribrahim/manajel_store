@@ -162,7 +162,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
     >
       <Link href={`/products/${product.id}`} className="block h-full">
         <div
-          className="product-card group relative flex h-full cursor-pointer flex-col overflow-hidden border border-transparent bg-[#121416] shadow-md transition-all duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
+          className="product-card group relative flex h-full cursor-pointer flex-col overflow-hidden border border-transparent bg-[#121416] shadow-md transition-all duration-150 hover:duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
           style={{ borderRadius: 0 }}
         >
         {/* Image Container */}
@@ -183,11 +183,13 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                 setShowQuickAdd((prev) => !prev);
               }}
               type="button"
-              className="absolute bottom-2 left-2 z-10 h-7 w-7 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/60 bg-[#121416]/90 text-[#C9A66B] transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-[#C9A66B]/20 shadow-md"
+              className="absolute bottom-2 left-2 z-10 h-7 w-7 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/80 bg-[#C9A66B] text-white transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-[#b17a23] shadow-md"
               title={language === "ar" ? "إضافة سريعة" : "Quick add"}
               aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
             >
-              <span className="text-base leading-none">🛒</span>
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z" />
+              </svg>
             </button>
           )}
           {product.image ? (

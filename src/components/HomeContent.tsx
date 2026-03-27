@@ -27,6 +27,7 @@ export default function HomeContent() {
   const desktopUserMenuRef = useRef<HTMLDivElement>(null);
   const mobileUserMenuRef = useRef<HTMLDivElement>(null);
   const featuredSwiperRef = useRef<SwiperType | null>(null);
+  const testimonialsSwiperRef = useRef<SwiperType | null>(null);
   const gold = "#C9A66B";
 
   const getCartCount = () => {
@@ -88,8 +89,11 @@ export default function HomeContent() {
     "/images/mail.jpg",
     "/images/oil.jpg",
   ];
-
-  const arrivalsReveal = useScrollAnimation({ delay: 100 });
+  const arrivalsReveal = useScrollAnimation({ delay: 100, triggerOnce: false });
+  const aboutReveal = useScrollAnimation({ delay: 60, triggerOnce: false });
+  const heroTextReveal = useScrollAnimation({ delay: 80, triggerOnce: false });
+  const separatorReveal = useScrollAnimation({ delay: 120, triggerOnce: false });
+  const heritageTextReveal = useScrollAnimation({ delay: 120, triggerOnce: false });
   const heritageReveal = useScrollAnimation({ delay: 200 });
 
   useEffect(() => {
@@ -127,6 +131,54 @@ export default function HomeContent() {
   }, [language]);
 
   const featuredProducts = products.filter((p) => p.featured).slice(0, 4);
+  const testimonials = [
+    {
+      nameAr: "أحمد الكيلاني",
+      roleAr: "زبون دائم",
+      reviewAr: "الزيت فعلاً أصلي وطعمه واضح من أول تجربة. التوصيل كان سريع والتغليف ممتاز.",
+      nameEn: "Ahmad Al-Kilani",
+      roleEn: "Loyal Customer",
+      reviewEn: "The olive oil is truly authentic and you can taste the quality immediately. Fast delivery and great packaging.",
+    },
+    {
+      nameAr: "لينا أبو خليل",
+      roleAr: "عميلة منذ 2022",
+      reviewAr: "من أجمل المنتجات الفلسطينية اللي جربتها. الجودة ثابتة بكل طلبية.",
+      nameEn: "Lina Abu Khalil",
+      roleEn: "Customer Since 2022",
+      reviewEn: "One of the best Palestinian products I have tried. The quality is consistent in every order.",
+    },
+    {
+      nameAr: "محمد الصباح",
+      roleAr: "صاحب مطعم",
+      reviewAr: "اعتمدنا منتجات مناجل بالمطعم، والزبائن لاحظوا الفرق مباشرة بالطعم.",
+      nameEn: "Mohammad Al-Sabah",
+      roleEn: "Restaurant Owner",
+      reviewEn: "We use Manajel products in our restaurant, and customers noticed the flavor difference right away.",
+    },
+    {
+      nameAr: "سمر النجار",
+      roleAr: "مشتري متكرر",
+      reviewAr: "تعامل راقٍ وجودة ممتازة. صرت أوصي فيكم لكل العائلة والأصدقاء.",
+      nameEn: "Samar Al-Najjar",
+      roleEn: "Repeat Buyer",
+      reviewEn: "Great service and excellent quality. I keep recommending you to family and friends.",
+    },
+    {
+      nameAr: "رامي الخطيب",
+      roleAr: "عميل جديد",
+      reviewAr: "أول طلب إلي وكان فوق التوقعات. الطعم أصيل والمنتج نظيف وواضح الاهتمام فيه.",
+      nameEn: "Rami Al-Khatib",
+      roleEn: "New Customer",
+      reviewEn: "My first order exceeded expectations. Authentic taste, clean product, and clear attention to detail.",
+    },
+  ];
+  const testimonialSlides = testimonials.length > 0
+    ? Array.from({ length: Math.max(testimonials.length, 9) }, (_, idx) => ({
+        key: `${idx}-${language}`,
+        item: testimonials[idx % testimonials.length],
+      }))
+    : [];
   const minimumLoopSlides = 8;
   const featuredSlides =
     featuredProducts.length === 0
@@ -159,12 +211,26 @@ export default function HomeContent() {
     swiper.autoplay?.stop();
   }, [featuredSlides.length]);
 
+  useEffect(() => {
+    const swiper = testimonialsSwiperRef.current;
+    if (!swiper) return;
+
+    swiper.update();
+
+    if (testimonialSlides.length > 1) {
+      swiper.autoplay?.start();
+      return;
+    }
+
+    swiper.autoplay?.stop();
+  }, [testimonialSlides.length]);
+
   return (
     <div className="bg-[#121416] text-[#F2ECE2]">
       <SignupPrompt />
 
-      <section
-        className="hero-section relative w-full aspect-[4/5] min-h-[72vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[15/8] md:min-h-[44vh] mt-0"
+        <section
+          className="hero-section relative w-full aspect-[4/5] min-h-[72vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[15/8] md:min-h-[44vh] mt-0"
         style={{
           backgroundImage: "url('/images/hero.jpg')",
           backgroundSize: "cover",
@@ -186,7 +252,7 @@ export default function HomeContent() {
             <div className="flex justify-between items-center relative md:gap-8">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2 md:gap-3 group md:translate-x-2 lg:translate-x-3">
-                <div className="w-10 h-10 md:w-11 md:h-11 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
+                <div className="w-10 h-10 md:w-11 md:h-11 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-150 hover:duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
                   <Image
                     src="/images/logo.jpg"
                     alt="Manajel Logo"
@@ -197,7 +263,7 @@ export default function HomeContent() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
+                  <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight transition-all duration-150 hover:duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
                   <span className="text-[8px] md:text-[9px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
                 </div>
               </Link>
@@ -213,7 +279,7 @@ export default function HomeContent() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-xs md:text-sm font-semibold uppercase tracking-[0.1em] text-white/80 hover:text-white transition-colors"
+                    className="text-xs md:text-sm font-semibold uppercase tracking-[0.1em] text-white/80 hover:text-white transition-colors duration-150 hover:duration-300"
                   >
                     {item.name}
                   </Link>
@@ -228,7 +294,7 @@ export default function HomeContent() {
                 <div className="relative z-50" ref={desktopUserMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="transition-opacity relative flex items-center gap-2 text-white/85 hover:text-white"
+                    className="transition-opacity duration-150 hover:duration-300 relative flex items-center gap-2 text-white/85 hover:text-white"
                     title="السلة والطلبات"
                   >
                     <div className="relative w-5 h-5 flex items-center justify-center">
@@ -394,7 +460,7 @@ export default function HomeContent() {
                   <div className="flex items-center gap-2">
                     <Link
                       href="/login"
-                      className="px-2 py-1 text-xs rounded-md bg-white/10 hover:bg-white/20 transition-colors"
+                      className="px-2 py-1 text-xs rounded-md bg-white/10 hover:bg-white/20 transition-colors duration-150 hover:duration-300"
                     >
                       {t("auth.login")}
                     </Link>
@@ -423,7 +489,7 @@ export default function HomeContent() {
                 <div className="relative z-50" ref={mobileUserMenuRef}>
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="transition-opacity relative flex items-center justify-center text-white/85 hover:text-white"
+                    className="transition-opacity duration-150 hover:duration-300 relative flex items-center justify-center text-white/85 hover:text-white"
                   >
                     <div className="relative w-5 h-5 flex items-center justify-center">
                       <svg
@@ -529,7 +595,10 @@ export default function HomeContent() {
           </nav>
         </header>
 
-        <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-4 text-center">
+        <div
+          ref={heroTextReveal.elementRef}
+          className={`pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-4 text-center scroll-animate transition-all duration-700 ${heroTextReveal.isVisible ? "visible opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+        >
           <p
             className="text-xl sm:text-5xl md:text-5xl tajawal-regular-all font-extrabold tracking-wide "
             style={{
@@ -573,11 +642,14 @@ export default function HomeContent() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="mx-auto flex min-h-[180px] max-w-4xl flex-col items-center justify-center text-center">
-          <p className="text-2xl sm:text-5xl font-extrabold gold-texture tajawal-regular-all ">{language === "ar"
-              ? "من نحن"
-              : "Who We Are"}</p>
-          <p className="mt-4 mx-auto max-w-3xl text-sm sm:text-base font-normal tajawal-regular leading-8 text-white/80">
+        <div
+          ref={aboutReveal.elementRef}
+          className={`mx-auto flex min-h-[180px] max-w-4xl flex-col items-center justify-center text-center transition-all duration-700 ${aboutReveal.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+        >
+          <p className="text-2xl sm:text-5xl font-extrabold gold-texture tajawal-regular-all transition-all duration-700">
+            {language === "ar" ? "من نحن" : "Who We Are"}
+          </p>
+          <p className="mt-4 mx-auto max-w-3xl text-sm sm:text-base font-normal tajawal-regular leading-8 text-white/80 transition-all duration-700 delay-150">
             {language === "ar"
               ? "أكثر من مجرد متجر… إحنا في مناجل شركة ومعصرة، بدايتنا كانت في 2021، لكن خبرتنا بهالمجال متوارثة من الأجداد. هدفنا نوصل لكم خير الأرض الفلسطينية زي ما هو، بطعم أصيل وجودة بنفتخر فيها."
               : "More than just a store… At Manajel, we are a company and olive mill. Our journey began in 2021, but our experience in this field has been passed down through generations. Our goal is to bring you the goodness of Palestinian land as it is—authentic in taste and quality we are proud of."}
@@ -588,7 +660,7 @@ export default function HomeContent() {
       <section id="new-arrivals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-20">
         <div
           ref={arrivalsReveal.elementRef}
-          className={`mb-12 text-center scroll-animate ${arrivalsReveal.isVisible ? "visible" : ""}`}
+          className={`mb-12 text-center scroll-animate transition-all duration-700 ${arrivalsReveal.isVisible ? "visible opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
         >
           <div className="mb-4 flex w-full items-center justify-center gap-3 sm:gap-4 overflow-hidden">
             <span className="h-px flex-1 bg-[#C9A66B]/70" />
@@ -601,6 +673,11 @@ export default function HomeContent() {
           
         </div>
 
+        <div
+          onMouseEnter={() => featuredSwiperRef.current?.autoplay?.stop()}
+          onMouseLeave={() => featuredSwiperRef.current?.autoplay?.start()}
+          className="w-full"
+        >
         <Swiper
           key={`featured-${language}-${dir}`}
           modules={[Autoplay, Pagination]}
@@ -673,10 +750,10 @@ export default function HomeContent() {
                   <SwiperSlide key={key}>
                     <Link
                       href={`/products/${product.id}`}
-                      className="featured-product-card-auto group block h-full border border-transparent bg-transparent p-0 hover:border-[#C9A66B] transition-all duration-300 shadow-lg overflow-hidden"
-                      style={{ boxShadow: "0 4px 32px 0 #0006", maxWidth: '320px', minWidth: '0' }}
+                      className="featured-product-card-auto group block h-full border border-transparent bg-transparent p-0 hover:border-[#C9A66B] transition-all duration-150 hover:duration-300 shadow-lg overflow-hidden"
+                      style={{ boxShadow: "0 4px 32px 0 #0006", maxWidth: '240px', minWidth: '0' }}
                     >
-                      <div className="aspect-[4/5] overflow-hidden bg-[#23201c] w-full">
+                      <div className="aspect-[8/10] overflow-hidden bg-[#23201c] w-full">
                         <Image
                           src={product.image || "/images/hero.jpg"}
                           alt={product.name}
@@ -709,25 +786,29 @@ export default function HomeContent() {
                   </SwiperSlide>
               )})}
         </Swiper>
+        </div>
 
-        <div className="mt-12 sm:mt-14 mb-6 flex items-center justify-center gap-3 sm:gap-5">
-          <span className="h-px w-12 sm:w-20 bg-[#C9A66B]/45" />
+        <div
+          ref={separatorReveal.elementRef}
+          className={`mt-12 sm:mt-14 mb-6 flex items-center justify-center gap-3 sm:gap-5 group transition-all duration-700 ${separatorReveal.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+        >
+          <span className="h-px w-12 sm:w-20 bg-[#C9A66B]/45 transition-transform duration-150 transform-gpu will-change-transform origin-center " />
           <Image
             src="/images/split.png"
             alt="decorative separator"
             width={2008}
             height={512}
-            className="h-auto w-full max-w-[220px] sm:max-w-[320px] md:max-w-[420px] opacity-90"
+            className="h-auto w-full max-w-[220px] sm:max-w-[320px] md:max-w-[420px] opacity-90 transition-transform duration-150 transform-gpu will-change-transform "
             loading="lazy"
           />
-          <span className="h-px w-12 sm:w-20 bg-[#C9A66B]/45" />
+          <span className="h-px w-12 sm:w-20 bg-[#C9A66B]/45 transition-transform duration-150 transform-gpu will-change-transform origin-center group-hover:scale-x-110" />
         </div>
 
 
         {/*<div className="text-center mt-12">
           <Link
             href={isAdmin ? "/admin" : "/shop"}
-            className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform hover:scale-105 shadow-lg hover:shadow-2xl"
+            className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform duration-150 hover:duration-300 hover:scale-105 shadow-lg hover:shadow-2xl"
           >
             {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
           </Link>
@@ -747,7 +828,7 @@ export default function HomeContent() {
           className={`max-w-7xl mx-auto scroll-animate ${heritageReveal.isVisible ? "visible" : ""}`}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            <div className="order-1 lg:order-1 lg:col-span-6 group relative rounded-2xl overflow-hidden border border-[#C9A66B]/35 bg-black/30 min-h-[280px] shadow-[0_18px_38px_rgba(0,0,0,0.35)] transition-transform duration-500 hover:-translate-y-1 hover:scale-[1.01]">
+            <div className="order-1 lg:order-1 lg:col-span-6 group relative rounded-2xl overflow-hidden border border-[#C9A66B]/35 bg-black/30 min-h-[280px] shadow-[0_18px_38px_rgba(0,0,0,0.35)] transition-transform duration-150 hover:duration-300 hover:-translate-y-1 hover:scale-[1.01]">
               <div className="slider-container relative w-full h-full rounded-xl border border-[#C9A66B]/40 overflow-hidden shadow-[0_10px_26px_rgba(0,0,0,0.35)]">
                 {heritageImages.map((img, idx) => (
                   <img
@@ -778,8 +859,11 @@ export default function HomeContent() {
               </div>
             </div>
 
-            <div className={`order-2 lg:order-2 lg:col-span-6 p-2 sm:p-4 md:p-6 lg:p-0 tajawal-regular-all ${language === "ar" ? "text-right" : "text-left"}`}>
-              <p className={`text-3xl sm:text-4xl md:text-10xl mb-5 leading-[1.2] font-extrabold gold-texture ${language === "ar" ? "tracking-[0.06em]" : "tracking-[0.02em]"}`}>
+            <div
+              ref={heritageTextReveal.elementRef}
+              className={`order-2 lg:order-2 lg:col-span-6 p-2 sm:p-4 md:p-6 lg:p-0 tajawal-regular-all transition-all duration-700 ${heritageTextReveal.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} ${language === "ar" ? "text-right" : "text-left"}`}
+            >
+              <p className={`text-3xl sm:text-4xl md:text-10xl mb-5 leading-[1.2] font-extrabold gold-texture ${language === "ar" ? "tracking-[0.01em]" : "tracking-[0.01em]"}`}>
                 <span className="block w-full">{language === "ar" ? "حكاية التراث" : "Heritage Story"}</span>
               </p>
               
@@ -797,7 +881,7 @@ export default function HomeContent() {
               <div className="mt-6">
                 <Link
                   href="/about"
-                  className="inline-flex items-center rounded-lg border border-[#C9A66B]/60 bg-[#C9A66B]/10 px-4 py-2 text-sm font-semibold text-[#C9A66B] transition-colors hover:bg-[#C9A66B]/20"
+                  className="inline-flex items-center rounded-lg border border-[#C9A66B]/60 bg-[#C9A66B]/10 px-4 py-2 text-sm font-semibold text-[#C9A66B] transition-colors duration-150 hover:duration-300 hover:bg-[#C9A66B]/20"
                 >
                   {language === "ar" ? "اكتشف المزيد" : "Read More"}
                 </Link>
@@ -806,10 +890,102 @@ export default function HomeContent() {
           </div>
 
           <div className="mb-10 md:mb-14" />
+
+          <section className="mt-28 md:mt-48">
+            <div className="mb-6 md:mb-8 flex items-center justify-center gap-3 sm:gap-4 overflow-hidden">
+              <span className="h-px flex-1 bg-[#C9A66B]/55" />
+              <h3 className="whitespace-nowrap text-2xl md:text-3xl font-black gold-texture tajawal-regular-all">
+                {language === "ar" ? "ثقة عملائنا" : "Our Customers Trust"}
+              </h3>
+              <span className="h-px flex-1 bg-[#C9A66B]/55" />
+            </div>
+
+            <div className="w-full">
+              <Swiper
+                key={`testimonials-${language}-${dir}`}
+                modules={[Autoplay, Pagination]}
+                spaceBetween={20}
+                slidesPerView={1.2}
+                centeredSlides={false}
+                slidesPerGroup={1}
+                loop={testimonialSlides.length > 1}
+                loopAdditionalSlides={testimonialSlides.length}
+                watchOverflow={false}
+                speed={1200}
+                allowTouchMove={true}
+                autoplay={
+                  testimonialSlides.length > 1
+                    ? {
+                        delay: 1300,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: false,
+                        stopOnLastSlide: false,
+                      }
+                    : false
+                }
+                onSwiper={(swiper) => {
+                  testimonialsSwiperRef.current = swiper;
+                  if (testimonialSlides.length > 1) {
+                    swiper.autoplay.start();
+                  }
+                }}
+                pagination={{ clickable: true }}
+                dir={dir}
+                breakpoints={{
+                  640: { slidesPerView: 1.8 },
+                  1024: { slidesPerView: 2.4 },
+                  1280: { slidesPerView: 3 },
+                }}
+                className="featured-products-swiper pb-3"
+              >
+                {testimonialSlides.map(({ key, item }) => (
+                  <SwiperSlide key={key}>
+                    <article className="h-full min-h-[210px] rounded-2xl border border-[#C9A66B]/45 bg-[#171a1d]/95 p-4 md:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-all duration-150 hover:duration-300 hover:-translate-y-1">
+                      <div className="mb-3 flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm sm:text-base font-extrabold text-[#F2ECE2] tajawal-regular-all">
+                            {language === "ar" ? item.nameAr : item.nameEn}
+                          </p>
+                          <p className="text-xs sm:text-sm text-white/70 tajawal-regular">
+                            {language === "ar" ? item.roleAr : item.roleEn}
+                          </p>
+                        </div>
+
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A66B]/60 bg-[#C9A66B]/12 px-2.5 py-1 text-[11px] font-semibold text-[#E6C88A]">
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fillRule="evenodd" d="M16.704 5.29a1 1 0 010 1.42l-7.2 7.2a1 1 0 01-1.42 0l-3.2-3.2a1 1 0 111.415-1.415l2.493 2.492 6.493-6.492a1 1 0 011.419-.005z" clipRule="evenodd" />
+                          </svg>
+                          {language === "ar" ? "مشتري مؤكد" : "Verified Purchase"}
+                        </span>
+                      </div>
+
+                      <div
+                        className="mb-3 flex items-center gap-0.5 text-base sm:text-lg"
+                        style={{
+                          color: "#FFD700",
+                          textShadow: "0 0 6px rgba(255,215,0,0.55), 0 0 12px rgba(255,196,0,0.35)",
+                        }}
+                        aria-label="5 star rating"
+                      >
+                        <span>★</span>
+                        <span>★</span>
+                        <span>★</span>
+                        <span>★</span>
+                        <span>★</span>
+                      </div>
+
+                      <p className="text-sm sm:text-[15px] leading-7 text-white/85 tajawal-regular">
+                        “{language === "ar" ? item.reviewAr : item.reviewEn}”
+                      </p>
+                    </article>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          </section>
         </div>
       </section>
 
-     
     </div>
   );
 }

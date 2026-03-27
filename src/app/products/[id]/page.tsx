@@ -485,7 +485,7 @@ export default function ProductPage({ params }: PageProps) {
                 const rating = 4.5 + ((hash % 5) / 10);
                 return (
                   <>
-                    <div className="flex text-yellow-400">
+                    <div className="flex text-[#C9A66B]">
                       {[1,2,3,4,5].map((star) => {
                         if (rating >= star) return <span key={star}>★</span>;
                         if (rating >= star - 0.5) return <span key={star} className="relative inline-block"><span className="absolute inset-0 overflow-hidden w-1/2">★</span>☆</span>;
@@ -565,10 +565,10 @@ export default function ProductPage({ params }: PageProps) {
               <h3 className="mb-3 text-lg font-bold text-[#C9A66B]">
                 {t("product.quantity")}
               </h3>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-1 w-full">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-2 rounded-lg font-bold"
+                  className="px-2 py-1 rounded-sm font-bold text-xs"
                   style={{
                     backgroundColor: "#1b2024",
                     color: "#F2ECE2",
@@ -584,16 +584,14 @@ export default function ProductPage({ params }: PageProps) {
                   dir="ltr"
                   inputMode="numeric"
                   value={String(quantity)}
-                  onChange={(e) =>
-                    setQuantity(parseQuantityInput(e.target.value))
-                  }
+                  onChange={(e) => setQuantity(parseQuantityInput(e.target.value))}
                   onBlur={(e) => setQuantity(parseQuantityInput(e.target.value))}
-                  className="w-16 rounded-lg border px-3 py-2 text-center text-[#F2ECE2]"
+                  className="w-10 rounded-sm border px-1.5 py-1 text-center text-[#F2ECE2] text-xs"
                   style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                 />
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="px-4 py-2 rounded-lg font-bold"
+                  className="px-2 py-1 rounded-sm font-bold text-xs"
                   style={{
                     backgroundColor: "#1b2024",
                     color: "#F2ECE2",
@@ -602,10 +600,47 @@ export default function ProductPage({ params }: PageProps) {
                 >
                   +
                 </button>
+                {/* Add to cart button beside quantity */}
+                {product.inStock ? (
+                  <div className="mt-1 sm:mt-0 sm:ml-2 flex-1 min-w-[230px] sm:min-w-0 grid grid-cols-3 gap-1">
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      disabled={isAdding}
+                      className="gold-button w-full px-2 py-1 rounded-sm font-bold text-xs sm:text-sm disabled:opacity-50"
+                    >
+                      {isAdding ? t("product.adding") : t("product.addToCart")}
+                    </button>
+                    <button
+                      onClick={handleShareProduct}
+                      disabled={isSharing}
+                      className="w-full px-2 py-1 rounded-sm font-semibold text-xs transition-all border-2"
+                      style={{
+                        color: "#F2ECE2",
+                        borderColor: "rgba(201,166,107,0.55)",
+                        backgroundColor: "#171a1d",
+                      }}
+                    >
+                      {isSharing ? (language === "ar" ? "..." : "...") : (language === "ar" ? "مشاركة" : "Share")}
+                    </button>
+                    <Link
+                      href="/shipping-policy"
+                      className="w-full px-2 py-1 rounded-sm font-semibold text-xs text-center border-2"
+                      style={{
+                        color: "#F2ECE2",
+                        borderColor: "rgba(201,166,107,0.55)",
+                        backgroundColor: "#171a1d",
+                      }}
+                    >
+                      {language === "ar" ? "أسعار التوصيل" : "Delivery costs"}
+                    </Link>
+                  </div>
+                ) : null}
               </div>
             </div>
 
-            {/* Price Summary */}
+            
+            {/* Price Summary 
             <div
               className="mb-6 rounded-xl border border-white/10 bg-[#171a1d] p-4"
             >
@@ -638,17 +673,10 @@ export default function ProductPage({ params }: PageProps) {
                 </div>
               ) : null}
             </div>
-
+              */}
+            
             {/* Add to Cart / Notify */}
-            {product.inStock ? (
-              <button
-                className="gold-button w-full py-3 rounded-lg font-bold text-lg transition-opacity hover:opacity-90 mb-4 disabled:opacity-50"
-                onClick={handleAddToCart}
-                disabled={isAdding}
-              >
-                {isAdding ? t("product.adding") : t("product.addToCart")}
-              </button>
-            ) : (
+            {!product.inStock ? (
               <div className="mb-4 rounded-lg border p-4" style={{ borderColor: "rgba(201,166,107,0.35)", backgroundColor: "#171a1d" }}>
                 <p className="mb-3 text-sm text-white/80">
                   {language === "ar" ? "أدخل رقم واتسابك وسنخبرك فور توفر المنتج" : "Enter your WhatsApp number and we will notify you once this product is back"}
@@ -681,39 +709,9 @@ export default function ProductPage({ params }: PageProps) {
                   <p className="mt-2 text-xs text-[#C9A66B]">{notifyMessage}</p>
                 ) : null}
               </div>
-            )}
+            ) : null}
 
-            <div className="flex gap-3 mb-4">
-              <button
-                onClick={handleShareProduct}
-                disabled={isSharing}
-                className="flex-1 py-2 px-3 rounded-lg font-semibold text-sm transition-all border-2 disabled:opacity-50"
-                style={{
-                  color: "#F2ECE2",
-                  borderColor: "rgba(201,166,107,0.55)",
-                  backgroundColor: "#171a1d",
-                }}
-              >
-                {isSharing
-                  ? language === "ar"
-                    ? "جاري..."
-                    : "Sharing..."
-                  : language === "ar"
-                  ? "🔗 مشاركة"
-                  : "🔗 Share"}
-              </button>
-              <Link
-                href="/shipping-policy"
-                className="flex-1 py-2 px-3 rounded-lg font-semibold text-sm text-center border-2 transition-all"
-                style={{
-                  color: "#F2ECE2",
-                  borderColor: "rgba(201,166,107,0.55)",
-                  backgroundColor: "#171a1d",
-                }}
-              >
-                {language === "ar" ? "🚚 أسعار التوصيل" : "🚚 Delivery Prices"}
-              </Link>
-            </div>
+            
 
             {/* Continue Shopping */}
             <Link
