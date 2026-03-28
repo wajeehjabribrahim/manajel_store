@@ -23,6 +23,7 @@ interface ProductManualFeedback {
   note: string;
   noteEn?: string;
   images: string[];
+  rating?: number;
   createdAt: string;
 }
 
@@ -741,20 +742,30 @@ export default function ProductPage({ params }: PageProps) {
 
         {manualFeedbacks.length > 0 ? (
           <div className="mt-12">
-            <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-[#C9A66B]">
+            <h3 className="mb-4 text-xl font-bold uppercase tracking-[0.2em] text-[#C9A66B]">
               {language === "ar" ? "تجارب وآراء العملاء" : "Customer Feedbacks"}
             </h3>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {manualFeedbacks.slice(0, 6).map((feedback) => (
-                <div key={feedback.id} className="rounded-xl border border-white/10 bg-[#171a1d] p-4">
+                <div
+                  key={feedback.id}
+                  className="rounded-xl border border-white/10 p-4"
+                  style={{ backdropFilter: "blur(10px)", backgroundColor: "rgba(23,26,29,0.45)" }}
+                >
                   <div className="mb-2 flex items-center gap-2">
                     <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-white/10 text-white/80">
                       👤
                     </span>
                     <span className="text-xs font-semibold uppercase tracking-[0.12em] text-white/70">
-                      user
+                      {feedback.author || (language === "ar" ? "مستخدم" : "User")}
                     </span>
+                  </div>
+
+                  <div className="mb-2 flex items-center gap-0.5 text-sm" style={{ color: "#FFD700" }} aria-label={`${feedback.rating ?? 5} star rating`}>
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <span key={idx}>{idx < (feedback.rating ?? 5) ? "★" : "☆"}</span>
+                    ))}
                   </div>
 
                   {(feedback.note || feedback.noteEn) ? (

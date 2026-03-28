@@ -76,7 +76,7 @@ export default function About() {
         {/* Products Section */}
         <AnimatedSection animationType="fade-up">
           <div className="mb-16">
-            <h2 className="mx-auto w-fit text-xl sm:text-3xl font-bold mb-2 text-center text-[#C9A66B]">
+            <h2 className="mx-auto w-full sm:w-fit text-xl sm:text-3xl font-bold mb-2 text-center text-[#C9A66B]">
               {t.about.products}
             </h2>
             <p className="text-center text-white/70 text-sm sm:text-base mb-8">
@@ -95,8 +95,8 @@ export default function About() {
                 {
                   name: t.about.product2,
                   desc: language === "ar"
-                    ? "مزيج عطري من الأعشاب الطبيعية"
-                    : "Aromatic blend of natural herbs"
+                    ? "زعتر مجفف مطحون مع سماق بلدي"
+                    : "Dried thyme blended with local sumac"
                 },
                 {
                   name: t.about.product3,

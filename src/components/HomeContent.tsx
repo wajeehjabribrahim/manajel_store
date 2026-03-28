@@ -135,7 +135,7 @@ export default function HomeContent() {
     {
       nameAr: "أحمد الكيلاني",
       roleAr: "زبون دائم",
-      reviewAr: "الزيت فعلاً أصلي وطعمه واضح من أول تجربة. التوصيل كان سريع والتغليف مرتب.",
+      reviewAr: "الزيت فعلاً مرتب وطعمه واضح من أول تجربة. التوصيل دايما سريع والتغليف مرتب.",
       nameEn: "Ahmad Al-Kilani",
       roleEn: "Loyal Customer",
       reviewEn: "The olive oil is truly authentic and you can taste the quality immediately. Fast delivery and great packaging.",
@@ -248,11 +248,11 @@ export default function HomeContent() {
 
         {/* Header overlay on hero */}
         <header className="absolute top-0 left-0 right-0 z-50 w-full text-white tajawal-regular-all">
-          <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 md:py-5 relative z-10">
-            <div className="flex justify-between items-center relative md:gap-8">
+          <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 lg:py-5 relative z-10">
+            <div className="flex justify-between items-center relative lg:gap-8">
               {/* Logo */}
-              <Link href="/" className="flex items-center gap-2 md:gap-3 group md:translate-x-2 lg:translate-x-3">
-                <div className="w-10 h-10 md:w-11 md:h-11 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-150 hover:duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
+              <Link href="/" className="flex items-center gap-2 lg:gap-3 group lg:translate-x-2">
+                <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-150 hover:duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
                   <Image
                     src="/images/logo.jpg"
                     alt="Manajel Logo"
@@ -263,13 +263,13 @@ export default function HomeContent() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight transition-all duration-150 hover:duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
-                  <span className="text-[8px] md:text-[9px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
+                  <span className="text-lg sm:text-xl lg:text-2xl font-black tracking-tight transition-all duration-150 hover:duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
+                  <span className="text-[8px] lg:text-[9px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
                 </div>
               </Link>
 
               {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center gap-6 lg:gap-9 md:-translate-x-2 lg:-translate-x-3">
+              <div className="hidden lg:flex items-center gap-6 lg:gap-9 lg:-translate-x-2">
                 {[
                   { name: t("nav.home"), href: "/" },
                   { name: t("nav.shop"), href: "/shop" },
@@ -279,7 +279,7 @@ export default function HomeContent() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="text-xs md:text-sm font-semibold uppercase tracking-[0.1em] text-white/80 hover:text-white transition-colors duration-150 hover:duration-300"
+                    className="text-xs lg:text-sm font-semibold uppercase tracking-[0.1em] text-white/80 hover:text-white transition-colors duration-150 hover:duration-300"
                   >
                     {item.name}
                   </Link>
@@ -287,7 +287,7 @@ export default function HomeContent() {
               </div>
 
               {/* Language Switcher, Auth & Cart */}
-              <div className="hidden md:flex items-center gap-5 lg:gap-6">
+              <div className="hidden lg:flex items-center gap-5 lg:gap-6">
                 <LanguageSwitcher />
                 
                 {/* قائمة السلة والطلبات - للجميع */}
@@ -476,7 +476,7 @@ export default function HomeContent() {
               </div>
 
               {/* Mobile Icons - Language, Account & Cart */}
-              <div className="md:hidden flex items-center gap-2">
+              <div className="lg:hidden flex items-center gap-2">
                 <LanguageSwitcher />
                 <Link
                   href={isAuthenticated ? "/account" : "/login"}
@@ -914,7 +914,7 @@ export default function HomeContent() {
                 autoplay={
                   testimonialSlides.length > 1
                     ? ({
-                        delay: 4300,
+                        delay: 5300,
                         disableOnInteraction: false,
                         reverseDirection: true,
                       } as any)

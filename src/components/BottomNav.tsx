@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function BottomNav() {
+  const { t } = useLanguage();
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ export default function BottomNav() {
                 <circle cx="7.5" cy="17.5" r="1.5" strokeWidth="1.5" />
                 <circle cx="18.5" cy="17.5" r="1.5" strokeWidth="1.5" />
               </svg>
-              <span>التوصيل</span>
+              <span>{t("policies.shippingPolicy")}</span>
             </Link>
 
             <Link href="/shop" className="flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs">
@@ -57,22 +59,22 @@ export default function BottomNav() {
                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M7 10v8a1 1 0 001 1h8a1 1 0 001-1v-8" />
                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M9 6a3 3 0 006 0" />
               </svg>
-              <span>تسوق</span>
+              <span>{t("nav.shop")}</span>
             </Link>
 
             <Link href="/cart" className="relative flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.2 6.4A1 1 0 007.8 21h8.4a1 1 0 00.99-.84L18 13M7 13H5.4"/></svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1 right-[28%] min-w-[18px] h-[18px] px-1.5 rounded-full bg-[#C9A66B] text-black text-[11px] font-bold flex items-center justify-center">{cartCount > 99 ? '99+' : cartCount}</span>
+                <span className="absolute -top-1 right-[28%] min-w-[18px] h-[18px] px-1.5 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center border border-white/20">{cartCount > 99 ? '99+' : cartCount}</span>
               )}
-              <span>السلة</span>
+              <span>{t("nav.cart")}</span>
             </Link>
 
-            <Link href="/account" className="flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs" aria-label="الحساب">
+            <Link href="/account" className="flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs" aria-label={t("account.title")}>
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.33 0-10 1.67-10 5v1h20v-1c0-3.33-6.67-5-10-5z" />
               </svg>
-              <span>الحساب</span>
+              <span>{t("account.title")}</span>
             </Link>
           </div>
         </div>

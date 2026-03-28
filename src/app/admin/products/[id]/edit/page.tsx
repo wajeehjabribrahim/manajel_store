@@ -7,23 +7,27 @@ interface AdminFeedbackItemProps {
   item: ManualFeedbackItem;
   productId: string;
   onDelete: (id: string) => void;
-  onEdit: (id: string, note: string, noteEn: string, images: string[]) => void;
+  onEdit: (id: string, author: string, note: string, noteEn: string, images: string[], rating: number) => void;
 }
 
 const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, onDelete, onEdit }) => {
   const [isEditing, setIsEditing] = React.useState(false);
+  const [editAuthor, setEditAuthor] = React.useState(item.author || "");
   const [editNote, setEditNote] = React.useState(item.note);
   const [editNoteEn, setEditNoteEn] = React.useState(item.noteEn || "");
   const [editImages, setEditImages] = React.useState<string[]>(item.images || []);
+  const [editRating, setEditRating] = React.useState(item.rating ?? 5);
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState("");
 
   React.useEffect(() => {
     if (!isEditing) return;
+    setEditAuthor(item.author || "");
     setEditNote(item.note);
     setEditNoteEn(item.noteEn || "");
     setEditImages(item.images || []);
-  }, [isEditing, item.note, item.noteEn, item.images]);
+    setEditRating(item.rating ?? 5);
+  }, [isEditing, item.author, item.note, item.noteEn, item.images, item.rating]);
 
   const readFileAsDataUrl = (file: File) =>
     new Promise<string>((resolve, reject) => {
@@ -101,14 +105,14 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
       const res = await fetch(`/api/products/${productId}/feedbacks/${item.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note: editNote, noteEn: editNoteEn, images: editImages }),
+        body: JSON.stringify({ author: editAuthor.trim(), note: editNote, noteEn: editNoteEn, images: editImages, rating: editRating }),
       });
       if (!res.ok) {
         setError("فشل تعديل الفيدباك");
         setSaving(false);
         return;
       }
-      onEdit(item.id, editNote, editNoteEn, editImages);
+      onEdit(item.id, editAuthor.trim() || "Admin", editNote, editNoteEn, editImages, editRating);
       setIsEditing(false);
     } catch {
       setError("حدث خطأ أثناء تعديل الفيدباك");
@@ -125,8 +129,13 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 19.5a7.5 7.5 0 1115 0v.75A2.25 2.25 0 0117.25 22.5h-10.5A2.25 2.25 0 014.5 20.25v-.75z" />
           </svg>
         </span>
-        <span className="font-semibold">user</span>
+        <span className="font-semibold">{item.author || "Admin"}</span>
         <span className="text-xs text-gray-500 ml-2">{new Date(item.createdAt).toLocaleDateString("ar-EG")}</span>
+      </div>
+      <div className="flex items-center gap-1 text-amber-500 text-sm">
+        {Array.from({ length: 5 }).map((_, idx) => (
+          <span key={idx}>{idx < (item.rating ?? 5) ? "★" : "☆"}</span>
+        ))}
       </div>
       {item.images && item.images.length > 0 && (
         <div className="flex gap-2 mt-2">
@@ -137,6 +146,13 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
       )}
       {isEditing ? (
         <>
+          <input
+            type="text"
+            className="w-full border rounded-lg px-2 py-1"
+            value={editAuthor}
+            onChange={e => setEditAuthor(e.target.value)}
+            placeholder="اسم صاحب الفيدباك"
+          />
           <textarea
             className="w-full border rounded-lg px-2 py-1"
             value={editNote}
@@ -151,6 +167,20 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
             rows={2}
             placeholder="Feedback text in English (optional)"
           />
+          <div>
+            <label className="block text-sm font-semibold mb-1">التقييم بالنجوم</label>
+            <select
+              value={editRating}
+              onChange={(e) => setEditRating(Number(e.target.value))}
+              className="w-full border rounded-lg px-2 py-1"
+            >
+              <option value={5}>5 نجوم</option>
+              <option value={4}>4 نجوم</option>
+              <option value={3}>3 نجوم</option>
+              <option value={2}>2 نجوم</option>
+              <option value={1}>1 نجمة</option>
+            </select>
+          </div>
           <div>
             <input
               type="file"
@@ -219,7 +249,7 @@ interface AdminFeedbackItemProps {
   item: ManualFeedbackItem;
   productId: string;
   onDelete: (id: string) => void;
-  onEdit: (id: string, note: string, noteEn: string, images: string[]) => void;
+  onEdit: (id: string, author: string, note: string, noteEn: string, images: string[], rating: number) => void;
 }
 
 interface Category {
@@ -243,6 +273,7 @@ interface ManualFeedbackItem {
   note: string;
   noteEn?: string;
   images: string[];
+  rating?: number;
   createdAt: string;
 }
 
@@ -292,6 +323,8 @@ export default function AdminEditProductPage() {
   const [success, setSuccess] = useState("");
   const [manualFeedback, setManualFeedback] = useState("");
   const [manualFeedbackEn, setManualFeedbackEn] = useState("");
+  const [manualFeedbackAuthor, setManualFeedbackAuthor] = useState("");
+  const [manualFeedbackRating, setManualFeedbackRating] = useState(5);
   const [manualFeedbackDate, setManualFeedbackDate] = useState<string>("");
   const [manualFeedbackImageFiles, setManualFeedbackImageFiles] = useState<File[]>([]);
   const [manualFeedbackImagePreviews, setManualFeedbackImagePreviews] = useState<string[]>([]);
@@ -476,9 +509,11 @@ export default function AdminEditProductPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          author: manualFeedbackAuthor.trim(),
           note: manualFeedback,
           noteEn: manualFeedbackEn,
           images: encodedImages,
+          rating: manualFeedbackRating,
           createdAt: new Date(manualFeedbackDate).toISOString(),
         }),
       });
@@ -492,6 +527,8 @@ export default function AdminEditProductPage() {
       if (data?.feedback) {
         setManualFeedbackItems((prev) => [data.feedback, ...prev]);
       }
+      setManualFeedbackAuthor("");
+      setManualFeedbackRating(5);
       setManualFeedback("");
       setManualFeedbackEn("");
       setManualFeedbackDate("");
@@ -932,6 +969,13 @@ export default function AdminEditProductPage() {
           ) : null}
 
 
+          <input
+            type="text"
+            value={manualFeedbackAuthor}
+            onChange={(e) => setManualFeedbackAuthor(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 mb-3"
+            placeholder="اسم صاحب الفيدباك (اختياري)"
+          />
           <textarea
             value={manualFeedback}
             onChange={(e) => setManualFeedback(e.target.value)}
@@ -946,6 +990,20 @@ export default function AdminEditProductPage() {
             className="w-full border rounded-lg px-3 py-2 mb-3"
             placeholder="Write feedback translation in English (optional)..."
           />
+          <div className="mb-3">
+            <label className="block text-sm font-semibold mb-1">التقييم بالنجوم</label>
+            <select
+              value={manualFeedbackRating}
+              onChange={(e) => setManualFeedbackRating(Number(e.target.value))}
+              className="w-full border rounded-lg px-3 py-2"
+            >
+              <option value={5}>5 نجوم</option>
+              <option value={4}>4 نجوم</option>
+              <option value={3}>3 نجوم</option>
+              <option value={2}>2 نجوم</option>
+              <option value={1}>1 نجمة</option>
+            </select>
+          </div>
           <div className="mb-3">
             <label className="block text-sm font-semibold mb-1">تاريخ الفيدباك</label>
             <input
@@ -1007,7 +1065,7 @@ export default function AdminEditProductPage() {
                   item={item}
                   productId={id as string}
                   onDelete={id => setManualFeedbackItems(prev => prev.filter(fb => fb.id !== id))}
-                  onEdit={(id, note, noteEn, images) => setManualFeedbackItems(prev => prev.map(fb => fb.id === id ? { ...fb, note, noteEn, images } : fb))}
+                  onEdit={(id, author, note, noteEn, images, rating) => setManualFeedbackItems(prev => prev.map(fb => fb.id === id ? { ...fb, author, note, noteEn, images, rating } : fb))}
                 />
               ))}
             </div>

@@ -7,12 +7,17 @@ const PRODUCT_FEEDBACK_PREFIX = "PRODUCT_MANUAL_FEEDBACK:";
 const parseFeedbackMessage = (raw: string) => {
   try {
     const parsed = JSON.parse(raw);
+    const rawRating = Number(parsed?.rating);
+    const rating = Number.isFinite(rawRating)
+      ? Math.min(5, Math.max(1, Math.round(rawRating)))
+      : 5;
     return {
       note: typeof parsed?.note === "string" ? parsed.note : "",
       noteEn: typeof parsed?.noteEn === "string" ? parsed.noteEn : "",
       images: Array.isArray(parsed?.images)
         ? parsed.images.filter((img: unknown): img is string => typeof img === "string")
         : [],
+      rating,
       createdAt: typeof parsed?.createdAt === "string" ? parsed.createdAt : "",
     };
   } catch {
@@ -20,6 +25,7 @@ const parseFeedbackMessage = (raw: string) => {
       note: raw,
       noteEn: "",
       images: [] as string[],
+      rating: 5,
       createdAt: "",
     };
   }
@@ -57,8 +63,16 @@ export async function GET(
         note: parsed.note,
         noteEn: parsed.noteEn,
         images: parsed.images,
+        rating: parsed.rating,
         createdAt: parsed.createdAt || row.createdAt.toISOString(),
       };
+    }).sort((a, b) => {
+      const aTime = new Date(a.createdAt).getTime();
+      const bTime = new Date(b.createdAt).getTime();
+      if (!Number.isFinite(aTime) && !Number.isFinite(bTime)) return 0;
+      if (!Number.isFinite(aTime)) return 1;
+      if (!Number.isFinite(bTime)) return -1;
+      return bTime - aTime;
     });
 
     return NextResponse.json({ feedbacks }, { status: 200 });
@@ -83,8 +97,13 @@ export async function POST(
     }
 
     const body = await req.json().catch(() => ({}));
+    const author = typeof body?.author === "string" ? body.author.trim() : "";
     const note = typeof body?.note === "string" ? body.note.trim() : "";
     const noteEn = typeof body?.noteEn === "string" ? body.noteEn.trim() : "";
+    const rawRating = Number(body?.rating);
+    const rating = Number.isFinite(rawRating)
+      ? Math.min(5, Math.max(1, Math.round(rawRating)))
+      : 5;
     const images: string[] = Array.isArray(body?.images)
       ? body.images.filter((img: unknown) => typeof img === "string" && img.startsWith("data:image/"))
       : [];
@@ -105,6 +124,10 @@ export async function POST(
       return NextResponse.json({ error: "Maximum 3 images allowed" }, { status: 400 });
     }
 
+    if (author.length > 120) {
+      return NextResponse.json({ error: "Author name is too long" }, { status: 400 });
+    }
+
     const tooLarge = images.some((img) => img.length > 1_500_000);
     if (tooLarge) {
       return NextResponse.json({ error: "One or more images are too large" }, { status: 400 });
@@ -118,7 +141,7 @@ export async function POST(
 
     const created = await prisma.contactMessage.create({
       data: {
-        name: "Admin",
+        name: author || "Admin",
         email: `admin-feedback-${productId}@mnajel.local`,
         phone: null,
         subject: `${PRODUCT_FEEDBACK_PREFIX}${productId}`,
@@ -126,6 +149,7 @@ export async function POST(
           note,
           noteEn,
           images,
+          rating,
           createdAt,
         }),
         status: "read",
@@ -140,10 +164,11 @@ export async function POST(
       {
         feedback: {
           id: created.id,
-          author: created.name || "Admin",
+          author: created.name || author || "Admin",
           note,
           noteEn,
           images,
+          rating,
           createdAt,
         },
       },

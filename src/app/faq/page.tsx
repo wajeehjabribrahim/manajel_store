@@ -1,10 +1,8 @@
 "use client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { translations } from "@/constants/translations";
 
 export default function FAQ() {
-  const { language } = useLanguage();
-  const t = translations[language];
+  const { t, dir } = useLanguage();
 
   const faqs = [
     { question: t.faq.q1, answer: t.faq.a1 },
@@ -44,17 +42,17 @@ export default function FAQ() {
               className="group border-b border-white/10 last:border-b-0"
             >
               <summary
-                className="relative cursor-pointer list-none py-5 pl-8 pr-1 sm:pr-2 text-base sm:text-[1.35rem] font-bold text-[#C9A66B]"
+                className={`relative cursor-pointer list-none py-4 px-4 sm:py-5 sm:px-6 text-base sm:text-[1.15rem] font-bold text-[#C9A66B] flex items-center justify-between ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
               >
-                <span className="block">{faq.question}</span>
+                <span className="block flex-1">{faq.question}</span>
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-[#C9A66B] text-sm transition-transform duration-200 group-open:rotate-180"
+                  className={`pointer-events-none ml-3 mr-3 text-[#C9A66B] text-sm transition-transform duration-200 group-open:rotate-180 ${dir === 'rtl' ? 'order-first ml-0 mr-3' : ''}`}
                 >
                   ▼
                 </span>
               </summary>
-              <div className="pb-5 pr-1 sm:pr-2">
+              <div className={`pb-5 px-4 sm:px-6 ${dir === 'rtl' ? 'text-right' : 'text-left'}`}>
                 <p className="text-sm sm:text-base text-white/80 leading-7">{faq.answer}</p>
               </div>
             </details>

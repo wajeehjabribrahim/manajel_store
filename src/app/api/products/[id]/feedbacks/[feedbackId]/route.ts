@@ -42,8 +42,15 @@ export async function PUT(
       return NextResponse.json({ error: "Product ID and Feedback ID required" }, { status: 400 });
     }
     const body = await req.json().catch(() => ({}));
+    const hasAuthorField = typeof body?.author === "string";
+    const author = hasAuthorField ? body.author.trim() : "";
     const note = typeof body?.note === "string" ? body.note.trim() : "";
     const noteEn = typeof body?.noteEn === "string" ? body.noteEn.trim() : "";
+    const hasRatingField = body?.rating !== undefined;
+    const rawRating = Number(body?.rating);
+    const rating = Number.isFinite(rawRating)
+      ? Math.min(5, Math.max(1, Math.round(rawRating)))
+      : 5;
     const images = Array.isArray(body?.images)
       ? body.images.filter((img: unknown): img is string => typeof img === "string" && img.startsWith("data:image/"))
       : undefined;
@@ -57,6 +64,10 @@ export async function PUT(
 
     if (images && images.some((img: string) => img.length > 1_500_000)) {
       return NextResponse.json({ error: "One or more images are too large" }, { status: 400 });
+    }
+
+    if (hasAuthorField && author.length > 120) {
+      return NextResponse.json({ error: "Author name is too long" }, { status: 400 });
     }
 
     // Fetch the old message to preserve images and createdAt
@@ -78,10 +89,14 @@ export async function PUT(
       note,
       noteEn,
       images: images ?? parsed?.images ?? [],
+      ...(hasRatingField ? { rating } : {}),
     });
     await prisma.contactMessage.update({
       where: { id: feedbackId, subject: `${PRODUCT_FEEDBACK_PREFIX}${productId}` },
-      data: { message: updatedMsg },
+      data: {
+        message: updatedMsg,
+        ...(hasAuthorField ? { name: author || "Admin" } : {}),
+      },
     });
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {
