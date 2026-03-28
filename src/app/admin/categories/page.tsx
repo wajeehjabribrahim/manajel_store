@@ -133,7 +133,7 @@ export default function CategoriesManagementPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center" style={{ color: COLORS.primary }}>
-          جاري التحميل...
+          <span className="tajawal-regular">جاري التحميل...</span>
         </div>
       </div>
     );

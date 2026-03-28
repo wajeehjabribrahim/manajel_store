@@ -177,7 +177,7 @@ export default function AdminMessagesPage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-red-600"></div>
-            <p className="mt-4">جاري التحميل...</p>
+            <p className="mt-4 tajawal-regular">جاري التحميل...</p>
           </div>
         ) : filteredMessages.length === 0 ? (
           <div className="text-center py-12 bg-white rounded">

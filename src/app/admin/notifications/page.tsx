@@ -129,7 +129,7 @@ export default function AdminNotificationsPage() {
 
         {/* Table */}
         {loading ? (
-          <div className="text-center py-20 text-gray-400">جاري التحميل...</div>
+          <div className="text-center py-20 text-gray-400 tajawal-regular">جاري التحميل...</div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20 text-gray-400 bg-white rounded-xl border">
             لا توجد طلبات

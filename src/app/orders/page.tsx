@@ -475,7 +475,7 @@ export default function OrdersPage() {
                       >
                         {feedbackSubmitting
                           ? language === "ar"
-                            ? "جاري الإرسال..."
+                            ? <span className="tajawal-regular">جاري الإرسال...</span>
                             : "Submitting..."
                           : language === "ar"
                           ? "إرسال التقييم"

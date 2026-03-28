@@ -276,6 +276,28 @@
   animation: slideInUp 0.7s ease-out forwards;
 }
 
+/* Shake animation for attention on CTAs (used for Add-to-cart) */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  10% { transform: translateX(-6px); }
+  20% { transform: translateX(6px); }
+  30% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  50% { transform: translateX(-2px); }
+  60% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+.animate-shake {
+  animation: shake 0.72s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shake {
+    animation: none !important;
+  }
+}
+
 /* Initial state for scroll animations */
 .scroll-animate {
   opacity: 0;

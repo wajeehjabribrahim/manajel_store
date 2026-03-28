@@ -181,7 +181,7 @@ export default function RegisterPage() {
               className="gold-button w-full rounded-lg py-2 font-semibold transition-opacity"
               style={{ opacity: loading ? 0.7 : 1 }}
             >
-              {loading ? t("common.loading") : t("auth.registerButton")}
+              {loading ? <span className="tajawal-regular">{t("common.loading")}</span> : t("auth.registerButton")}
             </button>
           </form>
 

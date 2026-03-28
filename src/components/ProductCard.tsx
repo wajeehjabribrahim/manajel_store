@@ -300,27 +300,29 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                           ))}
                         </select>
 
-                        <div className="flex items-center justify-center gap-1 rounded-md border border-white/20 bg-[#121416] px-2 py-1">
+                        <div className="flex items-center justify-center gap-2 rounded-md border border-white/20 bg-[#121416] px-3 py-2">
                           <button
                             onClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                               setQuantity((prev) => Math.max(1, prev - 1));
                             }}
-                            className="h-8 w-8 text-base text-white/85"
+                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6 active:scale-95"
                             type="button"
+                            aria-label="decrease quantity"
                           >
                             -
                           </button>
-                          <span className="min-w-[30px] text-center text-sm text-white">{quantity}</span>
+                          <span className="min-w-[40px] text-center text-lg sm:text-xl text-white">{quantity}</span>
                           <button
                             onClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                               setQuantity((prev) => Math.min(99, prev + 1));
                             }}
-                            className="h-8 w-8 text-base text-white/85"
+                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6 active:scale-95"
                             type="button"
+                            aria-label="increase quantity"
                           >
                             +
                           </button>

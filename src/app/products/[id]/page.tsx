@@ -37,6 +37,7 @@ export default function ProductPage({ params }: PageProps) {
   const animatedTotalRef = useRef(0);
   const [isAdding, setIsAdding] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
   const [notifyWhatsapp, setNotifyWhatsapp] = useState("");
   const [isNotifying, setIsNotifying] = useState(false);
   const [notifyMessage, setNotifyMessage] = useState<string | null>(null);
@@ -291,6 +292,23 @@ export default function ProductPage({ params }: PageProps) {
     }
   };
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    // Start only when product is loaded to avoid distracting on initial load
+    if (!product) return;
+
+    const intervalId = window.setInterval(() => {
+      setIsShaking(true);
+      timeoutId = setTimeout(() => setIsShaking(false), 720);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [product]);
+
   const handleNotifyStock = async () => {
     if (!product || isNotifying) return;
 
@@ -323,7 +341,7 @@ export default function ProductPage({ params }: PageProps) {
     return (
       <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl font-semibold text-[#F2ECE2]">
+          <p className="text-xl text-[#F2ECE2] tajawal-regular">
             {t("common.loading")}
           </p>
         </div>
@@ -561,6 +579,7 @@ export default function ProductPage({ params }: PageProps) {
             </div>
 
             {/* Quantity */}
+            {product.inStock ? (
             <div className="mb-6">
               <h3 className="mb-3 text-lg font-bold text-[#C9A66B]">
                 {t("product.quantity")}
@@ -568,11 +587,12 @@ export default function ProductPage({ params }: PageProps) {
               <div className="flex flex-wrap sm:flex-nowrap items-center gap-1 w-full">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-2 py-1 rounded-sm font-bold text-xs"
+                  aria-label={language === "ar" ? "نقص الكمية" : "Decrease quantity"}
+                  className="flex items-center justify-center h-10 w-10 rounded-md font-bold text-sm"
                   style={{
                     backgroundColor: "#1b2024",
                     color: "#F2ECE2",
-                    border: "1px solid rgba(201,166,107,0.3)",
+                    border: "1px solid rgba(201,166,107,0.45)",
                   }}
                 >
                   −
@@ -586,60 +606,62 @@ export default function ProductPage({ params }: PageProps) {
                   value={String(quantity)}
                   onChange={(e) => setQuantity(parseQuantityInput(e.target.value))}
                   onBlur={(e) => setQuantity(parseQuantityInput(e.target.value))}
-                  className="w-10 rounded-sm border px-1.5 py-1 text-center text-[#F2ECE2] text-xs"
+                  className="w-16 h-10 rounded-md border px-2 text-center text-[#F2ECE2] text-sm"
                   style={{ borderColor: "rgba(255,255,255,0.25)", backgroundColor: "#171a1d" }}
                 />
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="px-2 py-1 rounded-sm font-bold text-xs"
+                  aria-label={language === "ar" ? "زيادة الكمية" : "Increase quantity"}
+                  className="flex items-center justify-center h-10 w-10 rounded-md font-bold text-sm"
                   style={{
                     backgroundColor: "#1b2024",
                     color: "#F2ECE2",
-                    border: "1px solid rgba(201,166,107,0.3)",
+                    border: "1px solid rgba(201,166,107,0.45)",
                   }}
                 >
                   +
                 </button>
-                {/* Add to cart button beside quantity */}
-                {product.inStock ? (
-                  <div className="mt-1 sm:mt-0 sm:ml-2 flex-1 min-w-[230px] sm:min-w-0 grid grid-cols-3 gap-1">
-                    <button
-                      type="button"
-                      onClick={handleAddToCart}
-                      disabled={isAdding}
-                      className="gold-button w-full px-2 py-1 rounded-sm font-bold text-xs sm:text-sm disabled:opacity-50"
-                    >
-                      {isAdding ? t("product.adding") : t("product.addToCart")}
-                    </button>
-                    <button
-                      onClick={handleShareProduct}
-                      disabled={isSharing}
-                      className="w-full px-2 py-1 rounded-sm font-semibold text-xs transition-all border-2"
-                      style={{
-                        color: "#F2ECE2",
-                        borderColor: "rgba(201,166,107,0.55)",
-                        backgroundColor: "#171a1d",
-                      }}
-                    >
-                      {isSharing ? (language === "ar" ? "..." : "...") : (language === "ar" ? "مشاركة" : "Share")}
-                    </button>
-                    <Link
-                      href="/shipping-policy"
-                      className="w-full px-2 py-1 rounded-sm font-semibold text-xs text-center border-2"
-                      style={{
-                        color: "#F2ECE2",
-                        borderColor: "rgba(201,166,107,0.55)",
-                        backgroundColor: "#171a1d",
-                      }}
-                    >
-                      {language === "ar" ? "أسعار التوصيل" : "Delivery costs"}
-                    </Link>
-                  </div>
-                ) : null}
+                {/* Share */}
+                <div className="mt-1 sm:mt-0 sm:ml-2 flex-1 min-w-[230px] sm:min-w-0 flex justify-end items-center">
+                  <button
+                    onClick={handleShareProduct}
+                    disabled={isSharing}
+                    className="ml-auto flex items-center justify-center h-8 w-8 rounded-full border-2 text-white/90 bg-[#171a1d] hover:bg-white/6 active:scale-95"
+                    style={{ borderColor: "rgba(201,166,107,0.55)" }}
+                    aria-label={language === "ar" ? "مشاركة" : "Share"}
+                  >
+                    {isSharing ? (
+                      <span className="text-sm">...</span>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7" />
+                        <path strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" d="M16 6l-4-4-4 4" />
+                        <path strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" d="M12 2v13" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
+            ) : null}
 
             
+            {/* Add to cart full-width row (separate) */}
+            {product.inStock ? (
+              <div className="mt-4">
+                <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    disabled={isAdding}
+                    className={`gold-button w-full block text-center py-3 rounded-lg font-bold border-2 disabled:opacity-50 ${isShaking ? 'animate-shake' : ''}`}
+                    style={{ maxWidth: '100%' }}
+                  >
+                    {isAdding ? t("product.adding") : t("product.addToCart")}
+                  </button>
+                </div>
+              </div>
+            ) : null}
             {/* Price Summary 
             <div
               className="mb-6 rounded-xl border border-white/10 bg-[#171a1d] p-4"
@@ -713,17 +735,7 @@ export default function ProductPage({ params }: PageProps) {
 
             
 
-            {/* Continue Shopping */}
-            <Link
-              href="/shop"
-              className="w-full block text-center py-3 rounded-lg font-bold border-2 transition-all"
-              style={{
-                color: "#F2ECE2",
-                borderColor: "rgba(201,166,107,0.55)",
-              }}
-            >
-              {t("product.continueShop")}
-            </Link>
+            
           </div>
         </div>
 

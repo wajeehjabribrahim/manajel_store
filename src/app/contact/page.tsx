@@ -245,7 +245,7 @@ export default function Contact() {
                 disabled={loading}
                 className="gold-button w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
               >
-                {loading ? "جاري الإرسال..." : t.contact.send}
+                {loading ? <span className="tajawal-regular">جاري الإرسال...</span> : t.contact.send}
               </button>
 
               {submitted && (

@@ -31,7 +31,7 @@ export default function AdminDashboard() {
   if (!authorized) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p style={{ color: COLORS.primary }} className="text-lg font-semibold">
+        <p style={{ color: COLORS.primary }} className="text-lg tajawal-regular">
           جاري التحقق من الصلاحيات...
         </p>
       </div>

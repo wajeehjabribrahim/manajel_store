@@ -16,7 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (status === "loading") {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12" style={{ direction: dir }}>
-        <p style={{ color: COLORS.primary }} className="text-lg font-semibold">
+        <p style={{ color: COLORS.primary }} className="text-lg tajawal-regular">
           {t("common.loading")}
         </p>
       </div>

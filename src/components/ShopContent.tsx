@@ -239,6 +239,7 @@ export default function ShopContent() {
 
   return (
     <div className="bg-[#121416] text-[#F2ECE2]">
+      <div aria-hidden className="h-8 md:h-12 lg:h-16" />
       {/* Header */}
       <section
         style={{

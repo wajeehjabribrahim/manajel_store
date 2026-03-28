@@ -135,7 +135,7 @@ export default function HomeContent() {
     {
       nameAr: "أحمد الكيلاني",
       roleAr: "زبون دائم",
-      reviewAr: "الزيت فعلاً أصلي وطعمه واضح من أول تجربة. التوصيل كان سريع والتغليف ممتاز.",
+      reviewAr: "الزيت فعلاً أصلي وطعمه واضح من أول تجربة. التوصيل كان سريع والتغليف مرتب.",
       nameEn: "Ahmad Al-Kilani",
       roleEn: "Loyal Customer",
       reviewEn: "The olive oil is truly authentic and you can taste the quality immediately. Fast delivery and great packaging.",
@@ -151,7 +151,7 @@ export default function HomeContent() {
     {
       nameAr: "محمد الصباح",
       roleAr: "صاحب مطعم",
-      reviewAr: "اعتمدنا منتجات مناجل بالمطعم، والزبائن لاحظوا الفرق مباشرة بالطعم.",
+      reviewAr: "اعتمدنا منتجات مناجل بالمطعم، والزباين لاحظوا الفرق عطول بالطعم.",
       nameEn: "Mohammad Al-Sabah",
       roleEn: "Restaurant Owner",
       reviewEn: "We use Manajel products in our restaurant, and customers noticed the flavor difference right away.",
@@ -159,7 +159,7 @@ export default function HomeContent() {
     {
       nameAr: "سمر النجار",
       roleAr: "مشتري متكرر",
-      reviewAr: "تعامل راقٍ وجودة ممتازة. صرت أوصي فيكم لكل العائلة والأصدقاء.",
+      reviewAr: "تعامل راقي وجودة ممتازة. صرت أوصي فيكم لكل العيلة والأصحاب.",
       nameEn: "Samar Al-Najjar",
       roleEn: "Repeat Buyer",
       reviewEn: "Great service and excellent quality. I keep recommending you to family and friends.",
@@ -174,7 +174,7 @@ export default function HomeContent() {
     },
   ];
   const testimonialSlides = testimonials.length > 0
-    ? Array.from({ length: Math.max(testimonials.length, 9) }, (_, idx) => ({
+    ? Array.from({ length: Math.max(testimonials.length, 12) }, (_, idx) => ({
         key: `${idx}-${language}`,
         item: testimonials[idx % testimonials.length],
       }))
@@ -685,8 +685,7 @@ export default function HomeContent() {
           slidesPerView={1.2}
           centeredSlides={false}
           slidesPerGroup={1}
-          loop={featuredSlides.length > 1}
-          loopAdditionalSlides={featuredSlides.length}
+          loop={featuredSlides.length > 3}
           rewind={false}
           watchOverflow={false}
           speed={1200}
@@ -776,7 +775,7 @@ export default function HomeContent() {
                             </span>
                           </div>
                         </div>
-                        <p className={`text-sm sm:text-base tajawal-regular text-white/80 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
+                        <p className={`text-xs sm:text-sm lg:text-xs tajawal-regular text-white/80 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
                           {t(`products.${product.id}.description`) === `products.${product.id}.description`
                             ? product.description
                             : t(`products.${product.id}.description`)}
@@ -874,7 +873,7 @@ export default function HomeContent() {
               </p>
               <p className={`text-sm sm:text-base text-white/75 leading-7 sm:leading-8 max-w-3xl ${language === "ar" ? "lg:ms-auto" : ""}`}>
                 {language === "ar"
-                  ? "زيت زيتون نقي يُعصر بطرق أصيلة، ليحمل لك طعم الأرض وروحها." 
+                  ? "زيت زيتون نقي يُعصر بطرق أصيلة، ليحملك طعم الأرض وروحها." 
                 : "Pure olive oil, pressed using traditional methods, carrying the taste of the land and its soul."}
               </p>
 
@@ -908,19 +907,17 @@ export default function HomeContent() {
                 slidesPerView={1.2}
                 centeredSlides={false}
                 slidesPerGroup={1}
-                loop={testimonialSlides.length > 1}
-                loopAdditionalSlides={testimonialSlides.length}
+                loop={testimonialSlides.length > 3}
                 watchOverflow={false}
                 speed={1200}
                 allowTouchMove={true}
                 autoplay={
                   testimonialSlides.length > 1
-                    ? {
-                        delay: 1300,
+                    ? ({
+                        delay: 4300,
                         disableOnInteraction: false,
-                        pauseOnMouseEnter: false,
-                        stopOnLastSlide: false,
-                      }
+                        reverseDirection: true,
+                      } as any)
                     : false
                 }
                 onSwiper={(swiper) => {
@@ -929,6 +926,7 @@ export default function HomeContent() {
                     swiper.autoplay.start();
                   }
                 }}
+                
                 pagination={{ clickable: true }}
                 dir={dir}
                 breakpoints={{

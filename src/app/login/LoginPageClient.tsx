@@ -104,7 +104,7 @@ export default function LoginPageClient() {
               className="gold-button w-full rounded-lg py-2 font-semibold transition-opacity"
               style={{ opacity: loading ? 0.7 : 1 }}
             >
-              {loading ? t("common.loading") : t("auth.loginButton")}
+              {loading ? <span className="tajawal-regular">{t("common.loading")}</span> : t("auth.loginButton")}
             </button>
           </form>
 

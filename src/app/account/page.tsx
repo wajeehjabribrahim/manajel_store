@@ -131,7 +131,7 @@ export default function AccountPage() {
               className="gold-button mb-2 w-full rounded-lg py-2 font-semibold transition-opacity"
               style={{ opacity: loading ? 0.7 : 1 }}
             >
-              {loading ? t("common.loading") : t("account.save") || "Save"}
+              {loading ? <span className="tajawal-regular">{t("common.loading")}</span> : t("account.save") || "Save"}
             </button>
 
             <button

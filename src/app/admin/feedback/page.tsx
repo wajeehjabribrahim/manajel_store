@@ -77,7 +77,7 @@ export default function AdminFeedbackPage() {
         </div>
 
         {loading ? (
-          <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-gray-600">جاري التحميل...</div>
+          <div className="rounded-xl border border-gray-200 bg-white p-8 text-center text-gray-600 tajawal-regular">جاري التحميل...</div>
         ) : error ? (
           <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">{error}</div>
         ) : feedback.length === 0 ? (

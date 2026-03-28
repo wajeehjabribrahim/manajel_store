@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import CookieConsent from "@/components/CookieConsent"; // لإعادة تشغيل رسالة الموافقة لاحقًا
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import BottomNav from "@/components/BottomNav";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import AuthProvider from "@/components/AuthProvider";
 import DisableContextMenu from "@/components/DisableContextMenu";
@@ -43,6 +44,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <BottomNav />
             <FloatingWhatsApp />
             {/* <CookieConsent /> */}
             {/* ملاحظة: تم إيقاف رسالة الموافقة على الخصوصية مؤقتًا. احذف التعليق لإعادة تفعيلها. */}
