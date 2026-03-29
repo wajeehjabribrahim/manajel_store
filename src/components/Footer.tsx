@@ -222,7 +222,7 @@ export default function Footer() {
           style={{ borderTopColor: "rgba(201,166,107,0.28)" }}
           className="border-t pt-8"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/70 gap-4 pb-6">
+          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/70 gap-4 pb-20">
             <div className="flex items-center gap-3">
               <span className="opacity-100 font-semibold">{t("footer.followUs")}</span>
               <a href="https://www.facebook.com/share/1HQyJVC8Bz/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="opacity-100 hover:opacity-80">

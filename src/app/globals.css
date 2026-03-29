@@ -153,6 +153,16 @@
   font-feature-settings: "rlig" 1, "liga" 1, "kern" 1;
 }
 
+/* Arabic glyphs can look disconnected when letter-spacing/tracking is applied */
+html[dir="rtl"] .tajawal-regular,
+html[dir="rtl"] .tajawal-bold,
+html[dir="rtl"] .tajawal-regular-all,
+html[dir="rtl"] .tajawal-regular-all * {
+  letter-spacing: 0 !important;
+  word-spacing: normal;
+  text-transform: none;
+}
+
 @keyframes heroZoom {
   from {
     transform: scale(1.05);
