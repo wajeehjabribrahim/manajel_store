@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function BottomNav() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function BottomNav() {
                 <circle cx="7.5" cy="17.5" r="1.5" strokeWidth="1.5" />
                 <circle cx="18.5" cy="17.5" r="1.5" strokeWidth="1.5" />
               </svg>
-              <span>{t("policies.shippingPolicy")}</span>
+              <span>{language === "ar" ? "توصيل" : "Delivery"}</span>
             </Link>
 
             <Link href="/shop" className="flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs">

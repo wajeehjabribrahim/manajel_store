@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
 import { useLanguage } from "@/contexts/LanguageContext";
+import "swiper/css";
+import "swiper/css/navigation";
 
 interface ImageGalleryProps {
   images: string[];
@@ -11,9 +16,7 @@ interface ImageGalleryProps {
 export default function ImageGallery({ images, alt }: ImageGalleryProps) {
   const { t } = useLanguage();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchEnd, setTouchEnd] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   const normalizedImages = useMemo(() => {
     const safe = Array.isArray(images)
@@ -30,6 +33,9 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
   useEffect(() => {
     if (selectedIndex >= imageCount) {
       setSelectedIndex(0);
+      if (swiperRef.current && imageCount > 0) {
+        swiperRef.current.slideTo(0);
+      }
     }
   }, [imageCount, selectedIndex]);
 
@@ -38,50 +44,15 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
       if (imageCount <= 1) return;
 
       if (e.key === "ArrowLeft") {
-        setSelectedIndex((prev) => (prev === 0 ? imageCount - 1 : prev - 1));
+        swiperRef.current?.slidePrev();
       } else if (e.key === "ArrowRight") {
-        setSelectedIndex((prev) => (prev === imageCount - 1 ? 0 : prev + 1));
+        swiperRef.current?.slideNext();
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [imageCount]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    setTouchEnd(e.changedTouches[0].clientX);
-    handleSwipe(e.targetTouches[0]?.clientX || e.changedTouches[0].clientX);
-  };
-
-  const handleSwipe = (endX: number) => {
-    if (imageCount <= 1) return;
-
-    const distance = touchStart - endX;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe) {
-      // السحب لليسار = الصورة التالية
-      setSelectedIndex((prev) => (prev === imageCount - 1 ? 0 : prev + 1));
-    } else if (isRightSwipe) {
-      // السحب لليمين = الصورة السابقة
-      setSelectedIndex((prev) => (prev === 0 ? imageCount - 1 : prev - 1));
-    }
-  };
-
-  const goToPrevious = () => {
-    if (imageCount <= 1) return;
-    setSelectedIndex((prev) => (prev === 0 ? imageCount - 1 : prev - 1));
-  };
-
-  const goToNext = () => {
-    if (imageCount <= 1) return;
-    setSelectedIndex((prev) => (prev === imageCount - 1 ? 0 : prev + 1));
-  };
 
   if (imageCount === 0) {
     return (
@@ -91,24 +62,40 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
     );
   }
 
-  const currentImage = normalizedImages[selectedIndex] || normalizedImages[0];
-
   return (
     <div className="space-y-4">
       {/* Main Image */}
-      <div
-        ref={containerRef}
-        className="relative w-full bg-gray-100 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing"
-        style={{ aspectRatio: "1" }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        <img
-          src={currentImage}
-          alt={alt}
-          className="w-full h-full object-cover select-none"
-          draggable={false}
-        />
+      <div className="relative w-full bg-gray-100 rounded-lg overflow-hidden" style={{ aspectRatio: "1" }}>
+        <Swiper
+          modules={[Navigation]}
+          navigation={imageCount > 1}
+          spaceBetween={10}
+          slidesPerView={1}
+          resistance={true}
+          resistanceRatio={0.85}
+          speed={500}
+          grabCursor={true}
+          followFinger={true}
+          touchRatio={1}
+          simulateTouch={true}
+          className="h-full w-full product-gallery-swiper"
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+            setSelectedIndex(swiper.activeIndex || 0);
+          }}
+          onSlideChange={(swiper) => setSelectedIndex(swiper.activeIndex)}
+        >
+          {normalizedImages.map((image, index) => (
+            <SwiperSlide key={`${image}-${index}`}>
+              <img
+                src={image}
+                alt={`${alt} ${index + 1}`}
+                className="w-full h-full object-cover object-center select-none bg-[#121416]"
+                draggable={false}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
 
       {/* Thumbnails */}
@@ -118,7 +105,10 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
             <button
               type="button"
               key={index}
-              onClick={() => setSelectedIndex(index)}
+              onClick={() => {
+                swiperRef.current?.slideTo(index);
+                setSelectedIndex(index);
+              }}
               className={`flex-shrink-0 w-20 h-20 rounded border-2 ${
                 selectedIndex === index
                   ? "border-red-600"
@@ -144,6 +134,12 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
            <p className="text-xs text-gray-600">{t("product.swipeToNavigate")}</p>
         </div>
       )}
+
+      <style jsx global>{`
+        .product-gallery-swiper .swiper-slide {
+          transition: transform 0.3s ease;
+        }
+      `}</style>
     </div>
   );
 }

@@ -16,7 +16,7 @@ export default function FloatingWhatsApp() {
       rel="noopener noreferrer"
       aria-label={language === "ar" ? "تواصل واتساب" : "WhatsApp chat"}
       title={language === "ar" ? "تواصل واتساب" : "WhatsApp chat"}
-      className="fixed bottom-4 right-4 z-[70] inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 shadow-lg transition-transform duration-200 hover:scale-105 md:bottom-6 md:right-6"
+      className="fixed bottom-12 right-4 z-[70] inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/20 shadow-lg transition-transform duration-200 hover:scale-105 md:bottom-16 md:right-6"
       style={{
         backgroundColor: "#25D366",
         boxShadow: "0 12px 24px rgba(37,211,102,0.3)",
