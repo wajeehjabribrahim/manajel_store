@@ -116,14 +116,14 @@
 }
 
 @font-face {
-  font-family: 'TajawalRegular';
+  font-family: 'Tajawal';
   src: url('/fonts/Tajawal-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
 }
 
 .tajawal-regular {
-  font-family: 'TajawalRegular', 'Tajawal', Arial, sans-serif !important;
+  font-family: 'Tajawal', Arial, sans-serif !important;
   font-weight: 400 !important;
 }
 
@@ -134,7 +134,7 @@
 
 .tajawal-regular-all,
 .tajawal-regular-all * {
-  font-family: 'TajawalRegular', 'Tajawal', Arial, sans-serif !important;
+  font-family: 'Tajawal', Arial, sans-serif !important;
   font-weight: 400 !important;
 }
 
@@ -142,6 +142,15 @@
 .tajawal-regular-all .product-name-bold * {
   font-family: 'Tajawal', Arial, sans-serif !important;
   font-weight: 700 !important;
+}
+
+/* Improve Arabic rendering and smoothing for Tajawal */
+.tajawal-regular, .tajawal-bold, .tajawal-regular-all, .tajawal-regular-all * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  font-feature-settings: "rlig" 1, "liga" 1, "kern" 1;
 }
 
 @keyframes heroZoom {
