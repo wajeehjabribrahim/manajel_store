@@ -310,11 +310,14 @@ export default function AdminEditProductPage() {
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [existingImage, setExistingImage] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [extraImageUrls, setExtraImageUrls] = useState<string[]>([]);
+  const [extraImageUrlInput, setExtraImageUrlInput] = useState("");
   const [featured, setFeatured] = useState(false);
   const [inStock, setInStock] = useState(true);
   const [sizes, setSizes] = useState<Record<SizeKey, SizeState>>(initialSizes);
@@ -369,6 +372,11 @@ export default function AdminEditProductPage() {
             setCategory(product.category || CATEGORIES[0]?.id);
             setPrice(String(product.price || ""));
             setExistingImage(product.image || null);
+            setImageUrl(
+              typeof product.image === "string" && /^https?:\/\//i.test(product.image)
+                ? product.image
+                : ""
+            );
             setExistingImages(product.images || []);
             setFeatured(Boolean(product.featured));
             setInStock(Boolean(product.inStock));
@@ -582,6 +590,7 @@ export default function AdminEditProductPage() {
     setSaving(true);
     try {
       let imageData = existingImage || "";
+      let image = imageUrl.trim();
       let imagesData = [...existingImages];
       
       if (imageFile) {
@@ -601,6 +610,9 @@ export default function AdminEditProductPage() {
 
         const uploadJson = await uploadRes.json();
         imageData = typeof uploadJson?.imageData === "string" ? uploadJson.imageData : imageData;
+        image = "";
+      } else if (image) {
+        imageData = "";
       }
 
       // Upload new multiple images
@@ -622,6 +634,12 @@ export default function AdminEditProductPage() {
         }
       }
 
+      // Append any externally provided image URLs
+      const extraUrls = extraImageUrls.map(u => u.trim()).filter(Boolean);
+      if (extraUrls.length > 0) {
+        imagesData = [...imagesData, ...extraUrls];
+      }
+
       const sizesPayload = buildSizesPayload();
       const payload = {
         name: name.trim(),
@@ -632,6 +650,7 @@ export default function AdminEditProductPage() {
         ingredientsEn: ingredientsEn.trim() || undefined,
         category,
         price: Number(price) || 0,
+        image,
         imageData,
         images: imagesData.length > 0 ? JSON.stringify(imagesData) : undefined,
         sizes: Object.keys(sizesPayload).length ? sizesPayload : undefined,
@@ -801,12 +820,24 @@ export default function AdminEditProductPage() {
           </div>
         </div>
 
-        {(imagePreview || existingImage) && (
+        <div>
+          <label className="block text-sm font-semibold mb-2">رابط الصورة الرئيسية (اختياري)</label>
+          <input
+            type="url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2"
+            placeholder="https://example.com/product-image.jpg"
+          />
+          <p className="text-xs text-gray-500 mt-1">إذا اخترت ملف صورة، ستكون له الأولوية على الرابط.</p>
+        </div>
+
+        {(imagePreview || imageUrl || existingImage) && (
           <div>
             <label className="block text-sm font-semibold mb-2">معاينة الصورة الرئيسية</label>
             <div className="w-40 h-40 rounded-lg overflow-hidden border">
               <img
-                src={imagePreview || existingImage || ""}
+                src={imagePreview || imageUrl || existingImage || ""}
                 alt="Preview"
                 className="w-full h-full object-cover"
               />
@@ -832,6 +863,44 @@ export default function AdminEditProductPage() {
             className="w-full border rounded-lg px-3 py-2"
           />
           <p className="text-xs text-gray-500 mt-1">الحد الأقصى 5 صور ({imageFiles.length}/5)</p>
+          <div className="mt-3">
+            <label className="block text-sm font-semibold mb-2">أو أضف روابط صور إضافية (اختياري)</label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={extraImageUrlInput}
+                onChange={(e) => setExtraImageUrlInput(e.target.value)}
+                className="flex-1 border rounded-lg px-3 py-2"
+                placeholder="https://example.com/image.webp"
+                dir="ltr"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const v = (extraImageUrlInput || "").trim();
+                  if (!v) return;
+                  setExtraImageUrls((prev) => [...prev, v]);
+                  setExtraImageUrlInput("");
+                }}
+                className="px-3 py-2 rounded-lg bg-gray-200"
+              >أضف</button>
+            </div>
+
+            {extraImageUrls.length > 0 && (
+              <div className="mt-3 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {extraImageUrls.map((url, idx) => (
+                  <div key={idx} className="relative">
+                    <img src={url} alt={`URL ${idx + 1}`} className="w-full h-32 object-cover rounded-lg border" />
+                    <button
+                      type="button"
+                      onClick={() => setExtraImageUrls(extraImageUrls.filter((_, i) => i !== idx))}
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                    >✕</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Existing Images */}
