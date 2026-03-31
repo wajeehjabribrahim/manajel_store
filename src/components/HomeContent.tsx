@@ -940,7 +940,7 @@ export default function HomeContent() {
                     ? ({
                         delay: 5300,
                         disableOnInteraction: false,
-                        reverseDirection: true,
+                        reverseDirection: false,
                       } as any)
                     : false
                 }
