@@ -689,6 +689,16 @@ export default function AdminEditProductPage() {
     }));
   };
 
+  const moveItem = <T,>(arr: T[], from: number, to: number): T[] => {
+    if (from < 0 || to < 0 || from >= arr.length || to >= arr.length || from === to) {
+      return arr;
+    }
+    const next = [...arr];
+    const [item] = next.splice(from, 1);
+    next.splice(to, 0, item);
+    return next;
+  };
+
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12" style={{ direction: dir }}>
@@ -891,6 +901,26 @@ export default function AdminEditProductPage() {
                 {extraImageUrls.map((url, idx) => (
                   <div key={idx} className="relative">
                     <img src={url} alt={`URL ${idx + 1}`} className="w-full h-32 object-cover rounded-lg border" />
+                    <div className="absolute left-1 top-1 flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setExtraImageUrls((prev) => moveItem(prev, idx, idx - 1))}
+                        disabled={idx === 0}
+                        className="bg-black/70 text-white rounded w-6 h-6 flex items-center justify-center text-[11px] disabled:opacity-40"
+                        title="تحريك لأعلى"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setExtraImageUrls((prev) => moveItem(prev, idx, idx + 1))}
+                        disabled={idx === extraImageUrls.length - 1}
+                        className="bg-black/70 text-white rounded w-6 h-6 flex items-center justify-center text-[11px] disabled:opacity-40"
+                        title="تحريك لأسفل"
+                      >
+                        ↓
+                      </button>
+                    </div>
                     <button
                       type="button"
                       onClick={() => setExtraImageUrls(extraImageUrls.filter((_, i) => i !== idx))}
@@ -915,6 +945,26 @@ export default function AdminEditProductPage() {
                     alt={`Existing ${idx + 1}`}
                     className="w-full h-32 object-cover rounded-lg border"
                   />
+                  <div className="absolute left-1 top-1 flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setExistingImages((prev) => moveItem(prev, idx, idx - 1))}
+                      disabled={idx === 0}
+                      className="bg-black/70 text-white rounded w-6 h-6 flex items-center justify-center text-[11px] disabled:opacity-40"
+                      title="تحريك لأعلى"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setExistingImages((prev) => moveItem(prev, idx, idx + 1))}
+                      disabled={idx === existingImages.length - 1}
+                      className="bg-black/70 text-white rounded w-6 h-6 flex items-center justify-center text-[11px] disabled:opacity-40"
+                      title="تحريك لأسفل"
+                    >
+                      ↓
+                    </button>
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
@@ -944,6 +994,26 @@ export default function AdminEditProductPage() {
                     alt={`New Preview ${idx + 1}`}
                     className="w-full h-32 object-cover rounded-lg border"
                   />
+                  <div className="absolute left-1 top-1 flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setImageFiles((prev) => moveItem(prev, idx, idx - 1))}
+                      disabled={idx === 0}
+                      className="bg-black/70 text-white rounded w-6 h-6 flex items-center justify-center text-[11px] disabled:opacity-40"
+                      title="تحريك لأعلى"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageFiles((prev) => moveItem(prev, idx, idx + 1))}
+                      disabled={idx === imagePreviews.length - 1}
+                      className="bg-black/70 text-white rounded w-6 h-6 flex items-center justify-center text-[11px] disabled:opacity-40"
+                      title="تحريك لأسفل"
+                    >
+                      ↓
+                    </button>
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
