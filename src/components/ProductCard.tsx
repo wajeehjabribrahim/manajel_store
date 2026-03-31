@@ -195,7 +195,6 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
     <div ref={elementRef} className={animationClass}>
       <Link
         href={`/products/${product.id}`}
-        scroll={false}
         className="block h-full"
         onClick={() => {
           try {
