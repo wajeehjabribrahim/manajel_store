@@ -85,9 +85,9 @@ export default function HomeContent() {
     };
   }, []);
   const heritageImages = [
-    "/images/mill.png",
-    "/images/mail.jpg",
-    "/images/oil.jpg",
+    "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980574/mill_flxe3m.webp",
+    "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980569/mail_ruyrci.webp",
+    "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980560/oil_eckddl.webp",
   ];
   const arrivalsReveal = useScrollAnimation({ delay: 100, triggerOnce: false });
   const aboutReveal = useScrollAnimation({ delay: 60, triggerOnce: false });

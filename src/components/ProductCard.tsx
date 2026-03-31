@@ -9,6 +9,7 @@ import { CURRENCY_SYMBOL } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { optimizeImage } from "@/lib/optimizeImage";
 import { DEFAULT_SIZE_KEY, SizeKey } from "@/lib/productSizes";
 
 interface ProductCardProps {
@@ -239,7 +240,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           )}
           {product.image ? (
             <Image
-              src={product.image}
+              src={typeof product.image === "string" ? optimizeImage(product.image, 600) : ""}
               alt={name}
               fill
               className="object-cover product-image"
