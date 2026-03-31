@@ -279,14 +279,14 @@ export default function ProductPage({ params }: PageProps) {
 
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(shareUrl);
-        alert(language === "ar" ? "تم نسخ رابط المنتج" : "Product link copied");
+        alert(t("product.linkCopied"));
         return;
       }
 
       alert(shareUrl);
     } catch (error) {
       if ((error as Error)?.name !== "AbortError") {
-        alert(language === "ar" ? "تعذر مشاركة المنتج" : "Unable to share product");
+        alert(t("product.shareFailed"));
       }
     } finally {
       setIsSharing(false);
@@ -325,14 +325,14 @@ export default function ProductPage({ params }: PageProps) {
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setNotifyMessage(data?.error || (language === "ar" ? "حدث خطأ، حاول مرة أخرى" : "Something went wrong, try again"));
+        setNotifyMessage(data?.error || t("product.notifyError"));
         return;
       }
 
-      setNotifyMessage(data?.message || (language === "ar" ? "تم تسجيل طلب التذكير الخاص بك" : "Reminder request saved"));
+      setNotifyMessage(data?.message || t("product.notifySaved"));
       setNotifyWhatsapp("");
     } catch {
-      setNotifyMessage(language === "ar" ? "حدث خطأ، حاول مرة أخرى" : "Something went wrong, try again");
+      setNotifyMessage(t("product.notifyError"));
     } finally {
       setIsNotifying(false);
     }
@@ -354,14 +354,13 @@ export default function ProductPage({ params }: PageProps) {
     return (
       <div style={{ minHeight: "calc(100vh - 200px)", backgroundColor: "#121416" }} className="flex items-center justify-center">
         <div className="text-center">
-          <h1 className="mb-4 text-4xl font-bold text-[#F2ECE2]">المنتج غير موجود</h1>
-          <p className="mb-6 text-white/70">نعتصر، المنتج الذي تبحث عنه غير متوفر</p>
+          <h1 className="mb-4 text-4xl font-bold text-[#F2ECE2]">{t("product.notFound")}</h1>
+          <p className="mb-6 text-white/70">{t("product.notFoundDesc")}</p>
           <Link
             href="/shop"
-            className="inline-block px-6 py-2 rounded-lg font-semibold transition-transform hover:scale-105"
-            style={{ backgroundColor: "#1f5d4e", color: "#F2ECE2", border: "1px solid rgba(201,166,107,0.45)" }}
+            className="inline-block px-6 py-2 rounded-lg font-semibold transition-transform hover:scale-105 tajawal-regular gold-button"
           >
-            العودة للمتجر
+            {t("product.backToShop")}
           </Link>
         </div>
       </div>

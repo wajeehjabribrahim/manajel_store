@@ -160,7 +160,17 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
       ref={elementRef}
       className={`scroll-animate h-full ${isVisible ? "visible" : ""}`}
     >
-      <Link href={`/products/${product.id}`} className="block h-full">
+      <Link
+        href={`/products/${product.id}`}
+        className="block h-full"
+        onClick={() => {
+          try {
+            sessionStorage.setItem('manajel:shop:scroll', String(window.scrollY || window.pageYOffset || 0));
+          } catch {
+            // ignore
+          }
+        }}
+      >
         <div
           className="product-card group relative flex h-full cursor-pointer flex-col overflow-hidden border border-transparent bg-[#121416] shadow-md transition-all duration-150 hover:duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
           style={{ borderRadius: 0 }}
@@ -222,7 +232,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
 
         {/* Content */}
         <div className="p-2.5 sm:p-4 flex flex-col flex-1">
-          <h3 className="gold-texture-static mb-1 line-clamp-1 text-xs sm:text-base font-semibold text-[#C9A66B]">
+          <h3 className="gold-texture-static mb-1 line-clamp-1 text-[13px] md:text-sm lg:text-base font-semibold text-[#C9A66B]">
             {name}
           </h3>
           <p className="mb-0.5 sm:mb-1 line-clamp-2 text-[9px] sm:text-xs leading-4 sm:leading-5 text-white/72 tajawal-regular">

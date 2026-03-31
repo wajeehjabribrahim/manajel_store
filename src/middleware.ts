@@ -43,12 +43,19 @@ function getRateLimitConfig(pathname: string) {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  const response = NextResponse.next();
+
+  // Cache shop and product pages for 1 hour
+  if (pathname === "/shop" || pathname.startsWith("/shop/") || pathname.startsWith("/products/")) {
+    response.headers.set("Cache-Control", "public, max-age=3600");
+  }
+
   if (
     !pathname.startsWith("/api/auth") &&
     !pathname.startsWith("/api/orders") &&
     !pathname.startsWith("/api/contact")
   ) {
-    return NextResponse.next();
+    return response;
   }
 
   const { key, limit, windowMs } = getRateLimitConfig(pathname);
@@ -60,7 +67,7 @@ export function middleware(request: NextRequest) {
 
   if (!existing || existing.resetAt <= now) {
     rateLimitStore.set(bucketKey, { count: 1, resetAt: now + windowMs });
-    return NextResponse.next();
+    return response;
   }
 
   if (existing.count >= limit) {
@@ -79,7 +86,7 @@ export function middleware(request: NextRequest) {
   existing.count += 1;
   rateLimitStore.set(bucketKey, existing);
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

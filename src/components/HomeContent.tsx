@@ -763,7 +763,7 @@ export default function HomeContent() {
                       </div>
                       <div className="px-5 pb-5 pt-2 flex flex-col gap-1">
                         <div className="flex items-center justify-between">
-                          <h3 className="gold-texture-static text-[#C9A66B] text-base sm:text-lg font-extrabold leading-tight line-clamp-2">
+                          <h3 className="gold-texture-static text-[#C9A66B] text-[13px] md:text-sm lg:text-base font-extrabold leading-tight line-clamp-2">
                             {t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}
                           </h3>
                           <div className="flex items-center gap-2 min-w-fit">
