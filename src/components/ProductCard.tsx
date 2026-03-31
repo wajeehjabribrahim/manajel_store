@@ -19,8 +19,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, animationDelay = 0, isFirstProduct = false }: ProductCardProps) {
   const { t, language } = useLanguage();
-  // Add extra delay for first product to ensure image loads
-  const totalDelay = isFirstProduct ? animationDelay + 500 : animationDelay;
+  // Do not add artificial extra delay for the first product — keep animation delay minimal
+  const totalDelay = isFirstProduct ? 0 : animationDelay;
   const { elementRef, isVisible } = useScrollAnimation({ delay: totalDelay, triggerOnce: true });
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
@@ -195,6 +195,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
     <div ref={elementRef} className={animationClass}>
       <Link
         href={`/products/${product.id}`}
+        scroll={false}
         className="block h-full"
         onClick={() => {
           try {
@@ -244,21 +245,16 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
               className="object-cover product-image"
               style={{ borderRadius: 0 }}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              quality={70}
+              quality={50}
               priority={isFirstProduct}
               loading={isFirstProduct ? "eager" : "lazy"}
+              fetchPriority={isFirstProduct ? "high" : "auto"}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <div className="text-center">
-                <div
-                  className="text-3xl font-bold mb-2 text-[#C9A66B]"
-                >
-                  {name.split(" ")[0][0]}
-                </div>
-                <p className="text-xs font-semibold text-white/75">
-                {name}
-              </p>
+                <div className="text-3xl font-bold mb-2 text-[#C9A66B]">{name.split(" ")[0][0]}</div>
+                <p className="text-xs font-semibold text-white/75">{name}</p>
               </div>
             </div>
           )}
@@ -294,7 +290,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           </div>
         </div>
 
-        {product.inStock && showQuickAdd && isMounted
+        {product.inStock && isMounted && showQuickAdd
           ? createPortal(
               <div
                 className="fixed inset-0 z-[121] bg-[#0f1215]/96 backdrop-blur-sm"
