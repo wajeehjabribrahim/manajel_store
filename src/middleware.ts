@@ -45,6 +45,16 @@ export function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
 
+  // Skip noisy NextAuth client endpoints to avoid false 429s.
+  if (
+    pathname === "/api/auth/session" ||
+    pathname.startsWith("/api/auth/session/") ||
+    pathname === "/api/auth/_log" ||
+    pathname.startsWith("/api/auth/_log/")
+  ) {
+    return response;
+  }
+
   // Cache shop and product pages for 1 hour
   if (pathname === "/shop" || pathname.startsWith("/shop/") || pathname.startsWith("/products/")) {
     response.headers.set("Cache-Control", "public, max-age=3600");

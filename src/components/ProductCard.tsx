@@ -195,10 +195,12 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
     <div ref={elementRef} className={animationClass}>
       <Link
         href={`/products/${product.id}`}
+        scroll={false}
         className="block h-full"
         onClick={() => {
           try {
             sessionStorage.setItem('manajel:shop:scroll', String(window.scrollY || window.pageYOffset || 0));
+            sessionStorage.setItem('lastProductId', String(product.id));
           } catch {
             // ignore
           }

@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
-const PRODUCTS_BATCH_SIZE = 3;
+const PRODUCTS_BATCH_SIZE = 4;
 
 interface Category {
   id: string;
@@ -298,54 +298,75 @@ export default function ShopContent() {
     };
   }, [isLoading, hasMoreProducts, filteredProducts.length]);
 
-  // Restore scroll position when returning from a product page.
-  // Try multiple times to allow layout and images to settle.
+  // Restore to the last clicked product first (stronger than raw Y),
+  // and if lazy-loading hides it, progressively increase visible items.
+  // Then fallback to stored Y position.
   useEffect(() => {
     try {
+      if (!productsLoaded) return;
+
+      const productId = sessionStorage.getItem('lastProductId');
       const pos = sessionStorage.getItem('manajel:shop:scroll');
-      if (!pos) return;
-      const n = Number(pos);
-      if (Number.isNaN(n)) {
-        sessionStorage.removeItem('manajel:shop:scroll');
+      let done = false;
+      let tries = 0;
+
+      if (productId) {
+        const interval = setInterval(() => {
+          const el = document.getElementById(`product-${productId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'auto', block: 'center' });
+            done = true;
+            clearInterval(interval);
+            sessionStorage.removeItem('lastProductId');
+            sessionStorage.removeItem('manajel:shop:scroll');
+            return;
+          }
+
+          // If element is not in DOM yet due to lazy-loading, reveal more cards
+          setVisibleCount((prev) => Math.min(prev + PRODUCTS_BATCH_SIZE, filteredProducts.length));
+
+          tries += 1;
+          if (tries > 20) {
+            clearInterval(interval);
+          }
+        }, 100);
+
+        setTimeout(() => {
+          clearInterval(interval);
+
+          // fallback to Y position if product element wasn't found in time
+          if (!done && pos) {
+            const n = Number(pos);
+            if (!Number.isNaN(n)) {
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  window.scrollTo({ top: n, behavior: 'auto' });
+                  sessionStorage.removeItem('manajel:shop:scroll');
+                  sessionStorage.removeItem('lastProductId');
+                });
+              });
+            }
+          }
+        }, 3000);
         return;
       }
 
-      let attempts = 0;
-      const maxAttempts = 6;
-
-      const tryRestore = () => {
-        attempts += 1;
-        // If products are not loaded yet, delay
-        if (!productsLoaded && attempts <= maxAttempts) {
-          setTimeout(tryRestore, 120);
-          return;
-        }
-
-        // Perform scroll using two RAFs to ensure layout/paint completed
-        requestAnimationFrame(() => {
+      // fallback path when only Y position exists
+      if (pos) {
+        const n = Number(pos);
+        if (!Number.isNaN(n)) {
           requestAnimationFrame(() => {
-            try {
+            requestAnimationFrame(() => {
               window.scrollTo({ top: n, behavior: 'auto' });
               sessionStorage.removeItem('manajel:shop:scroll');
-            } catch {
-              // ignore
-            }
+            });
           });
-        });
-
-        // If not restored yet and attempts remain, try again
-        if (attempts <= maxAttempts) {
-          setTimeout(() => {
-            tryRestore();
-          }, 200);
         }
-      };
-
-      tryRestore();
+      }
     } catch {
       // ignore
     }
-  }, [productsLoaded]);
+  }, [productsLoaded, filteredProducts.length]);
 
   return (
     <div className="bg-[#121416] text-[#F2ECE2]">
@@ -431,21 +452,7 @@ export default function ShopContent() {
                 {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
               </div>
             )}
-            <div
-              className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-8 auto-rows-fr"
-              onClick={(e) => {
-                try {
-                  const target = e.target as HTMLElement | null;
-                  const link = target?.closest && target.closest('a');
-                  const href = link?.getAttribute('href') || '';
-                  if (href.startsWith('/products/')) {
-                    sessionStorage.setItem('manajel:shop:scroll', String(window.scrollY || window.pageYOffset || 0));
-                  }
-                } catch {
-                  // ignore
-                }
-              }}
-            >
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-8 auto-rows-fr">
               {isLoading || filteredProducts.length === 0
                 ? Array.from({ length: 8 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
@@ -457,7 +464,7 @@ export default function ShopContent() {
                     </div>
                   ))
                 : visibleProducts.map((product, index) => (
-                    <div key={product.id} className="relative h-full">
+                  <div id={`product-${product.id}`} key={product.id} className="relative h-full">
                       <ProductCard 
                         product={product} 
                         animationDelay={index * 50}
