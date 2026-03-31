@@ -400,6 +400,11 @@ export default function ProductPage({ params }: PageProps) {
 
   const ingredients = typeof product.ingredients === "string" ? product.ingredients.trim() : "";
 
+  // Exclude the primary product.image from gallery on the product page
+  const galleryImages = Array.isArray(product.images)
+    ? product.images.filter((img) => !!img && img !== product.image)
+    : [];
+
   const formatNumber = (value: number) =>
     new Intl.NumberFormat(language === "ar" ? "ar-PS-u-nu-latn" : "en-US", {
       maximumFractionDigits: 2,
@@ -441,15 +446,8 @@ export default function ProductPage({ params }: PageProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image Gallery */}
           <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#171a1d]">
-            {product.image || (product.images && product.images.length > 0) ? (
-              <ImageGallery
-                images={
-                  product.image
-                    ? [product.image, ...(product.images || [])]
-                    : (product.images || [])
-                }
-                alt={name}
-              />
+            {galleryImages.length > 0 ? (
+              <ImageGallery images={galleryImages} alt={name} />
             ) : (
               <div className="w-full h-96 flex items-center justify-center">
                 <div className="text-center">
