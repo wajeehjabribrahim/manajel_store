@@ -134,6 +134,7 @@ export default function ShopContent() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
   const [productsLoaded, setProductsLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(PRODUCTS_BATCH_SIZE);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -153,22 +154,31 @@ export default function ShopContent() {
     }
   };
 
-  const loadProducts = async () => {
+  const loadProducts = async (opts?: { bypassCache?: boolean }) => {
+    setLoadError(null);
     try {
-      const res = await fetch(`/api/products?lang=${language}`);
+      const url = `/api/products?lang=${language}` + (opts?.bypassCache ? `&_ts=${Date.now()}` : "");
+      const res = await fetch(url, { cache: opts?.bypassCache ? "no-store" : undefined });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data?.products)) {
           setProducts(data.products);
           try {
             localStorage.setItem(`manajel-products-cache-${language}`, JSON.stringify(data.products));
+            localStorage.setItem(`manajel-products-cache-meta-${language}`, JSON.stringify({ ts: Date.now() }));
           } catch {
             // ignore cache errors
           }
+        } else {
+          setLoadError("Received unexpected response from server.");
         }
+      } else {
+        const text = await res.text().catch(() => res.statusText || "Error");
+        setLoadError(`Server returned ${res.status}: ${text}`);
       }
-    } catch {
-      // keep fallback
+    } catch (error: any) {
+      console.error("Error loading products:", error);
+      setLoadError(error?.message || "Network error while fetching products");
     } finally {
       setProductsLoaded(true);
     }
@@ -444,7 +454,7 @@ export default function ShopContent() {
                 }
               }}
             >
-              {isLoading || filteredProducts.length === 0
+              {isLoading
                 ? Array.from({ length: 8 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
                       <div className="mb-4 h-48 w-full rounded-lg bg-white/10" />
@@ -454,6 +464,45 @@ export default function ShopContent() {
                       <div className="mt-auto h-8 w-1/2 rounded bg-white/10" />
                     </div>
                   ))
+                : filteredProducts.length === 0
+                ? (
+                  <div className="col-span-full py-12 text-center">
+                    <p className="mb-4 text-white/80">{loadError ? `حدث خطأ: ${loadError}` : t("shop.noProducts")}</p>
+                    <div className="flex items-center justify-center gap-3">
+                      <button
+                        onClick={() => {
+                          setProductsLoaded(false);
+                          loadProducts({ bypassCache: true });
+                        }}
+                        className="gold-button rounded-xl px-5 py-2 text-sm font-bold"
+                      >
+                        {language === "ar" ? "أعد المحاولة" : "Retry"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          // Try to restore from localStorage directly if available
+                          try {
+                            const cached = localStorage.getItem(`manajel-products-cache-${language}`);
+                            if (cached) {
+                              const parsed = JSON.parse(cached);
+                              if (Array.isArray(parsed) && parsed.length > 0) {
+                                setProducts(parsed);
+                                setProductsLoaded(true);
+                                return;
+                              }
+                            }
+                          } catch {}
+                          // fallback to retry
+                          setProductsLoaded(false);
+                          loadProducts({ bypassCache: true });
+                        }}
+                        className="rounded-xl px-5 py-2 text-sm bg-white/6"
+                      >
+                        {language === "ar" ? "استخدم الكاش المحلي" : "Use local cache"}
+                      </button>
+                    </div>
+                  </div>
+                )
                 : visibleProducts.map((product, index) => (
                     <div key={product.id} className="relative h-full">
                       <ProductCard 
