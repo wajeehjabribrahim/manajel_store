@@ -575,7 +575,7 @@ export const translations = {
     // Product Page
     product: {
       notFound: "المنتج غير موجود",
-      notFoundDesc: "نعتذر، المنتج الذي تبحث عنه غير متوفر",
+      notFoundDesc: "نعتذر ، المنتج الذي تبحث عنه غير متوفر",
       backToShop: "العودة للمتجر",
       linkCopied: "تم نسخ رابط المنتج",
       shareFailed: "تعذر مشاركة المنتج",
