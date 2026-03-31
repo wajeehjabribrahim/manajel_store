@@ -21,8 +21,10 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
   const { t, language } = useLanguage();
   // Add extra delay for first product to ensure image loads
   const totalDelay = isFirstProduct ? animationDelay + 500 : animationDelay;
-  const { elementRef, isVisible } = useScrollAnimation({ delay: totalDelay });
+  const { elementRef, isVisible } = useScrollAnimation({ delay: totalDelay, triggerOnce: true });
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [playedThisMount, setPlayedThisMount] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [selectedSize, setSelectedSize] = useState<SizeKey>(DEFAULT_SIZE_KEY);
   const [quantity, setQuantity] = useState(1);
@@ -31,6 +33,17 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Load per-product animation flag (played before) from sessionStorage
+  useEffect(() => {
+    try {
+      const key = `manajel:product-animated-${product.id}`;
+      const v = sessionStorage.getItem(key);
+      if (v) setHasAnimated(true);
+    } catch {
+      // ignore
+    }
+  }, [product.id]);
 
   const availableSizes = (Object.keys(product.sizes || {}) as SizeKey[]).filter(
     (size) => typeof product.sizes?.[size]?.price === "number" && (product.sizes?.[size]?.price ?? 0) > 0
@@ -155,11 +168,31 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
     }, 900);
   };
 
+  // decide class: if already animated previously, make visible without animation
+  const animationClass = hasAnimated
+    ? "scroll-animate already-animated h-full"
+    : `scroll-animate h-full ${isVisible ? "visible" : ""}`;
+
+  // when becomes visible and not previously animated, mark as played and persist after animation
+  useEffect(() => {
+    if (!isVisible || hasAnimated || playedThisMount) return;
+    setPlayedThisMount(true);
+    try {
+      const key = `manajel:product-animated-${product.id}`;
+      const timer = setTimeout(() => {
+        try {
+          sessionStorage.setItem(key, "1");
+        } catch {}
+        setHasAnimated(true);
+      }, 700); // slightly longer than CSS transition
+      return () => clearTimeout(timer);
+    } catch {
+      // ignore
+    }
+  }, [isVisible, hasAnimated, playedThisMount, product.id]);
+
   return (
-    <div
-      ref={elementRef}
-      className={`scroll-animate h-full ${isVisible ? "visible" : ""}`}
-    >
+    <div ref={elementRef} className={animationClass}>
       <Link
         href={`/products/${product.id}`}
         className="block h-full"
