@@ -97,6 +97,10 @@ export default function HomeContent() {
   const heritageReveal = useScrollAnimation({ delay: 200 });
 
   useEffect(() => {
+    const CACHE_TTL = 60 * 60 * 1000; // 1 hour in ms
+    const cacheKey = `manajel-products-cache-${language}`;
+    const metaKey = `manajel-products-cache-meta-${language}`;
+
     const loadProducts = async () => {
       try {
         const res = await fetch(`/api/products?lang=${language}`);
@@ -105,7 +109,8 @@ export default function HomeContent() {
           if (Array.isArray(data?.products)) {
             setProducts(data.products);
             try {
-              localStorage.setItem(`manajel-products-cache-${language}`, JSON.stringify(data.products));
+              localStorage.setItem(cacheKey, JSON.stringify(data.products));
+              localStorage.setItem(metaKey, JSON.stringify({ ts: Date.now() }));
             } catch {
               // ignore cache errors
             }
@@ -116,18 +121,35 @@ export default function HomeContent() {
       }
     };
 
-    try {
-      const cached = localStorage.getItem(`manajel-products-cache-${language}`);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setProducts(parsed);
+    (function init() {
+      try {
+        const cached = localStorage.getItem(cacheKey);
+        const metaRaw = localStorage.getItem(metaKey);
+        let fresh = false;
+
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProducts(parsed);
+            if (metaRaw) {
+              try {
+                const meta = JSON.parse(metaRaw);
+                const ts = typeof meta?.ts === "number" ? meta.ts : 0;
+                if (Date.now() - ts < CACHE_TTL) fresh = true;
+              } catch {
+                // ignore meta parse
+              }
+            }
+          }
         }
+
+        if (!fresh) {
+          loadProducts();
+        }
+      } catch {
+        loadProducts();
       }
-    } catch {
-      // ignore cache errors
-    }
-    loadProducts();
+    })();
   }, [language]);
 
   const featuredProducts = products.filter((p) => p.featured).slice(0, 4);
@@ -726,7 +748,7 @@ export default function HomeContent() {
                   </div>
                 </SwiperSlide>
               ))
-            : featuredSlides.map(({ key, product }) => {
+            : featuredSlides.map(({ key, product }, idx) => {
                 const sizeValues = Object.values(product.sizes || {}).filter(
                   (s) => typeof s?.price === "number" && s.price > 0
                 );
@@ -759,6 +781,8 @@ export default function HomeContent() {
                           width={800}
                           height={800}
                           className="w-full h-full object-cover featured-product-image"
+                          loading={idx === 0 ? "eager" : "lazy"}
+                          priority={idx === 0}
                         />
                       </div>
                       <div className="px-5 pb-5 pt-2 flex flex-col gap-1">

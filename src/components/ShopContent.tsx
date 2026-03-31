@@ -175,19 +175,40 @@ export default function ShopContent() {
   };
 
   useEffect(() => {
+    const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+    const cacheKey = `manajel-products-cache-${language}`;
+    const metaKey = `manajel-products-cache-meta-${language}`;
+
     try {
-      const cached = localStorage.getItem(`manajel-products-cache-${language}`);
+      const cached = localStorage.getItem(cacheKey);
+      const metaRaw = localStorage.getItem(metaKey);
+      let fresh = false;
+
       if (cached) {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setProducts(parsed);
+          if (metaRaw) {
+            try {
+              const meta = JSON.parse(metaRaw);
+              const ts = typeof meta?.ts === "number" ? meta.ts : 0;
+              if (Date.now() - ts < CACHE_TTL) fresh = true;
+            } catch {
+              // ignore meta parse
+            }
+          }
         }
       }
+
+      loadCategories();
+      if (!fresh) {
+        loadProducts();
+      }
     } catch {
-      // ignore cache errors
+      loadCategories();
+      loadProducts();
     }
-    loadCategories();
-    loadProducts();
+
     return () => undefined;
   }, [language]);
 
