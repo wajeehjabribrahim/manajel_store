@@ -76,7 +76,7 @@ export default function RegisterPage() {
   const unmetRules = passwordRules.filter((r) => !r.test(password));
 
   return (
-    <div className="bg-[#121416] text-[#F2ECE2]" style={{ direction: dir, minHeight: "calc(100vh - 200px)" }}>
+    <div className="bg-[#121416] text-[#F2ECE2] tajawal-regular-all" style={{ direction: dir, minHeight: "calc(100vh - 200px)" }}>
       <div className="mx-auto max-w-md px-4 py-12">
         <div className="rounded-2xl border border-white/10 bg-[#171a1d] p-6 shadow-md">
           <p className="mb-2 text-xs uppercase tracking-[0.22em] text-[#C9A66B]">Account</p>
