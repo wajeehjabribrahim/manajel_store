@@ -9,20 +9,25 @@ export default function SignupPrompt() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    // Don't show if user is already logged in or if we've already shown it
-    if (status === "authenticated" || status === "loading") {
-      return;
-    }
+    // Do nothing until we know auth state and viewport
+    if (status === "authenticated" || status === "loading") return;
 
-    // Show the modal after 2 seconds for every visit
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 2000);
+    if (!isDesktop) return; // only show on desktop
 
+    // Show the modal after 2 seconds for desktop visits
+    const timer = setTimeout(() => setIsOpen(true), 2000);
     return () => clearTimeout(timer);
   }, [status]);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 769);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   if (!isOpen) return null;
 

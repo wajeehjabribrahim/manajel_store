@@ -2,11 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function BottomNav() {
   const { t, language } = useLanguage();
   const [cartCount, setCartCount] = useState(0);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [showPrompt, setShowPrompt] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const getCartCount = () => {
@@ -37,6 +44,44 @@ export default function BottomNav() {
       window.removeEventListener("manajel-cart-updated", handleStorage as EventListener);
     };
   }, []);
+
+  // Show mobile account prompt for unauthenticated users
+  useEffect(() => {
+    try {
+      if (status === "loading") return;
+      if (status === "authenticated") return; // don't show to logged-in users
+
+      // Only on mobile viewport
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+      if (!isMobile) return;
+
+      // Only show on homepage path
+      const path = pathname || (typeof window !== 'undefined' ? window.location.pathname : '/');
+      if (path !== '/') return;
+
+      const timer = setTimeout(() => setShowPrompt(true), 900);
+      return () => clearTimeout(timer);
+    } catch {
+      // ignore
+    }
+  }, [status, pathname]);
+
+  const handleDismissPrompt = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setShowPrompt(false);
+  };
+
+  const goToLogin = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setShowPrompt(false);
+    router.push('/login');
+  };
+
+  const goToRegister = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setShowPrompt(false);
+    router.push('/register');
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
@@ -76,6 +121,19 @@ export default function BottomNav() {
               </svg>
               <span>{t("account.title")}</span>
             </Link>
+            {/* Mobile-only account prompt bubble */}
+            {showPrompt && (
+              <div className="absolute bottom-12 right-6 left-auto z-50 flex items-center">
+                <div className="max-w-xs bg-[#171a1d] border border-white/10 text-white/90 rounded-lg p-3 shadow-xl tajawal-regular-all" style={{direction: 'rtl'}}>
+                  <div className="text-sm mb-2">قم بانشاء حساب او تسجيل الدخول لاستقبال جميع التحديثات والعروض</div>
+                  <div className="flex gap-2">
+                    <button onClick={goToLogin} className="flex-1 rounded-md py-1 text-sm bg-transparent border border-white/15">تسجيل الدخول</button>
+                    <button onClick={goToRegister} className="flex-1 rounded-md py-1 text-sm gold-button">انشاء حساب</button>
+                  </div>
+                </div>
+                <button onClick={handleDismissPrompt} className="ml-2 text-white/60 text-lg">✕</button>
+              </div>
+            )}
           </div>
         </div>
       </div>
