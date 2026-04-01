@@ -51,8 +51,8 @@ export default function BottomNav() {
       if (status === "loading") return;
       if (status === "authenticated") return; // don't show to logged-in users
 
-      // Only on mobile viewport
-      const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+      // Only on mobile viewport (treat tablets as desktop)
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 769;
       if (!isMobile) return;
 
       // Only show on homepage path
