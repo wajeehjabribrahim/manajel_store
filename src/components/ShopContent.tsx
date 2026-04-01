@@ -468,7 +468,7 @@ export default function ShopContent() {
                       <ProductCard 
                         product={product} 
                         animationDelay={index * 50}
-                        isFirstProduct={index === 0}
+                        isFirstProduct={index < 3}
                       />
                       {isAdmin && (
                         <div className="absolute top-2 right-2 flex gap-2 z-10">

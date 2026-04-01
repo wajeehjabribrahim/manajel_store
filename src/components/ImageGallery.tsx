@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -87,12 +88,19 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
         >
           {normalizedImages.map((image, index) => (
             <SwiperSlide key={`${image}-${index}`}>
-              <img
-                src={image}
-                alt={`${alt} ${index + 1}`}
-                className="w-full h-full object-cover object-center select-none bg-[#121416]"
-                draggable={false}
-              />
+              <div className="w-full h-full relative">
+                <Image
+                  src={image}
+                  alt={`${alt} ${index + 1}`}
+                  fill
+                  className="object-cover object-center select-none bg-[#121416]"
+                  draggable={false as any}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  priority={index === 0}
+                  fetchPriority={index === 0 ? "high" : "auto"}
+                  sizes="(max-width: 768px) 100vw, 800px"
+                />
+              </div>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -121,6 +129,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
                 alt={`${alt} ${index + 1}`}
                 className="w-full h-full object-cover rounded select-none"
                 draggable={false}
+                loading="lazy"
               />
             </button>
           ))}

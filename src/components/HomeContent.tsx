@@ -775,15 +775,22 @@ export default function HomeContent() {
                       style={{ boxShadow: "0 4px 32px 0 #0006", maxWidth: '240px', minWidth: '0' }}
                     >
                       <div className="aspect-[8/10] overflow-hidden bg-[#23201c] w-full">
+                          {/** First 3 slides are typically above the fold on desktop/tablet */}
+                          {(() => {
+                            const isAboveFoldFeatured = idx < 3;
+                            return (
                         <Image
                           src={product.image || "/images/hero.jpg"}
                           alt={product.name}
                           width={800}
                           height={800}
                           className="w-full h-full object-cover featured-product-image"
-                          loading={idx === 0 ? "eager" : "lazy"}
-                          priority={idx === 0}
+                            loading={isAboveFoldFeatured ? "eager" : "lazy"}
+                            priority={isAboveFoldFeatured}
+                            fetchPriority={isAboveFoldFeatured ? "high" : "auto"}
                         />
+                            );
+                          })()}
                       </div>
                       <div className="px-5 pb-5 pt-2 flex flex-col gap-1">
                         <div className="flex items-center justify-between">
