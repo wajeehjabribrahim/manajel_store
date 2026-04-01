@@ -113,6 +113,7 @@
   src: url('/fonts/Tajawal-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -120,6 +121,7 @@
   src: url('/fonts/Tajawal-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 .tajawal-regular {
@@ -320,13 +322,13 @@ html[dir="rtl"] .tajawal-regular-all * {
 /* Initial state for scroll animations */
 .scroll-animate {
   opacity: 0;
-  transform: translateY(30px);
+  transform: none;
 }
 
 .scroll-animate.visible {
   opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transform: none;
+  transition: opacity 0.45s ease-out;
 }
 
 /* If the item already animated previously, show it immediately without transition */
@@ -340,7 +342,7 @@ html[dir="rtl"] .tajawal-regular-all * {
 
 /* Smooth transitions for all interactive elements */
 button, a {
-  transition: all 0.2s ease-in-out;
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
 }
 
 /* Add bounce effect to icons on scroll */
@@ -533,17 +535,17 @@ html {
 }
 
 .product-image {
-  animation: productImageZoom 0.8s ease-out;
-  transition: transform 0.3s ease-in-out;
+  animation: none;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .product-card {
-  transform: scale(1);
-  transition: transform 0.9s ease-in-out;
+  transform: none;
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
 }
 
 .product-card:hover {
-  transform: scale(1.04);
+  transform: none;
 }
 
 /* Hide native password reveal/clear icons (Edge/IE) to avoid duplicate eye icon */
@@ -582,24 +584,49 @@ html {
 
 .featured-product-image {
   animation: none;
-  transition: transform 0.05s ease-out;
-  will-change: transform;
+  transition: opacity 0.2s ease-out;
+  will-change: auto;
   transform-origin: center;
 }
 
 .featured-product-card-auto {
-  transform: scale(1);
-  transition: transform 0.5s ease-in-out;
-  transform-style: preserve-3d;
-  will-change: transform;
+  transform: none;
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  transform-style: flat;
+  will-change: auto;
 }
 
 .featured-product-card-auto:hover {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .featured-product-card-auto:hover .featured-product-image {
-  transform: scale(1.08);
+  transform: none;
+}
+
+/* Mobile: hard-disable costly transform animations */
+@media (max-width: 768px) {
+  .animate-fade-in-up,
+  .animate-fade-in-down,
+  .animate-fade-in-left,
+  .animate-fade-in-right,
+  .animate-scale-in,
+  .animate-slide-in-up,
+  .animate-shake {
+    animation: none !important;
+  }
+
+  .scroll-animate,
+  .scroll-animate.visible,
+  .product-card,
+  .product-card:hover,
+  .featured-product-card-auto,
+  .featured-product-card-auto:hover,
+  .featured-product-card-auto:hover .featured-product-image,
+  .gold-button,
+  .gold-button:hover {
+    transform: none !important;
+  }
 }
 
 .featured-products-swiper {

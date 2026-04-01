@@ -228,7 +228,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                 setShowQuickAdd((prev) => !prev);
               }}
               type="button"
-              className="absolute bottom-2 left-2 z-10 h-7 w-7 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/80 bg-[#C9A66B] text-white transition-all duration-200 active:scale-95 hover:scale-105 hover:bg-[#b17a23] shadow-md"
+              className="absolute bottom-2 left-2 z-10 h-7 w-7 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/80 bg-[#C9A66B] text-white transition-colors duration-200 hover:bg-[#b17a23] shadow-md"
               title={language === "ar" ? "إضافة سريعة" : "Quick add"}
               aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
             >
@@ -347,7 +347,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                               event.stopPropagation();
                               setQuantity((prev) => Math.max(1, prev - 1));
                             }}
-                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6 active:scale-95"
+                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6"
                             type="button"
                             aria-label="decrease quantity"
                           >
@@ -360,7 +360,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                               event.stopPropagation();
                               setQuantity((prev) => Math.min(99, prev + 1));
                             }}
-                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6 active:scale-95"
+                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6"
                             type="button"
                             aria-label="increase quantity"
                           >
