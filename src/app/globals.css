@@ -18,19 +18,19 @@
 .gold-texture,
 .text-\[\#C9A66B\] {
   background-image:
-    radial-gradient(circle at 18% 22%, rgba(255, 250, 209, 0.98) 0%, rgba(255, 250, 209, 0) 34%),
-    radial-gradient(circle at 82% 76%, rgba(255, 221, 132, 0.82) 0%, rgba(255, 221, 132, 0) 33%),
+    radial-gradient(circle at 18% 22%, rgba(240, 200, 110, 0.95) 0%, rgba(240, 200, 110, 0) 34%),
+    radial-gradient(circle at 82% 76%, rgba(200, 148, 52, 0.85) 0%, rgba(200, 148, 52, 0) 33%),
     linear-gradient(
       130deg,
-      #fff7cf 0%,
-      #ffe9a8 10%,
-      #efc96a 22%,
+      #b5852f 0%,
+      #9a6f1f 10%,
+      #c3872a 22%,
 
-      #f7d57f 50%,
+      #8a5f16 50%,
       #b17a23 64%,
-      #ffefb7 77%,
-      #c3872a 90%,
-      #fbe09a 100%
+      #c99a3e 77%,
+      #7c5512 90%,
+      #a87b22 100%
     );
   background-size: 280% 280%, 240% 240%, 100% 100%;
   background-position: 0% 0%, 100% 100%, 0% 50%;
@@ -38,11 +38,6 @@
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: goldShimmer 7.5s ease-in-out infinite;
-  text-shadow:
-    0 1px 0 rgba(255, 246, 200, 0.35),
-    0 0 10px rgba(229, 177, 63, 0.3),
-    0 0 18px rgba(190, 132, 32, 0.18);
   /* Ensure coverage for large text */
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
@@ -53,6 +48,14 @@
 /* Extra large text coverage */
 .text-6xl.gold-texture {
   background-size: 4000% 4000%, 4000% 4000%, 400% 400%;
+}
+
+/* SVG icons colored with the brand gold class: the gradient text-clip rule
+   above would make currentColor transparent, so restore a solid gold fill */
+svg.text-\[\#C9A66B\] {
+  background-image: none;
+  color: #C9A66B;
+  -webkit-text-fill-color: #C9A66B;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -167,7 +170,7 @@ html[dir="rtl"] .tajawal-regular-all * {
 
 @keyframes heroZoom {
   from {
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
   to {
     transform: scale(1);
@@ -397,7 +400,7 @@ html {
 
 /* Add subtle parallax effect to hero section */
 .hero-section {
-  background-attachment: fixed;
+  background-attachment: scroll;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -473,8 +476,8 @@ html {
 }
 
 :root {
-  --background: #121416;
-  --foreground: #f2ece2;
+  --background: #FBF8F2;
+  --foreground: #121416;
 }
 
 @theme inline {
@@ -486,8 +489,8 @@ html {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #121416;
-    --foreground: #f2ece2;
+    --background: #FBF8F2;
+    --foreground: #121416;
   }
 }
 
@@ -496,7 +499,7 @@ html {
 }
 
 html, body {
-  background-color: #121416 !important;
+  background-color: #FBF8F2 !important;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -505,15 +508,15 @@ html, body {
 }
 
 body {
-  background: #121416 !important;
-  background-color: #121416 !important;
-  color: #f2ece2;
+  background: #FBF8F2 !important;
+  background-color: #FBF8F2 !important;
+  color: #121416;
   font-family: 'Tajawal', Arial, sans-serif;
   font-weight: 700;
 }
 
 html {
-  background: #121416 !important;
+  background: #FBF8F2 !important;
   overscroll-behavior-y: none;
 }
 
@@ -675,7 +678,53 @@ html {
 }
 
 .featured-products-swiper {
-  padding-bottom: 16px !important;
+  padding-top: 8px !important;
+  /* Room below the cards so the pagination dots don't overlap them */
+  padding-bottom: 40px !important;
+}
+
+/* Toast notifications */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-item {
+  animation: toastIn 0.25s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-item {
+    animation: none;
+  }
+}
+
+/* FAQ accordion: animate the answer when a question is opened */
+@keyframes faqReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-item[open] .faq-answer {
+  animation: faqReveal 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-item[open] .faq-answer {
+    animation: none;
+  }
 }
 
 .featured-products-swiper .swiper-pagination {

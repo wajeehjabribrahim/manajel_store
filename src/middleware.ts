@@ -56,7 +56,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Cache shop and product pages for 1 hour
-  if (pathname === "/shop" || pathname.startsWith("/shop/") || pathname.startsWith("/products/")) {
+  if (pathname === "/store/shop" || pathname.startsWith("/store/shop/") || pathname.startsWith("/store/products/")) {
     response.headers.set("Cache-Control", "public, max-age=3600");
   }
 

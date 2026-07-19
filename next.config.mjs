@@ -22,8 +22,34 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return {
+      // Serve the standalone cinematic landing page (public/landing/) at the root URL.
+      beforeFiles: [
+        {
+          source: "/",
+          destination: "/landing/index.html",
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async redirects() {
     return [
+      // Legacy store URLs (pre-merge) now live under /store.
+      {
+        source:
+          "/:seg(shop|cart|login|register|account|orders|about|contact|faq|shipping-policy|return-policy|privacy-policy|admin|products)",
+        destination: "/store/:seg",
+        permanent: true,
+      },
+      {
+        source:
+          "/:seg(shop|cart|login|register|account|orders|about|contact|faq|shipping-policy|return-policy|privacy-policy|admin|products)/:path*",
+        destination: "/store/:seg/:path*",
+        permanent: true,
+      },
       {
         source: "/:path*",
         has: [
@@ -52,9 +78,25 @@ const nextConfig = {
       "form-action 'self'",
     ].join('; ');
 
+    // The landing page (served at / from public/landing/) loads GSAP, Lenis and
+    // the Tailwind CDN plus Google Fonts, so it needs its own relaxed CSP.
+    const landingCsp = [
+      "default-src 'self'",
+      "base-uri 'self'",
+      "object-src 'none'",
+      "frame-ancestors 'none'",
+      "img-src 'self' data:",
+      "media-src 'self'",
+      "font-src 'self' data: https://fonts.gstatic.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+      "connect-src 'self'",
+      "form-action 'self'",
+    ].join('; ');
+
     return [
       {
-        source: '/shop',
+        source: '/store/shop',
         headers: [
           {
             key: 'Cache-Control',
@@ -90,7 +132,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/shop/:path*',
+        source: '/store/shop/:path*',
         headers: [
           {
             key: 'Cache-Control',
@@ -99,11 +141,20 @@ const nextConfig = {
         ],
       },
       {
-        source: '/products/:path*',
+        source: '/store/products/:path*',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=3600',
+          },
+        ],
+      },
+      {
+        source: '/landing/assets/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=2592000, immutable',
           },
         ],
       },
@@ -129,6 +180,25 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+      // Placed after the catch-all so these override its CSP for the landing page only.
+      {
+        source: '/',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: landingCsp,
+          },
+        ],
+      },
+      {
+        source: '/landing/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: landingCsp,
           },
         ],
       },

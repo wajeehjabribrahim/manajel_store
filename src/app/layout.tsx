@@ -6,6 +6,7 @@ import BottomNav from "@/components/BottomNav";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import AuthProvider from "@/components/AuthProvider";
 import DisableContextMenu from "@/components/DisableContextMenu";
+import Toaster from "@/components/Toast";
 import "./globals.css";
 
 export default function RootLayout({
@@ -27,7 +28,7 @@ export default function RootLayout({
         />
         <meta
           name="theme-color"
-          content="#121416"
+          content="#FBF8F2"
         />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta charSet="utf-8" />
@@ -35,7 +36,7 @@ export default function RootLayout({
         <meta property="og:locale" content="ar_PS" />
         <meta property="og:locale:alternate" content="en_US" />
       </head>
-      <body style={{ backgroundColor: "#121416" }} className="flex flex-col min-h-screen antialiased">
+      <body style={{ backgroundColor: "#FBF8F2" }} className="flex flex-col min-h-screen antialiased">
         <AuthProvider>
           <LanguageProvider>
             <DisableContextMenu />
@@ -46,6 +47,7 @@ export default function RootLayout({
             <Footer />
             <BottomNav />
             <FloatingWhatsApp />
+            <Toaster />
             {/* <CookieConsent /> */}
             {/* ملاحظة: تم إيقاف رسالة الموافقة على الخصوصية مؤقتًا. احذف التعليق لإعادة تفعيلها. */}
           </LanguageProvider>

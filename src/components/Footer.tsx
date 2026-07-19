@@ -108,8 +108,8 @@ export default function Footer() {
   return (
     <footer
       style={{
-        background: "linear-gradient(180deg, #131619 0%, #101214 100%)",
-        color: "#F2ECE2",
+        background: "#FBF8F2",
+        color: "#121416",
         borderTop: "1px solid rgba(201,166,107,0.28)",
       }}
       className="text-sm tajawal-regular-all"
@@ -120,28 +120,28 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <h3 className="text-lg font-black mb-4 tracking-wide text-[#C9A66B]">{(t as any).footer.brandName}</h3>
-            <p className="mb-4 text-xs text-white/70 leading-6">
+            <p className="mb-4 text-xs text-black/70 leading-6">
               {(t as any).footer.tagline}
             </p>
-            <p className="text-xs text-white/70">{(t as any).footer.location}</p>
+            <p className="text-xs text-black/70">{(t as any).footer.location}</p>
           </div>
 
           {/* Shop */}
           <div>
             <h4 className="font-semibold mb-4 text-[#C9A66B]">{(t as any).footer.shopTitle}</h4>
-            <ul className="space-y-2 text-white/80">
+            <ul className="space-y-2 text-black/80">
               <li>
-                <Link href="/shop" className="hover:text-white transition-colors">
+                <Link href="/store/shop" className="hover:text-black transition-colors">
                   {(t as any).footer.allProducts}
                 </Link>
               </li>
               <li>
-                <Link href={`/shop?category=${encodeURIComponent(categoryParams.oliveOil)}`} className="hover:text-white transition-colors">
+                <Link href={`/store/shop?category=${encodeURIComponent(categoryParams.oliveOil)}`} className="hover:text-black transition-colors">
                   {(t as any).footer.oliveOil}
                 </Link>
               </li>
               <li>
-                <Link href={`/shop?category=${encodeURIComponent(categoryParams.zatar)}`} className="hover:text-white transition-colors">
+                <Link href={`/store/shop?category=${encodeURIComponent(categoryParams.zatar)}`} className="hover:text-black transition-colors">
                   {(t as any).footer.zatar}
                 </Link>
               </li>
@@ -151,19 +151,19 @@ export default function Footer() {
           {/* Information */}
           <div>
             <h4 className="font-semibold mb-4 text-[#C9A66B]">{(t as any).footer.infoTitle}</h4>
-            <ul className="space-y-2 text-white/80">
+            <ul className="space-y-2 text-black/80">
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
+                <Link href="/store/about" className="hover:text-black transition-colors">
                   {(t as any).footer.aboutUs}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
+                <Link href="/store/contact" className="hover:text-black transition-colors">
                   {(t as any).footer.contact}
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-white transition-colors">
+                <Link href="/store/faq" className="hover:text-black transition-colors">
                   {(t as any).footer.faq}
                 </Link>
               </li>
@@ -173,19 +173,19 @@ export default function Footer() {
           {/* Policies */}
           <div>
             <h4 className="font-semibold mb-4 text-[#C9A66B]">{(t as any).footer.policiesTitle}</h4>
-            <ul className="space-y-2 text-white/80">
+            <ul className="space-y-2 text-black/80">
               <li>
-                <Link href="/shipping-policy" className="hover:text-white transition-colors">
+                <Link href="/store/shipping-policy" className="hover:text-black transition-colors">
                   {(t as any).footer.shippingPolicy}
                 </Link>
               </li>
               <li>
-                <Link href="/return-policy" className="hover:text-white transition-colors">
+                <Link href="/store/return-policy" className="hover:text-black transition-colors">
                   {(t as any).footer.returnPolicy}
                 </Link>
               </li>
               <li>
-                <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                <Link href="/store/privacy-policy" className="hover:text-black transition-colors">
                   {(t as any).footer.privacyPolicy}
                 </Link>
               </li>
@@ -193,8 +193,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm">
-          <p className="mb-3 text-sm text-white/80">{(t as any).footer.subscribeText}</p>
+        <div className="mb-8 rounded-2xl border border-black/10 bg-black/[0.04] p-5 backdrop-blur-sm">
+          <p className="mb-3 text-sm text-black/80">{(t as any).footer.subscribeText}</p>
           <form onSubmit={handleSubscribe} className="flex flex-col gap-3 sm:flex-row">
             <input
               type="email"
@@ -202,12 +202,12 @@ export default function Footer() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder={(t as any).footer.subscribePlaceholder}
-              className="h-11 w-full rounded-xl border border-white/20 bg-[#0f1214] px-4 text-sm text-[#F2ECE2] placeholder:text-white/45 focus:border-[#C9A66B]/70 focus:outline-none"
+              className="h-11 w-full rounded-xl border border-black/20 bg-white px-4 text-sm text-[#121416] placeholder:text-black/45 focus:border-[#C9A66B]/70 focus:outline-none"
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-11 rounded-xl border border-[#C9A66B]/60 px-6 text-sm font-semibold text-[#F2ECE2] transition-colors hover:bg-[#C9A66B]/15 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 rounded-xl border border-[#C9A66B]/60 px-6 text-sm font-semibold text-[#121416] transition-colors hover:bg-[#C9A66B]/15 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? "..." : (t as any).footer.subscribeButton}
             </button>
@@ -222,7 +222,7 @@ export default function Footer() {
           style={{ borderTopColor: "rgba(201,166,107,0.28)" }}
           className="border-t pt-8"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/70 gap-4 pb-20">
+          <div className="flex flex-col md:flex-row justify-between items-center text-xs text-black/70 gap-4 pb-20">
             <div className="flex items-center gap-3">
               <span className="opacity-100 font-semibold">{t("footer.followUs")}</span>
               <a href="https://www.facebook.com/share/1HQyJVC8Bz/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="opacity-100 hover:opacity-80">

@@ -57,7 +57,7 @@ export default function BottomNav() {
 
       // Only show on homepage path
       const path = pathname || (typeof window !== 'undefined' ? window.location.pathname : '/');
-      if (path !== '/') return;
+      if (path !== '/store') return;
 
       const timer = setTimeout(() => setShowPrompt(true), 900);
       return () => clearTimeout(timer);
@@ -74,21 +74,21 @@ export default function BottomNav() {
   const goToLogin = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setShowPrompt(false);
-    router.push('/login');
+    router.push('/store/login');
   };
 
   const goToRegister = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setShowPrompt(false);
-    router.push('/register');
+    router.push('/store/register');
   };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
       <div className="w-full">
-        <div className="w-full bg-[#0f1214]/95 backdrop-blur rounded-none shadow-lg py-2">
+        <div className="w-full bg-white/95 backdrop-blur rounded-none border-t border-black/10 shadow-lg py-2">
           <div className="flex items-center justify-around">
-            <Link href="/shipping-policy" className="flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs">
+            <Link href="/store/shipping-policy" className="flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 7h11v6H3z" />
                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M14 9h3l4 4v3h-2a2 2 0 0 1-2-2v-1h-3V9z" />
@@ -98,7 +98,7 @@ export default function BottomNav() {
               <span>{language === "ar" ? "توصيل" : "Delivery"}</span>
             </Link>
 
-            <Link href="/shop" className="flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs">
+            <Link href="/store/shop" className="flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs">
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M6 2h12l1 4H5L6 2z" />
                 <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M7 10v8a1 1 0 001 1h8a1 1 0 001-1v-8" />
@@ -107,7 +107,7 @@ export default function BottomNav() {
               <span>{t("nav.shop")}</span>
             </Link>
 
-            <Link href="/cart" className="relative flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs">
+            <Link href="/store/cart" className="relative flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.2 6.4A1 1 0 007.8 21h8.4a1 1 0 00.99-.84L18 13M7 13H5.4"/></svg>
               {cartCount > 0 && (
                 <span className="absolute -top-1 right-[28%] min-w-[18px] h-[18px] px-1.5 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center border border-white/20">{cartCount > 99 ? '99+' : cartCount}</span>
@@ -115,7 +115,7 @@ export default function BottomNav() {
               <span>{t("nav.cart")}</span>
             </Link>
 
-            <Link href="/account" className="flex flex-col items-center justify-center gap-1 text-white/90 hover:text-white text-xs" aria-label={t("account.title")}>
+            <Link href="/store/account" className="flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs" aria-label={t("account.title")}>
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.33 0-10 1.67-10 5v1h20v-1c0-3.33-6.67-5-10-5z" />
               </svg>
@@ -124,14 +124,14 @@ export default function BottomNav() {
             {/* Mobile-only account prompt bubble */}
             {showPrompt && (
               <div className="absolute bottom-12 right-6 left-auto z-50 flex items-center">
-                <div className="max-w-xs bg-[#171a1d] border border-white/10 text-white/90 rounded-lg p-3 shadow-xl tajawal-regular-all" style={{direction: 'rtl'}}>
+                <div className="max-w-xs bg-white border border-black/10 text-black/80 rounded-lg p-3 shadow-xl tajawal-regular-all" style={{direction: 'rtl'}}>
                   <div className="text-sm mb-2">قم بانشاء حساب او تسجيل الدخول لاستقبال جميع التحديثات والعروض</div>
                   <div className="flex gap-2">
-                    <button onClick={goToLogin} className="flex-1 rounded-md py-1 text-sm bg-transparent border border-white/15">تسجيل الدخول</button>
+                    <button onClick={goToLogin} className="flex-1 rounded-md py-1 text-sm bg-transparent border border-black/20">تسجيل الدخول</button>
                     <button onClick={goToRegister} className="flex-1 rounded-md py-1 text-sm gold-button">انشاء حساب</button>
                   </div>
                 </div>
-                <button onClick={handleDismissPrompt} className="ml-2 text-white/60 text-lg">✕</button>
+                <button onClick={handleDismissPrompt} className="ml-2 text-black/60 text-lg">✕</button>
               </div>
             )}
           </div>

@@ -195,7 +195,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
   return (
     <div ref={elementRef} className={animationClass}>
       <Link
-        href={`/products/${product.id}`}
+        href={`/store/products/${product.id}`}
         className="block h-full"
         onClick={() => {
           try {
@@ -207,35 +207,22 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
         }}
       >
         <div
-          className="product-card group relative flex h-full cursor-pointer flex-col overflow-hidden border border-transparent bg-[#121416] shadow-md transition-all duration-150 hover:duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
-          style={{ borderRadius: 0 }}
+          className="product-card group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#FFFFFF] shadow-md transition-all duration-150 hover:duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
         >
         {/* Image Container */}
         <div
           className="w-full aspect-[8/10] bg-gradient-to-br relative overflow-hidden"
-          style={{ backgroundColor: "#242a2f", borderRadius: 0 }}
+          style={{ backgroundColor: "#F3EEE3" }}
         >
+          {product.inStock && hasSale && (
+            <span className="absolute top-2 right-2 z-10 rounded-full bg-red-600 px-2 py-0.5 text-[10px] sm:text-xs font-bold text-white shadow-md select-none">
+              -{Math.round((1 - displayPrice / basePrice) * 100)}%
+            </span>
+          )}
           {!product.inStock && (
             <span className="absolute top-2 left-2 z-10 rounded border border-red-400/45 px-2 py-0.5 text-[10px] font-semibold text-white shadow-md select-none" style={{background:'#ef4444'}}>
               {t("product.outOfStock")}
             </span>
-          )}
-          {product.inStock && (
-            <button
-              onClick={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                setShowQuickAdd((prev) => !prev);
-              }}
-              type="button"
-              className="absolute bottom-2 left-2 z-10 h-7 w-7 sm:h-9 sm:w-9 flex items-center justify-center rounded-full border border-[#C9A66B]/80 bg-[#C9A66B] text-white transition-colors duration-200 hover:bg-[#b17a23] shadow-md"
-              title={language === "ar" ? "إضافة سريعة" : "Quick add"}
-              aria-label={language === "ar" ? "إضافة سريعة" : "Quick add"}
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z" />
-              </svg>
-            </button>
           )}
           {product.image ? (
             <Image
@@ -243,7 +230,6 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
               alt={name}
               fill
               className="object-cover product-image"
-              style={{ borderRadius: 0 }}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               quality={50}
               priority={isFirstProduct}
@@ -254,7 +240,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
             <div className="w-full h-full flex items-center justify-center">
               <div className="text-center">
                 <div className="text-3xl font-bold mb-2 text-[#C9A66B]">{name.split(" ")[0][0]}</div>
-                <p className="text-xs font-semibold text-white/75">{name}</p>
+                <p className="text-xs font-semibold text-black/75">{name}</p>
               </div>
             </div>
           )}
@@ -262,15 +248,24 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
 
         {/* Content */}
         <div className="p-2.5 sm:p-4 flex flex-col flex-1">
-          <h3 className="gold-texture-static mb-1 line-clamp-1 text-[13px] md:text-sm lg:text-base font-semibold text-[#C9A66B]">
+          <h3 className="mb-1 line-clamp-1 text-[13px] md:text-sm lg:text-base text-[#121416] tajawal-regular">
             {name}
           </h3>
-          <p className="mb-0.5 sm:mb-1 line-clamp-2 text-[9px] sm:text-xs leading-4 sm:leading-5 text-white/72 tajawal-regular">
+          {sizeValues.some((s) => s?.weight) && (
+            <p className="mb-1 text-[9px] sm:text-[11px] text-black/55 tajawal-regular">
+              {sizeValues
+                .slice(0, 3)
+                .map((s) => s?.weight)
+                .filter(Boolean)
+                .join(" • ")}
+            </p>
+          )}
+          <p className="mb-0.5 sm:mb-1 line-clamp-2 text-[9px] sm:text-xs leading-4 sm:leading-5 text-black/72 tajawal-regular">
             {description.split(".")[0]}
           </p>
 
           {/* Price */}
-          <div className="flex justify-between items-center abo">
+          <div className="mb-2 flex justify-between items-center">
             <div>
               <div className="flex items-center gap-3">
                 {hasSale ? (
@@ -286,7 +281,29 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                 </p>
               </div>
             </div>
-            {/* Cart icon moved to image overlay */}
+          </div>
+
+          <div className="mt-auto flex gap-1.5 sm:gap-2">
+            <span className="flex-1 rounded-lg border border-[#C9A66B]/70 py-1.5 sm:py-2 text-center text-[10px] sm:text-sm font-semibold text-[#96691A] transition-colors duration-200 group-hover:bg-[#C9A66B]/10 tajawal-regular-all">
+              {language === "ar" ? "عرض المنتج" : "View product"}
+            </span>
+            {product.inStock ? (
+              <button
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setShowQuickAdd(true);
+                }}
+                type="button"
+                className="flex-1 rounded-lg border border-[#C9A66B]/70 bg-[#C9A66B] py-1.5 sm:py-2 text-[10px] sm:text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#b17a23] tajawal-regular-all"
+              >
+                {language === "ar" ? "إضافة سريعة" : "Quick add"}
+              </button>
+            ) : (
+              <div className="flex-1 rounded-lg border border-black/15 bg-black/5 py-1.5 sm:py-2 text-center text-[10px] sm:text-sm font-semibold text-black/45 tajawal-regular-all">
+                {t("product.outOfStock")}
+              </div>
+            )}
           </div>
         </div>
 
@@ -308,7 +325,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                       event.stopPropagation();
                     }}
                   >
-                    <div className="w-full rounded-2xl border border-[#C9A66B]/45 bg-[#121416]/95 p-4 sm:p-6 shadow-2xl">
+                    <div className="w-full rounded-2xl border border-[#C9A66B]/45 bg-[#FFFFFF]/95 p-4 sm:p-6 shadow-2xl">
                       <div className="mb-4 flex items-center justify-between">
                         <p className="text-base font-bold text-[#C9A66B]">
                           {language === "ar" ? "إضافة سريعة" : "Quick Add"}
@@ -320,7 +337,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                             event.stopPropagation();
                             setShowQuickAdd(false);
                           }}
-                          className="h-8 w-8 rounded-full border border-white/20 text-sm text-white/75 hover:bg-white/10"
+                          className="h-8 w-8 rounded-full border border-black/20 text-sm text-black/75 hover:bg-black/10"
                           aria-label={language === "ar" ? "إغلاق" : "Close"}
                         >
                           ✕
@@ -331,7 +348,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                         <select
                           value={selectedSize}
                           onChange={(event) => setSelectedSize(event.target.value as SizeKey)}
-                          className="w-full rounded-md border border-white/20 bg-[#121416] px-3 py-2 text-sm text-white"
+                          className="w-full rounded-md border border-black/20 bg-[#FFFFFF] px-3 py-2 text-sm text-[#121416]"
                         >
                           {(availableSizes.length ? availableSizes : [DEFAULT_SIZE_KEY]).map((size) => (
                             <option key={size} value={size}>
@@ -340,27 +357,27 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                           ))}
                         </select>
 
-                        <div className="flex items-center justify-center gap-2 rounded-md border border-white/20 bg-[#121416] px-3 py-2">
+                        <div className="flex items-center justify-center gap-2 rounded-md border border-black/20 bg-[#FFFFFF] px-3 py-2">
                           <button
                             onClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                               setQuantity((prev) => Math.max(1, prev - 1));
                             }}
-                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6"
+                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-black/85 flex items-center justify-center rounded border border-black/20 bg-[#F3EEE3] hover:bg-black/6"
                             type="button"
                             aria-label="decrease quantity"
                           >
                             -
                           </button>
-                          <span className="min-w-[40px] text-center text-lg sm:text-xl text-white">{quantity}</span>
+                          <span className="min-w-[40px] text-center text-lg sm:text-xl text-[#121416]">{quantity}</span>
                           <button
                             onClick={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                               setQuantity((prev) => Math.min(99, prev + 1));
                             }}
-                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-white/85 flex items-center justify-center rounded border border-white/20 bg-[#1b2024] hover:bg-white/6"
+                            className="h-10 w-10 sm:h-12 sm:w-12 text-lg sm:text-xl text-black/85 flex items-center justify-center rounded border border-black/20 bg-[#F3EEE3] hover:bg-black/6"
                             type="button"
                             aria-label="increase quantity"
                           >
@@ -369,7 +386,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                         </div>
                       </div>
 
-                      <div className="mb-4 rounded-lg border border-[#C9A66B]/35 bg-[#1a1f23] px-4 py-3 text-sm text-white/85">
+                      <div className="mb-4 rounded-lg border border-[#C9A66B]/35 bg-[#F3EEE3] px-4 py-3 text-sm text-black/85">
                         <div className="flex items-center justify-between">
                           <span>{language === "ar" ? "سعر الوحدة" : "Unit price"}</span>
                           <span className="font-semibold text-[#C9A66B]">{CURRENCY_SYMBOL}{formatAmount(activeQuickFinalPrice)}</span>
@@ -378,7 +395,7 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                           <span>{language === "ar" ? "المجموع" : "Total"}</span>
                           <span className="text-lg font-extrabold text-[#C9A66B]">{CURRENCY_SYMBOL}{formatAmount(quickAddTotal)}</span>
                         </div>
-                        <p className="mt-1 text-[11px] text-white/60">
+                        <p className="mt-1 text-[11px] text-black/60">
                           {CURRENCY_SYMBOL}{formatAmount(activeQuickFinalPrice)} × {quantity}
                         </p>
                       </div>

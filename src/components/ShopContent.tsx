@@ -2,12 +2,18 @@
 
 import { PRODUCTS, Product, CATEGORIES } from "@/constants/products";
 import ProductCard from "@/components/ProductCard";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { showToast } from "@/components/Toast";
 
 const PRODUCTS_BATCH_SIZE = 4;
+
+// Products per grid row at each viewport width (must match the grid's
+// grid-cols-2 / md:grid-cols-3 / lg:grid-cols-4 / xl:grid-cols-5 classes)
+const getGridColumns = (width: number) =>
+  width >= 1280 ? 5 : width >= 1024 ? 4 : width >= 768 ? 3 : 2;
 
 interface Category {
   id: string;
@@ -124,7 +130,7 @@ const productMatchesSelectedCategory = (
 };
 
 export default function ShopContent() {
-  const { t, dir, language } = useLanguage();
+  const { t, language } = useLanguage();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
@@ -137,6 +143,18 @@ export default function ShopContent() {
   const [visibleCount, setVisibleCount] = useState(PRODUCTS_BATCH_SIZE);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
+  // One lazy-load step = one full grid row, tracked against the viewport width
+  const rowSizeRef = useRef(PRODUCTS_BATCH_SIZE);
+
+  useEffect(() => {
+    const updateRowSize = () => {
+      rowSizeRef.current = getGridColumns(window.innerWidth);
+    };
+    updateRowSize();
+    window.addEventListener("resize", updateRowSize);
+    return () => window.removeEventListener("resize", updateRowSize);
+  }, []);
+
   const loadCategories = async () => {
     try {
       const res = await fetch('/api/categories');
@@ -144,6 +162,11 @@ export default function ShopContent() {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
           setCategories(data);
+          try {
+            localStorage.setItem('manajel-categories-cache', JSON.stringify(data));
+          } catch {
+            // ignore cache errors
+          }
         }
       }
     } catch (error) {
@@ -162,6 +185,14 @@ export default function ShopContent() {
           setProducts(data.products);
           try {
             localStorage.setItem(`manajel-products-cache-${language}`, JSON.stringify(data.products));
+            try {
+              localStorage.setItem(
+                `manajel-products-cache-meta-${language}`,
+                JSON.stringify({ ts: Date.now() })
+              );
+            } catch {
+              // ignore meta cache errors
+            }
           } catch {
             // ignore cache errors
           }
@@ -179,6 +210,21 @@ export default function ShopContent() {
     const cacheKey = `manajel-products-cache-${language}`;
     const metaKey = `manajel-products-cache-meta-${language}`;
     let fresh = false;
+
+    // Render cached categories instantly so returning to the page doesn't
+    // flash skeletons while /api/categories responds (it still refreshes below)
+    try {
+      const cachedCats = localStorage.getItem('manajel-categories-cache');
+      if (cachedCats) {
+        const parsedCats = JSON.parse(cachedCats);
+        if (Array.isArray(parsedCats) && parsedCats.length > 0) {
+          setCategories(parsedCats);
+          setCategoriesLoaded(true);
+        }
+      }
+    } catch {
+      // ignore cache errors
+    }
 
     try {
       const cached = localStorage.getItem(cacheKey);
@@ -242,25 +288,22 @@ export default function ShopContent() {
         await loadProducts();
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data?.error || "فشل حذف المنتج");
+        showToast(data?.error || "فشل حذف المنتج", "error");
       }
     } catch {
-      alert("حدث خطأ أثناء الحذف");
+      showToast("حدث خطأ أثناء الحذف", "error");
     } finally {
       setDeleting(null);
     }
   };
 
-  const filteredProducts = selectedCategory
-    ? products.filter(
-        (p) =>
-          productMatchesSelectedCategory(
-            p.category,
-            selectedCategory,
-            categories
-          )
-      )
-    : products;
+  const filteredProducts = useMemo(() => {
+    return selectedCategory
+      ? products.filter((p) =>
+          productMatchesSelectedCategory(p.category, selectedCategory, categories)
+        )
+      : products;
+  }, [products, selectedCategory, categories]);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const hasMoreProducts = visibleCount < filteredProducts.length;
@@ -268,8 +311,11 @@ export default function ShopContent() {
   const isLoading = !categoriesLoaded || !productsLoaded;
 
   useEffect(() => {
-    setVisibleCount(PRODUCTS_BATCH_SIZE);
-  }, [selectedCategory, language, filteredProducts.length]);
+    // Start with two full rows for the current viewport width.
+    // Deliberately NOT keyed on filteredProducts.length: a background data
+    // refresh must not collapse the list and yank the user back to the top.
+    setVisibleCount(rowSizeRef.current * 2);
+  }, [selectedCategory, language]);
 
   useEffect(() => {
     if (isLoading || !hasMoreProducts || !loadMoreRef.current) {
@@ -282,7 +328,11 @@ export default function ShopContent() {
         if (!entry?.isIntersecting) {
           return;
         }
-        setVisibleCount((prev) => Math.min(prev + PRODUCTS_BATCH_SIZE, filteredProducts.length));
+        // Advance to the next full-row boundary so rows never render incomplete
+        setVisibleCount((prev) => {
+          const row = rowSizeRef.current;
+          return Math.min((Math.floor(prev / row) + 1) * row, filteredProducts.length);
+        });
       },
       {
         root: null,
@@ -298,123 +348,127 @@ export default function ShopContent() {
     };
   }, [isLoading, hasMoreProducts, filteredProducts.length]);
 
-  // Restore to the last clicked product first (stronger than raw Y),
-  // and if lazy-loading hides it, progressively increase visible items.
-  // Then fallback to stored Y position.
+  // Restore to the last clicked product when returning from a product page.
+  // Reveals every row up to that product in ONE state update, then scrolls
+  // straight to it — no incremental reveal crawl. Falls back to the stored
+  // Y position. Runs once per mount.
+  const restoredRef = useRef(false);
   useEffect(() => {
-    try {
-      if (!productsLoaded) return;
+    if (!productsLoaded || restoredRef.current) return;
 
+    try {
       const productId = sessionStorage.getItem('lastProductId');
       const pos = sessionStorage.getItem('manajel:shop:scroll');
-      let done = false;
-      let tries = 0;
+      if (!productId && !pos) return;
+      restoredRef.current = true;
 
-      if (productId) {
-        const interval = setInterval(() => {
-          const el = document.getElementById(`product-${productId}`);
-          if (el) {
-            el.scrollIntoView({ behavior: 'auto', block: 'center' });
-            done = true;
-            clearInterval(interval);
-            sessionStorage.removeItem('lastProductId');
-            sessionStorage.removeItem('manajel:shop:scroll');
-            return;
-          }
+      const clearKeys = () => {
+        try {
+          sessionStorage.removeItem('lastProductId');
+          sessionStorage.removeItem('manajel:shop:scroll');
+        } catch {
+          // ignore
+        }
+      };
 
-          // If element is not in DOM yet due to lazy-loading, reveal more cards
-          setVisibleCount((prev) => Math.min(prev + PRODUCTS_BATCH_SIZE, filteredProducts.length));
-
-          tries += 1;
-          if (tries > 20) {
-            clearInterval(interval);
-          }
-        }, 100);
-
-        setTimeout(() => {
-          clearInterval(interval);
-
-          // fallback to Y position if product element wasn't found in time
-          if (!done && pos) {
-            const n = Number(pos);
-            if (!Number.isNaN(n)) {
-              requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                  window.scrollTo({ top: n, behavior: 'auto' });
-                  sessionStorage.removeItem('manajel:shop:scroll');
-                  sessionStorage.removeItem('lastProductId');
-                });
-              });
-            }
-          }
-        }, 3000);
-        return;
-      }
-
-      // fallback path when only Y position exists
-      if (pos) {
+      const scrollToStoredY = () => {
         const n = Number(pos);
-        if (!Number.isNaN(n)) {
+        if (pos && !Number.isNaN(n)) {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
               window.scrollTo({ top: n, behavior: 'auto' });
-              sessionStorage.removeItem('manajel:shop:scroll');
+              clearKeys();
             });
           });
+        } else {
+          clearKeys();
+        }
+      };
+
+      if (productId) {
+        const index = filteredProducts.findIndex((p) => String(p.id) === String(productId));
+        if (index >= 0) {
+          // Reveal the product's row plus one extra row in a single update
+          const row = rowSizeRef.current;
+          const needed = Math.min((Math.ceil((index + 1) / row) + 1) * row, filteredProducts.length);
+          setVisibleCount((prev) => Math.max(prev, needed));
+
+          let tries = 0;
+          const tick = () => {
+            const el = document.getElementById(`product-${productId}`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'auto', block: 'center' });
+              clearKeys();
+              return;
+            }
+            tries += 1;
+            if (tries < 30) {
+              requestAnimationFrame(tick);
+            } else {
+              scrollToStoredY();
+            }
+          };
+          requestAnimationFrame(tick);
+          return;
         }
       }
+
+      scrollToStoredY();
     } catch {
       // ignore
     }
-  }, [productsLoaded, filteredProducts.length]);
+  }, [productsLoaded, filteredProducts]);
 
   return (
-    <div className="bg-[#121416] text-[#F2ECE2]">
-      <div aria-hidden className="h-8 md:h-12 lg:h-16" />
+    <div className="bg-[#FBF8F2] text-[#121416]">
       {/* Header */}
       <section
         style={{
           background:
-            "linear-gradient(180deg, #14171a 0%, #101214 100%)",
+            "linear-gradient(180deg, #F3EEE3 0%, #FBF8F2 100%)",
           borderBottom: "1px solid rgba(201,166,107,0.25)",
         }}
-        className="px-4 py-12 text-white"
+        className="px-4 py-7 text-[#121416]"
       >
         <div className="max-w-7xl mx-auto">
           <h1 className="mb-2 text-3xl sm:text-4xl text-[#C9A66B] leading-tight tajawal-regular-all">{t("shop.title")}</h1>
-          <p className="text-sm sm:text-base md:text-lg text-white/80 leading-relaxed tajawal-regular-all">
+          <p className="text-sm sm:text-base md:text-lg text-black/80 leading-relaxed tajawal-regular-all">
             {t("shop.subtitle")}
           </p>
         </div>
       </section>
 
       {/* Shop */}
-      <section className="max-w-7xl mx-auto px-4 py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar - Categories */}
-          <div className="lg:w-56 flex-shrink-0">
-            <h3 className="mb-4 sm:mb-6 text-lg sm:text-xl font-bold text-[#C9A66B] tajawal-regular-all">
-              {t("shop.categories")}
-            </h3>
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-1.5 sm:gap-2 tajawal-regular-all">
+      <section className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex flex-col gap-2">
+          {/* Categories - horizontal chips */}
+          <div>
+            <div className="mb-4 flex flex-wrap items-center gap-2 tajawal-regular-all">
               {isLoading ? (
                 // Categories Skeleton
                 <>
                   {Array.from({ length: 5 }).map((_, idx) => (
-                    <div key={idx} className="relative h-full animate-pulse">
-                      <div className="h-9 sm:h-10 w-full rounded-xl border border-white/10 bg-white/10" />
+                    <div key={idx} className="relative animate-pulse">
+                      <div className="h-9 w-24 rounded-full border border-black/10 bg-black/10" />
                     </div>
                   ))}
                 </>
               ) : (
                 <>
                   <button
-                    onClick={() => setSelectedCategory(null)}
-                    className={`w-full rounded-xl border px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
+                    onClick={() => {
+                      try {
+                        const u = new URL(window.location.href);
+                        u.searchParams.delete('category');
+                        window.history.pushState({}, '', u.toString());
+                      } catch {}
+                      setSelectedCategory(null);
+                    }}
+                    className={`rounded-full border px-4 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
                       selectedCategory === null
-                        ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
-                         : "border-white/15 bg-[#121416] text-white/85 hover:border-white/30 hover:text-white"
-                    } ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                        ? "border-[#C9A66B] bg-[#C9A66B]/20 font-semibold text-[#121416]"
+                         : "border-black/15 bg-[#FFFFFF] text-black/85 hover:border-[#C9A66B]/60 hover:text-black"
+                    }`}
                     type="button"
                   >
                     {t("shop.allProducts")}
@@ -426,14 +480,18 @@ export default function ShopContent() {
                       <button
                         key={category.id}
                         onClick={() => {
-                          console.log('Selected category:', category.id);
-                          setSelectedCategory(category.id);
-                        }}
-                        className={`w-full rounded-xl border px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
+                            try {
+                              const u = new URL(window.location.href);
+                              u.searchParams.set('category', category.id);
+                              window.history.pushState({}, '', u.toString());
+                            } catch {}
+                            setSelectedCategory(category.id);
+                          }}
+                        className={`rounded-full border px-4 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
                           selectedCategory === category.id
-                            ? "border-[#C9A66B]/50 bg-[#C9A66B]/20 text-[#F2ECE2]"
-                             : "border-white/15 bg-[#121416] text-white/85 hover:border-white/30 hover:text-white"
-                        } ${dir === 'rtl' ? 'text-right' : 'text-left'}`}
+                            ? "border-[#C9A66B] bg-[#C9A66B]/20 font-semibold text-[#121416]"
+                             : "border-black/15 bg-[#FFFFFF] text-black/85 hover:border-[#C9A66B]/60 hover:text-black"
+                        }`}
                         type="button"
                       >
                         {displayName}
@@ -448,19 +506,25 @@ export default function ShopContent() {
           {/* Products Grid */}
           <div className="flex-1">
             {!isLoading && (
-              <div className="mb-4 text-sm text-white/80">
-                {t("shop.showing")} {filteredProducts.length} {t("shop.items")}
+              <div className="mb-4 text-sm text-black/80 tajawal-regular-all">
+                {(() => {
+                  const cat = categories.find((c) => c.id === selectedCategory);
+                  const catName = cat
+                    ? (language === "ar" ? cat.nameAr || cat.name : cat.name)
+                    : t("shop.allProducts");
+                  return `${catName} — ${filteredProducts.length} ${t("shop.items")}`;
+                })()}
               </div>
             )}
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-8 auto-rows-fr">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5 md:gap-6 auto-rows-fr">
               {isLoading || filteredProducts.length === 0
                 ? Array.from({ length: 8 }).map((_, idx) => (
                     <div key={idx} className="relative h-full animate-pulse">
-                      <div className="mb-4 h-48 w-full rounded-lg bg-white/10" />
-                      <div className="mb-2 h-6 w-3/4 rounded bg-white/10" />
-                      <div className="mb-2 h-4 w-1/2 rounded bg-white/10" />
-                      <div className="mb-2 h-4 w-1/3 rounded bg-white/10" />
-                      <div className="mt-auto h-8 w-1/2 rounded bg-white/10" />
+                      <div className="mb-4 h-48 w-full rounded-lg bg-black/10" />
+                      <div className="mb-2 h-6 w-3/4 rounded bg-black/10" />
+                      <div className="mb-2 h-4 w-1/2 rounded bg-black/10" />
+                      <div className="mb-2 h-4 w-1/3 rounded bg-black/10" />
+                      <div className="mt-auto h-8 w-1/2 rounded bg-black/10" />
                     </div>
                   ))
                 : visibleProducts.map((product, index) => (
@@ -473,8 +537,8 @@ export default function ShopContent() {
                       {isAdmin && (
                         <div className="absolute top-2 right-2 flex gap-2 z-10">
                           <button
-                            onClick={() => window.location.href = `/admin/products/${product.id}/edit`}
-                            className="rounded-lg border border-[#C9A66B]/60 bg-[#14171a]/95 p-2 text-[#F2ECE2] shadow-md backdrop-blur hover:bg-[#1b1f23]"
+                            onClick={() => window.location.href = `/store/admin/products/${product.id}/edit`}
+                            className="rounded-lg border border-[#C9A66B]/60 bg-[#FFFFFF]/95 p-2 text-[#121416] shadow-md backdrop-blur hover:bg-[#F3EEE3]"
                             title="تعديل المنتج"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -508,7 +572,12 @@ export default function ShopContent() {
               <div ref={loadMoreRef} className="mt-6 flex justify-center">
                 <button
                   type="button"
-                  onClick={() => setVisibleCount((prev) => Math.min(prev + PRODUCTS_BATCH_SIZE, filteredProducts.length))}
+                  onClick={() =>
+                    setVisibleCount((prev) => {
+                      const row = rowSizeRef.current;
+                      return Math.min((Math.floor(prev / row) + 1) * row, filteredProducts.length);
+                    })
+                  }
                   className="gold-button rounded-xl px-5 py-2 text-sm font-bold"
                 >
                   {language === "ar" ? "تحميل المزيد" : "Load more"}

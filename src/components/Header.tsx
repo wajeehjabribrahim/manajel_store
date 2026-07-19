@@ -15,7 +15,7 @@ export default function Header() {
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-  const isHomePage = pathname === "/";
+  const isHomePage = pathname === "/store";
 
   // Initialize hooks BEFORE any conditionals
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -97,20 +97,20 @@ export default function Header() {
   }
 
   const navItems = [
-    { name: t("nav.home"), href: "/" },
-    { name: t("nav.shop"), href: "/shop" },
-    { name: t("nav.about"), href: "/about" },
-    { name: t("nav.contact"), href: "/contact" },
+    { name: t("nav.home"), href: "/store" },
+    { name: t("nav.shop"), href: "/store/shop" },
+    { name: t("nav.about"), href: "/store/about" },
+    { name: t("nav.contact"), href: "/store/contact" },
   ];
 
   return (
     <header
-      className="text-white relative z-40 w-full tajawal-regular-all"
+      className="text-[#121416] relative z-40 w-full tajawal-regular-all"
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-5 relative z-10">
         <div className="flex justify-between items-center relative">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 lg:gap-3 group">
+          <Link href="/store" className="flex items-center gap-2 lg:gap-3 group">
             <div className="w-9 h-9 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
               <Image
                 src="/images/logo.jpg"
@@ -133,7 +133,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-semibold uppercase tracking-[0.12em] text-white/80 hover:text-white transition-colors"
+                className="text-sm font-semibold uppercase tracking-[0.12em] text-black/80 hover:text-black transition-colors"
               >
                 {item.name}
               </Link>
@@ -148,7 +148,7 @@ export default function Header() {
             <div className="relative z-50" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity relative flex items-center gap-2 text-white/85 hover:text-white"
+                className="transition-opacity relative flex items-center gap-2 text-black/85 hover:text-black"
                 title="السلة والطلبات"
               >
                 <div className="relative w-6 h-6 flex items-center justify-center">
@@ -177,10 +177,10 @@ export default function Header() {
                 <div
                   className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
                   style={{
-                    backgroundColor: "#14171a",
+                    backgroundColor: "#FFFFFF",
                     borderColor: "rgba(201,166,107,0.35)",
                     zIndex: 99999,
-                    boxShadow: "0 14px 34px rgba(0,0,0,0.45)",
+                    boxShadow: "0 14px 34px rgba(0,0,0,0.15)",
                     top: "100%",
                     marginTop: "8px",
                     width: "208px",
@@ -188,14 +188,14 @@ export default function Header() {
                   }}
                 >
                   <Link
-                    href="/cart"
+                    href="/store/cart"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors border-b"
                     style={{
-                      color: "#F2ECE2",
+                      color: "#121416",
                       borderColor: "rgba(201,166,107,0.2)",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">
@@ -221,13 +221,13 @@ export default function Header() {
                     </div>
                   </Link>
                   <Link
-                    href="/orders"
+                    href="/store/orders"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors"
                     style={{
-                      color: "#F2ECE2",
+                      color: "#121416",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">
@@ -256,7 +256,7 @@ export default function Header() {
                 {isAdmin && (
                   <>
                     <Link
-                      href="/admin/products"
+                      href="/store/admin/products"
                       className="transition-opacity"
                       title={t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct")}
                     >
@@ -275,7 +275,7 @@ export default function Header() {
                       </svg>
                     </Link>
                     <Link
-                      href="/admin/orders"
+                      href="/store/admin/orders"
                       className="transition-opacity"
                       title={t("admin.orders") === "admin.orders" ? "الطلبات" : t("admin.orders")}
                     >
@@ -297,7 +297,7 @@ export default function Header() {
                 )}
                 
                 <Link
-                  href="/account"
+                  href="/store/account"
                   className="transition-opacity w-10 h-10 flex items-center justify-center"
                   title={t("account.title") === "account.title" ? "الحساب" : t("account.title")}
                 >
@@ -305,7 +305,7 @@ export default function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </Link>
-                <span className="text-sm text-white/75">
+                <span className="text-sm text-black/75">
                   {t("auth.welcome")}
                   {session?.user?.name ? `, ${session.user.name}` : ""}
                 </span>
@@ -313,15 +313,15 @@ export default function Header() {
             ) : (
               <div className="flex items-center gap-2">
                 <Link
-                  href="/login"
-                  className="px-3 py-1.5 rounded-md bg-white/10 hover:bg-white/20 transition-colors"
+                  href="/store/login"
+                  className="px-3 py-1.5 rounded-md bg-black/5 hover:bg-black/10 transition-colors"
                 >
                   {t("auth.login")}
                 </Link>
                 <Link
-                  href="/register"
+                  href="/store/register"
                   className="px-3 py-1.5 rounded-md border transition-colors"
-                  style={{ borderColor: `${gold}88`, color: "#F2ECE2" }}
+                  style={{ borderColor: `${gold}88`, color: "#121416" }}
                 >
                   {t("auth.register")}
                 </Link>
@@ -333,7 +333,7 @@ export default function Header() {
           <div className="lg:hidden flex items-center gap-2">
             <LanguageSwitcher />
             <Link
-              href={isAuthenticated ? "/account" : "/login"}
+              href={isAuthenticated ? "/store/account" : "/store/login"}
               className="transition-opacity w-8 h-8 flex items-center justify-center lg:w-10 lg:h-10"
               title={isAuthenticated ? (t("account.title") === "account.title" ? "الحساب" : t("account.title")) : t("auth.login")}
             >
@@ -356,7 +356,7 @@ export default function Header() {
             <div className="relative z-50" ref={mobileUserMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity relative w-8 h-8 flex items-center justify-center text-white/85 hover:text-white lg:w-10 lg:h-10"
+                className="transition-opacity relative w-8 h-8 flex items-center justify-center text-black/85 hover:text-black lg:w-10 lg:h-10"
                 title="السلة والطلبات"
               >
                 <svg
@@ -383,10 +383,10 @@ export default function Header() {
                 <div
                   className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
                   style={{
-                    backgroundColor: "#14171a",
+                    backgroundColor: "#FFFFFF",
                     borderColor: "rgba(201,166,107,0.35)",
                     zIndex: 99999,
-                    boxShadow: "0 14px 34px rgba(0,0,0,0.45)",
+                    boxShadow: "0 14px 34px rgba(0,0,0,0.15)",
                     top: "100%",
                     marginTop: "8px",
                     width: "208px",
@@ -394,14 +394,14 @@ export default function Header() {
                   }}
                 >
                   <Link
-                    href="/cart"
+                    href="/store/cart"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors border-b"
                     style={{
-                      color: "#F2ECE2",
+                      color: "#121416",
                       borderColor: "rgba(201,166,107,0.2)",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">
@@ -427,13 +427,13 @@ export default function Header() {
                     </div>
                   </Link>
                   <Link
-                    href="/orders"
+                    href="/store/orders"
                     onClick={() => setShowUserMenu(false)}
                     className="block px-4 py-3 transition-colors"
                     style={{
-                      color: "#F2ECE2",
+                      color: "#121416",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                   >
                     <div className="flex items-center gap-3">

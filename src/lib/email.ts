@@ -15,7 +15,7 @@ export async function sendOrderNotification(
   const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
   const customerEmail = userEmail && userEmail.trim() ? userEmail : "غير متوفر";
   const customerName = orderData.customerName || "زبون جديد";
-  const adminOrdersUrl = "https://www.mnajel.com/admin/orders";
+  const adminOrdersUrl = "https://www.mnajel.com/store/admin/orders";
   
   try {
     // إرسال إيميل لجميع الأدمنز
@@ -74,7 +74,7 @@ export async function sendContactNotification(
     message: string;
   }
 ) {
-  const adminMessagesUrl = "https://www.mnajel.com/admin/messages";
+  const adminMessagesUrl = "https://www.mnajel.com/store/admin/messages";
 
   try {
     await resend.emails.send({
@@ -188,7 +188,7 @@ export async function sendOrderCancellationNotification(
   }
 ) {
   const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
-  const adminOrdersUrl = "https://www.mnajel.com/admin/orders";
+  const adminOrdersUrl = "https://www.mnajel.com/store/admin/orders";
   const customerName = orderData.customerName?.trim() || "زبون";
   const customerEmail = orderData.customerEmail?.trim() || "غير متوفر";
   const cancelledByLabel =
@@ -242,8 +242,8 @@ export async function sendStockRequestNotification(
   }
 ) {
   const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
-  const adminNotificationsUrl = "https://www.mnajel.com/admin/notifications";
-  const productUrl = `https://www.mnajel.com/products/${data.productId}`;
+  const adminNotificationsUrl = "https://www.mnajel.com/store/admin/notifications";
+  const productUrl = `https://www.mnajel.com/store/products/${data.productId}`;
   const productName = data.productName?.trim() || "منتج غير محدد";
 
   try {
@@ -293,8 +293,8 @@ export async function sendOrderFeedbackNotification(
   }
 ) {
   const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim()) || ['admin@manajel.works'];
-  const adminFeedbackUrl = "https://www.mnajel.com/admin/feedback";
-  const orderUrl = `https://www.mnajel.com/orders/${data.orderId}`;
+  const adminFeedbackUrl = "https://www.mnajel.com/store/admin/feedback";
+  const orderUrl = `https://www.mnajel.com/store/orders/${data.orderId}`;
 
   try {
     await resend.emails.send({

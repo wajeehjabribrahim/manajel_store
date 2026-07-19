@@ -32,11 +32,11 @@ export default function CookieConsent() {
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-50 p-4"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.9)" }}
+      style={{ backgroundColor: "rgba(255, 255, 255, 0.97)", borderTop: "1px solid rgba(0,0,0,0.12)", boxShadow: "0 -4px 16px rgba(0,0,0,0.08)" }}
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         {/* النص */}
-        <div className="flex-1 text-white text-sm md:text-base">
+        <div className="flex-1 text-[#121416] text-sm md:text-base">
           <p className="opacity-90 leading-relaxed">
             {language === "ar"
               ? "نستخدم ملفات تعريف الارتباط لتحسين تجربتك في متجر مناجل. بالاستمرار في التصفح، فإنك توافق على استخدامنا لها."
@@ -48,7 +48,7 @@ export default function CookieConsent() {
         <div className="flex items-center gap-3 flex-shrink-0">
           <button
             onClick={handleReject}
-            className="px-4 py-2 rounded-lg border border-white/40 text-white hover:border-white hover:bg-white/5 transition-all text-sm font-medium"
+            className="px-4 py-2 rounded-lg border border-black/40 text-[#121416] hover:border-black hover:bg-black/5 transition-all text-sm font-medium"
           >
             {language === "ar" ? "رفض" : "Decline"}
           </button>

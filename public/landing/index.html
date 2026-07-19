@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     MANAJEL — Premium Extra Virgin Olive Oil
+     Modern wellness-luxury single-file landing page (Apple / Aesop register).
+     Engine: Lenis+GSAP single ticker, hide/show header, per-section ambient,
+     canvas frame-sequence film + product turntable, CTA reveal, fallbacks.
+     Theme: porcelain / stone neutrals, serif display (Fraunces), gold accents.
+     ============================================================================ -->
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>MANAJEL — Premium Extra Virgin Olive Oil</title>
+<meta name="description" content="MANAJEL — a premium extra virgin olive oil crafted for people who value quality, health, and exceptional taste. Cold-extracted, single origin." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Manrope:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+<style>
+  /* local Arabic font (assets/Tajawal-Regular.ttf) — used for ALL Arabic text */
+  @font-face{
+    font-family:"TajawalLocal";
+    src:url("/landing/assets/Tajawal-Regular.ttf") format("truetype");
+    font-weight:100 900;font-style:normal;font-display:swap;
+  }
+  :root{
+    /* modern wellness palette — porcelain / stone neutrals, gold accents */
+    --paper:#FAFAF7; --mist:#F4F4F0; --cream:#EFEFEA; --sand:#E8E7E0; --honey:#DBD9CB;
+    --ink:#171A14; --ink-soft:#5C6053; --ink-faint:#9A998C;
+    --olive:#4A5A35; --olive-deep:#222B19; --olive-pale:#DDE3D2;
+    --gold:#A97B33; --gold-deep:#8A6128; --gold-bright:#C9A052; --accent:#A8632E;
+    --line:rgba(28,33,22,.14); --line-soft:rgba(28,33,22,.08);
+    --ambient:#FAFAF7; --maxw:1280px; --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%} html{scroll-behavior:auto}
+  body{background:var(--paper);color:var(--ink);font-family:"Manrope",system-ui,sans-serif;font-weight:400;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.75}
+  ::selection{background:var(--gold-bright);color:#fff}
+  h1,h2,h3,.display{font-family:"Fraunces",serif;font-weight:500;letter-spacing:-.01em;line-height:1.05;color:var(--ink)}
+  .latin{font-family:"Cormorant Garamond",serif;letter-spacing:.34em;text-transform:uppercase}
+
+  /* fixed cinematic layers — clean, no grain */
+  #ambient{position:fixed;inset:0;z-index:-3;background:var(--ambient)}
+  #glow{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.5;
+    background:radial-gradient(120% 90% at 50% 0%,rgba(255,255,255,.85),rgba(240,241,236,0) 60%)}
+  #vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(135% 120% at 50% 42%,transparent 60%,rgba(40,48,32,.05) 100%)}
+  #progress{position:fixed;top:0;right:0;left:0;height:2px;z-index:70;transform-origin:left;transform:scaleX(0);
+    background:linear-gradient(90deg,var(--gold-deep),var(--gold-bright),var(--accent))}
+
+  /* header */
+  header{position:fixed;top:0;right:0;left:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+    padding:clamp(14px,2.4vw,28px) clamp(18px,4vw,54px);will-change:transform;
+    transition:transform .5s var(--ease),background .5s,backdrop-filter .5s,box-shadow .5s,padding .5s}
+  header.hidden{transform:translateY(-115%)}
+  header.solid{background:rgba(250,250,247,.82);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--line-soft);
+    padding-top:clamp(10px,1.6vw,16px);padding-bottom:clamp(10px,1.6vw,16px)}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .brand .mark{height:46px;width:46px;object-fit:contain;display:block;padding:5px;border:1.5px solid #8B6A4B;
+    border-radius:50%;filter:drop-shadow(0 1px 2px rgba(30,35,24,.15))}
+  .brand .wm{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(19px,2.2vw,24px);letter-spacing:.02em;color:var(--ink)}
+  header nav{display:flex;align-items:center;gap:clamp(16px,2.4vw,34px)}
+  header nav a{color:var(--ink-soft);text-decoration:none;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;transition:color .3s}
+  header nav a:hover{color:var(--gold-deep)}
+  .nav-cta{border:1px solid var(--gold);border-radius:999px;padding:8px 22px;color:var(--gold-deep)!important}
+  .nav-cta:hover{background:var(--gold);color:#fff!important}
+  .lang-btn{background:none;border:1px solid var(--line);border-radius:999px;padding:7px 16px;cursor:pointer;
+    font-size:13px;color:var(--ink-soft);font-family:"TajawalLocal","Tajawal",sans-serif;font-weight:600;line-height:1.4;
+    transition:color .3s,border-color .3s}
+  .lang-btn:hover{color:var(--gold-deep);border-color:var(--gold)}
+
+  /* Arabic mode — local Tajawal file for everything (user-supplied), RTL fixes */
+  html[lang=ar] body{font-family:"TajawalLocal","Tajawal",system-ui,sans-serif}
+  html[lang=ar] h1,html[lang=ar] h2,html[lang=ar] h3,html[lang=ar] .display{font-family:"TajawalLocal","Tajawal",sans-serif;font-weight:700}
+  html[lang=ar] .latin,html[lang=ar] .eyebrow{font-family:"TajawalLocal","Tajawal",sans-serif;letter-spacing:.06em}
+  html[lang=ar] .btn,html[lang=ar] .brand .wm,html[lang=ar] .idx{font-family:"TajawalLocal","Tajawal",sans-serif}
+  html[lang=ar] .scrollcue{font-family:"TajawalLocal","Tajawal",sans-serif;letter-spacing:.12em}
+  html[lang=ar] #hero h1{line-height:1.2;letter-spacing:0}
+  html[dir=rtl] #origin .scrim{background:linear-gradient(260deg,rgba(250,250,247,.985) 0%,rgba(250,250,247,.92) 30%,rgba(250,250,247,.55) 52%,rgba(250,250,247,.1) 70%,transparent 85%)}
+  @media(max-width:760px){header nav a:not(.nav-cta){display:none}}
+  a:focus-visible,.btn:focus-visible,.nav-cta:focus-visible,header nav a:focus-visible,footer .links a:focus-visible{
+    outline:2px solid var(--gold-deep);outline-offset:3px;border-radius:6px}
+
+  /* layout helpers */
+  section{position:relative}
+  .wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(20px,5vw,68px)}
+  .eyebrow{display:flex;align-items:center;gap:.7em;font-family:"Cormorant Garamond",serif;letter-spacing:.4em;
+    text-transform:uppercase;font-size:13px;color:var(--gold-deep);font-weight:500;margin-bottom:1.1em}
+  .eyebrow .rule{width:26px;height:1px;background:var(--gold);opacity:.6}
+  .idx{font-family:"Fraunces",serif;font-size:14px;color:var(--gold);font-weight:600}
+  .gold-text{background:linear-gradient(100deg,var(--gold-deep),var(--gold-bright) 45%,var(--gold-deep) 85%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .multiply{mix-blend-mode:multiply}
+  .fallback-host{position:relative}
+  .fallback-host.is-missing{background-image:linear-gradient(135deg,var(--cream),var(--sand) 78%);background-size:cover}
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* 1 · HERO */
+  #hero{height:135vh}
+  #hero .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:6vh 18px 0;perspective:1300px}
+  #hero .aura{position:absolute;top:44%;left:50%;width:80vmin;height:80vmin;border-radius:50%;z-index:0;pointer-events:none;
+    transform:translate3d(calc(-50% + var(--px,0px)),calc(-50% + var(--py,0px)),0);
+    background:radial-gradient(circle,rgba(201,160,82,.3),rgba(200,132,60,.1) 42%,transparent 66%);
+    filter:blur(20px);opacity:0;will-change:transform,opacity;animation:auraIn 1.6s ease-out .15s forwards,auraPulse 9s ease-in-out 1.8s infinite}
+  @keyframes auraIn{to{opacity:.65}} @keyframes auraPulse{0%,100%{opacity:.55}50%{opacity:.75}}
+  #hero .motes{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  #hero .hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;will-change:transform,opacity}
+  #hero .latin{font-size:12px;color:var(--gold-deep);margin-bottom:2.6vh;opacity:0}
+  #hero h1{font-size:clamp(48px,11vw,148px);font-weight:500;line-height:.92;margin-top:0;opacity:0;clip-path:inset(0 0 100% 0);letter-spacing:-.01em}
+  #hero .sub{margin-top:1.8vh;font-family:"Fraunces",serif;font-style:italic;font-weight:400;font-size:clamp(15px,2vw,20px);color:var(--ink-soft);opacity:0;max-width:52ch}
+  .scrollcue{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;
+    color:var(--ink-faint);font-size:11px;letter-spacing:.32em;font-family:"Cormorant Garamond",serif;text-transform:uppercase}
+  .scrollcue .bar{width:1px;height:44px;background:linear-gradient(var(--gold),transparent);animation:cue 2.4s var(--ease) infinite}
+  @keyframes cue{0%{transform:scaleY(.2);opacity:.2;transform-origin:top}50%{transform:scaleY(1);opacity:1}100%{transform:scaleY(.2);opacity:.2;transform-origin:bottom}}
+
+  /* 2 · PURITY (pinned Ken Burns) */
+  #origin{height:210vh}
+  #origin .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;background:var(--sand)}
+  #origin .bg{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;opacity:0;transform:scale(1.02);will-change:transform,opacity}
+  #origin .scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(250,250,247,.985) 0%,rgba(250,250,247,.92) 30%,rgba(250,250,247,.55) 52%,rgba(250,250,247,.1) 70%,transparent 85%)}
+  #origin .copy{position:relative;z-index:2;max-width:620px}
+  #origin h2{font-size:clamp(32px,5.2vw,58px);margin-bottom:.5em}
+  #origin p{color:var(--ink);font-weight:500;font-size:clamp(15px,1.6vw,18px);max-width:480px;text-shadow:0 1px 12px rgba(250,250,247,.85)}
+  #origin p+p{margin-top:1.1em}
+  #origin .stats{display:flex;gap:clamp(24px,4vw,52px);margin-top:32px}
+  #origin .stats div{border-top:1px solid var(--line);padding-top:12px;min-width:90px}
+  #origin .stats .n{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(20px,2.5vw,27px);color:var(--gold-deep)}
+  #origin .stats .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:3px;font-weight:600}
+
+  /* 4 · REVEAL (canvas frame-sequence, scroll-scrubbed) */
+  #reveal{height:230vh}
+  #reveal .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;background:var(--paper)}
+  #reveal .grid{display:grid;grid-template-columns:1fr;gap:clamp(22px,4vw,60px);align-items:center;width:100%}
+  @media(min-width:900px){#reveal .grid{grid-template-columns:.85fr 1.15fr}}
+  #reveal .shot{position:relative;height:min(74svh,700px);aspect-ratio:9/16;margin-inline:auto;display:grid;place-items:center}
+  #reveal .aura{position:absolute;width:85%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--olive-pale),transparent 68%);opacity:.45;filter:blur(8px)}
+  #reveal .shot canvas{position:relative;z-index:2;width:100%;height:100%;object-fit:contain;display:block;border-radius:8px}
+  #reveal .reveal-fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:none;z-index:2}
+  #reveal .loader{position:absolute;left:8px;bottom:8px;z-index:3;font-family:"Cormorant Garamond",serif;letter-spacing:.28em;font-size:11px;color:var(--ink-faint);transition:opacity .6s}
+  #reveal .copy{text-align:right} #reveal .idx{display:block;margin-bottom:10px}
+  #reveal h2{font-size:clamp(28px,4.4vw,56px);margin:6px 0 14px}
+  #reveal .lead{font-size:clamp(14px,1.6vw,18px);color:var(--ink-soft);max-width:46ch;margin-inline-start:auto;line-height:1.6}
+  #reveal .specs{list-style:none;margin-top:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px 24px}
+  #reveal .specs li{display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding:12px 0;border-top:1px solid var(--line)}
+  #reveal .specs .k{font-family:"Fraunces",serif;color:var(--gold-deep);font-weight:600;white-space:nowrap;font-size:14px}
+  #reveal .specs .v{color:var(--ink-soft);font-size:14px}
+  @media(max-width:899px){
+    #reveal .shot{height:min(36svh,400px)}
+    #reveal .copy{text-align:center}
+    #reveal .lead{margin-inline:auto}
+    #reveal .specs{margin-top:12px}
+    #reveal .specs li{padding:8px 0;gap:2px;align-items:center}
+  }
+  @media(max-width:899px) and (max-height:760px){
+    #reveal .shot{height:min(30svh,300px)}
+    #reveal .lead{display:none}
+    #reveal h2{font-size:24px}
+  }
+
+  /* ---- tablet refinements ---- */
+  @media(max-width:900px){
+    #ritual .copy{right:clamp(18px,4vw,40px);left:clamp(18px,4vw,40px);max-width:none}
+    #ritual h2{font-size:clamp(26px,6vw,44px)}
+    footer .wm-logo{height:112px}
+  }
+
+  /* ---- phone refinements ---- */
+  @media(max-width:760px){
+    header{padding:12px 16px}
+    header.solid{padding-top:9px;padding-bottom:9px}
+    .brand{gap:8px} .brand .mark{height:38px;width:38px;padding:4px} .brand .wm{font-size:18px}
+    header nav{gap:10px}
+    .nav-cta{padding:7px 15px;font-size:11.5px}
+    .lang-btn{padding:6px 12px;font-size:12px}
+    #hero{height:120vh}
+    #origin .scrim{background:linear-gradient(180deg,rgba(250,250,247,.95) 0%,rgba(250,250,247,.88) 55%,rgba(250,250,247,.4) 100%)}
+    html[dir=rtl] #origin .scrim{background:linear-gradient(180deg,rgba(250,250,247,.95) 0%,rgba(250,250,247,.88) 55%,rgba(250,250,247,.4) 100%)}
+    #origin h2{font-size:clamp(30px,8.5vw,42px)}
+    #ritual{padding:12vh 0}
+    #ritual .frame{height:clamp(400px,70vh,620px)}
+    #ritual .copy{bottom:22px}
+    #ritual p{font-size:14.5px}
+    .btn{padding:13px 28px;font-size:15px}
+    #cta .btns{gap:12px;margin-top:28px}
+    #detail{padding:12vh 0 8vh}
+    footer .wm-logo{height:96px}
+    footer .links{gap:16px 22px}
+  }
+  @media(max-width:420px){
+    .brand .wm{display:none}
+    header nav{gap:8px}
+  }
+
+  /* ---- short / landscape phones ---- */
+  @media(max-height:500px){
+    #hero h1{font-size:clamp(36px,9vw,64px)}
+    #hero .latin{margin-bottom:1.2vh}
+    #origin .copy p:nth-of-type(2){display:none}
+    #origin h2{font-size:26px;margin-bottom:.35em}
+    #origin p{font-size:14px;max-width:440px}
+    #cta h2{font-size:clamp(28px,7vw,54px)}
+    #cta .btns{margin-top:18px}
+    #cta .content p{font-size:14px}
+  }
+
+  /* 5 · RITUAL */
+  #ritual{padding:20vh 0}
+  #ritual .frame{position:relative;height:clamp(460px,84vh,820px);border-radius:10px;overflow:hidden;box-shadow:0 50px 110px -50px rgba(35,42,28,.4)}
+  #ritual .frame img{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;will-change:transform}
+  #ritual .frame::after{content:"";position:absolute;inset:0;background:linear-gradient(to left,rgba(250,250,247,.92),rgba(250,250,247,.28) 52%,transparent 84%),linear-gradient(0deg,rgba(250,250,247,.8),transparent 52%)}
+  #ritual .copy{position:absolute;z-index:2;right:clamp(24px,5vw,72px);bottom:clamp(42px,9vh,96px);max-width:min(88vw,540px);text-align:right}
+  #ritual .idx{display:block;margin-bottom:12px} #ritual h2{font-size:clamp(32px,5.2vw,64px);margin:8px 0 16px}
+  #ritual p{color:var(--ink-soft);font-size:clamp(15px,1.7vw,19px);max-width:44ch;margin-inline-start:auto}
+
+  /* 6 · CTA */
+  #cta{height:250vh}
+  #cta .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center;background:var(--olive-deep)}
+  #cta video,#cta .cta-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+  #cta .cta-poster{transition:opacity .8s ease}
+  #cta .dim{position:absolute;inset:0;opacity:0;backdrop-filter:blur(2px);
+    background:radial-gradient(120% 100% at 50% 50%,rgba(35,43,24,.5),rgba(20,25,14,.88))}
+  #cta .content{position:relative;z-index:3;text-align:center;opacity:0;transform:translateY(28px);padding-inline:20px}
+  #cta .content .latin{display:block;font-size:12px;color:var(--gold-bright);margin-bottom:18px}
+  #cta h2{font-size:clamp(40px,8vw,104px);line-height:.96;color:var(--paper)}
+  #cta .content p{margin:18px auto 0;color:rgba(250,250,247,.75);font-size:clamp(15px,1.8vw,20px);max-width:42ch}
+  #cta .btns{margin-top:40px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn{border-radius:999px;padding:15px 38px;font-family:"Fraunces",serif;font-size:16px;font-weight:600;text-decoration:none;display:inline-block;transition:transform .35s var(--ease),box-shadow .35s,background .35s,color .35s}
+  .btn-primary{background:#FAFAF7;color:var(--olive-deep);box-shadow:0 16px 40px -14px rgba(0,0,0,.4)}
+  .btn-primary:hover{transform:translateY(-3px)}
+  .btn-ghost{border:1px solid rgba(250,250,247,.4);color:var(--paper)} .btn-ghost:hover{background:rgba(250,250,247,.12);transform:translateY(-3px)}
+
+  /* 7 · DETAIL gallery */
+  #detail{padding:18vh 0 12vh;text-align:center}
+  #detail .head{margin-bottom:clamp(40px,6vw,72px)} #detail .idx{display:block;margin-bottom:10px}
+  #detail h2{font-size:clamp(32px,5vw,60px);margin-top:6px}
+  #detail .cards{display:grid;grid-template-columns:1fr;gap:26px}
+  @media(min-width:760px){#detail .cards{grid-template-columns:repeat(3,1fr)}}
+  .d-card{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--mist);transition:transform .5s var(--ease),box-shadow .5s,border-color .5s}
+  .d-card:hover{transform:translateY(-8px);box-shadow:0 34px 70px -36px rgba(35,42,28,.35)}
+  .d-card .pic{aspect-ratio:4/3;display:grid;place-items:center;overflow:hidden;padding:9%}
+  .d-card .pic img{width:100%;height:100%;object-fit:contain;transition:transform .9s var(--ease)}
+  .d-card:hover .pic img{transform:scale(1.05)}
+  .d-card .body{padding:6px 22px 28px} .d-card h3{font-size:21px;color:var(--ink)} .d-card p{font-size:14px;color:var(--ink-soft);margin-top:8px}
+
+  footer{padding:9vh 0 5vh;text-align:center;border-top:1px solid var(--line)}
+  footer .wm-logo{height:150px;width:auto;display:block;margin-inline:auto}
+  footer .tag{color:var(--ink-soft);font-size:14px;max-width:44ch;margin:14px auto 0}
+  footer .links{margin:26px 0;display:flex;gap:30px;justify-content:center;flex-wrap:wrap}
+  footer .links a{color:var(--ink-soft);text-decoration:none;font-size:14px;transition:color .3s} footer .links a:hover{color:var(--gold-deep)}
+  footer .cr{color:var(--ink-faint);font-size:12px}
+
+  @media(prefers-reduced-motion:reduce){
+    #hero .aura,.scrollcue .bar{animation:none}
+    #hero .aura{opacity:.55} #hero .latin,#hero h1,#hero .sub{opacity:1;clip-path:none}
+    *{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div id="ambient"></div><div id="glow"></div><div id="vignette"></div><div id="progress"></div>
+
+<header id="header">
+  <a class="brand" href="#hero"><img class="mark" src="/landing/assets/logo.png" alt="MANAJEL emblem" /><span class="wm">MANAJEL</span></a>
+  <nav>
+    <a href="#origin">Purity</a><a href="#reveal">The Oil</a><a href="#ritual">The Ritual</a><a href="#detail">Details</a>
+    <a class="nav-cta" href="#cta">Order</a>
+    <button class="lang-btn" id="langToggle" aria-label="Switch language">عربي</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 1 · HERO -->
+  <section id="hero" data-ambient="#FAFAF7" data-glow="0">
+    <div class="stage fallback-host">
+      <div class="aura" aria-hidden="true"></div>
+      <div class="motes" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <span class="latin">Extra Virgin · Cold-Extracted</span>
+        <h1>MANAJEL</h1>
+        <div class="sub">A premium olive oil crafted for people who value quality, health, and exceptional taste.</div>
+      </div>
+      <div class="scrollcue"><span>Scroll</span><span class="bar"></span></div>
+    </div>
+  </section>
+
+  <!-- 2 · PURITY -->
+  <section id="origin" data-ambient="#F1F1EC" data-glow=".55">
+    <div class="stage fallback-host">
+      <img class="bg multiply" id="originBg" src="/landing/assets/purity.jpg" alt="A slow golden swirl of extra virgin olive oil" loading="lazy" />
+      <div class="scrim"></div>
+      <div class="wrap"><div class="copy reveal">
+        <span class="eyebrow"><span class="rule"></span>Purity</span>
+        <h2>Nothing added.<br>Nothing taken away.</h2>
+        <p>Cold-extracted within hours of picking, at temperatures that preserve what matters: natural polyphenols, antioxidants, and a clean, vivid taste.</p>
+        <p>Single origin. Free acidity below 0.4%. Bottled without compromise.</p>
+        <div class="stats">
+          <div><div class="n">&le;0.4%</div><div class="l">Free acidity</div></div>
+          <div><div class="n">Cold</div><div class="l">Extraction</div></div>
+          <div><div class="n">Single</div><div class="l">Origin</div></div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 4 · REVEAL (canvas frame-sequence, scroll-scrubbed bottle turntable) -->
+  <section id="reveal" data-ambient="#F2F2ED" data-glow=".55">
+    <div class="stage">
+      <div class="wrap"><div class="grid">
+        <div class="shot fallback-host reveal">
+          <div class="aura"></div>
+          <canvas id="revealCanvas"></canvas>
+          <img class="reveal-fallback multiply" src="/landing/assets/reveal-cutout-web.png" alt="MANAJEL 750ml extra virgin olive oil bottle" />
+          <div class="loader" id="revealLoader">…</div>
+        </div>
+        <div class="copy">
+          <span class="idx reveal">01 — The Oil</span>
+          <h2 class="gold-text reveal">750ml. Extra virgin.<br>Uncompromising.</h2>
+          <p class="lead reveal">Green-gold and alive: smooth, full-bodied, with a peppery finish — the signature of high polyphenol content and exceptional freshness.</p>
+          <ul class="specs">
+            <li class="reveal"><span class="k">Acidity</span><span class="v">&le; 0.4% free acidity</span></li>
+            <li class="reveal"><span class="k">Extraction</span><span class="v">Cold, within hours of picking</span></li>
+            <li class="reveal"><span class="k">Antioxidants</span><span class="v">Naturally rich in polyphenols</span></li>
+            <li class="reveal"><span class="k">Origin</span><span class="v">Single estate, Palestine</span></li>
+          </ul>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 5 · RITUAL -->
+  <section id="ritual" data-ambient="#EFEFE9" data-glow=".5">
+    <div class="wrap"><div class="frame fallback-host">
+      <img src="/landing/assets/ritual.png" alt="Olive oil drizzled over a healthy breakfast bowl in a bright modern kitchen" loading="lazy" />
+      <div class="copy reveal">
+        <span class="idx">02 — The Ritual</span>
+        <h2 class="gold-text">Your daily ritual.</h2>
+        <p>A finishing pour over breakfast, a base for every salad, a clean source of healthy fats. One bottle, every day — this is how it's meant to be used.</p>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- 6 · CTA -->
+  <section id="cta" data-ambient="#202718" data-glow=".6">
+    <div class="stage fallback-host">
+      <img class="cta-poster" id="ctaPoster" src="/landing/assets/label-front.jpg" alt="" aria-hidden="true" />
+      <video id="ctaVideo" muted playsinline loop preload="none" aria-hidden="true" poster="/landing/assets/label-front.jpg"></video>
+      <div class="dim" id="ctaDim"></div>
+      <div class="content" id="ctaContent">
+        <span class="latin">Begin the Ritual</span>
+        <h2 class="gold-text">Taste the difference.</h2>
+        <p>Order MANAJEL for your kitchen, or as a considered gift. Direct, personal service — from our press to your table.</p>
+        <div class="btns"><a class="btn btn-primary" href="mailto:contact@manajel.com">Email Manajel</a><a class="btn btn-ghost" href="/store">Palestinian Store</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · DETAIL -->
+  <section id="detail" data-ambient="#F3F3EE" data-glow=".5">
+    <div class="wrap">
+      <div class="head"><span class="idx reveal">03 — Details</span><h2 class="gold-text reveal">Considered, down to the glass.</h2></div>
+      <div class="cards">
+        <article class="d-card reveal"><div class="pic fallback-host"><img src="/landing/assets/label-front.jpg" alt="MANAJEL minimal label and emblem" loading="lazy" /></div><div class="body"><h3>The Design</h3><p>A minimal label and a hand-drawn emblem — designed to live on your counter, not in a cupboard.</p></div></article>
+        <article class="d-card reveal"><div class="pic fallback-host"><img src="/landing/assets/label-back.jpg" alt="MANAJEL back label with quality and nutrition information" loading="lazy" /></div><div class="body"><h3>The Standard</h3><p>Every batch is tested for acidity, purity and freshness before it is bottled.</p></div></article>
+        <article class="d-card reveal"><div class="pic fallback-host"><img src="/landing/assets/reveal-cutout-web.png" alt="MANAJEL dark glass bottle" loading="lazy" /></div><div class="body"><h3>The Glass</h3><p>UV-protective dark glass preserves natural antioxidants and keeps the oil at its peak.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="wrap">
+    <img class="wm-logo" src="/landing/assets/logo-web.png" alt="MANAJEL" />
+    <p class="tag">Premium extra virgin olive oil. Cold-extracted, single origin, crafted for modern living.</p>
+    <nav class="links"><a href="#origin">Purity</a><a href="#reveal">The Oil</a><a href="#ritual">The Ritual</a><a href="#detail">Details</a><a href="#cta">Order</a></nav>
+    <div class="cr">&copy; <span id="year"></span> Manajel Co. &middot; Single origin, Palestine</div>
+  </div></footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  document.getElementById("year").textContent = new Date().getFullYear();
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const hasGSAP=typeof gsap!=="undefined"&&typeof ScrollTrigger!=="undefined";
+  if(hasGSAP) gsap.registerPlugin(ScrollTrigger);
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const smooth=(e0,e1,x)=>{const t=clamp((x-e0)/(e1-e0),0,1);return t*t*(3-2*t);};
+
+  // graceful asset fallback
+  document.querySelectorAll("img[src]").forEach(img=>img.addEventListener("error",()=>{
+    img.style.display="none"; const h=img.closest(".fallback-host"); if(h) h.classList.add("is-missing");
+  },{once:true}));
+
+  // Lenis driven by GSAP ticker (ONE rAF clock)
+  let lenis=null;
+  if(typeof Lenis!=="undefined"&&hasGSAP&&!reduce){
+    lenis=new Lenis({duration:1.2,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),smoothWheel:true});
+    lenis.on("scroll",ScrollTrigger.update);
+    gsap.ticker.add(t=>lenis.raf(t*1000)); gsap.ticker.lagSmoothing(0); window.lenis=lenis;
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{
+      const t=document.querySelector(a.getAttribute("href")); if(t){e.preventDefault();lenis.scrollTo(t,{offset:0});}}));
+  }
+
+  // header hide/show + progress
+  const header=document.getElementById("header"), progress=document.getElementById("progress");
+  if(hasGSAP) ScrollTrigger.create({start:0,end:"max",onUpdate:s=>{
+    progress.style.transform="scaleX("+s.progress+")";
+    header.classList.toggle("solid",s.scroll()>40);
+    if(s.scroll()>140) header.classList.toggle("hidden",s.direction===1); else header.classList.remove("hidden");
+  }});
+
+  // ambient per section
+  const ambient=document.getElementById("ambient"), glow=document.getElementById("glow");
+  function applyAmbient(c,g){ if(hasGSAP){gsap.to(ambient,{backgroundColor:c,duration:1.1,overwrite:"auto",ease:"power2.out"});gsap.to(glow,{opacity:g,duration:1.1,overwrite:"auto"});}else{ambient.style.backgroundColor=c;glow.style.opacity=g;} }
+  document.querySelectorAll("section[data-ambient]").forEach(sec=>{
+    const c=sec.getAttribute("data-ambient"),g=parseFloat(sec.getAttribute("data-glow")||".5");
+    if(hasGSAP) ScrollTrigger.create({trigger:sec,start:"top 60%",end:"bottom 40%",onEnter:()=>applyAmbient(c,g),onEnterBack:()=>applyAmbient(c,g)});
+    else if("IntersectionObserver" in window) new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)applyAmbient(c,g);}),{threshold:.4}).observe(sec);
+  });
+
+  // reveals
+  const reveals=document.querySelectorAll(".reveal");
+  if(hasGSAP&&!reduce) reveals.forEach(el=>ScrollTrigger.create({trigger:el,start:"top 86%",once:true,onEnter:()=>el.classList.add("in")}));
+  else if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.2});reveals.forEach(el=>io.observe(el));}
+  else reveals.forEach(el=>el.classList.add("in"));
+
+  // HERO entrance + pointer parallax + scroll handoff
+  if(hasGSAP&&!reduce){
+    gsap.timeline({defaults:{ease:"power3.out"}})
+      .fromTo("#hero .latin",{opacity:0,y:14},{opacity:1,y:0,duration:.8},0.15)
+      .fromTo("#hero h1",{opacity:0,y:24,clipPath:"inset(0 0 100% 0)"},{opacity:1,y:0,clipPath:"inset(0 0 0% 0)",duration:1.1},0.35)
+      .fromTo("#hero .sub",{opacity:0,y:12},{opacity:1,y:0,duration:.8},0.85)
+      .fromTo("#hero .scrollcue",{opacity:0},{opacity:1,duration:.8},1.15);
+    gsap.to("#hero .hero-inner",{scrollTrigger:{trigger:"#hero",start:"top top",end:"78% top",scrub:true},y:-50,opacity:0,ease:"none"});
+    gsap.to("#hero .aura",{scrollTrigger:{trigger:"#hero",start:"top top",end:"bottom top",scrub:true},scale:1.5,opacity:0,ease:"none"});
+    const stage=document.querySelector("#hero .stage"),aura=document.querySelector("#hero .aura"),motes=document.querySelector("#hero .motes");
+    stage.addEventListener("pointermove",e=>{const r=stage.getBoundingClientRect(),nx=(e.clientX-r.left)/r.width-.5,ny=(e.clientY-r.top)/r.height-.5;
+      aura.style.setProperty("--px",(-nx*46).toFixed(1)+"px");aura.style.setProperty("--py",(-ny*34).toFixed(1)+"px");
+      motes.style.transform="translate3d("+(nx*22).toFixed(1)+"px,"+(ny*16).toFixed(1)+"px,0)";});
+    stage.addEventListener("pointerleave",()=>{aura.style.setProperty("--px","0px");aura.style.setProperty("--py","0px");motes.style.transform="translate3d(0,0,0)";});
+  }
+  if(!hasGSAP) document.querySelectorAll("#hero .latin,#hero h1,#hero .sub,#hero .scrollcue,#hero .aura").forEach(e=>{e.style.opacity=e.classList.contains("aura")?.6:1;e.style.clipPath="none";e.style.transform="none";});
+
+  // PURITY — pinned Ken Burns push
+  if(hasGSAP&&!reduce){
+    gsap.to("#origin .bg",{scrollTrigger:{trigger:"#origin",start:"top top",end:"bottom bottom",scrub:true},scale:1.14,ease:"none"});
+    gsap.fromTo("#origin .bg",{opacity:0},{opacity:1,scrollTrigger:{trigger:"#origin",start:"top 90%",end:"top 30%",scrub:true}});
+  } else { const el=document.getElementById("originBg"); if(el) el.style.opacity=1; }
+
+  // RITUAL parallax
+  if(hasGSAP&&!reduce){
+    gsap.to("#ritual .frame img",{scrollTrigger:{trigger:"#ritual",start:"top bottom",end:"bottom top",scrub:true},y:"-7%",ease:"none"});
+  }
+
+  // REVEAL — canvas frame sequence, scroll-scrubbed bottle turntable (NEVER video.currentTime).
+  (function initReveal(){
+    const FRAME_COUNT=86;
+    const url=i=>"/landing/assets/reveal-seq/r"+String(i).padStart(3,"0")+".jpg";
+    const canvas=document.getElementById("revealCanvas"); if(!canvas) return;
+    const shot=canvas.closest(".shot"),fallback=document.querySelector("#reveal .reveal-fallback"),loaderEl=document.getElementById("revealLoader"),ctx=canvas.getContext("2d",{alpha:false}),frames=new Array(FRAME_COUNT);
+    let loaded=0,errored=0,ready=false,useFallback=false,cur=-1,lastIdx=0,revealST=null;
+    const progIdx=()=>revealST?Math.round(clamp(revealST.progress,0,1)*(FRAME_COUNT-1)):0;
+    function showFallback(){useFallback=true;ready=true;canvas.style.display="none";if(fallback&&fallback.complete&&fallback.naturalWidth>0)fallback.style.display="block";else if(fallback)fallback.style.display="none";if(loaderEl)loaderEl.style.opacity=0;}
+    function maybeReady(){if(ready)return;if(loaded+errored>=FRAME_COUNT||loaded>=Math.ceil(FRAME_COUNT*0.6)){if(loaded===0){showFallback();return;}ready=true;if(loaderEl)loaderEl.style.opacity=0;resize();draw(progIdx());}if(loaderEl&&!ready)loaderEl.textContent="… "+Math.round(loaded/FRAME_COUNT*100)+"%";}
+    if(reduce||!hasGSAP){showFallback();return;}
+    for(let i=0;i<FRAME_COUNT;i++){const im=new Image();im.decoding="async";im.onload=()=>{frames[i]=im;loaded++;maybeReady();};im.onerror=()=>{errored++;maybeReady();};im.src=url(i);}
+    setTimeout(()=>{if(!ready){if(loaded>0){ready=true;if(loaderEl)loaderEl.style.opacity=0;resize();draw(progIdx());}else showFallback();}},9000);
+    function resize(){const dpr=Math.min(2,window.devicePixelRatio||1),w=shot.clientWidth,h=shot.clientHeight;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);canvas.style.width=w+"px";canvas.style.height=h+"px";cur=-1;if(ready&&!useFallback)draw(lastIdx);}
+    function draw(i){if(useFallback)return;i=clamp(i,0,FRAME_COUNT-1);let im=frames[i];if(!im){for(let d=1;d<FRAME_COUNT;d++){if(frames[i-d]){im=frames[i-d];break;}if(frames[i+d]){im=frames[i+d];break;}}if(!im)return;}if(i===cur)return;cur=i;lastIdx=i;const cw=canvas.width,ch=canvas.height,iw=im.naturalWidth,ih=im.naturalHeight,s=Math.max(cw/iw,ch/ih),dw=iw*s,dh=ih*s;ctx.fillStyle="#0B0805";ctx.fillRect(0,0,cw,ch);ctx.drawImage(im,(cw-dw)/2,(ch-dh)/2,dw,dh);}
+    window.addEventListener("resize",resize,{passive:true});
+    revealST=ScrollTrigger.create({trigger:"#reveal",start:"top top",end:"bottom bottom",scrub:true,onUpdate:self=>{if(ready&&!useFallback)draw(Math.round(self.progress*(FRAME_COUNT-1)));}});
+  })();
+
+  // CTA — video alone first, then dim/wash + content reveal. Single looping clip.
+  (function initCTA(){
+    const sec=document.getElementById("cta"),video=document.getElementById("ctaVideo"),poster=document.getElementById("ctaPoster"),dim=document.getElementById("ctaDim"),content=document.getElementById("ctaContent");
+    video.src="/landing/assets/film-src.mp4";
+    video.addEventListener("loadeddata",()=>{poster.style.opacity=0;});
+    video.addEventListener("error",()=>{poster.style.opacity=1;});
+    let started=false; const start=()=>{if(started)return;started=true;const pr=video.play();if(pr&&pr.catch)pr.catch(()=>{});};
+    ["pointerdown","keydown","wheel","touchstart"].forEach(ev=>window.addEventListener(ev,start,{once:true,passive:true}));
+    if(hasGSAP&&!reduce){
+      ScrollTrigger.create({trigger:sec,start:"top center",onEnter:start,onEnterBack:start});
+      ScrollTrigger.create({trigger:sec,start:"top top",end:"bottom bottom",scrub:true,onUpdate:s=>{const p=s.progress;dim.style.opacity=smooth(0.30,0.62,p);content.style.opacity=smooth(0.36,0.68,p);content.style.transform="translateY("+(28*(1-smooth(0.36,0.68,p)))+"px)";}});
+    } else {dim.style.opacity=.9;content.style.opacity=1;content.style.transform="none";}
+  })();
+
+  // LANGUAGE TOGGLE — English default, Arabic (RTL) on demand. Selector → {en, ar} innerHTML.
+  (function initLang(){
+    const I18N=[
+      ['header nav a[href="#origin"]',{en:'Purity',ar:'النقاء'}],
+      ['header nav a[href="#reveal"]',{en:'The Oil',ar:'الزيت'}],
+      ['header nav a[href="#ritual"]',{en:'The Ritual',ar:'الطقس اليومي'}],
+      ['header nav a[href="#detail"]',{en:'Details',ar:'التفاصيل'}],
+      ['header nav .nav-cta',{en:'Order',ar:'اطلب'}],
+      ['.brand .wm',{en:'MANAJEL',ar:'مناجل'}],
+      ['#hero .latin',{en:'Extra Virgin · Cold-Extracted',ar:'بكر ممتاز · معصور على البارد'}],
+      ['#hero h1',{en:'MANAJEL',ar:'مناجل'}],
+      ['#hero .sub',{en:'A premium olive oil crafted for people who value quality, health, and exceptional taste.',ar:'زيت زيتون فاخر، صُنع لمن يقدّرون الجودة والصحة والمذاق الاستثنائي.'}],
+      ['.scrollcue span:first-child',{en:'Scroll',ar:'مرِّر'}],
+      ['#origin .eyebrow',{en:'<span class="rule"></span>Purity',ar:'<span class="rule"></span>النقاء'}],
+      ['#origin h2',{en:'Nothing added.<br>Nothing taken away.',ar:'لا إضافات.<br>ولا انتقاص.'}],
+      ['#origin .copy p:nth-of-type(1)',{en:'Cold-extracted within hours of picking, at temperatures that preserve what matters: natural polyphenols, antioxidants, and a clean, vivid taste.',ar:'يُعصر على البارد خلال ساعاتٍ من القطف، بدرجات حرارة تحفظ ما يهم: البوليفينولات الطبيعية، ومضادات الأكسدة، ومذاقًا نقيًا حيًا.'}],
+      ['#origin .copy p:nth-of-type(2)',{en:'Single origin. Free acidity below 0.4%. Bottled without compromise.',ar:'أصلٌ واحد. حموضة حرة أقل من ٠٫٤٪. يُعبأ بلا مساومة.'}],
+      ['#origin .stats div:nth-child(1) .l',{en:'Free acidity',ar:'حموضة حرة'}],
+      ['#origin .stats div:nth-child(2) .n',{en:'Cold',ar:'بارد'}],
+      ['#origin .stats div:nth-child(2) .l',{en:'Extraction',ar:'العصر'}],
+      ['#origin .stats div:nth-child(3) .n',{en:'Single',ar:'واحد'}],
+      ['#origin .stats div:nth-child(3) .l',{en:'Origin',ar:'الأصل'}],
+      ['#reveal .idx',{en:'01 — The Oil',ar:'٠١ — الزيت'}],
+      ['#reveal h2',{en:'750ml. Extra virgin.<br>Uncompromising.',ar:'٧٥٠ مل. بكرٌ ممتاز.<br>بلا مساومة.'}],
+      ['#reveal .lead',{en:'Green-gold and alive: smooth, full-bodied, with a peppery finish — the signature of high polyphenol content and exceptional freshness.',ar:'ذهبيٌّ مخضرّ وحيّ: ناعم، ممتلئ القوام، بقفلة فلفلية — توقيع المحتوى العالي من البوليفينول والطزاجة الاستثنائية.'}],
+      ['#reveal .specs li:nth-child(1) .k',{en:'Acidity',ar:'الحموضة'}],
+      ['#reveal .specs li:nth-child(1) .v',{en:'&le; 0.4% free acidity',ar:'حموضة حرة ≤ ٠٫٤٪'}],
+      ['#reveal .specs li:nth-child(2) .k',{en:'Extraction',ar:'العصر'}],
+      ['#reveal .specs li:nth-child(2) .v',{en:'Cold, within hours of picking',ar:'بارد، خلال ساعاتٍ من القطف'}],
+      ['#reveal .specs li:nth-child(3) .k',{en:'Antioxidants',ar:'مضادات الأكسدة'}],
+      ['#reveal .specs li:nth-child(3) .v',{en:'Naturally rich in polyphenols',ar:'غني طبيعيًا بالبوليفينول'}],
+      ['#reveal .specs li:nth-child(4) .k',{en:'Origin',ar:'الأصل'}],
+      ['#reveal .specs li:nth-child(4) .v',{en:'Single estate, Palestine',ar:'ضيعة واحدة، فلسطين'}],
+      ['#ritual .idx',{en:'02 — The Ritual',ar:'٠٢ — الطقس اليومي'}],
+      ['#ritual h2',{en:'Your daily ritual.',ar:'طقسك اليومي.'}],
+      ['#ritual .copy p',{en:'A finishing pour over breakfast, a base for every salad, a clean source of healthy fats. One bottle, every day — this is how it\'s meant to be used.',ar:'سكبة أخيرة فوق الفطور، أساسٌ لكل سلطة، ومصدر نظيف للدهون الصحية. قارورة واحدة، كل يوم — هكذا صُنع ليُستعمل.'}],
+      ['#cta .content .latin',{en:'Begin the Ritual',ar:'ابدأ الطقس'}],
+      ['#cta h2',{en:'Taste the difference.',ar:'تذوّق الفرق.'}],
+      ['#cta .content p',{en:'Order MANAJEL for your kitchen, or as a considered gift. Direct, personal service — from our press to your table.',ar:'اطلب مناجل لمطبخك، أو كهديةٍ مدروسة. خدمة مباشرة وشخصية — من معصرتنا إلى مائدتك.'}],
+      ['#cta .btns .btn-primary',{en:'Email Manajel',ar:'راسل مناجل'}],
+      ['#cta .btns .btn-ghost',{en:'Palestinian Store',ar:'المتجر الفلسطيني'}],
+      ['#detail .idx',{en:'03 — Details',ar:'٠٣ — التفاصيل'}],
+      ['#detail .head h2',{en:'Considered, down to the glass.',ar:'مدروسٌ حتى الزجاج.'}],
+      ['#detail .cards article:nth-child(1) h3',{en:'The Design',ar:'التصميم'}],
+      ['#detail .cards article:nth-child(1) .body p',{en:'A minimal label and a hand-drawn emblem — designed to live on your counter, not in a cupboard.',ar:'ملصقٌ مينيمال وشعارٌ مرسوم باليد — صُمم ليعيش على سطح مطبخك، لا في الخزانة.'}],
+      ['#detail .cards article:nth-child(2) h3',{en:'The Standard',ar:'المعيار'}],
+      ['#detail .cards article:nth-child(2) .body p',{en:'Every batch is tested for acidity, purity and freshness before it is bottled.',ar:'كل دفعة تُفحص للحموضة والنقاء والطزاجة قبل التعبئة.'}],
+      ['#detail .cards article:nth-child(3) h3',{en:'The Glass',ar:'الزجاج'}],
+      ['#detail .cards article:nth-child(3) .body p',{en:'UV-protective dark glass preserves natural antioxidants and keeps the oil at its peak.',ar:'زجاجٌ داكن حاجب للأشعة فوق البنفسجية يحفظ مضادات الأكسدة الطبيعية ويبقي الزيت في ذروته.'}],
+      ['footer .tag',{en:'Premium extra virgin olive oil. Cold-extracted, single origin, crafted for modern living.',ar:'زيت زيتون بكر ممتاز فاخر. معصور على البارد، من أصلٍ واحد، صُنع للحياة العصرية.'}],
+      ['footer .links a[href="#origin"]',{en:'Purity',ar:'النقاء'}],
+      ['footer .links a[href="#reveal"]',{en:'The Oil',ar:'الزيت'}],
+      ['footer .links a[href="#ritual"]',{en:'The Ritual',ar:'الطقس اليومي'}],
+      ['footer .links a[href="#detail"]',{en:'Details',ar:'التفاصيل'}],
+      ['footer .links a[href="#cta"]',{en:'Order',ar:'اطلب'}],
+      ['footer .cr',{en:'&copy; <span id="year"></span> Manajel Co. &middot; Single origin, Palestine',ar:'&copy; <span id="year"></span> شركة مناجل · أصلٌ واحد، فلسطين'}]
+    ];
+    const btn=document.getElementById("langToggle"); if(!btn) return;
+    function applyLang(lang){
+      document.documentElement.setAttribute("lang",lang);
+      document.documentElement.setAttribute("dir",lang==="ar"?"rtl":"ltr");
+      I18N.forEach(pair=>{const el=document.querySelector(pair[0]);if(el)el.innerHTML=pair[1][lang];});
+      const y=document.getElementById("year"); if(y) y.textContent=new Date().getFullYear();
+      btn.textContent=lang==="ar"?"English":"عربي";
+      try{localStorage.setItem("manajel-lang",lang);}catch(e){}
+      if(hasGSAP) ScrollTrigger.refresh();
+    }
+    btn.addEventListener("click",()=>applyLang(document.documentElement.lang==="ar"?"en":"ar"));
+    let saved=null; try{saved=localStorage.getItem("manajel-lang");}catch(e){}
+    if(saved==="ar") applyLang("ar");
+  })();
+
+  if(hasGSAP){window.addEventListener("load",()=>ScrollTrigger.refresh());if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>ScrollTrigger.refresh());}
+})();
+</script>
+</body>
+</html>

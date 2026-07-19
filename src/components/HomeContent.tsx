@@ -87,7 +87,7 @@ export default function HomeContent() {
   const heritageImages = [
     "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980574/mill_flxe3m.webp",
     "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980569/mail_ruyrci.webp",
-    "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980560/oil_eckddl.webp",
+    "https://res.cloudinary.com/dj5k9x9sl/image/upload/v1784456624/7ca2d686-f226-4b96-9ff6-ad28498493b4_fhxpzg.png",
   ];
   const arrivalsReveal = useScrollAnimation({ delay: 100, triggerOnce: false });
   const aboutReveal = useScrollAnimation({ delay: 60, triggerOnce: false });
@@ -248,13 +248,13 @@ export default function HomeContent() {
   }, [testimonialSlides.length]);
 
   return (
-    <div className="bg-[#121416] text-[#F2ECE2]">
+    <div className="bg-[#FBF8F2] text-[#121416]">
       <SignupPrompt />
 
         <section
           className="hero-section relative w-full aspect-[4/5] min-h-[72vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[15/8] md:min-h-[44vh] mt-0"
         style={{
-          backgroundImage: "url('/images/hero.jpg')",
+          backgroundImage: "url('/images/hero.png?v=2')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
@@ -264,7 +264,7 @@ export default function HomeContent() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(110deg, rgba(12,12,14,0.88) 0%, rgba(24,28,31,0.74) 45%, rgba(76,51,38,0.52) 100%)",
+              "linear-gradient(180deg, rgba(251,248,242,0) 86%, rgba(251,248,242,0.9) 100%), linear-gradient(180deg, rgba(22,17,11,0.5) 0%, rgba(22,17,11,0.28) 32%, rgba(22,17,11,0.26) 62%, rgba(22,17,11,0.42) 100%)",
           }}
         />
 
@@ -273,7 +273,7 @@ export default function HomeContent() {
           <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 lg:py-5 relative z-10">
             <div className="flex justify-between items-center relative lg:gap-8">
               {/* Logo */}
-              <Link href="/" className="flex items-center gap-2 lg:gap-3 group lg:translate-x-2">
+              <Link href="/store" className="flex items-center gap-2 lg:gap-3 group lg:translate-x-2">
                 <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-150 hover:duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
                   <Image
                     src="/images/logo.jpg"
@@ -293,10 +293,10 @@ export default function HomeContent() {
               {/* Desktop Navigation */}
               <div className="hidden lg:flex items-center gap-6 lg:gap-9 lg:-translate-x-2">
                 {[
-                  { name: t("nav.home"), href: "/" },
-                  { name: t("nav.shop"), href: "/shop" },
-                  { name: t("nav.about"), href: "/about" },
-                  { name: t("nav.contact"), href: "/contact" },
+                  { name: t("nav.home"), href: "/store" },
+                  { name: t("nav.shop"), href: "/store/shop" },
+                  { name: t("nav.about"), href: "/store/about" },
+                  { name: t("nav.contact"), href: "/store/contact" },
                 ].map((item) => (
                   <Link
                     key={item.href}
@@ -345,10 +345,10 @@ export default function HomeContent() {
                     <div
                       className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
                       style={{
-                        backgroundColor: "#14171a",
+                        backgroundColor: "#FFFFFF",
                         borderColor: "rgba(201,166,107,0.35)",
                         zIndex: 99999,
-                        boxShadow: "0 14px 34px rgba(0,0,0,0.45)",
+                        boxShadow: "0 14px 34px rgba(0,0,0,0.15)",
                         top: "100%",
                         marginTop: "8px",
                         width: "208px",
@@ -356,14 +356,14 @@ export default function HomeContent() {
                       }}
                     >
                       <Link
-                        href="/cart"
+                        href="/store/cart"
                         onClick={() => setShowUserMenu(false)}
                         className="block px-4 py-3 transition-colors border-b"
                         style={{
-                          color: "#F2ECE2",
+                          color: "#121416",
                           borderColor: "rgba(201,166,107,0.2)",
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                       >
                         <div className="flex items-center gap-2">
@@ -389,13 +389,13 @@ export default function HomeContent() {
                         </div>
                       </Link>
                       <Link
-                        href="/orders"
+                        href="/store/orders"
                         onClick={() => setShowUserMenu(false)}
                         className="block px-4 py-3 transition-colors"
                         style={{
-                          color: "#F2ECE2",
+                          color: "#121416",
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                       >
                         <div className="flex items-center gap-2">
@@ -424,7 +424,7 @@ export default function HomeContent() {
                     {isAdmin && (
                       <>
                         <Link
-                          href="/admin/products"
+                          href="/store/admin/products"
                           className="transition-opacity"
                           title={t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct")}
                         >
@@ -443,7 +443,7 @@ export default function HomeContent() {
                           </svg>
                         </Link>
                         <Link
-                          href="/admin/orders"
+                          href="/store/admin/orders"
                           className="transition-opacity"
                           title={t("admin.orders") === "admin.orders" ? "الطلبات" : t("admin.orders")}
                         >
@@ -465,7 +465,7 @@ export default function HomeContent() {
                     )}
                     
                     <Link
-                      href="/account"
+                      href="/store/account"
                       className="transition-opacity w-8 h-8 flex items-center justify-center"
                       title={t("account.title") === "account.title" ? "الحساب" : t("account.title")}
                     >
@@ -481,13 +481,13 @@ export default function HomeContent() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Link
-                      href="/login"
+                      href="/store/login"
                       className="px-2 py-1 text-xs rounded-md bg-white/10 hover:bg-white/20 transition-colors duration-150 hover:duration-300"
                     >
                       {t("auth.login")}
                     </Link>
                     <Link
-                      href="/register"
+                      href="/store/register"
                       className="px-2 py-1 text-xs rounded-md border transition-colors"
                       style={{ borderColor: `${gold}88`, color: "#F2ECE2" }}
                     >
@@ -501,7 +501,7 @@ export default function HomeContent() {
               <div className="lg:hidden flex items-center gap-2">
                 <LanguageSwitcher />
                 <Link
-                  href={isAuthenticated ? "/account" : "/login"}
+                  href={isAuthenticated ? "/store/account" : "/store/login"}
                   className="transition-opacity w-8 h-8 flex items-center justify-center"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -539,10 +539,10 @@ export default function HomeContent() {
                     <div
                       className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
                       style={{
-                        backgroundColor: "#14171a",
+                        backgroundColor: "#FFFFFF",
                         borderColor: "rgba(201,166,107,0.35)",
                         zIndex: 99999,
-                        boxShadow: "0 14px 34px rgba(0,0,0,0.45)",
+                        boxShadow: "0 14px 34px rgba(0,0,0,0.15)",
                         top: "100%",
                         marginTop: "8px",
                         width: "208px",
@@ -550,14 +550,14 @@ export default function HomeContent() {
                       }}
                     >
                       <Link
-                        href="/cart"
+                        href="/store/cart"
                         onClick={() => setShowUserMenu(false)}
                         className="block px-4 py-3 transition-colors border-b"
                         style={{
-                          color: "#F2ECE2",
+                          color: "#121416",
                           borderColor: "rgba(201,166,107,0.2)",
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                       >
                         <div className="flex items-center gap-3">
@@ -583,13 +583,13 @@ export default function HomeContent() {
                         </div>
                       </Link>
                       <Link
-                        href="/orders"
+                        href="/store/orders"
                         onClick={() => setShowUserMenu(false)}
                         className="block px-4 py-3 transition-colors"
                         style={{
-                          color: "#F2ECE2",
+                          color: "#121416",
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)")}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                       >
                         <div className="flex items-center gap-3">
@@ -620,13 +620,17 @@ export default function HomeContent() {
         <div
           ref={heroTextReveal.elementRef}
           className={`pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-4 text-center scroll-animate transition-all duration-700 ${heroTextReveal.isVisible ? "visible opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+          style={{
+            background:
+              "radial-gradient(ellipse 62% 42% at 50% 46%, rgba(20,15,8,0.4) 0%, rgba(20,15,8,0.22) 55%, rgba(20,15,8,0) 100%)",
+          }}
         >
           <p
             className="text-xl sm:text-5xl md:text-5xl tajawal-regular-all font-extrabold tracking-wide "
             style={{
               color: "#E6C88A",
               WebkitTextFillColor: "#E6C88A",
-              textShadow: "0 1px 0 rgba(255,246,200,0.35), 0 0 8px rgba(201,166,107,0.15)",
+              textShadow: "0 2px 14px rgba(0,0,0,0.55), 0 0 8px rgba(201,166,107,0.15)",
             }}
           >
             {language === "ar" ? "شركة ومعصرة مناجل للانتاج الزراعي" : "Manajel Company & Mill for Agricultural Production"}
@@ -634,15 +638,9 @@ export default function HomeContent() {
           <p
             className="text-xs sm:text-base md:text-2xl font-semibold tajawal-regular-all tracking-wide max-w-3xl"
             style={{
-              backgroundImage:
-                "radial-gradient(circle at 18% 22%, rgba(255, 250, 209, 0.98) 0%, rgba(255, 250, 209, 0) 34%), radial-gradient(circle at 82% 76%, rgba(255, 221, 132, 0.82) 0%, rgba(255, 221, 132, 0) 33%), linear-gradient(130deg, #fff7cf 0%, #ffe9a8 10%, #efc96a 22%, #9a6f1f 36%, #f7d57f 50%, #b17a23 64%, #ffefb7 77%, #c3872a 90%, #fbe09a 100%)",
-              backgroundSize: "220% 220%, 190% 190%, 100% 100%",
-              backgroundPosition: "45% 25%, 60% 80%, 0% 50%",
-              color: "transparent",
-              WebkitTextFillColor: "transparent",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              textShadow: "0 1px 0 rgba(255, 246, 200, 0.25)",
+              color: "#F7EEDC",
+              WebkitTextFillColor: "#F7EEDC",
+              textShadow: "0 2px 10px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4)",
             }}
           >
             {language === "ar" ? "التراث الفلسطيني في كل منتج" : "Palestinian heritage in every product"}
@@ -655,7 +653,7 @@ export default function HomeContent() {
 
         <div className="absolute left-0 right-0 bottom-6 z-40 flex justify-center pointer-events-auto">
           <Link
-            href={isAdmin ? "/admin" : "/shop"}
+            href={isAdmin ? "/store/admin" : "/store/shop"}
             className="gold-button rounded-xl px-6 py-2 text-sm font-bold"
           >
             {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
@@ -671,7 +669,7 @@ export default function HomeContent() {
           <p className="text-2xl sm:text-5xl font-extrabold gold-texture tajawal-regular-all transition-all duration-700">
             {language === "ar" ? "من نحن" : "Who We Are"}
           </p>
-          <p className="mt-4 mx-auto max-w-3xl text-sm sm:text-base font-normal tajawal-regular leading-8 text-white/80 transition-all duration-700 delay-150">
+          <p className="mt-4 mx-auto max-w-3xl text-sm sm:text-base font-normal tajawal-regular leading-8 text-black/75 transition-all duration-700 delay-150">
             {language === "ar"
               ? "أكثر من مجرد متجر… إحنا في مناجل شركة ومعصرة، بدايتنا كانت في 2021، لكن خبرتنا بهالمجال متوارثة من الأجداد. هدفنا نوصل لكم خير الأرض الفلسطينية زي ما هو، بطعم أصيل وجودة بنفتخر فيها."
               : "More than just a store… At Manajel, we are a company and olive mill. Our journey began in 2021, but our experience in this field has been passed down through generations. Our goal is to bring you the goodness of Palestinian land as it is—authentic in taste and quality we are proud of."}
@@ -740,11 +738,11 @@ export default function HomeContent() {
           {featuredProducts.length === 0
             ? Array.from({ length: 4 }).map((_, idx) => (
                 <SwiperSlide key={idx}>
-                  <div className="relative h-[340px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-white/10 bg-white/5 p-3 sm:p-5 overflow-hidden animate-pulse">
-                    <div className="rounded-xl sm:rounded-2xl bg-gray-700/50 aspect-video w-full mb-3 sm:mb-4" />
-                    <div className="h-6 bg-gray-700/50 rounded mb-2 w-3/4" />
-                    <div className="h-4 bg-gray-700/50 rounded mb-2 w-2/3" />
-                    <div className="h-4 bg-gray-700/50 rounded mb-2 w-1/2" />
+                  <div className="relative h-[340px] sm:h-[420px] rounded-2xl sm:rounded-3xl border border-black/10 bg-black/5 p-3 sm:p-5 overflow-hidden animate-pulse">
+                    <div className="rounded-xl sm:rounded-2xl bg-gray-300/60 aspect-video w-full mb-3 sm:mb-4" />
+                    <div className="h-6 bg-gray-300/60 rounded mb-2 w-3/4" />
+                    <div className="h-4 bg-gray-300/60 rounded mb-2 w-2/3" />
+                    <div className="h-4 bg-gray-300/60 rounded mb-2 w-1/2" />
                   </div>
                 </SwiperSlide>
               ))
@@ -770,11 +768,11 @@ export default function HomeContent() {
                 return (
                   <SwiperSlide key={key}>
                     <Link
-                      href={`/products/${product.id}`}
+                      href={`/store/products/${product.id}`}
                       className="featured-product-card-auto group block h-full border border-transparent bg-transparent p-0 hover:border-[#C9A66B] transition-all duration-150 hover:duration-300 shadow-lg overflow-hidden"
-                      style={{ boxShadow: "0 4px 32px 0 #0006", maxWidth: '240px', minWidth: '0' }}
+                      style={{ boxShadow: "0 4px 24px 0 #0002", maxWidth: '240px', minWidth: '0' }}
                     >
-                      <div className="aspect-[8/10] overflow-hidden bg-[#23201c] w-full">
+                      <div className="aspect-[8/10] overflow-hidden bg-[#F3EEE3] w-full">
                           {/** First 3 slides are typically above the fold on desktop/tablet */}
                           {(() => {
                             const isAboveFoldFeatured = idx < 3;
@@ -794,7 +792,7 @@ export default function HomeContent() {
                       </div>
                       <div className="px-5 pb-5 pt-2 flex flex-col gap-1">
                         <div className="flex items-center justify-between">
-                          <h3 className="gold-texture-static text-[#C9A66B] text-[13px] md:text-sm lg:text-base font-extrabold leading-tight line-clamp-2">
+                          <h3 className="text-[#121416] tajawal-regular text-[13px] md:text-sm lg:text-base leading-tight line-clamp-2">
                             {t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}
                           </h3>
                           <div className="flex items-center gap-2 min-w-fit">
@@ -806,7 +804,7 @@ export default function HomeContent() {
                             </span>
                           </div>
                         </div>
-                        <p className={`text-xs sm:text-sm lg:text-xs tajawal-regular text-white/80 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
+                        <p className={`text-xs sm:text-sm lg:text-xs tajawal-regular text-black/70 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
                           {t(`products.${product.id}.description`) === `products.${product.id}.description`
                             ? product.description
                             : t(`products.${product.id}.description`)}
@@ -837,7 +835,7 @@ export default function HomeContent() {
 
         {/*<div className="text-center mt-12">
           <Link
-            href={isAdmin ? "/admin" : "/shop"}
+            href={isAdmin ? "/store/admin" : "/store/shop"}
             className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform duration-150 hover:duration-300 hover:scale-105 shadow-lg hover:shadow-2xl"
           >
             {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
@@ -849,8 +847,7 @@ export default function HomeContent() {
         id="heritage-story"
         className="py-15 px-4"
         style={{
-          background:
-            "linear-gradient(180deg, rgba(17,20,22,1) 0%, rgba(26,30,33,1) 52%, rgba(20,19,18,1) 100%)",
+          background: "#FBF8F2",
         }}
       >
         <div
@@ -876,14 +873,26 @@ export default function HomeContent() {
                 
 
                 <div className="flex flex-wrap gap-2 justify-start">
-                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-2 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all ">
-                    🌿 {language === "ar" ? "مصدر طبيعي" : "Natural Source"}
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#C9A66B]/50 bg-black/35 px-2.5 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all">
+                    <svg className="h-3.5 w-3.5 shrink-0 text-[#E6C88A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                    </svg>
+                    {language === "ar" ? "مصدر طبيعي" : "Natural Source"}
                   </span>
-                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-2 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all">
-                    🫒 {language === "ar" ? "تراث فلسطيني" : "Palestinian Heritage"}
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#C9A66B]/50 bg-black/35 px-2.5 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all">
+                    <svg className="h-3.5 w-3.5 shrink-0 text-[#E6C88A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 22a9 9 0 0 0 9-9c0-4-2.5-7.5-5-9.5" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 22a9 9 0 0 1-9-9c0-4 2.5-7.5 5-9.5" />
+                      <circle cx="12" cy="13" r="3" />
+                    </svg>
+                    {language === "ar" ? "تراث فلسطيني" : "Palestinian Heritage"}
                   </span>
-                  <span className="rounded-full border border-[#C9A66B]/50 bg-black/35 px-2 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all">
-                    ✨ {language === "ar" ? "طرق تقليدية" : "Traditional Methods"}
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-[#C9A66B]/50 bg-black/35 px-2.5 py-1 text-xs sm:text-sm text-[#F2ECE2] tajawal-regular-all">
+                    <svg className="h-3.5 w-3.5 shrink-0 text-[#E6C88A]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" />
+                    </svg>
+                    {language === "ar" ? "طرق تقليدية" : "Traditional Methods"}
                   </span>
                 </div>
               </div>
@@ -897,12 +906,12 @@ export default function HomeContent() {
                 <span className="block w-full">{language === "ar" ? "حكاية التراث" : "Heritage Story"}</span>
               </p>
               
-              <p className={`text-base sm:text-lg text-white/80 leading-8 sm:leading-9 mb-6 ${language === "ar" ? "" : "max-w-xl"}`}>
+              <p className={`text-base sm:text-lg text-black/75 leading-8 sm:leading-9 mb-6 ${language === "ar" ? "" : "max-w-xl"}`}>
                 {language === "ar"
                   ? "من قلب المعصرة تبدأ الحكاية…"
                   : "From the heart of the mill, the story begins…"}
               </p>
-              <p className={`text-sm sm:text-base text-white/75 leading-7 sm:leading-8 max-w-3xl ${language === "ar" ? "lg:ms-auto" : ""}`}>
+              <p className={`text-sm sm:text-base text-black/70 leading-7 sm:leading-8 max-w-3xl ${language === "ar" ? "lg:ms-auto" : ""}`}>
                 {language === "ar"
                   ? "زيت زيتون نقي يُعصر بطرق أصيلة، ليحملك طعم الأرض وروحها." 
                 : "Pure olive oil, pressed using traditional methods, carrying the taste of the land and its soul."}
@@ -910,7 +919,7 @@ export default function HomeContent() {
 
               <div className="mt-6">
                 <Link
-                  href="/about"
+                  href="/store/about"
                   className="inline-flex items-center rounded-lg border border-[#C9A66B]/60 bg-[#C9A66B]/10 px-4 py-2 text-sm font-semibold text-[#C9A66B] transition-colors duration-150 hover:duration-300 hover:bg-[#C9A66B]/20"
                 >
                   {language === "ar" ? "اكتشف المزيد" : "Read More"}
@@ -969,18 +978,18 @@ export default function HomeContent() {
               >
                 {testimonialSlides.map(({ key, item }) => (
                   <SwiperSlide key={key}>
-                    <article className="h-full min-h-[210px] rounded-2xl border border-[#C9A66B]/45 bg-[#171a1d]/95 p-4 md:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-all duration-150 hover:duration-300 hover:-translate-y-1">
+                    <article className="h-full min-h-[210px] rounded-2xl border border-[#C9A66B]/45 bg-white p-4 md:p-5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-150 hover:duration-300 hover:-translate-y-1">
                       <div className="mb-3 flex items-start justify-between gap-2">
                         <div>
-                          <p className="text-sm sm:text-base font-extrabold text-[#F2ECE2] tajawal-regular-all">
+                          <p className="text-sm sm:text-base font-extrabold text-[#121416] tajawal-regular-all">
                             {language === "ar" ? item.nameAr : item.nameEn}
                           </p>
-                          <p className="text-xs sm:text-sm text-white/70 tajawal-regular">
+                          <p className="text-xs sm:text-sm text-black/60 tajawal-regular">
                             {language === "ar" ? item.roleAr : item.roleEn}
                           </p>
                         </div>
 
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A66B]/60 bg-[#C9A66B]/12 px-2.5 py-1 text-[11px] font-semibold text-[#E6C88A]">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[#C9A66B]/60 bg-[#C9A66B]/12 px-2.5 py-1 text-[11px] font-semibold text-[#96691A]">
                           <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fillRule="evenodd" d="M16.704 5.29a1 1 0 010 1.42l-7.2 7.2a1 1 0 01-1.42 0l-3.2-3.2a1 1 0 111.415-1.415l2.493 2.492 6.493-6.492a1 1 0 011.419-.005z" clipRule="evenodd" />
                           </svg>
@@ -990,10 +999,7 @@ export default function HomeContent() {
 
                       <div
                         className="mb-3 flex items-center gap-0.5 text-base sm:text-lg"
-                        style={{
-                          color: "#FFD700",
-                          textShadow: "0 0 6px rgba(255,215,0,0.55), 0 0 12px rgba(255,196,0,0.35)",
-                        }}
+                        style={{ color: "#E8B923" }}
                         aria-label="5 star rating"
                       >
                         <span>★</span>
@@ -1003,7 +1009,7 @@ export default function HomeContent() {
                         <span>★</span>
                       </div>
 
-                      <p className="text-sm sm:text-[15px] leading-7 text-white/85 tajawal-regular">
+                      <p className="text-sm sm:text-[15px] leading-7 text-black/80 tajawal-regular">
                         “{language === "ar" ? item.reviewAr : item.reviewEn}”
                       </p>
                     </article>

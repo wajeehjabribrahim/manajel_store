@@ -93,7 +93,7 @@ export default function ImageGallery({ images, alt }: ImageGalleryProps) {
                   src={image}
                   alt={`${alt} ${index + 1}`}
                   fill
-                  className="object-cover object-center select-none bg-[#121416]"
+                  className="object-cover object-center select-none bg-[#FFFFFF]"
                   draggable={false as any}
                   loading={index === 0 ? "eager" : "lazy"}
                   priority={index === 0}

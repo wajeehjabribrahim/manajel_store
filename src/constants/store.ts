@@ -25,29 +25,29 @@ export const SIZES = [
 
 // Navigation
 export const NAVIGATION = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Shop", href: "/shop" },
-  { name: "Contact", href: "/contact" },
+  { name: "Home", href: "/store" },
+  { name: "About", href: "/store/about" },
+  { name: "Shop", href: "/store/shop" },
+  { name: "Contact", href: "/store/contact" },
 ];
 
 // Footer Links
 export const FOOTER_LINKS = {
   shop: [
-    { name: "All Products", href: "/shop" },
-    { name: "Olive Oil", href: "/shop?category=olive-oil" },
-    { name: "Za'atar", href: "/shop?category=zatar" },
-    { name: "Freekeh", href: "/shop?category=freekeh" },
+    { name: "All Products", href: "/store/shop" },
+    { name: "Olive Oil", href: "/store/shop?category=olive-oil" },
+    { name: "Za'atar", href: "/store/shop?category=zatar" },
+    { name: "Freekeh", href: "/store/shop?category=freekeh" },
   ],
   info: [
-    { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    { name: "FAQ", href: "/faq" },
+    { name: "About Us", href: "/store/about" },
+    { name: "Contact", href: "/store/contact" },
+    { name: "FAQ", href: "/store/faq" },
   ],
   policies: [
-    { name: "Shipping Policy", href: "/shipping-policy" },
-    { name: "Return Policy", href: "/return-policy" },
-    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Shipping Policy", href: "/store/shipping-policy" },
+    { name: "Return Policy", href: "/store/return-policy" },
+    { name: "Privacy Policy", href: "/store/privacy-policy" },
   ],
 };
 
