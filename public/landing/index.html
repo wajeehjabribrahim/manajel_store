@@ -154,9 +154,12 @@
   /* 2 · PURITY (pinned Ken Burns) */
   #origin{height:210vh}
   #origin .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center;background:var(--sand)}
+  /* full-bleed wrap for this section so the copy hugs the actual screen edge (small gap) */
+  #origin .wrap{width:100%;max-width:none;padding-inline:clamp(16px,2.5vw,40px)}
   #origin .bg{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;opacity:0;transform:scale(1.02);will-change:transform,opacity}
-  #origin .scrim{position:absolute;inset:0;background:linear-gradient(100deg,rgba(250,250,247,.985) 0%,rgba(250,250,247,.92) 30%,rgba(250,250,247,.55) 52%,rgba(250,250,247,.1) 70%,transparent 85%)}
-  #origin .copy{position:relative;z-index:2;max-width:620px}
+  /* copy pinned to the RIGHT (physical) — the background image subject sits on the left */
+  #origin .scrim{position:absolute;inset:0;background:linear-gradient(260deg,rgba(250,250,247,.985) 0%,rgba(250,250,247,.92) 30%,rgba(250,250,247,.55) 52%,rgba(250,250,247,.1) 70%,transparent 85%)}
+  #origin .copy{position:relative;z-index:2;max-width:620px;margin-left:auto}
   #origin h2{font-size:clamp(32px,5.2vw,58px);margin-bottom:.5em}
   #origin p{color:var(--ink);font-weight:500;font-size:clamp(15px,1.6vw,18px);max-width:480px;text-shadow:0 1px 12px rgba(250,250,247,.85)}
   #origin p+p{margin-top:1.1em}
@@ -213,6 +216,8 @@
     .nav-cta{padding:7px 15px;font-size:11.5px}
     .lang-btn{padding:6px 12px;font-size:12px}
     #hero{height:120vh}
+    #origin{height:135vh}
+    #cta{height:150vh}
     #origin .scrim{background:linear-gradient(180deg,rgba(250,250,247,.95) 0%,rgba(250,250,247,.88) 55%,rgba(250,250,247,.4) 100%)}
     html[dir=rtl] #origin .scrim{background:linear-gradient(180deg,rgba(250,250,247,.95) 0%,rgba(250,250,247,.88) 55%,rgba(250,250,247,.4) 100%)}
     #origin h2{font-size:clamp(30px,8.5vw,42px)}
@@ -247,7 +252,7 @@
   #ritual{padding:20vh 0}
   #ritual .frame{position:relative;height:clamp(460px,84vh,820px);border-radius:10px;overflow:hidden;box-shadow:0 50px 110px -50px rgba(35,42,28,.4)}
   #ritual .frame img{position:absolute;inset:-6%;width:112%;height:112%;object-fit:cover;will-change:transform}
-  #ritual .frame::after{content:"";position:absolute;inset:0;background:linear-gradient(to left,rgba(250,250,247,.92),rgba(250,250,247,.28) 52%,transparent 84%),linear-gradient(0deg,rgba(250,250,247,.8),transparent 52%)}
+  #ritual .frame::after{content:"";position:absolute;inset:0;background:linear-gradient(to left,rgba(250,250,247,.97),rgba(250,250,247,.6) 55%,transparent 86%),linear-gradient(0deg,rgba(250,250,247,.92),rgba(250,250,247,.35) 45%,transparent 62%),radial-gradient(90% 80% at 100% 100%,rgba(250,250,247,.85),transparent 60%)}
   #ritual .copy{position:absolute;z-index:2;right:clamp(24px,5vw,72px);bottom:clamp(42px,9vh,96px);max-width:min(88vw,540px);text-align:right}
   #ritual .idx{display:block;margin-bottom:12px} #ritual h2{font-size:clamp(32px,5.2vw,64px);margin:8px 0 16px}
   #ritual p{color:var(--ink-soft);font-size:clamp(15px,1.7vw,19px);max-width:44ch;margin-inline-start:auto}
@@ -347,7 +352,7 @@
   <!-- 2 · PURITY -->
   <section id="origin" data-ambient="#F1F1EC" data-glow=".55">
     <div class="stage fallback-host">
-      <img class="bg multiply" id="originBg" src="/landing/assets/purity.jpg" alt="A slow golden swirl of extra virgin olive oil" loading="lazy" />
+      <img class="bg multiply" id="originBg" src="/landing/assets/purity.png" alt="A slow golden swirl of extra virgin olive oil" loading="lazy" />
       <div class="scrim"></div>
       <div class="wrap"><div class="copy reveal">
         <span class="eyebrow"><span class="rule"></span>Purity</span>
