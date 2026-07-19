@@ -75,6 +75,36 @@
     transition:color .3s,border-color .3s}
   .lang-btn:hover{color:var(--gold-deep);border-color:var(--gold)}
 
+  /* mobile drawer (hamburger next to the logo — nav links live in the top nav on desktop) */
+  .brand-wrap{display:flex;align-items:center;gap:10px}
+  .menu-btn{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;
+    background:none;border:1px solid var(--line);border-radius:10px;cursor:pointer;padding:9px;transition:border-color .3s}
+  .menu-btn:hover{border-color:var(--gold)}
+  .menu-btn span{display:block;height:2px;width:100%;background:var(--ink);border-radius:2px;transition:transform .35s var(--ease),opacity .3s}
+  .menu-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .menu-btn.open span:nth-child(2){opacity:0}
+  .menu-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .drawer-overlay{position:fixed;inset:0;z-index:80;background:rgba(23,26,20,.45);opacity:0;pointer-events:none;transition:opacity .4s}
+  .drawer-overlay.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;bottom:0;left:0;z-index:85;width:min(78vw,320px);background:var(--paper);
+    box-shadow:0 0 60px rgba(20,24,15,.2);transform:translateX(-105%);transition:transform .45s var(--ease);
+    display:flex;flex-direction:column;padding:24px 24px 30px}
+  .drawer.open{transform:translateX(0)}
+  html[dir=rtl] .drawer{left:auto;right:0;transform:translateX(105%)}
+  html[dir=rtl] .drawer.open{transform:translateX(0)}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between}
+  .drawer-head img{height:44px;width:44px;object-fit:contain;padding:5px;border:1.5px solid #8B6A4B;border-radius:50%}
+  .drawer-close{background:none;border:1px solid var(--line);border-radius:50%;width:36px;height:36px;cursor:pointer;
+    color:var(--ink-soft);font-size:15px;line-height:1;transition:color .3s,border-color .3s}
+  .drawer-close:hover{color:var(--gold-deep);border-color:var(--gold)}
+  .drawer-nav{display:flex;flex-direction:column;margin-top:26px}
+  .drawer-nav a{padding:15px 4px;border-bottom:1px solid var(--line-soft);color:var(--ink);text-decoration:none;
+    font-size:14px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;transition:color .3s}
+  .drawer-nav a:hover{color:var(--gold-deep)}
+  .drawer-nav .drawer-cta{color:var(--gold-deep)}
+  html[lang=ar] .drawer-nav a{font-family:"TajawalLocal","Tajawal",sans-serif;letter-spacing:.02em}
+  @media(max-width:760px){.menu-btn{display:flex}}
+
   /* Arabic mode — local Tajawal file for everything (user-supplied), RTL fixes */
   html[lang=ar] body{font-family:"TajawalLocal","Tajawal",system-ui,sans-serif}
   html[lang=ar] h1,html[lang=ar] h2,html[lang=ar] h3,html[lang=ar] .display{font-family:"TajawalLocal","Tajawal",sans-serif;font-weight:700}
@@ -153,14 +183,16 @@
   #reveal .specs .k{font-family:"Fraunces",serif;color:var(--gold-deep);font-weight:600;white-space:nowrap;font-size:14px}
   #reveal .specs .v{color:var(--ink-soft);font-size:14px}
   @media(max-width:899px){
-    #reveal .shot{height:min(36svh,400px)}
+    #reveal .grid{gap:12px}
+    #reveal .shot{height:min(62svh,700px)}
     #reveal .copy{text-align:center}
-    #reveal .lead{margin-inline:auto}
-    #reveal .specs{margin-top:12px}
-    #reveal .specs li{padding:8px 0;gap:2px;align-items:center}
+    #reveal h2{font-size:clamp(22px,6vw,34px);margin:4px 0 10px}
+    #reveal .lead{margin-inline:auto;font-size:14px}
+    #reveal .specs{margin-top:10px}
+    #reveal .specs li{padding:7px 0;gap:2px;align-items:center}
   }
   @media(max-width:899px) and (max-height:760px){
-    #reveal .shot{height:min(30svh,300px)}
+    #reveal .shot{height:min(54svh,520px)}
     #reveal .lead{display:none}
     #reveal h2{font-size:24px}
   }
@@ -268,13 +300,34 @@
 <div id="ambient"></div><div id="glow"></div><div id="vignette"></div><div id="progress"></div>
 
 <header id="header">
-  <a class="brand" href="#hero"><img class="mark" src="/landing/assets/logo.png" alt="MANAJEL emblem" /><span class="wm">MANAJEL</span></a>
+  <div class="brand-wrap">
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="#hero"><img class="mark" src="/landing/assets/logo.png" alt="MANAJEL emblem" /><span class="wm">MANAJEL</span></a>
+  </div>
   <nav>
     <a href="#origin">Purity</a><a href="#reveal">The Oil</a><a href="#ritual">The Ritual</a><a href="#detail">Details</a>
     <a class="nav-cta" href="#cta">Order</a>
     <button class="lang-btn" id="langToggle" aria-label="Switch language">عربي</button>
   </nav>
 </header>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <img src="/landing/assets/logo.png" alt="MANAJEL" />
+    <button class="drawer-close" id="drawerClose" aria-label="Close menu">✕</button>
+  </div>
+  <nav class="drawer-nav">
+    <a href="#origin">Purity</a>
+    <a href="#reveal">The Oil</a>
+    <a href="#ritual">The Ritual</a>
+    <a href="#detail">Details</a>
+    <a class="drawer-cta" href="#cta">Order</a>
+    <a href="/store">Palestinian Store</a>
+  </nav>
+</aside>
 
 <main>
   <!-- 1 · HERO -->
@@ -491,6 +544,24 @@
     } else {dim.style.opacity=.9;content.style.opacity=1;content.style.transform="none";}
   })();
 
+  // MOBILE DRAWER — hamburger next to the logo on small screens
+  (function initDrawer(){
+    const btn=document.getElementById("menuBtn"),drawer=document.getElementById("drawer"),
+          overlay=document.getElementById("drawerOverlay"),closeBtn=document.getElementById("drawerClose");
+    if(!btn||!drawer||!overlay) return;
+    function setOpen(o){
+      drawer.classList.toggle("open",o);overlay.classList.toggle("open",o);btn.classList.toggle("open",o);
+      btn.setAttribute("aria-expanded",o?"true":"false");drawer.setAttribute("aria-hidden",o?"false":"true");
+      if(lenis){o?lenis.stop():lenis.start();}
+    }
+    btn.addEventListener("click",()=>setOpen(!drawer.classList.contains("open")));
+    overlay.addEventListener("click",()=>setOpen(false));
+    if(closeBtn) closeBtn.addEventListener("click",()=>setOpen(false));
+    // capture phase: restart Lenis BEFORE the link's smooth-scroll handler runs
+    drawer.addEventListener("click",e=>{if(e.target.closest("a"))setOpen(false);},true);
+    window.addEventListener("keydown",e=>{if(e.key==="Escape")setOpen(false);});
+  })();
+
   // LANGUAGE TOGGLE — English default, Arabic (RTL) on demand. Selector → {en, ar} innerHTML.
   (function initLang(){
     const I18N=[
@@ -500,6 +571,12 @@
       ['header nav a[href="#detail"]',{en:'Details',ar:'التفاصيل'}],
       ['header nav .nav-cta',{en:'Order',ar:'اطلب'}],
       ['.brand .wm',{en:'MANAJEL',ar:'مناجل'}],
+      ['.drawer-nav a[href="#origin"]',{en:'Purity',ar:'النقاء'}],
+      ['.drawer-nav a[href="#reveal"]',{en:'The Oil',ar:'الزيت'}],
+      ['.drawer-nav a[href="#ritual"]',{en:'The Ritual',ar:'الطقس اليومي'}],
+      ['.drawer-nav a[href="#detail"]',{en:'Details',ar:'التفاصيل'}],
+      ['.drawer-nav .drawer-cta',{en:'Order',ar:'اطلب'}],
+      ['.drawer-nav a[href="/store"]',{en:'Palestinian Store',ar:'المتجر الفلسطيني'}],
       ['#hero .latin',{en:'Extra Virgin · Cold-Extracted',ar:'بكر ممتاز · معصور على البارد'}],
       ['#hero h1',{en:'MANAJEL',ar:'مناجل'}],
       ['#hero .sub',{en:'A premium olive oil crafted for people who value quality, health, and exceptional taste.',ar:'زيت زيتون فاخر، صُنع لمن يقدّرون الجودة والصحة والمذاق الاستثنائي.'}],
