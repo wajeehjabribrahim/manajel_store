@@ -88,14 +88,13 @@ export default function BottomNav() {
       <div className="w-full">
         <div className="w-full bg-white/95 backdrop-blur rounded-none border-t border-black/10 shadow-lg py-2">
           <div className="flex items-center justify-around">
-            <Link href="/store/shipping-policy" className="flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs">
+            <Link href="/store" className="flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 7h11v6H3z" />
-                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M14 9h3l4 4v3h-2a2 2 0 0 1-2-2v-1h-3V9z" />
-                <circle cx="7.5" cy="17.5" r="1.5" strokeWidth="1.5" />
-                <circle cx="18.5" cy="17.5" r="1.5" strokeWidth="1.5" />
+              
+                <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 10.5L12 3l9 7.5M5.25 9.75V21h13.5V9.75" />
+           
               </svg>
-              <span>{language === "ar" ? "توصيل" : "Delivery"}</span>
+              <span>{language === "ar" ? "الرئيسية" : "Home"}</span>
             </Link>
 
             <Link href="/store/shop" className="flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs">
@@ -116,23 +115,63 @@ export default function BottomNav() {
             </Link>
 
             <Link href="/store/account" className="flex flex-col items-center justify-center gap-1 text-black/80 hover:text-black text-xs" aria-label={t("account.title")}>
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.33 0-10 1.67-10 5v1h20v-1c0-3.33-6.67-5-10-5z" />
-              </svg>
+              <svg
+    className="w-6 h-6"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    <path
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M15.75 6.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+    />
+    <path
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4.5 20.118a7.5 7.5 0 0115 0"
+    />
+  </svg>
               <span>{t("account.title")}</span>
             </Link>
             {/* Mobile-only account prompt bubble */}
             {showPrompt && (
-              <div className="absolute bottom-12 right-6 left-auto z-50 flex items-center">
-                <div className="max-w-xs bg-white border border-black/10 text-black/80 rounded-lg p-3 shadow-xl tajawal-regular-all" style={{direction: 'rtl'}}>
-                  <div className="text-sm mb-2">قم بانشاء حساب او تسجيل الدخول لاستقبال جميع التحديثات والعروض</div>
-                  <div className="flex gap-2">
-                    <button onClick={goToLogin} className="flex-1 rounded-md py-1 text-sm bg-transparent border border-black/20">تسجيل الدخول</button>
-                    <button onClick={goToRegister} className="flex-1 rounded-md py-1 text-sm gold-button">انشاء حساب</button>
-                  </div>
-                </div>
-                <button onClick={handleDismissPrompt} className="ml-2 text-black/60 text-lg">✕</button>
-              </div>
+              <div className="absolute bottom-12 right-6 z-50">
+  <div
+   className="relative w-72 bg-white border border-black/10 text-black/80 rounded-lg pt-8 pb-3 px-3 shadow-xl tajawal-regular-all"
+    style={{ direction: "rtl" }}
+  >
+    <button
+      onClick={handleDismissPrompt}
+      className="absolute top-2 left-2 text-black/50 hover:text-black"
+    >
+      ✕
+    </button>
+
+    <div className="text-sm mb-3">
+      قم بانشاء حساب او تسجيل الدخول لاستقبال جميع التحديثات والعروض
+    </div>
+
+    <div className="flex gap-2">
+      <button
+        onClick={goToLogin}
+        className="flex-1 rounded-md py-1 text-sm bg-transparent border border-black/20"
+      >
+        تسجيل الدخول
+      </button>
+
+      <button
+        onClick={goToRegister}
+        className="flex-1 rounded-md py-1 text-sm gold-button"
+      >
+        انشاء حساب
+      </button>
+    </div>
+  </div>
+</div>
             )}
           </div>
         </div>
