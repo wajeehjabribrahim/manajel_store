@@ -1,3 +1,4 @@
+import type { Metadata, Viewport } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 // import CookieConsent from "@/components/CookieConsent"; // لإعادة تشغيل رسالة الموافقة لاحقًا
@@ -9,6 +10,51 @@ import DisableContextMenu from "@/components/DisableContextMenu";
 import Toaster from "@/components/Toast";
 import "./globals.css";
 
+export const metadata: Metadata = {
+  metadataBase: new URL("https://www.mnajel.com"),
+  title: {
+    default: "مناجل | Manajel — زيت زيتون فلسطيني بكر ممتاز",
+    template: "%s | مناجل Manajel",
+  },
+  description:
+    "مناجل - Manajel: متجر فلسطيني لزيت الزيتون البكر الممتاز المعصور على البارد والمنتجات التراثية الطبيعية.",
+  keywords: [
+    "مناجل",
+    "manajel",
+    "mnajel",
+    "زيت زيتون",
+    "زيت زيتون فلسطيني",
+    "زيت زيتون بكر ممتاز",
+    "معصور على البارد",
+    "متجر فلسطيني",
+    "زعتر بلدي",
+    "منتجات تراثية",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "مناجل | Manajel",
+    locale: "ar_PS",
+    alternateLocale: "en_US",
+    images: ["/images/logo.jpg"],
+  },
+  twitter: {
+    card: "summary",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  appleWebApp: {
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#FBF8F2",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -16,26 +62,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <head>
-        <title>مناجل | Manajel</title>
-        <meta
-          name="description"
-          content="مناجل - Manajel: متجر فلسطيني لزيت الزيتون البكر الممتاز والمنتجات التراثية الطبيعية."
-        />
-        <meta
-          name="keywords"
-          content="مناجل, manajel, mnajel, زيت زيتون فلسطيني, متجر فلسطيني, زعتر بلدي, منتجات تراثية"
-        />
-        <meta
-          name="theme-color"
-          content="#FBF8F2"
-        />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:locale" content="ar_PS" />
-        <meta property="og:locale:alternate" content="en_US" />
-      </head>
       <body style={{ backgroundColor: "#FBF8F2" }} className="flex flex-col min-h-screen antialiased">
         <AuthProvider>
           <LanguageProvider>

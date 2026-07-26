@@ -138,41 +138,49 @@ export default function BottomNav() {
               <span>{t("account.title")}</span>
             </Link>
             {/* Mobile-only account prompt bubble */}
-            {showPrompt && (
-              <div className="absolute bottom-12 right-6 z-50">
+{showPrompt && (
   <div
-   className="relative w-72 bg-white border border-black/10 text-black/80 rounded-lg pt-8 pb-3 px-3 shadow-xl tajawal-regular-all"
-    style={{ direction: "rtl" }}
+    className={`absolute bottom-12 z-50 ${
+      language === "ar" ? "right-6" : "left-6"
+    }`}
   >
-    <button
-      onClick={handleDismissPrompt}
-      className="absolute top-2 left-2 text-black/50 hover:text-black"
+    <div
+      className="relative w-72 bg-white border border-black/10 text-black/80 rounded-lg pt-8 pb-3 px-3 shadow-xl tajawal-regular-all"
+      style={{ direction: language === "ar" ? "rtl" : "ltr" }}
     >
-      ✕
-    </button>
-
-    <div className="text-sm mb-3">
-      قم بانشاء حساب او تسجيل الدخول لاستقبال جميع التحديثات والعروض
-    </div>
-
-    <div className="flex gap-2">
       <button
-        onClick={goToLogin}
-        className="flex-1 rounded-md py-1 text-sm bg-transparent border border-black/20"
+        onClick={handleDismissPrompt}
+        className={`absolute top-2 ${
+          language === "ar" ? "left-2" : "right-2"
+        } text-black/50 hover:text-black`}
       >
-        تسجيل الدخول
+        ✕
       </button>
 
-      <button
-        onClick={goToRegister}
-        className="flex-1 rounded-md py-1 text-sm gold-button"
-      >
-        انشاء حساب
-      </button>
+      <div className="text-sm mb-3">
+        {language === "ar"
+          ? "قم بإنشاء حساب أو تسجيل الدخول لاستقبال جميع التحديثات والعروض."
+          : "Create an account or sign in to receive the latest updates and exclusive offers."}
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          onClick={goToLogin}
+          className="flex-1 rounded-md py-1 text-sm bg-transparent border border-black/20"
+        >
+          {language === "ar" ? "تسجيل الدخول" : "Sign In"}
+        </button>
+
+        <button
+          onClick={goToRegister}
+          className="flex-1 rounded-md py-1 text-sm gold-button"
+        >
+          {language === "ar" ? "إنشاء حساب" : "Create Account"}
+        </button>
+      </div>
     </div>
   </div>
-</div>
-            )}
+)}
           </div>
         </div>
       </div>

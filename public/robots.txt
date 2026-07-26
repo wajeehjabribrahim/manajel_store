@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /store/admin
 
 Sitemap: https://www.mnajel.com/sitemap.xml

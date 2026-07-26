@@ -95,6 +95,26 @@ const nextConfig = {
     ].join('; ');
 
     return [
+      // Private / account pages must never be indexed — keep them out of search
+      // results so they can't outrank the homepage or shop pages.
+      {
+        source: '/store/:seg(admin|account|cart|login|register|orders)/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        source: '/store/:seg(admin|account|cart|login|register|orders)',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
       {
         source: '/store/shop',
         headers: [
