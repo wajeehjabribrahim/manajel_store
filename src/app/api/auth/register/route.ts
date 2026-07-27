@@ -2,16 +2,21 @@ import { NextResponse } from "next/server";
 import * as bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { encryptData } from "@/lib/encryption";
+import { checkDbRateLimit, getRequestIp } from "@/lib/rateLimit";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    try {
-      // Log incoming request body for debugging (remove in production)
-      console.log("[register] body:", JSON.stringify(body));
-    } catch (e) {
-      // ignore logging errors
+    // Durable per-IP limit on account creation (middleware limit is in-memory only)
+    const ip = getRequestIp(req);
+    const rate = await checkDbRateLimit(`register:${ip}`, 5, 60 * 60 * 1000);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: "Too many registration attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
     }
+
+    const body = await req.json();
     const name = typeof body?.name === "string" ? body.name.trim() : "";
     const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
     const city = typeof body?.city === "string" ? body.city.trim() : "";
@@ -29,9 +34,6 @@ export async function POST(req: Request) {
     if (password && password.length < 6) missing.push("password_too_short");
 
     if (missing.length > 0) {
-      try {
-        console.log("[register] validation missing:", missing);
-      } catch (e) {}
       return NextResponse.json(
         { error: "Invalid data", missing },
         { status: 400 }

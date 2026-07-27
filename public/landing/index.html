@@ -100,6 +100,9 @@
     --gold:#A97B33; --gold-deep:#8A6128; --gold-bright:#C9A052; --accent:#A8632E;
     --line:rgba(28,33,22,.14); --line-soft:rgba(28,33,22,.08);
     --ambient:#FAFAF7; --maxw:1280px; --ease:cubic-bezier(.22,.61,.36,1);
+    /* room below gold-gradient headings so descenders stay inside the painted area
+       (Arabic ج/ق need ~.18em; this keeps slack for fallback fonts) */
+    --descender-pad:.3em;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%} html{scroll-behavior:auto}
@@ -188,8 +191,13 @@
     text-transform:uppercase;font-size:13px;color:var(--gold-deep);font-weight:500;margin-bottom:1.1em}
   .eyebrow .rule{width:26px;height:1px;background:var(--gold);opacity:.6}
   .idx{font-family:"Fraunces",serif;font-size:14px;color:var(--gold);font-weight:600}
+  /* background-clip:text paints the gradient only inside the element's box, so with the
+     tight display line-height the descenders (y, g, p, ق) fell outside it and rendered
+     transparent. The padding extends the paint area; the negative margin cancels it so
+     surrounding layout is unchanged. */
   .gold-text{background:linear-gradient(100deg,var(--gold-deep),var(--gold-bright) 45%,var(--gold-deep) 85%);
-    -webkit-background-clip:text;background-clip:text;color:transparent}
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    padding-bottom:var(--descender-pad);margin-bottom:calc(-1 * var(--descender-pad))}
   .multiply{mix-blend-mode:multiply}
   .fallback-host{position:relative}
   .fallback-host.is-missing{background-image:linear-gradient(135deg,var(--cream),var(--sand) 78%);background-size:cover}
@@ -246,6 +254,7 @@
   #reveal .loader{position:absolute;left:8px;bottom:8px;z-index:3;font-family:"Cormorant Garamond",serif;letter-spacing:.28em;font-size:11px;color:var(--ink-faint);transition:opacity .6s}
   #reveal .copy{text-align:right} #reveal .idx{display:block;margin-bottom:10px}
   #reveal h2{font-size:clamp(28px,4.4vw,56px);margin:6px 0 14px}
+  #reveal h2.gold-text{margin-bottom:calc(14px - var(--descender-pad))}
   #reveal .lead{font-size:clamp(14px,1.6vw,18px);color:var(--ink-soft);max-width:46ch;margin-inline-start:auto;line-height:1.6}
   #reveal .specs{list-style:none;margin-top:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px 24px}
   #reveal .specs li{display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding:12px 0;border-top:1px solid var(--line)}
@@ -256,6 +265,7 @@
     #reveal .shot{height:min(62svh,700px)}
     #reveal .copy{text-align:center}
     #reveal h2{font-size:clamp(22px,6vw,34px);margin:4px 0 10px}
+    #reveal h2.gold-text{margin-bottom:calc(10px - var(--descender-pad))}
     #reveal .lead{margin-inline:auto;font-size:14px}
     #reveal .specs{margin-top:10px}
     #reveal .specs li{padding:7px 0;gap:2px;align-items:center}
@@ -264,6 +274,9 @@
     #reveal .shot{height:min(54svh,520px)}
     #reveal .lead{display:none}
     #reveal h2{font-size:24px}
+    /* .lead is hidden here, so the heading sits directly above .specs and their margins
+       collapse — the compensation has to be negative to survive the collapse. */
+    #reveal h2.gold-text{margin-bottom:calc(-1 * var(--descender-pad))}
   }
 
   /* ---- tablet refinements ---- */
@@ -321,6 +334,7 @@
   #ritual .frame::after{content:"";position:absolute;inset:0;background:linear-gradient(to left,rgba(250,250,247,.97),rgba(250,250,247,.6) 55%,transparent 86%),linear-gradient(0deg,rgba(250,250,247,.92),rgba(250,250,247,.35) 45%,transparent 62%),radial-gradient(90% 80% at 100% 100%,rgba(250,250,247,.85),transparent 60%)}
   #ritual .copy{position:absolute;z-index:2;right:clamp(24px,5vw,72px);bottom:clamp(42px,9vh,96px);max-width:min(88vw,540px);text-align:right}
   #ritual .idx{display:block;margin-bottom:12px} #ritual h2{font-size:clamp(32px,5.2vw,64px);margin:8px 0 16px}
+  #ritual h2.gold-text{margin-bottom:calc(16px - var(--descender-pad))}
   #ritual p{color:var(--ink-soft);font-size:clamp(15px,1.7vw,19px);max-width:44ch;margin-inline-start:auto}
 
   /* 6 · CTA */

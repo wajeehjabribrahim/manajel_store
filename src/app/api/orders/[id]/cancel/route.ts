@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/adminAuth";
 import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
 import { sendOrderCancellationNotification } from "@/lib/email";
 import { decryptData } from "@/lib/encryption";
@@ -28,7 +29,7 @@ export async function POST(
 
     const sessionUser = session?.user as { id?: string; role?: string } | undefined;
     const sessionUserId = sessionUser?.id;
-    const isAdmin = sessionUser?.role === "admin";
+    const isAdmin = await isAdminUser(sessionUser?.id);
 
     // Authenticated user order: owner or admin only
     if (order.userId) {

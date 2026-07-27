@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { sendContactNotification } from '@/lib/email';
 import { encryptData, decryptData } from '@/lib/encryption';
+import { requireAdminAccess } from '@/lib/adminAuth';
+import { checkDbRateLimit, getRequestIp } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Durable per-IP limit (middleware limit is in-memory only)
+    const ip = getRequestIp(request);
+    const rate = await checkDbRateLimit(`contact:${ip}`, 5, 10 * 60 * 1000);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: 'Too many messages. Please try again later.' },
+        { status: 429, headers: { 'Retry-After': String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const body = await request.json();
     const { name, email, phone, subject, message } = body;
 
@@ -71,14 +81,9 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    // Check if user is admin
-    if (!session || (session.user as { role?: string } | undefined)?.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const { searchParams } = new URL(request.url);
@@ -114,14 +119,9 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    // Check if user is admin
-    if (!session || (session.user as { role?: string } | undefined)?.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const body = await request.json();
@@ -154,14 +154,9 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    // Check if user is admin
-    if (!session || (session.user as { role?: string } | undefined)?.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    const adminCheck = await requireAdminAccess();
+    if (!adminCheck.ok) {
+      return adminCheck.response;
     }
 
     const body = await request.json();

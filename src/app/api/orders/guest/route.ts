@@ -3,6 +3,7 @@ import { corsMiddleware, applyCorsHeaders } from "@/lib/cors";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/adminAuth";
 import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
 import { auditLog } from "@/lib/auditLog";
 import { decryptData } from "@/lib/encryption";
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     const sessionUser = session?.user as { id?: string; role?: string } | undefined;
-    const isAdmin = sessionUser?.role === "admin";
+    const isAdmin = await isAdminUser(sessionUser?.id);
 
     const { searchParams } = new URL(req.url);
     const idsParam = searchParams.get("ids") || "";

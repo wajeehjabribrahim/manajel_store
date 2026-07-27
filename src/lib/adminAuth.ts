@@ -31,3 +31,19 @@ export async function requireAdminAccess() {
     userId: dbUser.id,
   };
 }
+
+/**
+ * Fresh DB check of the admin role for a known user id.
+ * Use instead of trusting the `role` claim in the JWT — a revoked admin
+ * keeps the claim until the token expires.
+ */
+export async function isAdminUser(userId: string | undefined): Promise<boolean> {
+  if (!userId) return false;
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+
+  return dbUser?.role === "admin";
+}

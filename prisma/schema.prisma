@@ -146,3 +146,19 @@ model StockNotification {
   notified    Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
+
+model RateLimitBucket {
+  key     String   @id
+  count   Int      @default(0)
+  resetAt DateTime
+}
+
+model SecurityEvent {
+  id        String   @id @default(cuid())
+  type      String
+  key       String
+  meta      String?
+  createdAt DateTime @default(now())
+
+  @@index([type, key, createdAt])
+}

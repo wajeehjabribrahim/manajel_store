@@ -5,27 +5,38 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { sendSecurityAlert } from "@/lib/email";
 
-// Simple audit logging
-const auditLogs: Array<{
-  action: string;
-  email?: string;
-  userId?: string;
-  timestamp: Date;
-  reason?: string;
-}> = [];
-
-function auditLog(entry: { action: string; email?: string; userId?: string; reason?: string }) {
-  const logEntry = { ...entry, timestamp: new Date() };
-  auditLogs.push(logEntry);
+// Audit logging persisted in the SecurityEvent table so login lockouts
+// survive restarts and apply across serverless instances. DB failures fall
+// back to console-only logging and never break the login flow itself.
+async function auditLog(entry: { action: string; email?: string; userId?: string; reason?: string }) {
   console.log(`[AUDIT] ${entry.action} | ${entry.email || entry.userId || "unknown"} | ${entry.reason || ""}`);
-  if (auditLogs.length > 500) auditLogs.shift();
+  try {
+    await prisma.securityEvent.create({
+      data: {
+        type: entry.action,
+        key: entry.email || entry.userId || "unknown",
+        meta: entry.reason || null,
+      },
+    });
+  } catch (error) {
+    console.error("[AUDIT] failed to persist security event:", error);
+  }
 }
 
-function getFailedLoginAttempts(email: string, minutes = 15): number {
+async function getFailedLoginAttempts(email: string, minutes = 15): Promise<number> {
   const cutoff = new Date(Date.now() - minutes * 60 * 1000);
-  return auditLogs.filter(
-    (log) => log.action === "LOGIN_FAILED" && log.email === email && log.timestamp >= cutoff
-  ).length;
+  try {
+    return await prisma.securityEvent.count({
+      where: {
+        type: "LOGIN_FAILED",
+        key: email,
+        createdAt: { gte: cutoff },
+      },
+    });
+  } catch (error) {
+    console.error("[AUDIT] failed to count login attempts:", error);
+    return 0;
+  }
 }
 
 const adminEmails = (process.env.ADMIN_EMAILS ?? "manajel2026@gmail.com")
@@ -35,7 +46,9 @@ const adminEmails = (process.env.ADMIN_EMAILS ?? "manajel2026@gmail.com")
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
+  // 7 days instead of NextAuth's 30-day default: limits how long a stolen
+  // or stale-role JWT stays usable.
+  session: { strategy: "jwt", maxAge: 7 * 24 * 60 * 60 },
   pages: {
     signIn: "/store/login",
   },
@@ -54,10 +67,10 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const failedAttempts = getFailedLoginAttempts(email, 15);
+        const failedAttempts = await getFailedLoginAttempts(email, 15);
         
         if (failedAttempts >= 5) {
-          auditLog({
+          await auditLog({
             action: "LOGIN_BLOCKED",
             email,
             reason: "Too many failed attempts",
@@ -82,7 +95,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password) {
-          auditLog({
+          await auditLog({
             action: "LOGIN_FAILED",
             email,
             reason: "User not found",
@@ -92,7 +105,7 @@ export const authOptions: NextAuthOptions = {
 
         const isValid = await bcrypt.compare(password, user.password);
         if (!isValid) {
-          auditLog({
+          await auditLog({
             action: "LOGIN_FAILED",
             email,
             reason: "Invalid password",
@@ -115,7 +128,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        auditLog({
+        await auditLog({
           action: "LOGIN_SUCCESS",
           userId: user.id,
           email,

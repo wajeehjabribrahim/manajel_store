@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { sendOrderNotification } from "@/lib/email";
 import { generateGuestOrderToken } from "@/lib/guestOrderToken";
 import { encryptData, decryptData } from "@/lib/encryption";
+import { checkDbRateLimit, getRequestIp } from "@/lib/rateLimit";
 
 interface OrderItemInput {
   id: string;
@@ -24,6 +25,16 @@ export async function POST(req: Request) {
     return corsResult;
   }
   try {
+    // Durable per-IP flood guard; generous so real customers are never blocked
+    const ip = getRequestIp(req);
+    const rate = await checkDbRateLimit(`order-create:${ip}`, 30, 60 * 60 * 1000);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: "Too many orders. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+      );
+    }
+
     const session = await getServerSession(authOptions);
     const body = await req.json();
 

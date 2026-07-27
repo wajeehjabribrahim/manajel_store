@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { isAdminUser } from "@/lib/adminAuth";
 import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
 import { auditLog } from "@/lib/auditLog";
 import { sendOrderFeedbackNotification } from "@/lib/email";
@@ -44,7 +45,7 @@ const validateOrderAccess = async (req: Request, orderId: string) => {
   }
 
   const sessionUser = session?.user as { id?: string; role?: string } | undefined;
-  const isAdmin = sessionUser?.role === "admin";
+  const isAdmin = await isAdminUser(sessionUser?.id);
 
   if (order.userId) {
     if (!isAdmin && (!sessionUser?.id || sessionUser.id !== order.userId)) {

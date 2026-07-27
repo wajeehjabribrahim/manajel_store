@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { verifyGuestOrderToken } from "@/lib/guestOrderToken";
 import { auditLog } from "@/lib/auditLog";
 import { decryptData } from "@/lib/encryption";
-import { requireAdminAccess } from "@/lib/adminAuth";
+import { requireAdminAccess, isAdminUser } from "@/lib/adminAuth";
 
 export async function GET(
   req: Request,
@@ -38,7 +38,7 @@ export async function GET(
     }
 
     const sessionUser = session?.user as { id?: string; role?: string } | undefined;
-    const isAdmin = sessionUser?.role === "admin";
+    const isAdmin = await isAdminUser(sessionUser?.id);
 
     // Authenticated user order: owner or admin only
     if (order.userId) {
