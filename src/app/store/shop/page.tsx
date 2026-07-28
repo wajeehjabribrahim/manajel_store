@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ShopContent from "@/components/ShopContent";
 import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
+import { STORE_LAUNCHED } from "@/lib/storeStatus";
 
 const SITE = "https://www.mnajel.com";
 
@@ -38,14 +39,17 @@ async function getCatalogueJsonLd() {
           "@type": "Product",
           name: product.name,
           url: `${SITE}/store/products/${product.id}`,
-          offers: {
-            "@type": "Offer",
-            priceCurrency: "ILS",
-            price: product.price,
-            availability: product.inStock
-              ? "https://schema.org/InStock"
-              : "https://schema.org/OutOfStock",
-          },
+          // Prices are withheld until launch — see STORE_LAUNCHED.
+          offers: STORE_LAUNCHED
+            ? {
+                "@type": "Offer",
+                priceCurrency: "ILS",
+                price: product.price,
+                availability: product.inStock
+                  ? "https://schema.org/InStock"
+                  : "https://schema.org/OutOfStock",
+              }
+            : undefined,
         },
       })),
     };

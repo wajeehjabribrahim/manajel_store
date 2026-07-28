@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
+import { STORE_LAUNCHED } from "@/lib/storeStatus";
 
 const SITE = "https://www.mnajel.com";
 
@@ -113,25 +114,28 @@ export default async function ProductLayout({
     ? "https://schema.org/InStock"
     : "https://schema.org/OutOfStock";
 
-  const offers =
-    low !== high
-      ? {
-          "@type": "AggregateOffer",
-          priceCurrency: "ILS",
-          lowPrice: low,
-          highPrice: high,
-          offerCount: prices.length,
-          availability,
-          url,
-        }
-      : {
-          "@type": "Offer",
-          priceCurrency: "ILS",
-          price: low,
-          availability,
-          url,
-          seller: { "@id": `${SITE}/#organization` },
-        };
+  // Prices reach search engines and AI models only once the store is launched —
+  // see STORE_LAUNCHED. Until then the Product is published without offers.
+  const offers = !STORE_LAUNCHED
+    ? undefined
+    : low !== high
+    ? {
+        "@type": "AggregateOffer",
+        priceCurrency: "ILS",
+        lowPrice: low,
+        highPrice: high,
+        offerCount: prices.length,
+        availability,
+        url,
+      }
+    : {
+        "@type": "Offer",
+        priceCurrency: "ILS",
+        price: low,
+        availability,
+        url,
+        seller: { "@id": `${SITE}/#organization` },
+      };
 
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
