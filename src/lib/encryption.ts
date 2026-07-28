@@ -1,21 +1,41 @@
 import crypto from 'crypto';
 
-// Dedicated key preferred; NEXTAUTH_SECRET kept as fallback because existing
-// rows may have been encrypted under it.
+// New data is always written with the primary key. Older rows may have been
+// written under a different secret (before ENCRYPTION_KEY existed the code fell
+// back to NEXTAUTH_SECRET), so decryption tries every known secret in turn —
+// otherwise those rows become unreadable the moment a new key is introduced.
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || process.env.NEXTAUTH_SECRET || '';
+
+const DECRYPTION_SECRETS: string[] = Array.from(
+  new Set(
+    [
+      ENCRYPTION_KEY,
+      process.env.NEXTAUTH_SECRET,
+      process.env.ENCRYPTION_KEY_PREVIOUS, // set this when rotating keys
+    ].filter((secret): secret is string => !!secret && secret.length >= 32)
+  )
+);
 
 const GCM_IV_LENGTH = 12;
 const LEGACY_ALGORITHM = 'aes-256-cbc';
 const ALGORITHM = 'aes-256-gcm';
 const V2_PREFIX = 'v2';
 
+// scrypt is intentionally slow; derive each secret once.
+const keyCache = new Map<string, Buffer>();
+
 function hasUsableKey(): boolean {
   return ENCRYPTION_KEY.length >= 32;
 }
 
-function deriveKey(): Buffer {
+function deriveKey(secret: string = ENCRYPTION_KEY): Buffer {
   // Same derivation as the legacy implementation so old rows stay readable.
-  return crypto.scryptSync(ENCRYPTION_KEY, 'salt', 32);
+  const cached = keyCache.get(secret);
+  if (cached) return cached;
+
+  const derived = crypto.scryptSync(secret, 'salt', 32);
+  keyCache.set(secret, derived);
+  return derived;
 }
 
 /**
@@ -52,36 +72,48 @@ export function encryptData(plaintext: string): string {
  * key was missing).
  */
 export function decryptData(encryptedData: string): string {
-  if (!ENCRYPTION_KEY || !encryptedData) {
+  if (!DECRYPTION_SECRETS.length || !encryptedData) {
     return encryptedData;
   }
 
   const parts = encryptedData.split(':');
+  const isGcm = parts.length === 4 && parts[0] === V2_PREFIX;
+  const isCbc = parts.length === 2 && /^[a-fA-F0-9]{32}$/.test(parts[0]);
 
-  try {
-    if (parts.length === 4 && parts[0] === V2_PREFIX) {
-      const iv = Buffer.from(parts[1], 'hex');
-      const authTag = Buffer.from(parts[2], 'hex');
-      const decipher = crypto.createDecipheriv(ALGORITHM, deriveKey(), iv);
-      decipher.setAuthTag(authTag);
+  if (!isGcm && !isCbc) {
+    // Plaintext row from before encryption was active.
+    return encryptedData;
+  }
 
-      let decrypted = decipher.update(parts[3], 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
-      return decrypted;
-    }
+  for (const secret of DECRYPTION_SECRETS) {
+    try {
+      if (isGcm) {
+        const decipher = crypto.createDecipheriv(
+          ALGORITHM,
+          deriveKey(secret),
+          Buffer.from(parts[1], 'hex')
+        );
+        decipher.setAuthTag(Buffer.from(parts[2], 'hex'));
 
-    if (parts.length === 2 && /^[a-fA-F0-9]{32}$/.test(parts[0])) {
-      const iv = Buffer.from(parts[0], 'hex');
-      const decipher = crypto.createDecipheriv(LEGACY_ALGORITHM, deriveKey(), iv);
+        let decrypted = decipher.update(parts[3], 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted;
+      }
+
+      const decipher = crypto.createDecipheriv(
+        LEGACY_ALGORITHM,
+        deriveKey(secret),
+        Buffer.from(parts[0], 'hex')
+      );
 
       let decrypted = decipher.update(parts[1], 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;
+    } catch {
+      // Wrong key for this row — try the next known secret.
     }
-
-    return encryptedData;
-  } catch (error) {
-    console.error('Decryption error:', error);
-    return encryptedData;
   }
+
+  console.error('Decryption failed: no configured key matches this value.');
+  return encryptedData;
 }

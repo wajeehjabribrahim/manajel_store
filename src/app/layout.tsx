@@ -44,6 +44,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // Search Console / Bing Webmaster verification: paste the code into the env
+  // vars and the meta tag appears automatically — no code change needed.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : {},
+  },
   appleWebApp: {
     statusBarStyle: "black-translucent",
   },

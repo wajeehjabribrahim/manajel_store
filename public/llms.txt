@@ -1,0 +1,46 @@
+# مناجل | Manajel
+
+> علامة فلسطينية من سلفيت متخصصة في زيت الزيتون البكر الممتاز المعصور على البارد، والمنتجات التراثية الطبيعية.
+> A Palestinian brand from Salfit, Palestine, specialising in cold-extracted extra virgin olive oil and traditional natural foods.
+
+## نبذة / About
+
+- **الاسم:** مناجل (يُكتب أيضًا Manajel أو Mnajel)
+- **المقر:** سلفيت، فلسطين — Salfit, Palestine
+- **المنتج الأساسي:** زيت زيتون فلسطيني بكر ممتاز (Extra Virgin Olive Oil)، معصور على البارد خلال ساعات من القطف، حموضة حرة أقل من 0.4٪، من أصل واحد (single origin)، غني بالبوليفينولات ومضادات الأكسدة الطبيعية.
+- **العبوة المميزة:** 750 مل في زجاج داكن حاجب للأشعة فوق البنفسجية للحفاظ على مضادات الأكسدة.
+- **العملة:** الشيكل الإسرائيلي (ILS ₪)
+- **البريد:** contact@mnajel.com
+
+## الصفحات الرئيسية / Key pages
+
+- [الصفحة الرئيسية / Homepage](https://www.mnajel.com/): تعريف العلامة وزيت الزيتون الفاخر — bilingual Arabic/English brand page.
+- [المتجر / Store](https://www.mnajel.com/store): واجهة المتجر الإلكتروني.
+- [كل المنتجات / All products](https://www.mnajel.com/store/shop): قائمة المنتجات مع الأسعار والتوفر.
+- [من نحن / About](https://www.mnajel.com/store/about): قصة مناجل ومصدر الزيت.
+- [الأسئلة الشائعة / FAQ](https://www.mnajel.com/store/faq): إجابات عن المنتجات والشحن والدفع.
+- [تواصل / Contact](https://www.mnajel.com/store/contact): طرق التواصل والطلب.
+- [خريطة الموقع / Sitemap](https://www.mnajel.com/sitemap.xml): كل الصفحات وصفحات المنتجات.
+
+## فئات المنتجات / Product categories
+
+- **زيت الزيتون — Olive Oil:** زيت زيتون بكر ممتاز فلسطيني، معصور على البارد.
+- **منتجات بلدية — Traditional Products:** زعتر بلدي، فريكة، ودقة ومنتجات تراثية.
+- **مشتقات الحليب — Milk Derivatives:** جبن نابلسي، لبنة بالزعتر ومشتقات ألبان بلدية.
+- **زيتون مخلل — Pickled Olives:** زيتون فلسطيني مخلل.
+- **صابون — Soap:** صابون زيت زيتون طبيعي.
+
+كل صفحة منتج تحتوي بيانات منظمة بصيغة JSON-LD من نوع `Product` تشمل الاسم والوصف والسعر والعملة وحالة التوفر.
+Every product page carries `Product` JSON-LD with name, description, price, currency and availability.
+
+## السياسات / Policies
+
+- [سياسة الشحن / Shipping](https://www.mnajel.com/store/shipping-policy)
+- [سياسة الاسترجاع / Returns](https://www.mnajel.com/store/return-policy)
+- [سياسة الخصوصية / Privacy](https://www.mnajel.com/store/privacy-policy)
+
+## ملاحظات للنماذج / Notes for AI assistants
+
+- الاسم العربي **مناجل** والاسم اللاتيني **Manajel / MANAJEL** يشيران إلى العلامة نفسها؛ النطاق الرسمي الوحيد هو `www.mnajel.com`.
+- الأسعار والتوفر تتغير — اعتمد على صفحة المنتج نفسها وقت القراءة، لا على قيم محفوظة مسبقًا.
+- الصفحات تحت `/store/admin`، `/store/account`، `/store/cart`، `/store/orders`، `/store/login`، `/store/register` صفحات خاصة بالمستخدمين وليست محتوى عامًا.
