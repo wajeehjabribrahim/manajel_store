@@ -3,6 +3,7 @@ import { corsMiddleware, applyCorsHeaders } from "@/lib/cors";
 import { prisma } from "@/lib/prisma";
 import { PRODUCTS, Product } from "@/constants/products";
 import { requireAdminAccess } from "@/lib/adminAuth";
+import { invalidImageUrlReason } from "@/lib/imageHosts";
 import { ProductSizes, SIZE_KEYS } from "@/lib/productSizes";
 
 const toNumber = (value: unknown) => {
@@ -84,6 +85,21 @@ const mapDbProduct = (db: any, language?: string): Product => {
     }
   }
 
+  // Never inline base64 into the list payload — it ballooned this endpoint to
+  // several MB per visitor. Base64 images are served as cacheable binaries by
+  // /api/products/[id]/image instead; ?v busts caches when the product changes.
+  const version = db.updatedAt ? new Date(db.updatedAt).getTime() : 0;
+  const publicImages = images.map((src, idx) =>
+    typeof src === "string" && src.startsWith("data:")
+      ? `/api/products/${db.id}/image?i=${idx}&v=${version}`
+      : src
+  );
+  const mainImage = db.imageData
+    ? `/api/products/${db.id}/image?v=${version}`
+    : db.image
+    ? String(db.image)
+    : "";
+
   return {
     id: String(db.id),
     name,
@@ -92,8 +108,8 @@ const mapDbProduct = (db: any, language?: string): Product => {
     ingredients,
     price: Number.isFinite(minPrice) && minPrice !== Infinity ? minPrice : price,
     sizes,
-    image: db.imageData ? String(db.imageData) : (db.image ? String(db.image) : ""),
-    images: images.length > 0 ? images : undefined,
+    image: mainImage,
+    images: publicImages.length > 0 ? publicImages : undefined,
     featured: Boolean(db.featured),
     inStock: Boolean(db.inStock),
     rating: toNumber(db.rating) || 0,
@@ -166,6 +182,31 @@ export async function POST(req: Request) {
 
     if (!name || !description || !category) {
       let response = NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      response = applyCorsHeaders(response, req.headers.get('origin'));
+      return response;
+    }
+
+    // Reject external image URLs that would silently render as broken images
+    // (hosts outside next.config.mjs remotePatterns get 400 from the optimizer).
+    const imageUrlProblem = invalidImageUrlReason(image);
+    let imagesProblem: string | null = null;
+    if (images) {
+      try {
+        const parsed = JSON.parse(images);
+        if (!Array.isArray(parsed) || parsed.some((entry) => typeof entry !== "string")) {
+          imagesProblem = "قائمة الصور غير صالحة";
+        } else {
+          imagesProblem = parsed.map(invalidImageUrlReason).find(Boolean) || null;
+        }
+      } catch {
+        imagesProblem = "قائمة الصور غير صالحة";
+      }
+    }
+    if (imageUrlProblem || imagesProblem) {
+      let response = NextResponse.json(
+        { error: imageUrlProblem || imagesProblem },
+        { status: 400 }
+      );
       response = applyCorsHeaders(response, req.headers.get('origin'));
       return response;
     }

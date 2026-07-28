@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PRODUCTS, Product } from "@/constants/products";
 import { requireAdminAccess } from "@/lib/adminAuth";
+import { invalidImageUrlReason } from "@/lib/imageHosts";
 import { ProductSizes, SIZE_KEYS } from "@/lib/productSizes";
 
 const toNumber = (value: unknown) => {
@@ -190,6 +191,26 @@ export async function PUT(
 
     if (!name || !description || !category) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    // Reject external image URLs on unsupported hosts — they render as broken
+    // images because the Next image optimizer only allows next.config hosts.
+    const imageUrlProblem = invalidImageUrlReason(image);
+    let imagesProblem: string | null = null;
+    if (images) {
+      try {
+        const parsed = JSON.parse(images);
+        if (!Array.isArray(parsed) || parsed.some((entry) => typeof entry !== "string")) {
+          imagesProblem = "قائمة الصور غير صالحة";
+        } else {
+          imagesProblem = parsed.map(invalidImageUrlReason).find(Boolean) || null;
+        }
+      } catch {
+        imagesProblem = "قائمة الصور غير صالحة";
+      }
+    }
+    if (imageUrlProblem || imagesProblem) {
+      return NextResponse.json({ error: imageUrlProblem || imagesProblem }, { status: 400 });
     }
 
     const sizes = normalizeSizes(body?.sizes, rawPrice);

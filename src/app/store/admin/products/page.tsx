@@ -188,23 +188,30 @@ export default function AdminAddProductPage() {
         imageData = typeof uploadJson?.imageData === "string" ? uploadJson.imageData : "";
       }
 
-      // Upload multiple images
+      // Upload gallery images in parallel; a failed upload aborts the save
+      // instead of silently dropping the image.
       if (imageFiles.length > 0) {
-        for (const file of imageFiles) {
-          const uploadData = new FormData();
-          uploadData.append("file", file);
-          const uploadRes = await fetch("/api/uploads/product-image", {
-            method: "POST",
-            body: uploadData,
-          });
+        const uploads = await Promise.all(
+          imageFiles.map(async (file) => {
+            const uploadData = new FormData();
+            uploadData.append("file", file);
+            const uploadRes = await fetch("/api/uploads/product-image", {
+              method: "POST",
+              body: uploadData,
+            });
+            if (!uploadRes.ok) return null;
+            const uploadJson = await uploadRes.json().catch(() => null);
+            return typeof uploadJson?.imageData === "string" ? uploadJson.imageData : null;
+          })
+        );
 
-          if (uploadRes.ok) {
-            const uploadJson = await uploadRes.json();
-            if (typeof uploadJson?.imageData === "string") {
-              imagesData.push(uploadJson.imageData);
-            }
-          }
+        const failedCount = uploads.filter((u) => u === null).length;
+        if (failedCount > 0) {
+          setError(`فشل رفع ${failedCount} من الصور الإضافية — لم يتم حفظ المنتج`);
+          setSaving(false);
+          return;
         }
+        imagesData = uploads as string[];
       }
 
       // Include any external image URLs provided by the admin
@@ -222,7 +229,9 @@ export default function AdminAddProductPage() {
         ingredientsEn: ingredientsEn.trim() || undefined,
         category: finalCategory,
         price: Number(price) || 0,
-        image: imageData ? undefined : cleanImageUrl || undefined,
+        // Keep the URL even when a file was uploaded — the display layer
+        // prefers imageData, but the URL used to be dropped silently here.
+        image: cleanImageUrl || undefined,
         imageData: imageData || undefined,
         images: combinedImages.length > 0 ? JSON.stringify(combinedImages) : undefined,
         sizes: Object.keys(sizesPayload).length ? sizesPayload : undefined,

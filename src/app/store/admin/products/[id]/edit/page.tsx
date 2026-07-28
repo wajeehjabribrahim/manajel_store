@@ -615,23 +615,30 @@ export default function AdminEditProductPage() {
         imageData = "";
       }
 
-      // Upload new multiple images
+      // Upload new gallery images in parallel; a failed upload aborts the save
+      // instead of silently dropping the image.
       if (imageFiles.length > 0) {
-        for (const file of imageFiles) {
-          const uploadData = new FormData();
-          uploadData.append("file", file);
-          const uploadRes = await fetch("/api/uploads/product-image", {
-            method: "POST",
-            body: uploadData,
-          });
+        const uploads = await Promise.all(
+          imageFiles.map(async (file) => {
+            const uploadData = new FormData();
+            uploadData.append("file", file);
+            const uploadRes = await fetch("/api/uploads/product-image", {
+              method: "POST",
+              body: uploadData,
+            });
+            if (!uploadRes.ok) return null;
+            const uploadJson = await uploadRes.json().catch(() => null);
+            return typeof uploadJson?.imageData === "string" ? uploadJson.imageData : null;
+          })
+        );
 
-          if (uploadRes.ok) {
-            const uploadJson = await uploadRes.json();
-            if (typeof uploadJson?.imageData === "string") {
-              imagesData.push(uploadJson.imageData);
-            }
-          }
+        const failedCount = uploads.filter((u) => u === null).length;
+        if (failedCount > 0) {
+          setError(`فشل رفع ${failedCount} من الصور الإضافية — لم يتم حفظ التعديلات`);
+          setSaving(false);
+          return;
         }
+        imagesData = [...imagesData, ...(uploads as string[])];
       }
 
       // Append any externally provided image URLs

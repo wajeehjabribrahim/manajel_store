@@ -15,7 +15,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing file" }, { status: 400 });
     }
 
-    if (!file.type.startsWith("image/")) {
+    // Explicit whitelist instead of any image/* — the type header comes from
+    // the client and sharp re-encodes below, so unknown formats are rejected.
+    if (!/^image\/(jpe?g|png|webp|gif|avif|heic|heif)$/i.test(file.type)) {
       return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
     }
 
@@ -24,19 +26,26 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "File too large. Maximum 10MB allowed." }, { status: 400 });
     }
 
-    // تحويل الصورة إلى WebP بجودة 75
+    // إعادة الترميز إلى WebP مع تصغير الأبعاد — كاميرا 6000px كانت تُخزَّن
+    // بأبعادها الكاملة داخل قاعدة البيانات. rotate() يطبّق اتجاه EXIF قبل حذفه.
     const buffer = Buffer.from(await file.arrayBuffer());
-    let webpBuffer;
-    let imageData;
+    let imageData: string;
     try {
       const sharp = (await import('sharp')).default;
-      webpBuffer = await sharp(buffer).webp({ quality: 75 }).toBuffer();
-      const webpBase64 = webpBuffer.toString('base64');
-      imageData = `data:image/webp;base64,${webpBase64}`;
+      const webpBuffer = await sharp(buffer)
+        .rotate()
+        .resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toBuffer();
+      imageData = `data:image/webp;base64,${webpBuffer.toString('base64')}`;
     } catch (err) {
-      // fallback: إذا فشل التحويل استخدم الصورة الأصلية
-      const base64 = buffer.toString('base64');
-      imageData = `data:${file.type};base64,${base64}`;
+      // No raw fallback: storing the original bytes with a client-supplied MIME
+      // type would put unprocessed, unverified data in the database.
+      console.error("Image processing failed:", err);
+      return NextResponse.json(
+        { error: "تعذرت معالجة الصورة — تأكد أن الملف صورة سليمة" },
+        { status: 422 }
+      );
     }
     return NextResponse.json({ imageData }, { status: 201 });
   } catch (err) {

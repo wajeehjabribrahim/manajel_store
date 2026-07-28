@@ -226,12 +226,16 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           )}
           {product.image ? (
             <Image
-              src={typeof product.image === "string" ? optimizeImage(product.image, 600) : ""}
+              // 1200px source: the card is ~230px but retina screens need 2–3x that,
+              // and the old 600px cap was being upscaled into a blur.
+              src={typeof product.image === "string" ? optimizeImage(product.image, 1200) : ""}
               alt={name}
               fill
               className="object-cover product-image"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              quality={50}
+              // Matches the real grid (2 / 3 / 4 / 5 cols); above xl the max-w-7xl
+              // container fixes the card at ~230px, so vw units would over-request.
+              sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, (max-width: 1279px) 25vw, 240px"
+              quality={80}
               priority={isFirstProduct}
               loading={isFirstProduct ? "eager" : "lazy"}
               fetchPriority={isFirstProduct ? "high" : "auto"}
