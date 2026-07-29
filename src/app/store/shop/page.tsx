@@ -32,25 +32,31 @@ async function getCatalogueJsonLd() {
       "@type": "ItemList",
       name: "منتجات مناجل — Manajel products",
       numberOfItems: products.length,
+      // Before launch the entries are plain name+url list items: a nested
+      // Product without offers is reported as an error by Google, and it could
+      // not produce a rich result anyway while prices are withheld.
       itemListElement: products.map((product, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        item: {
-          "@type": "Product",
-          name: product.name,
-          url: `${SITE}/store/products/${product.id}`,
-          // Prices are withheld until launch — see STORE_LAUNCHED.
-          offers: STORE_LAUNCHED
-            ? {
-                "@type": "Offer",
-                priceCurrency: "ILS",
-                price: product.price,
-                availability: product.inStock
-                  ? "https://schema.org/InStock"
-                  : "https://schema.org/OutOfStock",
-              }
-            : undefined,
-        },
+        name: product.name,
+        url: `${SITE}/store/products/${product.id}`,
+        ...(STORE_LAUNCHED
+          ? {
+              item: {
+                "@type": "Product",
+                name: product.name,
+                url: `${SITE}/store/products/${product.id}`,
+                offers: {
+                  "@type": "Offer",
+                  priceCurrency: "ILS",
+                  price: product.price,
+                  availability: product.inStock
+                    ? "https://schema.org/InStock"
+                    : "https://schema.org/OutOfStock",
+                },
+              },
+            }
+          : {}),
       })),
     };
   } catch (error) {

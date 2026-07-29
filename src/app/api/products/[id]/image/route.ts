@@ -26,7 +26,9 @@ function binaryResponse(dataUri: string): NextResponse {
     headers: {
       "Content-Type": match[1] || "image/webp",
       "Content-Length": String(buffer.length),
-      "Cache-Control": "public, max-age=31536000, immutable",
+      // s-maxage is what makes the CDN cache it — with max-age alone every
+      // image request would still invoke the function and hit the database.
+      "Cache-Control": "public, max-age=31536000, s-maxage=31536000, immutable",
     },
   });
 }

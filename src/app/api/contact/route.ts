@@ -3,13 +3,18 @@ import { prisma } from '@/lib/prisma';
 import { sendContactNotification } from '@/lib/email';
 import { encryptData, decryptData } from '@/lib/encryption';
 import { requireAdminAccess } from '@/lib/adminAuth';
-import { checkDbRateLimit, getRequestIp } from '@/lib/rateLimit';
+import { checkDbRateLimit, getRequestIp, RATE_LIMITS } from '@/lib/rateLimit';
+import { reportError } from '@/lib/reportError';
 
 export async function POST(request: NextRequest) {
   try {
     // Durable per-IP limit (middleware limit is in-memory only)
     const ip = getRequestIp(request);
-    const rate = await checkDbRateLimit(`contact:${ip}`, 5, 10 * 60 * 1000);
+    const rate = await checkDbRateLimit(
+      `contact:${ip}`,
+      RATE_LIMITS.contact.limit,
+      RATE_LIMITS.contact.windowMs
+    );
     if (!rate.allowed) {
       return NextResponse.json(
         { error: 'Too many messages. Please try again later.' },
@@ -71,7 +76,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Contact form error:', error);
+    reportError(error, 'contact-submit');
     return NextResponse.json(
       { error: 'Failed to submit message. Please try again.' },
       { status: 500 }

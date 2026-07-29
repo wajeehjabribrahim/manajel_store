@@ -1,6 +1,21 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+const MINUTE = 60_000;
+const HOUR = 60 * MINUTE;
+
+/**
+ * Per-IP limits, tuned for carrier-grade NAT: mobile networks in Palestine put
+ * many real customers behind one public IP, so a limit tight enough to stop a
+ * single abuser can lock out an entire neighbourhood. These are set to stop
+ * scripted abuse while leaving normal shared-IP traffic well clear of them.
+ */
+export const RATE_LIMITS = {
+  register: { limit: 20, windowMs: HOUR },
+  contact: { limit: 15, windowMs: 10 * MINUTE },
+  orderCreate: { limit: 100, windowMs: HOUR },
+} as const;
+
 /**
  * DB-backed fixed-window rate limiter.
  * Survives restarts/deploys and works across serverless instances,

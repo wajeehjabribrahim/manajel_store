@@ -2,13 +2,18 @@ import { NextResponse } from "next/server";
 import * as bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { encryptData } from "@/lib/encryption";
-import { checkDbRateLimit, getRequestIp } from "@/lib/rateLimit";
+import { checkDbRateLimit, getRequestIp, RATE_LIMITS } from "@/lib/rateLimit";
+import { reportError } from "@/lib/reportError";
 
 export async function POST(req: Request) {
   try {
     // Durable per-IP limit on account creation (middleware limit is in-memory only)
     const ip = getRequestIp(req);
-    const rate = await checkDbRateLimit(`register:${ip}`, 5, 60 * 60 * 1000);
+    const rate = await checkDbRateLimit(
+      `register:${ip}`,
+      RATE_LIMITS.register.limit,
+      RATE_LIMITS.register.windowMs
+    );
     if (!rate.allowed) {
       return NextResponse.json(
         { error: "Too many registration attempts. Please try again later." },
@@ -71,7 +76,8 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
-  } catch {
+  } catch (error) {
+    reportError(error, "register");
     return NextResponse.json(
       { error: "Server error" },
       { status: 500 }

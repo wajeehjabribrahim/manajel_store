@@ -137,33 +137,43 @@ export default async function ProductLayout({
         seller: { "@id": `${SITE}/#organization` },
       };
 
+  // Google requires offers/review/aggregateRating on a Product and reports an
+  // error otherwise. Before launch we withhold prices, so a Product node could
+  // never produce a rich result — publishing one only generates Search Console
+  // errors. The node returns automatically with STORE_LAUNCHED.
+  const productNode = !STORE_LAUNCHED
+    ? []
+    : [
+        {
+          "@type": "Product",
+          "@id": `${url}#product`,
+          name: product.name,
+          alternateName: product.nameEn || undefined,
+          description: description || undefined,
+          image: images.length ? images : undefined,
+          sku: product.id,
+          category: product.category,
+          brand: { "@type": "Brand", name: "مناجل | Manajel" },
+          countryOfOrigin: "PS",
+          offers,
+          // aggregateRating is deliberately omitted unless real reviews exist —
+          // empty or fabricated ratings are a structured-data violation.
+          ...(product.reviews > 0 && product.rating > 0
+            ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: product.rating,
+                  reviewCount: product.reviews,
+                },
+              }
+            : {}),
+        },
+      ];
+
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Product",
-        "@id": `${url}#product`,
-        name: product.name,
-        alternateName: product.nameEn || undefined,
-        description: description || undefined,
-        image: images.length ? images : undefined,
-        sku: product.id,
-        category: product.category,
-        brand: { "@type": "Brand", name: "مناجل | Manajel" },
-        countryOfOrigin: "PS",
-        offers,
-        // aggregateRating is deliberately omitted unless real reviews exist —
-        // empty or fabricated ratings are a structured-data violation.
-        ...(product.reviews > 0 && product.rating > 0
-          ? {
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: product.rating,
-                reviewCount: product.reviews,
-              },
-            }
-          : {}),
-      },
+      ...productNode,
       {
         "@type": "BreadcrumbList",
         itemListElement: [

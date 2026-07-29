@@ -8,6 +8,7 @@ export const prisma =
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
 
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-}
+// Cached in production too: on serverless each route bundle that imports this
+// module would otherwise open its own connection pool inside the same instance,
+// multiplying connections against a 50-connection Postgres limit.
+globalForPrisma.prisma = prisma;

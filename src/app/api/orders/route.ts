@@ -6,7 +6,8 @@ import { authOptions } from "@/lib/auth";
 import { sendOrderNotification } from "@/lib/email";
 import { generateGuestOrderToken } from "@/lib/guestOrderToken";
 import { encryptData, decryptData } from "@/lib/encryption";
-import { checkDbRateLimit, getRequestIp } from "@/lib/rateLimit";
+import { checkDbRateLimit, getRequestIp, RATE_LIMITS } from "@/lib/rateLimit";
+import { reportError } from "@/lib/reportError";
 
 interface OrderItemInput {
   id: string;
@@ -27,7 +28,11 @@ export async function POST(req: Request) {
   try {
     // Durable per-IP flood guard; generous so real customers are never blocked
     const ip = getRequestIp(req);
-    const rate = await checkDbRateLimit(`order-create:${ip}`, 30, 60 * 60 * 1000);
+    const rate = await checkDbRateLimit(
+      `order-create:${ip}`,
+      RATE_LIMITS.orderCreate.limit,
+      RATE_LIMITS.orderCreate.windowMs
+    );
     if (!rate.allowed) {
       return NextResponse.json(
         { error: "Too many orders. Please try again later." },
@@ -265,7 +270,8 @@ export async function POST(req: Request) {
     response = applyCorsHeaders(response, req.headers.get('origin'));
     return response;
   } catch (error) {
-    console.error("Order creation error:", error);
+    // A failed order is lost revenue — make sure it reaches the error tracker.
+    reportError(error, "order-create");
     let response = NextResponse.json({ error: "حدث خطأ في الخادم" }, { status: 500 });
     response = applyCorsHeaders(response, req.headers.get('origin'));
     return response;

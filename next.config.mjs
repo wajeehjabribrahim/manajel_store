@@ -1,8 +1,13 @@
+import { withSentryConfig } from "@sentry/nextjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
     scrollRestoration: true,
+    // Next 14 ignores instrumentation.ts without this flag, which would leave
+    // server-side Sentry silently uninitialised. (Default-on from Next 15.)
+    instrumentationHook: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -247,4 +252,25 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// Only wrap the config when Sentry is actually configured — without a DSN the
+// wrapper adds build work and warnings for no benefit. Source maps are uploaded
+// only when SENTRY_AUTH_TOKEN is present as well.
+const sentryEnabled = Boolean(
+  process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
+);
+
+export default sentryEnabled
+  ? withSentryConfig(nextConfig, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      silent: true,
+      // Hide source maps from the public bundle after uploading them.
+      widenClientFileUpload: true,
+      sourcemaps: { deleteSourcemapsAfterUpload: true },
+      // Route Sentry's browser requests through the app so ad blockers don't
+      // swallow client-side error reports.
+      tunnelRoute: "/monitoring",
+      disableLogger: true,
+    })
+  : nextConfig;

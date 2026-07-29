@@ -30,14 +30,17 @@ function getClientIp(request: NextRequest) {
   return "unknown";
 }
 
+// First-layer burst protection only — the durable per-action limits live in
+// lib/rateLimit.ts. Kept generous because carrier-grade NAT puts many real
+// customers behind a single IP.
 function getRateLimitConfig(pathname: string) {
   if (pathname.startsWith("/api/auth")) {
-    return { key: "auth", limit: 20, windowMs: 60_000 };
+    return { key: "auth", limit: 60, windowMs: 60_000 };
   }
   if (pathname.startsWith("/api/orders")) {
-    return { key: "orders", limit: 60, windowMs: 60_000 };
+    return { key: "orders", limit: 120, windowMs: 60_000 };
   }
-  return { key: "contact", limit: 20, windowMs: 60_000 };
+  return { key: "contact", limit: 40, windowMs: 60_000 };
 }
 
 export function middleware(request: NextRequest) {
