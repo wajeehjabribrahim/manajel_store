@@ -431,10 +431,15 @@ export default function ProductPage({ params }: PageProps) {
 
   const ingredients = typeof product.ingredients === "string" ? product.ingredients.trim() : "";
 
-  // Exclude the primary product.image from gallery on the product page
-  const galleryImages = Array.isArray(product.images)
-    ? product.images.filter((img) => !!img && img !== product.image)
-    : [];
+  // The main image leads the gallery; extra images follow (deduplicated).
+  // It used to be excluded entirely, so a product whose only picture was the
+  // main image showed a letter placeholder instead of its photo.
+  const galleryImages = [
+    ...(typeof product.image === "string" && product.image ? [product.image] : []),
+    ...(Array.isArray(product.images)
+      ? product.images.filter((img) => !!img && img !== product.image)
+      : []),
+  ];
 
   const formatNumber = (value: number) =>
     new Intl.NumberFormat(language === "ar" ? "ar-PS-u-nu-latn" : "en-US", {
