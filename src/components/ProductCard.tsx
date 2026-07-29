@@ -226,9 +226,10 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           )}
           {product.image ? (
             <Image
-              // 1200px source: the card is ~230px but retina screens need 2–3x that,
-              // and the old 600px cap was being upscaled into a blur.
-              src={typeof product.image === "string" ? optimizeImage(product.image, 1200) : ""}
+              // Cropped to the card's 8:10 box at the source. next/image sizes by
+              // width only, so an uncropped landscape photo arrived too short and
+              // the browser stretched it to cover — that was the blurry card.
+              src={typeof product.image === "string" ? optimizeImage(product.image, 1200, "4:5") : ""}
               alt={name}
               fill
               className="object-cover product-image"
