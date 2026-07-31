@@ -6,6 +6,7 @@ import { COLORS, CURRENCY_SYMBOL } from "@/constants/store";
 import { PRODUCTS } from "@/constants/products";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
+import { compressImageToDataUrl } from "@/lib/compressImage";
 
 interface OrderItem {
   id: string;
@@ -148,20 +149,6 @@ export default function OrdersPage() {
     return colorMap[status] || "#666";
   };
 
-  const readFileAsDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("Failed to encode image"));
-        }
-      };
-      reader.onerror = () => reject(new Error("Failed to read image"));
-      reader.readAsDataURL(file);
-    });
-
   const handleFeedbackImagesChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
@@ -174,7 +161,9 @@ export default function OrdersPage() {
     }
 
     try {
-      const encoded = await Promise.all(imageFiles.map(readFileAsDataUrl));
+      // Compressed before encoding: raw base64 of a 2 MB photo exceeded the
+      // API's size cap and the customer saw an unexplained failure.
+      const encoded = await Promise.all(imageFiles.map(compressImageToDataUrl));
       setFeedbackImages(encoded);
       setFeedbackError("");
     } catch {

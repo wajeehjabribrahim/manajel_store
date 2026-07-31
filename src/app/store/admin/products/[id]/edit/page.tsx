@@ -29,20 +29,6 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
     setEditRating(item.rating ?? 5);
   }, [isEditing, item.author, item.note, item.noteEn, item.images, item.rating]);
 
-  const readFileAsDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("Failed to read file"));
-        }
-      };
-      reader.onerror = () => reject(new Error("Failed to read file"));
-      reader.readAsDataURL(file);
-    });
-
   const handleEditImages = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
@@ -65,7 +51,9 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
     }
 
     try {
-      const encoded = await Promise.all(files.map(readFileAsDataUrl));
+      // Compressed, not raw: a 2 MB photo used to become ~2.7M base64 chars and
+      // the API rejected it (its cap is 1.5M) with only a generic error shown.
+      const encoded = await Promise.all(files.map(compressImageToDataUrl));
       setEditImages((prev) => [...prev, ...encoded].slice(0, 3));
       setError("");
     } catch {
@@ -108,7 +96,9 @@ const AdminFeedbackItem: React.FC<AdminFeedbackItemProps> = ({ item, productId, 
         body: JSON.stringify({ author: editAuthor.trim(), note: editNote, noteEn: editNoteEn, images: editImages, rating: editRating }),
       });
       if (!res.ok) {
-        setError("فشل تعديل الفيدباك");
+        // Surface the server's reason — a generic message hid exactly why.
+        const data = await res.json().catch(() => ({}));
+        setError(data?.error ? `فشل تعديل الفيدباك: ${data.error}` : "فشل تعديل الفيدباك");
         setSaving(false);
         return;
       }
@@ -244,6 +234,7 @@ import { CATEGORIES } from "@/constants/products";
 import { COLORS } from "@/constants/store";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SIZE_KEYS, SizeKey, getFallbackSizeLabel } from "@/lib/productSizes";
+import { compressImageToDataUrl } from "@/lib/compressImage";
 
 interface AdminFeedbackItemProps {
   item: ManualFeedbackItem;
@@ -458,20 +449,6 @@ export default function AdminEditProductPage() {
     };
   }, [manualFeedbackImageFiles]);
 
-  const readFileAsDataUrl = (file: File) =>
-    new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("Failed to read file"));
-        }
-      };
-      reader.onerror = () => reject(new Error("Failed to read file"));
-      reader.readAsDataURL(file);
-    });
-
   const handleManualFeedbackImages = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (files.length > 3) {
@@ -510,7 +487,7 @@ export default function AdminEditProductPage() {
 
     try {
       const encodedImages = manualFeedbackImageFiles.length
-        ? await Promise.all(manualFeedbackImageFiles.map(readFileAsDataUrl))
+        ? await Promise.all(manualFeedbackImageFiles.map(compressImageToDataUrl))
         : [];
 
       const res = await fetch(`/api/products/${id}/feedbacks`, {
