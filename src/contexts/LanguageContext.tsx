@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Language, translations } from "@/constants/translations";
+import { resolveInitialLanguage, storeLanguage } from "@/lib/languagePreference";
 
 interface LanguageContextType {
   language: Language;
@@ -13,18 +14,13 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Default to Arabic for first-time visitors
+  // Arabic on the server so the initial HTML matches the <html lang="ar"> in
+  // the root layout; the real preference is resolved after mount below.
   const [language, setLanguageState] = useState<Language>("ar");
 
-  // Load language from localStorage on mount
+  // A saved choice wins; otherwise follow the browser/phone language.
   useEffect(() => {
-    const savedLang = localStorage.getItem("manajel-language") as Language;
-    if (savedLang && (savedLang === "en" || savedLang === "ar")) {
-      setLanguageState(savedLang);
-    } else {
-      // Default to Arabic for first-time visitors
-      setLanguageState("ar");
-    }
+    setLanguageState(resolveInitialLanguage());
   }, []);
 
   // Keep document language and direction in sync
@@ -36,15 +32,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       // ignore in environments without document
     }
-    // small debug to help confirm language changes in the browser console
-    // remove later if not needed
-    // eslint-disable-next-line no-console
-    console.log("Language set to:", language, "dir:", currentDir);
   }, [language]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("manajel-language", lang);
+    storeLanguage(lang);
   };
 
   // Create hybrid t that works both as object and function

@@ -779,8 +779,10 @@ export default function ProductPage({ params }: PageProps) {
               {manualFeedbacks.slice(0, 6).map((feedback) => (
                 <div
                   key={feedback.id}
-                  className="rounded-xl border border-black/10 p-4"
-                  style={{ backdropFilter: "blur(10px)", backgroundColor: "rgba(23,26,29,0.45)" }}
+                  // White card matching the FAQ/shop cards. It used to be a dark
+                  // translucent panel left over from a dark theme, which clashed
+                  // with the cream page and put black text on a dark background.
+                  className="rounded-xl border border-black/10 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-colors duration-200 hover:border-[#C9A66B]/60"
                 >
                   <div className="mb-2 flex items-center gap-2">
                     <span className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-black/10 text-black/80">
@@ -791,7 +793,9 @@ export default function ProductPage({ params }: PageProps) {
                     </span>
                   </div>
 
-                  <div className="mb-2 flex items-center gap-0.5 text-sm" style={{ color: "#FFD700" }} aria-label={`${feedback.rating ?? 5} star rating`}>
+                  {/* Brand gold rather than #FFD700: pure yellow washes out on
+                      the now-white card, and this matches the section heading. */}
+                  <div className="mb-2 flex items-center gap-0.5 text-sm" style={{ color: "#C9A66B" }} aria-label={`${feedback.rating ?? 5} star rating`}>
                     {Array.from({ length: 5 }).map((_, idx) => (
                       <span key={idx}>{idx < (feedback.rating ?? 5) ? "★" : "☆"}</span>
                     ))}
@@ -904,7 +908,10 @@ export default function ProductPage({ params }: PageProps) {
           <button
             type="button"
             onClick={() => setSelectedFeedbackImage(null)}
-            className="absolute top-4 right-4 rounded-full border border-black/25 bg-black/50 px-3 py-1.5 text-sm text-[#121416]"
+            aria-label={language === "ar" ? "إغلاق" : "Close"}
+            // Light on purpose: this sits on a near-black overlay, where the
+            // previous near-black text was invisible.
+            className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/40 bg-black/60 text-lg leading-none text-[#FBF8F2] shadow-lg transition-colors hover:border-[#C9A66B] hover:text-[#C9A66B]"
           >
             ✕
           </button>

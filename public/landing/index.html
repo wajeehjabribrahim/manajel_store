@@ -723,12 +723,41 @@
       I18N.forEach(pair=>{const el=document.querySelector(pair[0]);if(el)el.innerHTML=pair[1][lang];});
       const y=document.getElementById("year"); if(y) y.textContent=new Date().getFullYear();
       btn.textContent=lang==="ar"?"English":"عربي";
-      try{localStorage.setItem("manajel-lang",lang);}catch(e){}
+      // Both keys stay in step so /store (which reads "manajel-language")
+      // shows the same language the visitor picked here.
+      try{localStorage.setItem("manajel-lang",lang);localStorage.setItem("manajel-language",lang);}catch(e){}
       if(hasGSAP) ScrollTrigger.refresh();
     }
     btn.addEventListener("click",()=>applyLang(document.documentElement.lang==="ar"?"en":"ar"));
-    let saved=null; try{saved=localStorage.getItem("manajel-lang");}catch(e){}
-    if(saved==="ar") applyLang("ar");
+
+    // Mirrors src/lib/languagePreference.ts — this page is standalone HTML and
+    // cannot import it. An explicit choice wins; otherwise the phone/browser
+    // language decides, so an Arabic visitor arriving from Google search does
+    // not land on an English page. Crawlers read the served HTML, so indexing
+    // is unaffected.
+    function storedLang(){
+      try{
+        var v=localStorage.getItem("manajel-language");
+        if(v==="ar"||v==="en") return v;
+        var legacy=localStorage.getItem("manajel-lang");
+        if(legacy==="ar"||legacy==="en"){ try{localStorage.setItem("manajel-language",legacy);}catch(e){} return legacy; }
+      }catch(e){}
+      return null;
+    }
+    function browserLang(){
+      try{
+        var list=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language];
+        for(var i=0;i<list.length;i++){
+          if(typeof list[i]!=="string") continue;
+          var primary=list[i].toLowerCase().split("-")[0];
+          if(primary==="ar") return "ar";
+          if(primary==="en") return "en";
+        }
+      }catch(e){}
+      return "en";
+    }
+    var initial=storedLang()||browserLang();
+    if(initial==="ar") applyLang("ar");
   })();
 
   if(hasGSAP){window.addEventListener("load",()=>ScrollTrigger.refresh());if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>ScrollTrigger.refresh());}
