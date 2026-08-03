@@ -339,9 +339,16 @@
   #cta .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center;background:var(--olive-deep)}
   #cta video,#cta .cta-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
   #cta .cta-poster{transition:opacity .8s ease}
-  #cta .dim{position:absolute;inset:0;opacity:0;backdrop-filter:blur(2px);
+  #cta .dim{position:absolute;inset:0;opacity:0;backdrop-filter:blur(2px);will-change:opacity;
     background:radial-gradient(120% 100% at 50% 50%,rgba(35,43,24,.5),rgba(20,25,14,.88))}
-  #cta .content{position:relative;z-index:3;text-align:center;opacity:0;transform:translateY(28px);padding-inline:20px}
+  /* The scroll handler drives this layer's opacity every frame. On touch GPUs a
+     full-viewport backdrop blur over a playing video has to re-sample the whole
+     frame each time; the gradient above already reaches 88% opacity, so the 2px
+     blur costs far more than it shows. Desktop keeps it. */
+  @media (hover: none), (pointer: coarse), (max-width: 760px){
+    #cta .dim{backdrop-filter:none;-webkit-backdrop-filter:none}
+  }
+  #cta .content{position:relative;z-index:3;text-align:center;opacity:0;transform:translateY(28px);padding-inline:20px;will-change:transform,opacity}
   #cta .content .latin{display:block;font-size:12px;color:var(--gold-bright);margin-bottom:18px}
   #cta h2{font-size:clamp(40px,8vw,104px);line-height:.96;color:var(--paper)}
   #cta .content p{margin:18px auto 0;color:rgba(250,250,247,.75);font-size:clamp(15px,1.8vw,20px);max-width:42ch}
@@ -357,11 +364,19 @@
   #detail h2{font-size:clamp(32px,5vw,60px);margin-top:6px}
   #detail .cards{display:grid;grid-template-columns:1fr;gap:26px}
   @media(min-width:760px){#detail .cards{grid-template-columns:repeat(3,1fr)}}
-  .d-card{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--mist);transition:transform .5s var(--ease),box-shadow .5s,border-color .5s}
-  .d-card:hover{transform:translateY(-8px);box-shadow:0 34px 70px -36px rgba(35,42,28,.35)}
+  .d-card{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--mist)}
   .d-card .pic{aspect-ratio:4/3;display:grid;place-items:center;overflow:hidden;padding:9%}
-  .d-card .pic img{width:100%;height:100%;object-fit:contain;transition:transform .9s var(--ease)}
-  .d-card:hover .pic img{transform:scale(1.05)}
+  .d-card .pic img{width:100%;height:100%;object-fit:contain}
+  /* Hover lift only where there is a real pointer. On touch, tapping or even
+     scrolling latches :hover, which animated a 70px-blur box-shadow plus two
+     transforms mid-scroll — the stutter reported in this section. The
+     transitions live here too so touch devices never arm them at all. */
+  @media (hover: hover) and (pointer: fine){
+    .d-card{transition:transform .5s var(--ease),box-shadow .5s,border-color .5s}
+    .d-card .pic img{transition:transform .9s var(--ease)}
+    .d-card:hover{transform:translateY(-8px);box-shadow:0 34px 70px -36px rgba(35,42,28,.35)}
+    .d-card:hover .pic img{transform:scale(1.05)}
+  }
   .d-card .body{padding:6px 22px 28px} .d-card h3{font-size:21px;color:var(--ink)} .d-card p{font-size:14px;color:var(--ink-soft);margin-top:8px}
 
   footer{padding:9vh 0 5vh;text-align:center;border-top:1px solid var(--line)}
@@ -675,14 +690,14 @@
       ['#origin .eyebrow',{en:'<span class="rule"></span>Purity',ar:'<span class="rule"></span>النقاء'}],
       ['#origin h2',{en:'Nothing added.<br>Nothing taken away.',ar:'لا إضافات.<br>ولا انتقاص.'}],
       ['#origin .copy p:nth-of-type(1)',{en:'Cold-extracted within hours of picking, at temperatures that preserve what matters: natural polyphenols, antioxidants, and a clean, vivid taste.',ar:'يُعصر على البارد خلال ساعاتٍ من القطف، بدرجات حرارة تحفظ ما يهم: البوليفينولات الطبيعية، ومضادات الأكسدة، ومذاقًا نقيًا حيًا.'}],
-      ['#origin .copy p:nth-of-type(2)',{en:'Single origin. Free acidity below 0.4%. Bottled without compromise.',ar:'أصلٌ واحد. حموضة حرة أقل من ٠٫٤٪. يُعبأ بلا مساومة.'}],
+      ['#origin .copy p:nth-of-type(2)',{en:'Single origin. Free acidity below 0.4%. Bottled without compromise.',ar:'أصلٌ واحد. حموضة حرة أقل من ٠٫٤٪. يُعبأ بلا أي تنازل عن الجودة .'}],
       ['#origin .stats div:nth-child(1) .l',{en:'Free acidity',ar:'حموضة حرة'}],
       ['#origin .stats div:nth-child(2) .n',{en:'Cold',ar:'بارد'}],
       ['#origin .stats div:nth-child(2) .l',{en:'Extraction',ar:'العصر'}],
       ['#origin .stats div:nth-child(3) .n',{en:'Single',ar:'واحد'}],
       ['#origin .stats div:nth-child(3) .l',{en:'Origin',ar:'الأصل'}],
       ['#reveal .idx',{en:'01 — The Oil',ar:'٠١ — الزيت'}],
-      ['#reveal h2',{en:'750ml. Extra virgin.<br>Uncompromising.',ar:'٧٥٠ مل. بكرٌ ممتاز.<br>بلا مساومة.'}],
+      ['#reveal h2',{en:'750ml. Extra virgin.<br>Uncompromising.',ar:'٧٥٠ مل. بكرٌ ممتاز.<br>بلا أي تنازل عن الجودة.'}],
       ['#reveal .lead',{en:'Green-gold and alive: smooth, full-bodied, with a peppery finish — the signature of high polyphenol content and exceptional freshness.',ar:'ذهبيٌّ مخضرّ وحيّ: ناعم، ممتلئ القوام، بقفلة فلفلية — توقيع المحتوى العالي من البوليفينول والطزاجة الاستثنائية.'}],
       ['#reveal .specs li:nth-child(1) .k',{en:'Acidity',ar:'الحموضة'}],
       ['#reveal .specs li:nth-child(1) .v',{en:'&le; 0.4% free acidity',ar:'حموضة حرة ≤ ٠٫٤٪'}],
@@ -694,7 +709,7 @@
       ['#reveal .specs li:nth-child(4) .v',{en:'Single estate, Palestine',ar:'ضيعة واحدة، فلسطين'}],
       ['#ritual .idx',{en:'02 — The Ritual',ar:'٠٢ — الطقس اليومي'}],
       ['#ritual h2',{en:'Your daily ritual.',ar:'طقسك اليومي.'}],
-      ['#ritual .copy p',{en:'A finishing pour over breakfast, a base for every salad, a clean source of healthy fats. One bottle, every day — this is how it\'s meant to be used.',ar:'سكبة أخيرة فوق الفطور، أساسٌ لكل سلطة، ومصدر نظيف للدهون الصحية. قارورة واحدة، كل يوم — هكذا صُنع ليُستعمل.'}],
+      ['#ritual .copy p',{en:'A finishing pour over breakfast, a base for every salad, a clean source of healthy fats. One bottle, every day — this is how it\'s meant to be used.',ar:'سكبة أخيرة فوق الفطور، أساسٌ لكل سلطة، ومصدر نظيف للدهون الصحية. كيس واحد، كل يوم — هكذا صُنع ليُستعمل.'}],
       ['#cta .content .latin',{en:'Begin the Ritual',ar:'ابدأ الطقس'}],
       ['#cta h2',{en:'Taste the difference.',ar:'تذوّق الفرق.'}],
       ['#cta .content p',{en:'Order MANAJEL for your kitchen, or as a considered gift. Direct, personal service — from our press to your table.',ar:'اطلب مناجل لمطبخك، أو كهديةٍ مدروسة. خدمة مباشرة وشخصية — من معصرتنا إلى مائدتك.'}],

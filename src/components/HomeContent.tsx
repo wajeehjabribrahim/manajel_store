@@ -254,7 +254,8 @@ export default function HomeContent() {
         <section
           className="hero-section relative w-full aspect-[4/5] min-h-[72vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[15/8] md:min-h-[44vh] mt-0"
         style={{
-          backgroundImage: "url('/images/hero.png?v=2')",
+          // The image itself lives in the .hero-section rule in globals.css so
+          // it can be declared as AVIF with a WebP fallback via image-set().
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
@@ -625,24 +626,10 @@ export default function HomeContent() {
               "radial-gradient(ellipse 62% 42% at 50% 46%, rgba(20,15,8,0.4) 0%, rgba(20,15,8,0.22) 55%, rgba(20,15,8,0) 100%)",
           }}
         >
-          <p
-            className="text-xl sm:text-5xl md:text-5xl tajawal-regular-all font-extrabold tracking-wide "
-            style={{
-              color: "#E6C88A",
-              WebkitTextFillColor: "#E6C88A",
-              textShadow: "0 2px 14px rgba(0,0,0,0.55), 0 0 8px rgba(201,166,107,0.15)",
-            }}
-          >
+          <p className="gold-texture-hero text-xl sm:text-5xl md:text-5xl tajawal-regular-all font-extrabold tracking-wide">
             {language === "ar" ? "شركة ومعصرة مناجل للانتاج الزراعي" : "Manajel Company & Mill for Agricultural Production"}
           </p>
-          <p
-            className="text-xs sm:text-base md:text-2xl font-semibold tajawal-regular-all tracking-wide max-w-3xl"
-            style={{
-              color: "#F7EEDC",
-              WebkitTextFillColor: "#F7EEDC",
-              textShadow: "0 2px 10px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4)",
-            }}
-          >
+          <p className="gold-texture-hero text-xs sm:text-base md:text-2xl font-semibold tajawal-regular-all tracking-wide max-w-3xl">
             {language === "ar" ? "التراث الفلسطيني في كل منتج" : "Palestinian heritage in every product"}
           </p>
         </div>
