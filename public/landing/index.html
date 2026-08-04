@@ -639,11 +639,38 @@
   // CTA — video alone first, then dim/wash + content reveal. Single looping clip.
   (function initCTA(){
     const sec=document.getElementById("cta"),video=document.getElementById("ctaVideo"),poster=document.getElementById("ctaPoster"),dim=document.getElementById("ctaDim"),content=document.getElementById("ctaContent");
-    video.src="/landing/assets/film-src.mp4";
-    video.addEventListener("loadeddata",()=>{poster.style.opacity=0;});
-    video.addEventListener("error",()=>{poster.style.opacity=1;});
-    let started=false; const start=()=>{if(started)return;started=true;const pr=video.play();if(pr&&pr.catch)pr.catch(()=>{});};
-    ["pointerdown","keydown","wheel","touchstart"].forEach(ev=>window.addEventListener(ev,start,{once:true,passive:true}));
+
+    // The clip is large, so on metered or slow connections we never fetch it and
+    // simply keep the poster — which is already the designed fallback.
+    var conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection||{};
+    var slowLink=conn.saveData===true||/(^|-)2g$/.test(conn.effectiveType||"");
+
+    if(!slowLink&&!reduce){
+      // metadata (not "none") so the first frames are ready before playback is
+      // requested; "none" guaranteed a stretch of poster-only on every visit.
+      video.preload="metadata";
+      video.src="/landing/assets/film-src.mp4";
+
+      // Hide the poster only once frames are actually rendering. loadeddata fires
+      // at the first frame, so a clip still buffering used to reveal a frozen image.
+      video.addEventListener("playing",function(){poster.style.opacity=0;});
+      // If it stalls or fails, bring the poster back instead of a frozen frame.
+      ["waiting","stalled","error"].forEach(function(ev){
+        video.addEventListener(ev,function(){poster.style.opacity=1;});
+      });
+    }
+
+    // `playing` latches only after play() actually succeeds. It used to latch
+    // before, so a single rejected play() (common on mobile until a gesture
+    // arrives) left the poster up permanently with no retry.
+    var playing=false;
+    const start=function(){
+      if(playing||slowLink||reduce||!video.src) return;
+      const pr=video.play();
+      if(pr&&pr.then) pr.then(function(){playing=true;}).catch(function(){/* keep poster, allow a later retry */});
+      else playing=true;
+    };
+    ["pointerdown","keydown","wheel","touchstart"].forEach(ev=>window.addEventListener(ev,start,{passive:true}));
     if(hasGSAP&&!reduce){
       ScrollTrigger.create({trigger:sec,start:"top center",onEnter:start,onEnterBack:start});
       ScrollTrigger.create({trigger:sec,start:"top top",end:"bottom bottom",scrub:true,onUpdate:s=>{const p=s.progress;dim.style.opacity=smooth(0.20,0.42,p);content.style.opacity=smooth(0.24,0.48,p);content.style.transform="translateY("+(28*(1-smooth(0.24,0.48,p)))+"px)";}});
