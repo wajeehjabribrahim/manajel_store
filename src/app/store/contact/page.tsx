@@ -16,7 +16,9 @@ interface FormData {
 export default function Contact() {
   const { language } = useLanguage();
   const t = translations[language];
-  const WHATSAPP_URL = "https://wa.me/message/TZFYMQR2ZGRJN1";
+  // Built from CONTACT_INFO.phone, exactly like the floating button. The old
+  // wa.me/message/… invite short link no longer opened a chat.
+  const WHATSAPP_URL = `https://wa.me/${CONTACT_INFO.phone.replace(/\D/g, "")}`;
   
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -162,7 +164,9 @@ export default function Contact() {
                   target="_blank"
                   rel="noopener noreferrer"
                   dir="ltr"
-                  className="mt-2 block text-[11px] sm:text-xs md:text-sm text-black/80 no-underline transition-colors hover:text-[#C9A66B] break-words"
+                  // mt-1 matches the address/email paragraphs below; mt-2 sat
+                  // this value 4px lower than the other two cards.
+                  className="mt-1 block text-[11px] sm:text-xs md:text-sm text-black/80 no-underline transition-colors hover:text-[#C9A66B] break-words"
                 >
                   {item.content}
                 </a>

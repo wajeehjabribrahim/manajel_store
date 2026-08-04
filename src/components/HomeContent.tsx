@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { optimizeImage } from "@/lib/optimizeImage";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
@@ -84,11 +85,15 @@ export default function HomeContent() {
       window.removeEventListener("manajel-cart-updated", updateCartCount as EventListener);
     };
   }, []);
+  // Run through optimizeImage so every entry gets f_auto,q_auto and a width cap.
+  // The third URL had been added without them and was delivered as a raw 1.8 MB
+  // PNG — on its own, 65% of this page's weight. Entries that already carry
+  // transforms are returned untouched by the helper.
   const heritageImages = [
     "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980574/mill_flxe3m.webp",
     "https://res.cloudinary.com/dj5k9x9sl/image/upload/q_auto,f_auto/v1774980569/mail_ruyrci.webp",
     "https://res.cloudinary.com/dj5k9x9sl/image/upload/v1784456624/7ca2d686-f226-4b96-9ff6-ad28498493b4_fhxpzg.png",
-  ];
+  ].map((url) => optimizeImage(url, 1200));
   const arrivalsReveal = useScrollAnimation({ delay: 100, triggerOnce: false });
   const aboutReveal = useScrollAnimation({ delay: 60, triggerOnce: false });
   const heroTextReveal = useScrollAnimation({ delay: 80, triggerOnce: false });
