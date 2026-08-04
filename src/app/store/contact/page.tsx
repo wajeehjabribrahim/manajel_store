@@ -162,7 +162,7 @@ export default function Contact() {
                   target="_blank"
                   rel="noopener noreferrer"
                   dir="ltr"
-                  className="mt-2 block text-[11px] sm:text-xs md:text-sm text-black/80 underline hover:text-black break-words"
+                  className="mt-2 block text-[11px] sm:text-xs md:text-sm text-black/80 no-underline transition-colors hover:text-[#C9A66B] break-words"
                 >
                   {item.content}
                 </a>
