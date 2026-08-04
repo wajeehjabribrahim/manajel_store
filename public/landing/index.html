@@ -338,7 +338,13 @@
   #cta{height:190vh}
   #cta .stage{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center;background:var(--olive-deep)}
   #cta video,#cta .cta-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+  /* Only ever ONE of the two layers visible: both sit at .55 over the dark
+     stage, so poster-over-buffering-video used to blend into a double image.
+     The video stays fully hidden until it is actually rendering frames. */
+  #cta video{opacity:0;transition:opacity .8s ease}
+  #cta video.is-playing{opacity:.55}
   #cta .cta-poster{transition:opacity .8s ease}
+  #cta .cta-poster.is-hidden{opacity:0}
   #cta .dim{position:absolute;inset:0;opacity:0;backdrop-filter:blur(2px);will-change:opacity;
     background:radial-gradient(120% 100% at 50% 50%,rgba(35,43,24,.5),rgba(20,25,14,.88))}
   /* The scroll handler drives this layer's opacity every frame. On touch GPUs a
@@ -649,14 +655,24 @@
       // metadata (not "none") so the first frames are ready before playback is
       // requested; "none" guaranteed a stretch of poster-only on every visit.
       video.preload="metadata";
-      video.src="/landing/assets/film-src.mp4";
+      // film-web.mp4 is film-src.mp4 re-encoded for the web (1280p, CRF 28,
+      // audio stripped, faststart): 4.5 MB instead of 60 MB. Keep film-src.mp4
+      // as the editing master — never point the page back at it.
+      video.src="/landing/assets/film-web.mp4";
 
-      // Hide the poster only once frames are actually rendering. loadeddata fires
-      // at the first frame, so a clip still buffering used to reveal a frozen image.
-      video.addEventListener("playing",function(){poster.style.opacity=0;});
-      // If it stalls or fails, bring the poster back instead of a frozen frame.
+      // Crossfade via classes so each layer keeps its designed .55 opacity —
+      // inline style.opacity=1 used to overshoot the poster to full brightness.
+      // Only one layer is ever visible: video fades in exactly when frames
+      // render ("playing"), poster returns on stall/failure.
+      video.addEventListener("playing",function(){
+        video.classList.add("is-playing");
+        poster.classList.add("is-hidden");
+      });
       ["waiting","stalled","error"].forEach(function(ev){
-        video.addEventListener(ev,function(){poster.style.opacity=1;});
+        video.addEventListener(ev,function(){
+          video.classList.remove("is-playing");
+          poster.classList.remove("is-hidden");
+        });
       });
     }
 
