@@ -23,6 +23,10 @@ export default function HomeContent() {
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  // Which language the loaded products belong to. Switching language re-runs the
+  // fetch, and until it resolves `products` still holds the previous language's
+  // names — that is why featured product names showed in Arabic under English.
+  const [productsLang, setProductsLang] = useState<string | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const desktopUserMenuRef = useRef<HTMLDivElement>(null);
@@ -113,6 +117,7 @@ export default function HomeContent() {
           const data = await res.json();
           if (Array.isArray(data?.products)) {
             setProducts(data.products);
+            setProductsLang(language);
             try {
               localStorage.setItem(cacheKey, JSON.stringify(data.products));
               localStorage.setItem(metaKey, JSON.stringify({ ts: Date.now() }));
@@ -136,6 +141,7 @@ export default function HomeContent() {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setProducts(parsed);
+            setProductsLang(language);
             if (metaRaw) {
               try {
                 const meta = JSON.parse(metaRaw);
@@ -157,7 +163,9 @@ export default function HomeContent() {
     })();
   }, [language]);
 
-  const featuredProducts = products.filter((p) => p.featured).slice(0, 4);
+  // Only render products fetched for the language currently on screen.
+  const featuredProducts =
+    productsLang === language ? products.filter((p) => p.featured).slice(0, 4) : [];
   const testimonials = [
     {
       nameAr: "أحمد الكيلاني",

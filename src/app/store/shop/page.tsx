@@ -3,6 +3,7 @@ import ShopContent from "@/components/ShopContent";
 import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import { STORE_LAUNCHED } from "@/lib/storeStatus";
+import { serializeJsonLd } from "@/lib/jsonLd";
 
 const SITE = "https://www.mnajel.com";
 
@@ -73,7 +74,7 @@ export default async function Shop() {
       {jsonLd ? (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
       ) : null}
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>

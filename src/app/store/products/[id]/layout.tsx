@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { STORE_LAUNCHED } from "@/lib/storeStatus";
+import { serializeJsonLd } from "@/lib/jsonLd";
 
 const SITE = "https://www.mnajel.com";
 
@@ -190,7 +191,7 @@ export default async function ProductLayout({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       {children}
     </>

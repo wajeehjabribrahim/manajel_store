@@ -102,14 +102,21 @@ export async function POST(req: Request) {
         return response;
       }
 
-      // التحقق من السعر الصحيح
+      // السعر المعتمد يُحسب من قاعدة البيانات دائمًا، ويطابق ما تعرضه الواجهة:
+      // سعر التخفيض حين يكون مفعّلًا (أقل من السعر العادي)، وإلا السعر العادي.
+      // كان التحقق يتجاهل salePrice، فأي منتج عليه خصم كان يُرفض شراؤه.
       let correctPrice = dbProduct.price;
       if (typeof dbProduct.sizes === "string") {
         try {
           const sizes = JSON.parse(dbProduct.sizes);
-          const size = String(item.size);
-          if (sizes[size] && sizes[size].price) {
-            correctPrice = sizes[size].price;
+          const entry = sizes[String(item.size)];
+          const basePrice = Number(entry?.price);
+          if (Number.isFinite(basePrice) && basePrice > 0) {
+            correctPrice = basePrice;
+            const salePrice = Number(entry?.salePrice);
+            if (Number.isFinite(salePrice) && salePrice > 0 && salePrice < basePrice) {
+              correctPrice = salePrice;
+            }
           }
         } catch (e) {
           // استخدم السعر الأساسي
@@ -118,9 +125,10 @@ export async function POST(req: Request) {
 
       // تحقق من تطابق السعر (السماح بـ ±0.01 بسبب التقريب)
       if (Math.abs(price - correctPrice) > 0.01) {
+        // رسالة مميزة: السبب الشائع هو تغيّر السعر بعد فتح الصفحة، لا بيانات فاسدة.
         let response = NextResponse.json(
-          { error: "بيانات الطلب غير صالحة" },
-          { status: 400 }
+          { error: "تغيّر سعر أحد المنتجات. حدّث الصفحة وأعد المحاولة." },
+          { status: 409 }
         );
         response = applyCorsHeaders(response, req.headers.get('origin'));
         return response;

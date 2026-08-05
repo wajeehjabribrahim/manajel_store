@@ -1,6 +1,7 @@
 "use client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { CONTACT_INFO } from "@/constants/store";
+import { serializeJsonLd } from "@/lib/jsonLd";
 
 const normalizePhone = (phone: string) => phone.replace(/\D/g, "");
 
@@ -39,7 +40,7 @@ export default function FAQ() {
     <div className="bg-[#FBF8F2] text-[#121416] tajawal-regular-all">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqSchema) }}
       />
 
       <section

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import HomeContent from "@/components/HomeContent";
+import { serializeJsonLd } from "@/lib/jsonLd";
 
 export const metadata: Metadata = {
   title: "المتجر — زيت زيتون فلسطيني بكر ممتاز ومنتجات تراثية",
@@ -55,7 +56,7 @@ export default function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <HomeContent />
     </>

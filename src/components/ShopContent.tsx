@@ -136,6 +136,8 @@ export default function ShopContent() {
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  // Language the loaded products were fetched for; see filteredProducts.
+  const [productsLang, setProductsLang] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>(CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name })));
   const [deleting, setDeleting] = useState<string | null>(null);
   const [categoriesLoaded, setCategoriesLoaded] = useState(false);
@@ -183,6 +185,7 @@ export default function ShopContent() {
         const data = await res.json();
         if (Array.isArray(data?.products)) {
           setProducts(data.products);
+          setProductsLang(language);
           try {
             localStorage.setItem(`manajel-products-cache-${language}`, JSON.stringify(data.products));
             try {
@@ -234,6 +237,7 @@ export default function ShopContent() {
         const parsed = JSON.parse(cached);
         if (Array.isArray(parsed) && parsed.length > 0) {
           setProducts(parsed);
+          setProductsLang(language);
           if (metaRaw) {
             try {
               const meta = JSON.parse(metaRaw);
@@ -298,12 +302,16 @@ export default function ShopContent() {
   };
 
   const filteredProducts = useMemo(() => {
+    // Products carry names in the language they were fetched for. After a
+    // language switch the previous list lingers until the refetch resolves, so
+    // it is withheld rather than rendered with the wrong-language names.
+    if (productsLang !== language) return [];
     return selectedCategory
       ? products.filter((p) =>
           productMatchesSelectedCategory(p.category, selectedCategory, categories)
         )
       : products;
-  }, [products, selectedCategory, categories]);
+  }, [products, selectedCategory, categories, productsLang, language]);
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
   const hasMoreProducts = visibleCount < filteredProducts.length;
