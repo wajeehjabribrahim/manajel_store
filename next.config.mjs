@@ -70,6 +70,11 @@ const nextConfig = {
   },
   async headers() {
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || ['http://localhost:3000'];
+    // `next dev` compiles modules through eval for hot reloading. Without this
+    // the React bundle throws a CSP EvalError locally and never hydrates, which
+    // makes pages hang on their loading skeletons — production builds contain no
+    // eval, so the strict policy below still applies to real visitors.
+    const devScriptSrc = process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : '';
     const csp = [
       "default-src 'self'",
       "base-uri 'self'",
@@ -78,7 +83,7 @@ const nextConfig = {
       "img-src 'self' data: https:",
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'unsafe-inline'${devScriptSrc}`,
       "connect-src 'self' https:",
       "form-action 'self'",
     ].join('; ');
@@ -94,7 +99,7 @@ const nextConfig = {
       "media-src 'self'",
       "font-src 'self' data: https://fonts.gstatic.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+      `script-src 'self' 'unsafe-inline'${devScriptSrc} https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net`,
       "connect-src 'self'",
       "form-action 'self'",
     ].join('; ');

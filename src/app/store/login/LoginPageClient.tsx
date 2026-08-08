@@ -108,6 +108,15 @@ export default function LoginPageClient() {
             </button>
           </form>
 
+          {/* No self-service password reset yet, so point people at support
+              rather than leaving them stuck at the login form. */}
+          <div className="mt-4 text-xs text-black/60">
+            {language === "ar" ? "هل نسيت كلمة المرور؟" : "Forgot your password?"}{" "}
+            <Link href="/store/contact" className="text-[#C9A66B] transition-colors hover:text-[#121416]">
+              {language === "ar" ? "تواصل معنا" : "Contact us"}
+            </Link>
+          </div>
+
           <div className="mt-6 text-sm text-black/75">
             {t("auth.noAccount")}{" "}
             <Link href="/store/register" className="underline text-[#C9A66B] hover:text-[#121416]">

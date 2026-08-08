@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AccountPage() {
-  const { t, dir } = useLanguage();
+  const { t, dir, language } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -142,6 +143,15 @@ export default function AccountPage() {
             >
               {t("auth.logout")}
             </button>
+
+            {/* No self-service password reset yet, so point people at support
+                rather than leaving them stuck. */}
+            <p className="mt-4 text-center text-xs text-black/60">
+              {language === "ar" ? "هل نسيت كلمة المرور؟" : "Forgot your password?"}{" "}
+              <Link href="/store/contact" className="text-[#C9A66B] transition-colors hover:text-[#121416]">
+                {language === "ar" ? "تواصل معنا" : "Contact us"}
+              </Link>
+            </p>
           </form>
         </div>
       </div>

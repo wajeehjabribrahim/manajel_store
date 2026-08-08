@@ -651,14 +651,6 @@ export default function HomeContent() {
           {/* content inside centered container (kept empty to preserve vertical spacing) */}
         </div>
 
-        <div className="absolute left-0 right-0 bottom-6 z-40 flex justify-center pointer-events-auto">
-          <Link
-            href={isAdmin ? "/store/admin" : "/store/shop"}
-            className="gold-button rounded-xl px-6 py-2 text-sm font-bold"
-          >
-            {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
-          </Link>
-        </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
@@ -816,6 +808,18 @@ export default function HomeContent() {
         </Swiper>
         </div>
 
+        {/* Moved out of the hero: the call to action follows the featured
+            products, and sits above the separator so it still belongs to this
+            section rather than introducing the heritage story below it. */}
+        <div className="text-center mt-12">
+          <Link
+            href={isAdmin ? "/store/admin" : "/store/shop"}
+            className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform duration-150 hover:duration-300 hover:scale-105 shadow-lg hover:shadow-2xl"
+          >
+            {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
+          </Link>
+        </div>
+
         <div
           ref={separatorReveal.elementRef}
           className={`mt-12 sm:mt-14 mb-6 flex items-center justify-center gap-3 sm:gap-5 group transition-all duration-700 ${separatorReveal.isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
@@ -831,16 +835,6 @@ export default function HomeContent() {
           />
           <span className="h-px w-12 sm:w-20 bg-[#C9A66B]/45 transition-transform duration-150 transform-gpu will-change-transform origin-center group-hover:scale-x-110" />
         </div>
-
-
-        {/*<div className="text-center mt-12">
-          <Link
-            href={isAdmin ? "/store/admin" : "/store/shop"}
-            className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform duration-150 hover:duration-300 hover:scale-105 shadow-lg hover:shadow-2xl"
-          >
-            {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
-          </Link>
-        </div>*/}
       </section>
 
       <section
