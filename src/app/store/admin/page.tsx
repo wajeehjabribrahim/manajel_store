@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { COLORS } from "@/constants/store";
 
 export default function AdminDashboard() {
-  const { dir, language } = useLanguage();
+  const { t, dir } = useLanguage();
   const router = useRouter();
   const { status, data: session } = useSession();
   const [authorized, setAuthorized] = useState(false);
@@ -32,7 +32,7 @@ export default function AdminDashboard() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p style={{ color: COLORS.primary }} className="text-lg tajawal-regular">
-          جاري التحقق من الصلاحيات...
+          {t("admin.checkingAccess")}
         </p>
       </div>
     );
@@ -40,71 +40,71 @@ export default function AdminDashboard() {
 
   const dashboardItems = [
     {
-      title: "إضافة منتج",
-      description: "أضف منتجات جديدة إلى المتجر",
+      title: t("admin.addProduct"),
+      description: t("admin.addProductDesc"),
       icon: "➕",
       href: "/store/admin/products",
       color: "from-green-500 to-green-600",
     },
     {
-      title: "إدارة الطلبات",
-      description: "عرض وإدارة الطلبات الحالية",
+      title: t("admin.orders"),
+      description: t("admin.ordersDesc"),
       icon: "📦",
       href: "/store/admin/orders",
       color: "from-blue-500 to-blue-600",
     },
     {
-      title: "إدارة التصنيفات",
-      description: "إضافة وتعديل تصنيفات المنتجات",
+      title: t("admin.categories"),
+      description: t("admin.categoriesDesc"),
       icon: "🏷️",
       href: "/store/admin/categories",
       color: "from-teal-500 to-teal-600",
     },
     {
-      title: "ترتيب المنتجات",
-      description: "إدارة ترتيب عرض المنتجات",
+      title: t("admin.arrangeProducts"),
+      description: t("admin.arrangeProductsDesc"),
       icon: "🔄",
       href: "/store/admin/products/manage",
       color: "from-purple-500 to-purple-600",
     },
     {
-      title: "الرسائل المستقبلة",
-      description: "اطلع على رسائل العملاء",
+      title: t("admin.messages"),
+      description: t("admin.messagesDesc"),
       icon: "💬",
       href: "/store/admin/messages",
       color: "from-orange-500 to-orange-600",
     },
     {
-      title: "حسابات المستخدمين",
-      description: "عرض وإدارة جميع حسابات المستخدمين المسجلة",
+      title: t("admin.users"),
+      description: t("admin.usersDesc"),
       icon: "👥",
       href: "/store/admin/users",
       color: "from-pink-500 to-pink-600",
     },
     {
-      title: "الطلبات حسب السنة",
-      description: "عرض الطلبات والإيرادات حسب السنة والشهر",
+      title: t("admin.ordersYearly"),
+      description: t("admin.ordersYearlyDesc"),
       icon: "📊",
       href: "/store/admin/orders-yearly",
       color: "from-indigo-500 to-indigo-600",
     },
     {
-      title: "الإيميلات المشتركة معنا",
-      description: "عرض جميع الإيميلات المسجلة في الاشتراك",
+      title: t("admin.subscribers"),
+      description: t("admin.subscribersDesc"),
       icon: "📧",
       href: "/store/admin/subscribers",
       color: "from-emerald-500 to-emerald-600",
     },
     {
-      title: "طلبات الإشعار عند التوفر",
-      description: "عرض أرقام العملاء الذين طلبوا إشعارهم عند توفر منتج",
+      title: t("admin.stockNotifications"),
+      description: t("admin.stockNotificationsDesc"),
       icon: "🔔",
       href: "/store/admin/notifications",
       color: "from-yellow-500 to-yellow-600",
     },
     {
-      title: "فيدباك الطلبات",
-      description: "عرض تقييمات وملاحظات العملاء بعد تسليم الطلب",
+      title: t("admin.feedback"),
+      description: t("admin.feedbackDesc"),
       icon: "⭐",
       href: "/store/admin/feedback",
       color: "from-rose-500 to-rose-600",
@@ -119,10 +119,10 @@ export default function AdminDashboard() {
             style={{ color: COLORS.primary }}
             className="text-4xl md:text-5xl font-bold mb-4"
           >
-            لوحة التحكم
+            {t("admin.welcome")}
           </h1>
           <p className="text-gray-600 text-lg">
-            إدارة المتجر والمنتجات والطلبات
+            {t("admin.welcomeDesc")}
           </p>
         </div>
 
@@ -137,14 +137,10 @@ export default function AdminDashboard() {
               <span className="text-5xl">👥</span>
               <div className="text-right flex-1">
                 <h3 className="text-2xl font-bold mb-1">
-                  {language === "ar"
-                    ? "ملخص الحسابات"
-                    : "Users Summary"}
+                  {t("admin.usersSummary")}
                 </h3>
                 <p className="text-white/90">
-                  {language === "ar"
-                    ? "عرض إحصائيات المستخدمين المسجلين"
-                    : "View user statistics"}
+                  {t("admin.usersSummaryDesc")}
                 </p>
               </div>
             </div>
@@ -159,14 +155,10 @@ export default function AdminDashboard() {
               <span className="text-5xl">📦</span>
               <div className="text-right flex-1">
                 <h3 className="text-2xl font-bold mb-1">
-                  {language === "ar"
-                    ? "ملخص الطلبات"
-                    : "Orders Summary"}
+                  {t("admin.ordersSummary")}
                 </h3>
                 <p className="text-white/90">
-                  {language === "ar"
-                    ? "عرض إحصائيات الطلبات والإيرادات"
-                    : "View orders and revenue"}
+                  {t("admin.ordersSummaryDesc")}
                 </p>
               </div>
             </div>

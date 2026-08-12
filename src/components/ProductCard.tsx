@@ -207,7 +207,10 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
         }}
       >
         <div
-          className="product-card group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#FFFFFF] shadow-md transition-all duration-150 hover:duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl"
+          // active: states matter more than hover here — on a phone there is no
+          // hover at all, so tapping a card used to give no signal that the tap
+          // registered while the product page loaded.
+          className="product-card group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#FFFFFF] shadow-md transition-all duration-150 hover:duration-300 hover:border-[#C9A66B]/70 hover:shadow-xl active:scale-[0.98] active:border-[#C9A66B] active:shadow-sm active:duration-75"
         >
         {/* Image Container */}
         <div
@@ -300,7 +303,9 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
                   setShowQuickAdd(true);
                 }}
                 type="button"
-                className="flex-1 rounded-lg border border-[#C9A66B]/70 bg-[#C9A66B] py-1.5 sm:py-2 text-[10px] sm:text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#b17a23] tajawal-regular-all"
+                // Its own press state: this button stops propagation, so the
+                // card's active state never fires for it.
+                className="flex-1 rounded-lg border border-[#C9A66B]/70 bg-[#C9A66B] py-1.5 sm:py-2 text-[10px] sm:text-sm font-semibold text-white transition-all duration-200 hover:bg-[#b17a23] active:bg-[#96691A] active:scale-95 active:duration-75 tajawal-regular-all"
               >
                 {language === "ar" ? "إضافة سريعة" : "Quick add"}
               </button>

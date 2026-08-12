@@ -364,6 +364,25 @@
   .btn-primary:hover{transform:translateY(-3px)}
   .btn-ghost{border:1px solid rgba(250,250,247,.4);color:var(--paper)} .btn-ghost:hover{background:rgba(250,250,247,.12);transform:translateY(-3px)}
 
+  /* Press feedback. :hover does not exist on touch, so tapping used to give no
+     signal at all — and /store is a full page load, so nothing changes on
+     screen for a second or more. */
+  .btn:active{transform:scale(.97);transition-duration:.08s}
+  .drawer-nav a:active{color:var(--gold-deep)}
+
+  /* Held while the browser fetches /store, so the tap clearly registered. */
+  .btn.is-loading{pointer-events:none;opacity:.8}
+  .btn.is-loading::after{
+    content:"";display:inline-block;vertical-align:-2px;margin-inline-start:10px;
+    width:14px;height:14px;border-radius:50%;
+    border:2px solid currentColor;border-top-color:transparent;
+    animation:btnSpin .6s linear infinite}
+  @keyframes btnSpin{to{transform:rotate(360deg)}}
+  @media(prefers-reduced-motion:reduce){
+    .btn.is-loading::after{animation:none;opacity:.6}
+    .btn:active{transform:none}
+  }
+
   /* 7 · DETAIL gallery */
   #detail{padding:18vh 0 12vh;text-align:center}
   #detail .head{margin-bottom:clamp(40px,6vw,72px)} #detail .idx{display:block;margin-bottom:10px}
@@ -691,6 +710,24 @@
       ScrollTrigger.create({trigger:sec,start:"top center",onEnter:start,onEnterBack:start});
       ScrollTrigger.create({trigger:sec,start:"top top",end:"bottom bottom",scrub:true,onUpdate:s=>{const p=s.progress;dim.style.opacity=smooth(0.20,0.42,p);content.style.opacity=smooth(0.24,0.48,p);content.style.transform="translateY("+(28*(1-smooth(0.24,0.48,p)))+"px)";}});
     } else {dim.style.opacity=.9;content.style.opacity=1;content.style.transform="none";}
+  })();
+
+  // STORE LINKS — /store is a separate app, so the browser does a full page
+  // load that can take a second or more. Mark the button as busy so the tap is
+  // visibly acknowledged instead of the page appearing frozen.
+  (function initStoreNav(){
+    document.querySelectorAll('a[href="/store"]').forEach(function(link){
+      link.addEventListener("click",function(){
+        if(link.classList.contains("btn")) link.classList.add("is-loading");
+      });
+    });
+    // Returning via the back button restores the page from cache with the
+    // spinner still showing, so clear it.
+    window.addEventListener("pageshow",function(){
+      document.querySelectorAll(".btn.is-loading").forEach(function(el){
+        el.classList.remove("is-loading");
+      });
+    });
   })();
 
   // MOBILE DRAWER — hamburger next to the logo on small screens

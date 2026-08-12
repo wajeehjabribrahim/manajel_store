@@ -8,9 +8,6 @@ import { useSession } from "next-auth/react";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { t, dir } = useLanguage();
   const { data: session, status } = useSession();
-  const titleText = t("admin.title");
-  const addProductText = t("admin.addProduct");
-  const ordersText = t("admin.orders");
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
 
   if (status === "loading") {
@@ -28,15 +25,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="max-w-7xl mx-auto px-4 py-12" style={{ direction: dir }}>
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 style={{ color: COLORS.primary }} className="text-2xl font-bold mb-2">
-            غير مصرح
+            {t("admin.unauthorized")}
           </h2>
-          <p className="text-gray-600 mb-4">هذه الصفحة مخصصة للأدمن فقط.</p>
+          <p className="text-gray-600 mb-4">{t("admin.adminOnly")}</p>
           <Link
             href="/store"
             className="inline-block px-4 py-2 rounded-lg text-white"
             style={{ backgroundColor: COLORS.primary }}
           >
-            العودة للرئيسية
+            {t("admin.backHome")}
           </Link>
         </div>
       </div>
@@ -50,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     >
       <aside className="w-full lg:w-64 bg-white rounded-lg shadow-md p-4 h-fit">
         <h2 style={{ color: COLORS.primary }} className="text-xl font-bold mb-4">
-          {titleText === "admin.title" ? "لوحة التحكم" : titleText}
+          {t("admin.title")}
         </h2>
         <nav className="space-y-2">
           <Link
@@ -58,21 +55,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             className="block px-4 py-2 rounded-lg hover:bg-gray-100"
             style={{ color: COLORS.primary }}
           >
-            {addProductText === "admin.addProduct" ? "إضافة منتج" : addProductText}
+            {t("admin.addProduct")}
           </Link>
           <Link
             href="/store/admin/categories"
             className="block px-4 py-2 rounded-lg hover:bg-gray-100"
             style={{ color: COLORS.primary }}
           >
-            إدارة التصنيفات
+            {t("admin.categories")}
           </Link>
           <Link
             href="/store/admin/orders"
             className="block px-4 py-2 rounded-lg hover:bg-gray-100"
             style={{ color: COLORS.primary }}
           >
-            {ordersText === "admin.orders" ? "الطلبات الحالية" : ordersText}
+            {t("admin.orders")}
           </Link>
         </nav>
       </aside>
