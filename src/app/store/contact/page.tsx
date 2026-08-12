@@ -1,7 +1,8 @@
 "use client";
 
 import { COLORS, CONTACT_INFO } from "@/constants/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/constants/translations";
 
@@ -15,6 +16,7 @@ interface FormData {
 
 export default function Contact() {
   const { language } = useLanguage();
+  const { status } = useSession();
   const t = translations[language];
   // Built from CONTACT_INFO.phone, exactly like the floating button. The old
   // wa.me/message/… invite short link no longer opened a chat.
@@ -30,6 +32,36 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Prefill contact details for signed-in customers. Only empty fields are
+  // touched, so anything already typed — or edited afterwards — is preserved.
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/user");
+        if (!res.ok) return;
+        const data = await res.json();
+        const user = data?.user;
+        if (!user || cancelled) return;
+
+        setFormData((prev) => ({
+          ...prev,
+          name: prev.name || user.name || "",
+          email: prev.email || user.email || "",
+          phone: prev.phone || user.phone || "",
+        }));
+      } catch {
+        // leave the form empty; the customer can still fill it in
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
