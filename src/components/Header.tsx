@@ -15,7 +15,6 @@ export default function Header() {
   const { data: session, status } = useSession();
   const isAuthenticated = status === "authenticated";
   const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-  const isHomePage = pathname === "/store";
 
   // Initialize hooks BEFORE any conditionals
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -91,10 +90,8 @@ export default function Header() {
     };
   }, []);
 
-  // Hide header on home page (hero has its own header overlay) - AFTER all hooks
-  if (isHomePage) {
-    return null;
-  }
+  // Renders on every page now, including /store: the hero used to carry its own
+  // duplicate overlay header, which meant two headers to keep in sync.
 
   const navItems = [
     { name: t("nav.home"), href: "/store" },
@@ -105,13 +102,23 @@ export default function Header() {
 
   return (
     <header
-      className="text-[#121416] relative z-40 w-full tajawal-regular-all"
+      // Solid cream bar with a hairline rule, instead of floating transparently
+      // over the hero. One header for the whole store.
+      className="text-[#121416] relative z-40 w-full tajawal-regular-all border-b"
+      style={{ backgroundColor: "#FBF8F2", borderColor: "rgba(201,166,107,0.28)" }}
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-5 relative z-10">
-        <div className="flex justify-between items-center relative">
+      <nav className="max-w-7xl mx-auto px-3 min-[375px]:px-4 sm:px-6 lg:px-8 py-4 lg:py-5 relative z-10">
+        {/* Mobile is a simple two-end flex row. The three-track grid only kicks
+            in at lg, where the centre nav exists: below that the nav is
+            display:none, so it leaves no grid cell and the icons used to fall
+            into the middle column instead of sitting at the right edge. */}
+        <div className="flex items-center justify-between gap-3 lg:grid lg:grid-cols-[1fr_auto_1fr] relative">
           {/* Logo */}
-          <Link href="/store" className="flex items-center gap-2 lg:gap-3 group">
-            <div className="w-9 h-9 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
+          {/* Below 375px (older/small Androids) the brand lockup + controls
+              overflow the row, so everything steps down one notch. The company
+              name is never truncated — it shrinks instead. */}
+          <Link href="/store" className="flex items-center gap-1.5 min-[375px]:gap-2 lg:gap-3 group">
+            <div className="w-8 h-8 min-[375px]:w-9 min-[375px]:h-9 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center overflow-hidden border transition-transform duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
               <Image
                 src="/images/logo.jpg"
                 alt="Manajel Logo"
@@ -121,19 +128,25 @@ export default function Header() {
                 className="object-cover w-full h-full"
               />
             </div>
-            <div className="flex flex-col">
-              <span className="text-lg lg:text-2xl font-black tracking-tight transition-all duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
-              <span className="text-[8px] lg:text-[10px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
+            {/* Deliberately not translated: the registered company name is part
+                of the brand mark, so both lines stay fixed in either language. */}
+            <div className="flex flex-col leading-tight">
+              <span className="text-xs min-[375px]:text-sm lg:text-lg font-black tracking-tight whitespace-nowrap transition-all duration-300 group-hover:text-opacity-90">
+                شركة ومعصرة مناجل
+              </span>
+              <span className="text-[7px] tracking-[0.08em] min-[375px]:text-[8px] min-[375px]:tracking-[0.12em] lg:text-[10px] opacity-70 font-semibold whitespace-nowrap">
+                MANAJEL COMPANY &amp; MILL
+              </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex gap-6">
+          {/* Desktop Navigation — centre track */}
+          <div className="hidden lg:flex justify-center gap-8 xl:gap-10">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-semibold uppercase tracking-[0.12em] text-black/80 hover:text-black transition-colors"
+                className="relative text-sm font-semibold uppercase tracking-[0.18em] text-black/75 transition-colors hover:text-[#96691A] after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-[#C9A66B] after:transition-all after:duration-300 hover:after:w-full"
               >
                 {item.name}
               </Link>
@@ -141,7 +154,7 @@ export default function Header() {
           </div>
 
           {/* Language Switcher, Auth & Cart */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center justify-end gap-4">
             <LanguageSwitcher />
             
             {/* قائمة السلة والطلبات - للجميع */}
@@ -305,7 +318,12 @@ export default function Header() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </Link>
-                <span className="text-sm text-black/75">
+                {/* Truncated: a long full name would otherwise push the action
+                    cluster wide enough to squeeze the centred nav. */}
+                <span
+                  className="text-sm text-black/75 max-w-[10rem] xl:max-w-[14rem] truncate"
+                  title={session?.user?.name || undefined}
+                >
                   {t("auth.welcome")}
                   {session?.user?.name ? `, ${session.user.name}` : ""}
                 </span>
@@ -330,15 +348,15 @@ export default function Header() {
           </div>
 
           {/* Mobile Icons - Language, Account & Cart */}
-          <div className="lg:hidden flex items-center gap-2">
+          <div className="lg:hidden flex items-center gap-1.5 min-[375px]:gap-2 shrink-0">
             <LanguageSwitcher />
             <Link
               href={isAuthenticated ? "/store/account" : "/store/login"}
-              className="transition-opacity w-8 h-8 flex items-center justify-center lg:w-10 lg:h-10"
+              className="transition-opacity w-10 h-10 flex items-center justify-center rounded-full active:bg-black/5"
               title={isAuthenticated ? (t("account.title") === "account.title" ? "الحساب" : t("account.title")) : t("auth.login")}
             >
               <svg
-                className="w-5 h-5 lg:w-6 lg:h-6"
+                className="w-[22px] h-[22px]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -356,11 +374,11 @@ export default function Header() {
             <div className="relative z-50" ref={mobileUserMenuRef}>
               <button
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="transition-opacity relative w-8 h-8 flex items-center justify-center text-black/85 hover:text-black lg:w-10 lg:h-10"
+                className="transition-opacity relative w-10 h-10 flex items-center justify-center rounded-full text-black/85 hover:text-black active:bg-black/5"
                 title="السلة والطلبات"
               >
                 <svg
-                  className="w-5 h-5 lg:w-6 lg:h-6"
+                  className="w-[22px] h-[22px]"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

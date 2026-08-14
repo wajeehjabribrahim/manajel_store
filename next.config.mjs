@@ -11,7 +11,9 @@ const nextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 60 * 60 * 24 * 30,
+    // One day, not 30: this is the server-side cache of optimised variants,
+    // so a replaced source image would otherwise keep serving the old render.
+    minimumCacheTTL: 60 * 60 * 24,
     remotePatterns: [
       {
         protocol: "https",
@@ -135,11 +137,15 @@ const nextConfig = {
         ],
       },
       {
+        // NOT immutable: these filenames are stable while their contents can be
+        // replaced (swapping logo.jpg for a new logo). "immutable" told browsers
+        // never to revalidate, so a replaced image kept showing for 30 days.
+        // stale-while-revalidate keeps the speed but picks changes up quickly.
         source: '/images/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=2592000, immutable',
+            value: 'public, max-age=3600, stale-while-revalidate=604800',
           },
         ],
       },
@@ -148,7 +154,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=2592000, immutable',
+            value: 'public, max-age=3600, stale-while-revalidate=604800',
           },
         ],
       },
@@ -157,7 +163,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=2592000, immutable',
+            value: 'public, max-age=3600, stale-while-revalidate=604800',
           },
         ],
       },
@@ -180,11 +186,15 @@ const nextConfig = {
         ],
       },
       {
+        // Same reasoning as /images: fixed filenames with replaceable contents
+        // (hero stills, the CTA clip). stale-while-revalidate still serves these
+        // instantly from cache while checking for a newer version in the
+        // background, so replacing an asset actually takes effect.
         source: '/landing/assets/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=2592000, immutable',
+            value: 'public, max-age=3600, stale-while-revalidate=604800',
           },
         ],
       },

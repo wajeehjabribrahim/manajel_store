@@ -17,6 +17,15 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
+// One pill for both calls to action on this page — the hero's and the one under
+// the featured products — so they read as the same control in two places.
+const CTA_PILL =
+  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#FBF8F2] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 md:text-[11px]";
+const CTA_PILL_STYLE = {
+  backgroundColor: "#3E2F1C",
+  boxShadow: "0 8px 20px rgba(62,47,28,0.26)",
+};
+
 export default function HomeContent() {
   const { t, language, dir } = useLanguage();
   const { data: session, status } = useSession();
@@ -265,7 +274,7 @@ export default function HomeContent() {
       <SignupPrompt />
 
         <section
-          className="hero-section relative w-full aspect-[4/5] min-h-[72vh] px-4 text-white sm:aspect-auto sm:min-h-[44vh] md:aspect-[15/8] md:min-h-[44vh] mt-0"
+          className="hero-section relative w-full aspect-[4/5] min-h-[72vh] sm:aspect-auto sm:min-h-[52vh] md:aspect-[15/8] md:min-h-[56vh] mt-0"
         style={{
           // The image itself lives in the .hero-section rule in globals.css so
           // it can be declared as AVIF with a WebP fallback via image-set().
@@ -274,381 +283,83 @@ export default function HomeContent() {
           backgroundAttachment: "fixed",
         }}
       >
+        {/* Cream scrim instead of the old dark one, and horizontal at every
+            width: the lockup sits on the left in both languages, so only the
+            left band is lightened and the bottle on the right keeps its colour.
+            The earlier vertical ramp on phones washed out most of the photo. */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 md:hidden"
           style={{
             background:
-              "linear-gradient(180deg, rgba(251,248,242,0) 86%, rgba(251,248,242,0.9) 100%), linear-gradient(180deg, rgba(22,17,11,0.5) 0%, rgba(22,17,11,0.28) 32%, rgba(22,17,11,0.26) 62%, rgba(22,17,11,0.42) 100%)",
+              // Held high across the text column (which ends at 62%) so the
+              // photograph's dark patches can't swallow the gold, then dropped
+              // fast — the bottle from ~72% on keeps its full colour.
+              "linear-gradient(to right, rgba(251,248,242,0.93) 0%, rgba(251,248,242,0.9) 40%, rgba(251,248,242,0.86) 58%, rgba(251,248,242,0.3) 74%, rgba(251,248,242,0.05) 88%, rgba(251,248,242,0) 96%), linear-gradient(180deg, rgba(251,248,242,0) 84%, rgba(251,248,242,0.9) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 hidden md:block"
+          style={{
+            // Always "to right": the lockup stays on the left in both
+            // languages so it never lands on the bottle.
+            background: `linear-gradient(to right, rgba(251,248,242,0.95) 0%, rgba(251,248,242,0.92) 30%, rgba(251,248,242,0.72) 44%, rgba(251,248,242,0.25) 62%, rgba(251,248,242,0) 80%), linear-gradient(180deg, rgba(251,248,242,0) 88%, rgba(251,248,242,0.92) 100%)`,
           }}
         />
 
-        {/* Header overlay on hero */}
-        <header className="absolute top-0 left-0 right-0 z-50 w-full text-white tajawal-regular-all">
-          <nav className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 lg:py-5 relative z-10">
-            <div className="flex justify-between items-center relative lg:gap-8">
-              {/* Logo */}
-              <Link href="/store" className="flex items-center gap-2 lg:gap-3 group lg:translate-x-2">
-                <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-lg flex items-center justify-center overflow-hidden border transition-transform duration-150 hover:duration-300 group-hover:scale-110" style={{ borderColor: `${gold}88`, boxShadow: "0 8px 18px rgba(201,166,107,0.2)" }}>
-                  <Image
-                    src="/images/logo.jpg"
-                    alt="Manajel Logo"
-                    width={40}
-                    height={40}
-                    priority
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-lg sm:text-xl lg:text-2xl font-black tracking-tight transition-all duration-150 hover:duration-300 group-hover:text-opacity-90">{t("nav.brand")}</span>
-                  <span className="text-[8px] lg:text-[9px] opacity-70 font-semibold tracking-[0.2em]">PALESTINE</span>
-                </div>
-              </Link>
-
-              {/* Desktop Navigation */}
-              <div className="hidden lg:flex items-center gap-6 lg:gap-9 lg:-translate-x-2">
-                {[
-                  { name: t("nav.home"), href: "/store" },
-                  { name: t("nav.shop"), href: "/store/shop" },
-                  { name: t("nav.about"), href: "/store/about" },
-                  { name: t("nav.contact"), href: "/store/contact" },
-                ].map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="text-xs lg:text-sm font-semibold uppercase tracking-[0.1em] text-white/80 hover:text-white transition-colors duration-150 hover:duration-300"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Language Switcher, Auth & Cart */}
-              <div className="hidden lg:flex items-center gap-5 lg:gap-6">
-                <LanguageSwitcher />
-                
-                {/* قائمة السلة والطلبات - للجميع */}
-                <div className="relative z-50" ref={desktopUserMenuRef}>
-                  <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="transition-opacity duration-150 hover:duration-300 relative flex items-center gap-2 text-white/85 hover:text-white"
-                    title="السلة والطلبات"
-                  >
-                    <div className="relative w-5 h-5 flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                        />
-                      </svg>
-                      {cartCount > 0 ? (
-                        <span className="absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1.5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center border border-white/20">
-                          {cartCount > 99 ? "99+" : cartCount}
-                        </span>
-                      ) : null}
-                    </div>
-                  </button>
-
-                  {showUserMenu && (
-                    <div
-                      className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
-                      style={{
-                        backgroundColor: "#FFFFFF",
-                        borderColor: "rgba(201,166,107,0.35)",
-                        zIndex: 99999,
-                        boxShadow: "0 14px 34px rgba(0,0,0,0.15)",
-                        top: "100%",
-                        marginTop: "8px",
-                        width: "208px",
-                        [dir === "rtl" ? "left" : "right"]: 0,
-                      }}
-                    >
-                      <Link
-                        href="/store/cart"
-                        onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 transition-colors border-b"
-                        style={{
-                          color: "#121416",
-                          borderColor: "rgba(201,166,107,0.2)",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                      >
-                        <div className="flex items-center gap-2">
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
-                            />
-                          </svg>
-                          <span className="font-semibold text-sm">{t("nav.cart")}</span>
-                          {cartCount > 0 && (
-                            <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white text-[9px] font-bold flex items-center justify-center border border-white/20">
-                              {cartCount > 99 ? "99+" : cartCount}
-                            </span>
-                          )}
-                        </div>
-                      </Link>
-                      <Link
-                        href="/store/orders"
-                        onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 transition-colors"
-                        style={{
-                          color: "#121416",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                      >
-                        <div className="flex items-center gap-2">
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
-                          <span className="font-semibold text-sm">{t("admin.orders") === "admin.orders" ? "الطلبات" : t("admin.orders")}</span>
-                        </div>
-                      </Link>
-                    </div>
-                  )}
-                </div>
-                
-                {isAuthenticated ? (
-                  <div className="flex items-center gap-2">
-                    {isAdmin && (
-                      <>
-                        <Link
-                          href="/store/admin/products"
-                          className="transition-opacity"
-                          title={t("admin.addProduct") === "admin.addProduct" ? "إضافة منتج" : t("admin.addProduct")}
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                        </Link>
-                        <Link
-                          href="/store/admin/orders"
-                          className="transition-opacity"
-                          title={t("admin.orders") === "admin.orders" ? "الطلبات" : t("admin.orders")}
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
-                        </Link>
-                      </>
-                    )}
-                    
-                    <Link
-                      href="/store/account"
-                      className="transition-opacity w-8 h-8 flex items-center justify-center"
-                      title={t("account.title") === "account.title" ? "الحساب" : t("account.title")}
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                    </Link>
-                    <span className="text-xs text-white/75">
-                      {t("auth.welcome")}
-                      {session?.user?.name ? `, ${session.user.name}` : ""}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Link
-                      href="/store/login"
-                      className="px-2 py-1 text-xs rounded-md bg-white/10 hover:bg-white/20 transition-colors duration-150 hover:duration-300"
-                    >
-                      {t("auth.login")}
-                    </Link>
-                    <Link
-                      href="/store/register"
-                      className="px-2 py-1 text-xs rounded-md border transition-colors"
-                      style={{ borderColor: `${gold}88`, color: "#F2ECE2" }}
-                    >
-                      {t("auth.register")}
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile Icons - Language, Account & Cart */}
-              <div className="lg:hidden flex items-center gap-2">
-                <LanguageSwitcher />
-                <Link
-                  href={isAuthenticated ? "/store/account" : "/store/login"}
-                  className="transition-opacity w-8 h-8 flex items-center justify-center"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </Link>
-                <div className="relative z-50" ref={mobileUserMenuRef}>
-                  <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="transition-opacity duration-150 hover:duration-300 relative flex items-center justify-center text-white/85 hover:text-white"
-                  >
-                    <div className="relative w-5 h-5 flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                        />
-                      </svg>
-                      {cartCount > 0 ? (
-                        <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-0.5 rounded-full bg-red-600 text-white text-[9px] font-bold leading-[16px] text-center border border-white/20">
-                          {cartCount > 99 ? "99+" : cartCount}
-                        </span>
-                      ) : null}
-                    </div>
-                  </button>
-
-                  {showUserMenu && (
-                    <div
-                      className="absolute rounded-2xl shadow-xl border overflow-hidden backdrop-blur"
-                      style={{
-                        backgroundColor: "#FFFFFF",
-                        borderColor: "rgba(201,166,107,0.35)",
-                        zIndex: 99999,
-                        boxShadow: "0 14px 34px rgba(0,0,0,0.15)",
-                        top: "100%",
-                        marginTop: "8px",
-                        width: "208px",
-                        [dir === "rtl" ? "left" : "right"]: 0,
-                      }}
-                    >
-                      <Link
-                        href="/store/cart"
-                        onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 transition-colors border-b"
-                        style={{
-                          color: "#121416",
-                          borderColor: "rgba(201,166,107,0.2)",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                      >
-                        <div className="flex items-center gap-3">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m10 0h2m-2 0H9m4 0a1 1 0 11-2 0 1 1 0 012 0z"
-                            />
-                          </svg>
-                          <span className="font-semibold">{t("nav.cart")}</span>
-                          {cartCount > 0 && (
-                            <span className="min-w-[20px] h-[20px] px-1.5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center border border-white/20">
-                              {cartCount > 99 ? "99+" : cartCount}
-                            </span>
-                          )}
-                        </div>
-                      </Link>
-                      <Link
-                        href="/store/orders"
-                        onClick={() => setShowUserMenu(false)}
-                        className="block px-4 py-3 transition-colors"
-                        style={{
-                          color: "#121416",
-                        }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-                      >
-                        <div className="flex items-center gap-3">
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
-                          <span className="font-semibold">{t("orders.myOrders")}</span>
-                        </div>
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </nav>
-        </header>
+        {/* The shared <Header /> now renders on this page too, so the hero no
+            longer carries its own duplicate overlay header. */}
 
         <div
           ref={heroTextReveal.elementRef}
-          className={`pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 px-4 text-center scroll-animate transition-all duration-700 ${heroTextReveal.isVisible ? "visible opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-          style={{
-            background:
-              "radial-gradient(ellipse 62% 42% at 50% 46%, rgba(20,15,8,0.4) 0%, rgba(20,15,8,0.22) 55%, rgba(20,15,8,0) 100%)",
-          }}
+          // Pinned to the left in both languages, on purpose: the photograph's
+          // subject sits on the right, so a mirrored RTL lockup would land on
+          // top of the bottle. In RTL the cross axis runs right-to-left, so
+          // flex-end — not flex-start — is the left edge.
+          className={`hero-content relative z-20 mx-auto flex h-full w-full max-w-7xl flex-col justify-center gap-3 px-4 text-left scroll-animate transition-all duration-700 sm:px-6 md:gap-5 lg:px-8 ${language === "ar" ? "items-end" : "items-start"} ${heroTextReveal.isVisible ? "visible opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
         >
-          <p className="gold-texture-hero text-xl sm:text-5xl md:text-5xl tajawal-regular-all font-extrabold tracking-wide">
+          {/* Capped to 70% of the column on phones so a line never runs under
+              the bottle on the right. */}
+          <h1 className="hero-display gold-texture max-w-[62%] text-2xl leading-[1.35] sm:text-3xl md:max-w-[18ch] md:text-[2.75rem] md:leading-[1.25]">
             {language === "ar" ? "شركة ومعصرة مناجل للانتاج الزراعي" : "Manajel Company & Mill for Agricultural Production"}
-          </p>
-          <p className="gold-texture-hero text-xs sm:text-base md:text-2xl font-semibold tajawal-regular-all tracking-wide max-w-3xl">
+          </h1>
+
+          {/* Decorative olive-branch rule. The artwork carries its own side
+              lines and a transparent ground, so it stands alone. */}
+          <Image
+            src="/images/zakhrafa.png"
+            alt=""
+            aria-hidden="true"
+            width={2172}
+            height={724}
+            sizes="(max-width: 767px) 180px, 240px"
+            className="h-auto w-[180px] md:w-[240px]"
+          />
+
+          <p className="max-w-[70%] text-sm font-normal leading-7 text-[#3E2F1C]/85 tajawal-regular sm:text-base md:max-w-[42ch] md:text-base md:leading-8">
             {language === "ar" ? "التراث الفلسطيني في كل منتج" : "Palestinian heritage in every product"}
           </p>
-        </div>
 
-        <div className="hero-content relative z-10 mx-auto flex min-h-[96vh] w-full max-w-7xl flex-col justify-end pb-6 sm:min-h-[44vh] md:h-full md:min-h-0 md:pb-4 pt-20">
-          {/* content inside centered container (kept empty to preserve vertical spacing) */}
+          <Link
+            href="/store/shop"
+            className={`mt-1 ${CTA_PILL}`}
+            style={CTA_PILL_STYLE}
+          >
+            {language === "ar" ? "تسوّق الآن" : "Shop Now"}
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="h-3 w-3"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              // The arrow points along the reading direction, so it flips in Arabic.
+              style={{ transform: language === "ar" ? "scaleX(-1)" : undefined }}
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </Link>
         </div>
 
       </section>
@@ -814,9 +525,23 @@ export default function HomeContent() {
         <div className="text-center mt-12">
           <Link
             href={isAdmin ? "/store/admin" : "/store/shop"}
-            className="gold-button inline-block px-7 py-2.5 text-base rounded-xl font-bold transition-transform duration-150 hover:duration-300 hover:scale-105 shadow-lg hover:shadow-2xl"
+            className={CTA_PILL}
+            style={CTA_PILL_STYLE}
           >
             {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="h-3 w-3"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ transform: language === "ar" ? "scaleX(-1)" : undefined }}
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           </Link>
         </div>
 
