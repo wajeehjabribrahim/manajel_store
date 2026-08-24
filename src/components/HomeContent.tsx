@@ -20,7 +20,7 @@ import "swiper/css/pagination";
 // One pill for both calls to action on this page — the hero's and the one under
 // the featured products — so they read as the same control in two places.
 const CTA_PILL =
-  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[#FBF8F2] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 md:text-[11px]";
+  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-bold uppercase transition-all duration-300 hover:-translate-y-0.5 active:scale-95 md:text-[11px]";
 const CTA_PILL_STYLE = {
   backgroundColor: "#3E2F1C",
   boxShadow: "0 8px 20px rgba(62,47,28,0.26)",
@@ -341,20 +341,21 @@ export default function HomeContent() {
 
           <Link
             href="/store/shop"
-            className={`mt-1 ${CTA_PILL}`}
+            className={`mt-1 ${CTA_PILL} ${
+              language === "ar" ? "tracking-normal text-xs md:text-sm" : "tracking-[0.18em]"
+            }`}
             style={CTA_PILL_STYLE}
           >
             {language === "ar" ? "تسوّق الآن" : "Shop Now"}
             <svg
               viewBox="0 0 24 24"
               aria-hidden="true"
-              className="h-3 w-3"
+              className="h-3 w-3 shrink-0"
               fill="none"
               stroke="currentColor"
               strokeWidth={2.5}
               strokeLinecap="round"
               strokeLinejoin="round"
-              // The arrow points along the reading direction, so it flips in Arabic.
               style={{ transform: language === "ar" ? "scaleX(-1)" : undefined }}
             >
               <path d="M5 12h14M13 6l6 6-6 6" />
@@ -525,14 +526,16 @@ export default function HomeContent() {
         <div className="text-center mt-12">
           <Link
             href={isAdmin ? "/store/admin" : "/store/shop"}
-            className={CTA_PILL}
+            className={`${CTA_PILL} ${
+              language === "ar" ? "tracking-normal text-xs md:text-sm" : "tracking-[0.18em]"
+            }`}
             style={CTA_PILL_STYLE}
           >
             {isAdmin ? "لوحة التحكم" : language === "ar" ? "تسوق كل المنتجات" : "Shop All Products"}
             <svg
               viewBox="0 0 24 24"
               aria-hidden="true"
-              className="h-3 w-3"
+              className="h-3 w-3 shrink-0"
               fill="none"
               stroke="currentColor"
               strokeWidth={2.5}
