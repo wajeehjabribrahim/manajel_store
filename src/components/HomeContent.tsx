@@ -20,8 +20,8 @@ import "swiper/css/pagination";
 // One pill for both calls to action on this page — the hero's and the one under
 // the featured products — so they read as the same control in two places.
 const CTA_PILL =
-  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-bold uppercase transition-all duration-300 hover:-translate-y-0.5 active:scale-95 md:text-[11px]";
-const CTA_PILL_STYLE = {
+  "inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[10px] font-bold uppercase text-[#FBF8F2] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 md:text-[11px]";
+  const CTA_PILL_STYLE = {
   backgroundColor: "#3E2F1C",
   boxShadow: "0 8px 20px rgba(62,47,28,0.26)",
 };
