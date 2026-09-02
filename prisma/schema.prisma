@@ -43,7 +43,7 @@ model Order {
 }
 
 model OrderItem {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   orderId   String
   productId String
   name      String
@@ -52,7 +52,7 @@ model OrderItem {
   price     Float
   total     Float
   image     String?
-  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Account {
@@ -95,8 +95,6 @@ model Product {
   nameEn        String?
   description   String
   descriptionEn String?
-  ingredients   String?
-  ingredientsEn String?
   category      String
   price         Float
   image         String?
@@ -110,6 +108,8 @@ model Product {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   imageData     String?
+  ingredients   String?
+  ingredientsEn String?
 }
 
 model ContactMessage {

@@ -46,6 +46,11 @@ function getRateLimitConfig(pathname: string) {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Temporarily close the store for maintenance صيانة
+  // if (pathname === "/store" || pathname.startsWith("/store/")) {
+  //   return NextResponse.redirect(new URL("/maintenance", request.url));
+  // }
+
   const response = NextResponse.next();
 
   // Skip noisy NextAuth client endpoints to avoid false 429s.
@@ -103,5 +108,10 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/auth/:path*", "/api/orders/:path*", "/api/contact/:path*"],
+  matcher: [
+    "/store/:path*",
+    "/api/auth/:path*",
+    "/api/orders/:path*",
+    "/api/contact/:path*",
+  ],
 };
