@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { sendSecurityAlert } from "@/lib/email";
 
-// Audit logging persisted in the SecurityEvent table so login lockouts
+// Audit logging persisted in the SecurityEvent table so login lockouts.
 // survive restarts and apply across serverless instances. DB failures fall
 // back to console-only logging and never break the login flow itself.
 async function auditLog(entry: { action: string; email?: string; userId?: string; reason?: string }) {
