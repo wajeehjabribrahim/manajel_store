@@ -179,15 +179,15 @@ export default function HomeContent() {
     {
       nameAr: "أحمد الكيلاني",
       roleAr: "زبون دائم",
-      reviewAr: "الزيت فعلاً مرتب وطعمه واضح من أول تجربة. التوصيل دايما سريع والتغليف مرتب.",
+      reviewAr: "الزيت فعلا مرتب وطعمه واضح من أول تجربة والتوصيل دايما سريع والتغليف مرتب.",
       nameEn: "Ahmad Al-Kilani",
       roleEn: "Loyal Customer",
       reviewEn: "The olive oil is truly authentic and you can taste the quality immediately. Fast delivery and great packaging.",
     },
     {
       nameAr: "لينا أبو خليل",
-      roleAr: "عميلة منذ 2022",
-      reviewAr: "من أجمل المنتجات الفلسطينية اللي جربتها. الجودة ثابتة بكل طلبية.",
+      roleAr: "زبونة منذ 2022",
+      reviewAr: "من أجمل المنتجات الفلسطينية اللي جربتها والجودة ثابتة بكل طلبية.",
       nameEn: "Lina Abu Khalil",
       roleEn: "Customer Since 2022",
       reviewEn: "One of the best Palestinian products I have tried. The quality is consistent in every order.",
@@ -203,15 +203,15 @@ export default function HomeContent() {
     {
       nameAr: "سمر النجار",
       roleAr: "مشتري متكرر",
-      reviewAr: "تعامل راقي وجودة ممتازة. صرت أوصي فيكم لكل العيلة والأصحاب.",
+      reviewAr: "تعامل راقي وجودة ممتازة صرت أوصي فيكم لكل العيلة والأصحاب.",
       nameEn: "Samar Al-Najjar",
       roleEn: "Repeat Buyer",
       reviewEn: "Great service and excellent quality. I keep recommending you to family and friends.",
     },
     {
       nameAr: "رامي الخطيب",
-      roleAr: "عميل جديد",
-      reviewAr: "أول طلب إلي وكان فوق التوقعات. الطعم أصيل والمنتج نظيف وواضح الاهتمام فيه.",
+      roleAr: "زبون جديد",
+      reviewAr: "أول طلب إلي وكان فوق التوقعات الطعم مرتب والمنتج نظيف وواضح الاهتمام فيه.",
       nameEn: "Rami Al-Khatib",
       roleEn: "New Customer",
       reviewEn: "My first order exceeded expectations. Authentic taste, clean product, and clear attention to detail.",
@@ -339,7 +339,7 @@ export default function HomeContent() {
             {language === "ar" ? "التراث الفلسطيني في كل منتج" : "Palestinian heritage in every product"}
           </p>
 
-          <Link
+          {/* <Link
             href="/store/shop"
             className={`mt-1 ${CTA_PILL} ${
               language === "ar" ? "tracking-normal text-xs md:text-sm" : "tracking-[0.18em]"
@@ -360,7 +360,7 @@ export default function HomeContent() {
             >
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
-          </Link>
+          </Link> */}
         </div>
 
       </section>

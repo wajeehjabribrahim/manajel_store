@@ -441,10 +441,10 @@ html {
      the Next image optimizer. Same picture, same dimensions: 155 KB as WebP and
      73 KB as AVIF. Declared as a background (not next/image) on purpose so
      background-attachment: fixed keeps working. */
-  background-image: url("/images/hero.webp");
+  background-image: url("/images/hero.png");
   background-image: image-set(
-    url("/images/hero.avif") type("image/avif"),
-    url("/images/hero.webp") type("image/webp")
+    url("/images/hero.png") type("image/png"),
+    url("/images/hero.png") type("image/png")
   );
   background-attachment: scroll;
   background-position: center;
@@ -614,6 +614,8 @@ html {
       #4a3208 90%,
       #63450f 100%
     );
+     padding-bottom: 0.2em;
+     margin-bottom: -0.1em;
 }
 
 .product-image {
