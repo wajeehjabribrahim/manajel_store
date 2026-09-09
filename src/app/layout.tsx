@@ -12,6 +12,9 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.mnajel.com"),
+  icons: {
+  icon: "/favicon.png",
+},
   title: {
     default: "مناجل | Manajel — زيت زيتون فلسطيني بكر ممتاز",
     template: "%s | مناجل Manajel",
