@@ -102,26 +102,6 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px
 .allergen{color:#75613E}
 .contact-title{font-size:45px;margin:0}.contact-list{margin-top:28px;display:grid;gap:13px;font-size:14px}.contact-label{color:var(--muted);font:500 9px Inter,sans-serif;letter-spacing:1.8px;text-transform:uppercase}.contact-value{font-size:16px}
 .footer{position:absolute;left:18mm;right:18mm;bottom:9mm;padding-top:8px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:#8A867D;font:500 8px Inter,Cairo,sans-serif;letter-spacing:.5px}
-/* Arabic font protection */
-html[dir="rtl"],
-html[dir="rtl"] body {
-  font-family: "Cairo", sans-serif !important;
-}
-
-html[dir="rtl"] body * {
-  font-family: "Cairo", sans-serif !important;
-}
-
-/* Keep Latin/English labels in Inter when Arabic mode is active */
-html[dir="rtl"] .brand-en,
-html[dir="rtl"] .title-en,
-html[dir="rtl"] .en-name,
-html[dir="rtl"] .number,
-html[dir="rtl"] .contact-label,
-html[dir="rtl"] .process-no {
-  font-family: "Inter", "Cairo", sans-serif !important;
-}
-
 [dir="rtl"] .footer{flex-direction:row-reverse}
 [dir="rtl"] .callout{border-left:none;border-right:2px solid var(--gold)}
 [dir="rtl"] .process-item{border-right:0;border-left:1px solid var(--line)}
@@ -169,7 +149,7 @@ html[dir="rtl"] .process-no {
 
 <section class="page ivory">
 <div class="kicker" data-key="signatureKicker">03 / SIGNATURE PRODUCT</div><div class="product-row">
-<div class="product-image"><img src="olive oil1.jpg" alt="Extra Virgin Olive Oil"></div>
+<div class="product-image"><img src="olive%20oil1.jpg" alt="Extra Virgin Olive Oil"></div>
 <div class="product-info"><div class="en-name" data-key="oliveEnName">EXTRA VIRGIN OLIVE OIL</div><h2 data-key="oliveTitle">Extra Virgin Olive Oil</h2>
 <p class="desc" data-key="oliveDesc">Extra virgin olive oil, first cold pressed and processed on the same day as harvest, then stored in food-grade stainless steel tanks before filling.</p>
 <div class="mini" data-key="specHeading">Key specifications</div>
@@ -188,7 +168,7 @@ html[dir="rtl"] .process-no {
 <div class="kicker" data-key="formatsKicker">04 / OLIVE OIL FORMATS</div><h2 class="title" data-key="formatsTitle">Olive Oil Formats</h2><p class="lead" data-key="formatsText">A range of formats for distribution, retail, single-serve use and bulk supply.</p>
 <div class="cards">
 <div class="card"><img src="sachets.png"><h3 data-key="sachetsTitle">Olive Oil Sachets</h3><p data-key="sachetsDesc">15 ml · 20 pcs / small box · 20 boxes / master carton</p></div>
-<div class="card"><img src="olive oil1.jpg"><h3 data-key="bottlesTitle">Glass Bottles</h3><p data-key="bottlesDesc">250 ml · 500 ml · 750 ml</p></div>
+<div class="card"><img src="olive%20oil1.jpg"><h3 data-key="bottlesTitle">Glass Bottles</h3><p data-key="bottlesDesc">250 ml · 500 ml · 750 ml</p></div>
 <div class="card"><img src="tin.jpg"><h3 data-key="tinsTitle">Retail Tins</h3><p data-key="tinsDesc">1 L · 2 L · 4 L</p></div>
 <div class="card"><img src="bigtin.png"><h3 data-key="bulkTinsTitle">Bulk Tins</h3><p data-key="bulkTinsDesc">10 kg · 15 kg</p></div>
 </div>
@@ -211,7 +191,7 @@ html[dir="rtl"] .process-no {
 
 <section class="page">
 <div class="kicker" data-key="pantrySpecsKicker">06 / PANTRY SPECIFICATIONS</div><div class="product-row">
-<div class="product-image"><img src="za'atar2.jpg" alt="Traditional Zaatar"></div>
+<div class="product-image"><img src="za%27atar2.jpg" alt="Traditional Zaatar"></div>
 <div class="product-info"><div class="en-name" data-key="zaatarEnName">TRADITIONAL ZAATAR</div><h2 data-key="zaatar">Traditional Zaatar</h2><p class="desc" data-key="zaatarDesc">A traditional Palestinian blend of zaatar, sumac and roasted sesame.</p><ul class="detail-list">
 <li><strong data-key="ingredientsLabel">Ingredients:</strong> <span data-key="zaatarIngredientsValue">Roasted sesame, ground dried zaatar, sumac.</span></li>
 <li><strong data-key="shelfLifeLabel">Shelf life:</strong> <span data-key="zaatarShelfValue">1 year.</span></li>
@@ -240,7 +220,7 @@ html[dir="rtl"] .process-no {
 <section class="page">
 <div class="kicker" data-key="dairyKicker">08 / PALESTINIAN DAIRY</div><h2 class="title title-en" data-key="dairyTitle">PALESTINIAN DAIRY</h2>
 <div class="cards">
-<div class="card"><img src="chesee vac.png"><h3 data-key="cheese1Title">Vacuum Fresh Nabulsi Cheese</h3><p data-key="cheese1Desc">Boiled Nabulsi cheese, vacuum-packed without water.</p><p><strong data-key="cheese1Size">300 g</strong> · <span data-key="pcsCarton20">20 pcs / carton</span></p><p class="note" data-key="dairyShelfStandard">Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.</p><p class="note" data-key="cheese1OpenNote">After opening and exposure to air, use preferably within 15 days.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="milkDairyAllergen">Milk and dairy.</span></p></div>
+<div class="card"><img src="chesee%20vac.png"><h3 data-key="cheese1Title">Vacuum Fresh Nabulsi Cheese</h3><p data-key="cheese1Desc">Boiled Nabulsi cheese, vacuum-packed without water.</p><p><strong data-key="cheese1Size">300 g</strong> · <span data-key="pcsCarton20">20 pcs / carton</span></p><p class="note" data-key="dairyShelfStandard">Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.</p><p class="note" data-key="cheese1OpenNote">After opening and exposure to air, use preferably within 15 days.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="milkDairyAllergen">Milk and dairy.</span></p></div>
 <div class="card"><img src="chesee.png"><h3 data-key="cheese2Title">Nabulsi Brined Cheese</h3><p data-key="cheese2Desc">Boiled cheese preserved in water and salt.</p><p><strong data-key="cheese2Size">300 g · 500 g</strong> · <span data-key="pcsCarton20">20 pcs / carton</span></p><p class="note" data-key="dairyShelfStandard">Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="milkDairyAllergen">Milk and dairy.</span></p><p class="note"><strong data-key="flavorsLabel">Flavors:</strong> <span data-key="cheese2Flavors">Original · Hot Chili · Nigella Seeds</span></p></div>
 <div class="card"><img src="labaneh.png"><h3 data-key="labanehTitle">Labaneh Balls in Olive Oil</h3><p data-key="labanehDesc">Cow's milk labaneh, salt and olive oil. Immersed in olive oil.</p><p><strong data-key="labanehSize">200 g</strong> · <span data-key="pcsCarton20">20 pcs / carton</span></p><p class="note" data-key="dairyShelfStandard">Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="milkDairyAllergen">Milk and dairy.</span></p><p class="note"><strong data-key="flavorsLabel">Flavors:</strong> <span data-key="labanehFlavors">Original · Hot Chili · Zaatar · Nigella Seeds</span></p></div>
 </div>
