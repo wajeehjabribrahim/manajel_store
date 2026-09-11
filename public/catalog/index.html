@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="mainHtml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024">
+<title>MANAJEL — Product Catalog 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ivory:#FBF8F2;--paper:#fff;--ink:#2F2B20;--muted:#716D63;--olive:#596247;--gold:#B49A68;--line:#DED9CF;--soft:#F3F0E9}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#E9E6DF;color:var(--ink);font-family:Cairo,Inter,sans-serif}
+body.english{font-family:Inter,Cairo,sans-serif}
+.controls{position:fixed;top:18px;left:18px;display:flex;gap:8px;z-index:1000}
+.btn{border:1px solid rgba(47,43,32,.12);background:rgba(255,255,255,.95);color:var(--ink);padding:10px 17px;border-radius:999px;cursor:pointer;font:500 13px Inter,Cairo,sans-serif;box-shadow:0 5px 20px rgba(0,0,0,.08)}
+.lang{background:var(--ink);color:#fff;border-color:var(--ink)}
+.page{width:210mm;height:297mm;margin:22px auto;padding:18mm 18mm 20mm;background:var(--paper);position:relative;display:flex;flex-direction:column;page-break-after:always;overflow:hidden}
+.page.ivory{background:var(--ivory)}
+.cover,.contact{background:var(--ivory);justify-content:center;align-items:center;text-align:center}
+.cover .brand-ar{font-size:64px;font-weight:600;line-height:1;margin:0}
+.cover .brand-en{margin-top:13px;font:500 18px Inter,sans-serif;letter-spacing:8px}
+.rule{width:54px;height:1px;background:var(--gold);margin:27px auto}
+.eyebrow{color:var(--muted);font:600 11px Inter,Cairo,sans-serif;letter-spacing:2.5px;text-transform:uppercase}
+.cover .subtitle{font-size:19px;margin:0}.cover .location{margin-top:12px;color:var(--muted);font-size:14px}
+.kicker{font:600 10px Inter,Cairo,sans-serif;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:8px}
+.title{font-size:34px;line-height:1.15;margin:0 0 10px;font-weight:600;letter-spacing:-.4px}
+.title-en{font:600 31px Inter,sans-serif;letter-spacing:-.8px}
+.lead{max-width:650px;font-size:15px;line-height:1.9;color:var(--muted);margin:0}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:30px;flex:1;align-items:center}
+.hero-image,.product-image{background:var(--ivory);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero-image{height:610px}.product-image{height:560px}
+.hero-image img,.product-image img{max-width:98%;max-height:98%;object-fit:contain}
+.number{font:600 54px Inter,sans-serif;line-height:1;letter-spacing:-2px}.number-label{color:var(--muted);font-size:13px;margin-top:8px}
+.process{display:grid;grid-template-columns:repeat(4,1fr);margin-top:32px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.process-item{padding:22px 16px;border-right:1px solid var(--line)}.process-item:last-child{border-right:0}
+.process-no{font:500 11px Inter,sans-serif;color:var(--gold);margin-bottom:18px}.process-title{font-size:15px;font-weight:600}.process-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.spec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);margin-top:25px;border:1px solid var(--line)}
+.spec{background:var(--paper);padding:18px;min-height:88px}.spec .label{color:var(--muted);font:500 10px Inter,Cairo,sans-serif;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:7px}.spec .value{font-size:17px;font-weight:600}
+.product-row{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;flex:1;align-items:center}
+.product-info h2{font-size:31px;margin:0 0 12px;line-height:1.15}.en-name{font:500 12px Inter,sans-serif;letter-spacing:1.6px;color:var(--gold);text-transform:uppercase;margin-bottom:18px}
+.desc{font-size:14px;line-height:1.9;color:var(--muted);margin:0 0 22px;white-space:pre-line}
+.mini{font:600 10px Inter,Cairo,sans-serif;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold);margin:20px 0 8px}
+table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px solid var(--line);padding:11px 9px;font-size:11px;text-align:center}th{color:var(--muted);font-weight:500;background:var(--soft)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
+.card{border:1px solid var(--line);padding:13px;min-height:280px;display:flex;flex-direction:column}.card img{width:100%;height:235px;object-fit:contain;background:var(--ivory)}.card h3{font-size:16px;margin:12px 0 4px}.card p{margin:0;font-size:12px;color:var(--muted);line-height:1.7}
+.category-list{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;border-top:1px solid var(--line);margin-top:22px}.category-item{padding:20px 0;border-bottom:1px solid var(--line)}.category-item .num{color:var(--gold);font:500 11px Inter,sans-serif}.category-item h3{margin:5px 0 4px;font-size:18px}.category-item p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+.callout{margin-top:24px;padding:22px;border-left:2px solid var(--gold);background:var(--ivory)}.callout strong{display:block;font-size:15px;margin-bottom:5px}.callout span{color:var(--muted);font-size:12px;line-height:1.7}
+.note{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
+.detail-list{margin:18px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.detail-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.7}
+.detail-list strong{font-weight:600}
+.allergen{color:#75613E}
+.contact-title{font-size:45px;margin:0}.contact-list{margin-top:28px;display:grid;gap:13px;font-size:14px}.contact-label{color:var(--muted);font:500 9px Inter,sans-serif;letter-spacing:1.8px;text-transform:uppercase}.contact-value{font-size:16px}
+.footer{position:absolute;left:18mm;right:18mm;bottom:9mm;padding-top:8px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:#8A867D;font:500 8px Inter,Cairo,sans-serif;letter-spacing:.5px}
+[dir="rtl"] .footer{flex-direction:row-reverse}
+[dir="rtl"] .callout{border-left:none;border-right:2px solid var(--gold)}
+[dir="rtl"] .process-item{border-right:0;border-left:1px solid var(--line)}
+[dir="rtl"] .process-item:last-child{border-left:0}
+@media screen and (max-width:900px){.page{width:100%;height:auto;min-height:100vh;margin:0;padding:40px 25px 55px}.hero,.product-row{grid-template-columns:1fr}.hero-image,.product-image{height:420px}.cards,.category-list{grid-template-columns:1fr}.process{grid-template-columns:1fr 1fr}.process-item:nth-child(2){border-right:0}}
+@media print{@page{size:A4;margin:0}body{background:none}.controls{display:none!important}.page{width:210mm!important;height:297mm!important;min-height:297mm!important;margin:0!important;padding:18mm 18mm 20mm!important;box-shadow:none}.hero,.product-row{grid-template-columns:1fr 1fr!important}.hero-image,.product-image{height:610px!important}.product-image{height:560px!important}.cards,.category-list{grid-template-columns:1fr 1fr!important}.process{grid-template-columns:repeat(4,1fr)!important}.process-item{border-right:1px solid var(--line)!important}.process-item:last-child{border-right:0!important}}
+</style>
+</head>
+<body>
+<div class="controls"><button class="btn lang" onclick="toggleLanguage()" id="langBtn">عربي</button><button class="btn" onclick="window.print()" id="printBtn">Print / Save as PDF</button></div>
+
+<section class="page cover">
+<div class="eyebrow" data-key="coverEyebrow">PALESTINIAN AGRICULTURAL & FOOD PRODUCTS</div>
+<h1 class="brand-ar">مـنـاجـل</h1><div class="brand-en">MANAJEL</div><div class="rule"></div>
+<p class="subtitle" data-key="subtitle">Product Catalog · 2026</p><p class="location" data-key="location">Salfit · Palestine</p>
+<div class="footer"><span>MANAJEL</span><span>01</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="companyKicker">01 / COMPANY</div><h2 class="title" data-key="aboutTitle">About Manajel</h2>
+<p class="lead" data-key="aboutText">MANAJEL is a Palestinian agricultural and food production company founded in 2021 in Salfit. We operate within the Palestinian agricultural sector, with a particular focus on olive oil production, processing and filling, alongside a selection of Palestinian food products.</p>
+<div class="spec-grid">
+<div class="spec"><div class="label" data-key="foundedLabel">Founded</div><div class="value">2021</div></div>
+<div class="spec"><div class="label" data-key="locationLabel">Location</div><div class="value" data-key="millLocationValue">Salfit, Palestine</div></div>
+<div class="spec"><div class="label" data-key="millLabel">Olive Oil Mill</div><div class="value" data-key="millValue">Own facility</div></div>
+<div class="spec"><div class="label" data-key="operationsLabel">Operations</div><div class="value" data-key="operationsValue">In-house</div></div>
+</div>
+<div class="callout"><strong data-key="aboutCalloutTitle">From agriculture to finished product.</strong><span data-key="aboutCalloutText">Our operations connect agricultural production with processing, storage and packing, all managed within Manajel.</span></div>
+<div class="footer"><span>MANAJEL · COMPANY</span><span>02</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="productionKicker">02 / PRODUCTION</div><div class="hero">
+<div><div class="number">4</div><div class="number-label" data-key="tonsLabel">tons per hour olive processing capacity</div>
+<h2 class="title" style="margin-top:30px" data-key="millTitle">Our Mill</h2><p class="lead" data-key="millText">We operate our own olive oil mill in Salfit, with in-house filling and food-grade stainless steel storage tanks.</p>
+<div class="process">
+<div class="process-item"><div class="process-no">01</div><div class="process-title" data-key="harvest">Harvest</div><div class="process-sub" data-key="harvestSub">Local olive sourcing</div></div>
+<div class="process-item"><div class="process-no">02</div><div class="process-title" data-key="pressing">Pressing</div><div class="process-sub" data-key="pressingSub">Same day as harvest</div></div>
+<div class="process-item"><div class="process-no">03</div><div class="process-title" data-key="storage">Storage</div><div class="process-sub" data-key="storageSub">Food-grade stainless steel</div></div>
+<div class="process-item"><div class="process-no">04</div><div class="process-title" data-key="filling">Filling</div><div class="process-sub" data-key="fillingSub">In-house operations</div></div>
+</div></div>
+<div class="hero-image"><img src="mill.png" alt="MANAJEL olive oil"></div></div>
+<div class="footer"><span>MANAJEL · PRODUCTION</span><span>03</span></div>
+</section>
+
+<section class="page ivory">
+<div class="kicker" data-key="signatureKicker">03 / SIGNATURE PRODUCT</div><div class="product-row">
+<div class="product-image"><img src="olive oil1.jpg" alt="Extra Virgin Olive Oil"></div>
+<div class="product-info"><div class="en-name" data-key="oliveEnName">EXTRA VIRGIN OLIVE OIL</div><h2 data-key="oliveTitle">Extra Virgin Olive Oil</h2>
+<p class="desc" data-key="oliveDesc">Extra virgin olive oil, first cold pressed and processed on the same day as harvest, then stored in food-grade stainless steel tanks before filling.</p>
+<div class="mini" data-key="specHeading">Key specifications</div>
+<div class="spec-grid">
+<div class="spec"><div class="label" data-key="classificationLabel">Classification</div><div class="value" data-key="classificationValue">Extra Virgin</div></div>
+<div class="spec"><div class="label" data-key="acidityLabel">Acidity</div><div class="value">&lt; 0.8%</div></div>
+<div class="spec"><div class="label" data-key="processingLabel">Processing</div><div class="value" data-key="processingValue">First Cold Press</div></div>
+<div class="spec"><div class="label" data-key="shelfLifeLabelSpec">Shelf Life</div><div class="value" data-key="oliveShelfLifeValue">2 years</div></div>
+</div>
+<p class="note" data-key="oliveNote">Storage: keep in a cool place and away from direct sunlight. Product analyses are available from the Palestinian Ministry of Agriculture.</p>
+</div></div>
+<div class="footer"><span>MANAJEL · OLIVE OIL</span><span>04</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="formatsKicker">04 / OLIVE OIL FORMATS</div><h2 class="title" data-key="formatsTitle">Olive Oil Formats</h2><p class="lead" data-key="formatsText">A range of formats for distribution, retail, single-serve use and bulk supply.</p>
+<div class="cards">
+<div class="card"><img src="sachets.png"><h3 data-key="sachetsTitle">Olive Oil Sachets</h3><p data-key="sachetsDesc">15 ml · 20 pcs / small box · 20 boxes / master carton</p></div>
+<div class="card"><img src="olive oil1.jpg"><h3 data-key="bottlesTitle">Glass Bottles</h3><p data-key="bottlesDesc">250 ml · 500 ml · 750 ml</p></div>
+<div class="card"><img src="tin.jpg"><h3 data-key="tinsTitle">Retail Tins</h3><p data-key="tinsDesc">1 L · 2 L · 4 L</p></div>
+<div class="card"><img src="bigtin.png"><h3 data-key="bulkTinsTitle">Bulk Tins</h3><p data-key="bulkTinsDesc">10 kg · 15 kg</p></div>
+</div>
+<div class="callout"><strong data-key="allSizesTitle">Available for export</strong><span data-key="allSizesText">All olive oil sizes listed in this catalog are available for export. Order quantities and shipping arrangements depend on destination and circumstances.</span></div>
+<div class="footer"><span>MANAJEL · FORMATS</span><span>05</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="pantryKicker">05 / PALESTINIAN PANTRY</div><h2 class="title title-en" data-key="pantryTitle">PALESTINIAN PANTRY</h2>
+<div class="category-list">
+<div class="category-item"><div class="num">01</div><h3 data-key="zaatar">Traditional Zaatar</h3><p data-key="zaatarShort">A Palestinian zaatar blend with roasted sesame and sumac.</p></div>
+<div class="category-item"><div class="num">02</div><h3 data-key="freekeh">Traditional Freekeh</h3><p data-key="freekehShort">Palestinian freekeh with a distinctive smoky character.</p></div>
+<div class="category-item"><div class="num">03</div><h3 data-key="dukkah">Traditional Dukkah</h3><p data-key="dukkahShort">A Palestinian blend of roasted seeds, grains, herbs and spices.</p></div>
+<div class="category-item"><div class="num">04</div><h3 data-key="pickled">Pickled Olives</h3><p data-key="pickledShort">Traditional Palestinian pickled olives.</p></div>
+<div class="category-item"><div class="num">05</div><h3 data-key="sage">Mountain Sage</h3><p data-key="sageShort">Palestinian mountain sage, carefully dried.</p></div>
+</div>
+<div class="callout"><strong data-key="pantryCallout">A focused selection of Palestinian pantry products.</strong><span data-key="pantryCalloutText">The catalog presents the products and packaging information currently available. Additional product specifications can be supplied for wholesale inquiries.</span></div>
+<div class="footer"><span>MANAJEL · PANTRY</span><span>06</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="pantrySpecsKicker">06 / PANTRY SPECIFICATIONS</div><div class="product-row">
+<div class="product-image"><img src="za'atar2.jpg" alt="Traditional Zaatar"></div>
+<div class="product-info"><div class="en-name" data-key="zaatarEnName">TRADITIONAL ZAATAR</div><h2 data-key="zaatar">Traditional Zaatar</h2><p class="desc" data-key="zaatarDesc">A traditional Palestinian blend of zaatar, sumac and roasted sesame.</p><ul class="detail-list">
+<li><strong data-key="ingredientsLabel">Ingredients:</strong> <span data-key="zaatarIngredientsValue">Roasted sesame, ground dried zaatar, sumac.</span></li>
+<li><strong data-key="shelfLifeLabel">Shelf life:</strong> <span data-key="zaatarShelfValue">1 year.</span></li>
+<li><strong data-key="storageLabel">Storage:</strong> <span data-key="zaatarStorageValue">Cool, dry place.</span></li>
+<li class="allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="zaatarAllergenValue">Contains sesame.</span></li></ul>
+<div class="mini" data-key="availableSizesLabel">Available sizes</div><table><thead><tr><th data-key="thSizeWeight">Size / Weight</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr></thead><tbody>
+<tr><td data-key="zaatarSize500">500 g</td><td>8</td><td>39 × 19 × 13 cm</td></tr>
+<tr><td data-key="zaatarSize1kg">1 kg</td><td>10</td><td data-key="availableOnRequest1">Available on request</td></tr>
+<tr><td data-key="zaatarSize2kg">2 kg</td><td>5</td><td data-key="availableOnRequest2">Available on request</td></tr>
+</tbody></table></div></div>
+<div class="footer"><span>MANAJEL · ZAATAR</span><span>07</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="preservedKicker">07 / PRESERVED & HERBAL</div>
+<h2 class="title title-en" data-key="pantrySpecsTitle">PANTRY SPECIFICATIONS</h2>
+<div class="cards">
+<div class="card"><img src="olive.jpg"><h3 data-key="pickled">Pickled Olives</h3><p data-key="pickledIngredients">Green olives · Lemon · Pepper · Salt</p><table><tr><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr><tr><td data-key="pickledSize500">500 g</td><td>8</td><td>39 × 19 × 13 cm</td></tr><tr><td data-key="pickledSize10kg">10 kg</td><td>1</td><td>25 × 25 × 35 cm</td></tr></table><p class="note" data-key="shelfLife1YearCool">Shelf life: 1 year · Store in a cool, dry place.</p></div>
+<div class="card"><img src="sage.jpg"><h3 data-key="sage">Mountain Sage</h3><p data-key="sageDesc">Dried mountain sage.</p><table><tr><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr><tr><td data-key="sageSize300">300 g</td><td>20</td><td>39 × 19 × 13 cm</td></tr></table><p class="note" data-key="shelfLife2YearsCool">Shelf life: 2 years · Store in a cool, dry place.</p></div>
+<div class="card"><img src="freekeh.jpg"><h3 data-key="freekeh">Traditional Freekeh</h3><p data-key="freekehDesc">Roasted and cracked green wheat.</p><table><tr><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr><tr><td data-key="freekehSize500">500 g</td><td>8</td><td>39 × 19 × 13 cm</td></tr></table><p class="note" data-key="shelfLife1YearCool">Shelf life: 1 year · Store in a cool, dry place.</p></div>
+<div class="card"><img src="duqqa.jpg"><h3 data-key="dukkah">Traditional Dukkah</h3><p data-key="dukkahIngredients">Roasted sesame, roasted cracked wheat/freekeh, ground cumin, ground dried coriander, sumac, chili/red pepper and salt.</p><p class="note" data-key="shelfLife1YearCool">Shelf life: 1 year · Store in a cool, dry place.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="dukkahAllergenValue">Contains sesame and wheat/gluten.</span></p></div>
+</div>
+<div class="footer"><span>MANAJEL · PANTRY SPECIFICATIONS</span><span>08</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="dairyKicker">08 / PALESTINIAN DAIRY</div><h2 class="title title-en" data-key="dairyTitle">PALESTINIAN DAIRY</h2>
+<div class="cards">
+<div class="card"><img src="chesee vac.png"><h3 data-key="cheese1Title">Vacuum Fresh Nabulsi Cheese</h3><p data-key="cheese1Desc">Boiled Nabulsi cheese, vacuum-packed without water.</p><p><strong data-key="cheese1Size">300 g</strong> · <span data-key="pcsCarton20">20 pcs / carton</span></p><p class="note" data-key="dairyShelfStandard">Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.</p><p class="note" data-key="cheese1OpenNote">After opening and exposure to air, use preferably within 15 days.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="milkDairyAllergen">Milk and dairy.</span></p></div>
+<div class="card"><img src="chesee.png"><h3 data-key="cheese2Title">Nabulsi Brined Cheese</h3><p data-key="cheese2Desc">Boiled cheese preserved in water and salt.</p><p><strong data-key="cheese2Size">300 g · 500 g</strong> · <span data-key="pcsCarton20">20 pcs / carton</span></p><p class="note" data-key="dairyShelfStandard">Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="milkDairyAllergen">Milk and dairy.</span></p><p class="note"><strong data-key="flavorsLabel">Flavors:</strong> <span data-key="cheese2Flavors">Original · Hot Chili · Nigella Seeds</span></p></div>
+<div class="card"><img src="labaneh.png"><h3 data-key="labanehTitle">Labaneh Balls in Olive Oil</h3><p data-key="labanehDesc">Cow's milk labaneh, salt and olive oil. Immersed in olive oil.</p><p><strong data-key="labanehSize">200 g</strong> · <span data-key="pcsCarton20">20 pcs / carton</span></p><p class="note" data-key="dairyShelfStandard">Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="milkDairyAllergen">Milk and dairy.</span></p><p class="note"><strong data-key="flavorsLabel">Flavors:</strong> <span data-key="labanehFlavors">Original · Hot Chili · Zaatar · Nigella Seeds</span></p></div>
+</div>
+<div class="callout"><strong data-key="storageNoteTitle">Storage note</strong><span data-key="storageNoteText">Keep products in a cool place. For final export documentation, storage and cold-chain requirements should be aligned with the destination-market regulations and the approved product specification.</span></div>
+<div class="footer"><span>MANAJEL · DAIRY</span><span>09</span></div>
+</section>
+
+<section class="page ivory">
+<div class="kicker" data-key="heritageKicker">09 / HERITAGE PRODUCT</div><div class="product-row">
+<div class="product-image"><img src="soap.png" alt="Nabulsi Soap"></div>
+<div class="product-info"><div class="en-name" data-key="soapEnName">NABULSI SOAP</div><h2 data-key="soapTitle">Nabulsi Soap</h2>
+<p class="desc" data-key="soapDesc">Traditional Palestinian Nabulsi soap made with olive oil.</p>
+<div class="mini" data-key="packagingLabel">Packaging</div><table><thead><tr><th data-key="thSizeWeight">Size / Weight</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr></thead><tbody><tr><td data-key="soapSize70">70 g</td><td>50</td><td>25 × 25 × 35 cm</td></tr></tbody></table>
+<p class="note" data-key="soapNote">Ingredients: olive oil and sodium hydroxide. Shelf life: Long shelf life under proper storage conditions. Store away from moisture.</p></div></div>
+<div class="footer"><span>MANAJEL · HERITAGE</span><span>10</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="packagingKicker">10 / PACKAGING & LOGISTICS</div><h2 class="title title-en" data-key="packagingTitle">PACKAGING & LOGISTICS</h2>
+<p class="lead" data-key="packagingLead">Selected packaging and carton information for the current catalog range.</p>
+<table style="margin-top:30px"><thead><tr><th data-key="thProduct">Product</th><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCartonDim">Carton Dimensions</th></tr></thead><tbody>
+<tr><td data-key="prodOliveGlass">Olive Oil · Glass</td><td data-key="size250ml">250 ml</td><td>15</td><td>28 × 21 × 27 cm</td></tr>
+<tr><td data-key="prodOliveGlass">Olive Oil · Glass</td><td data-key="size500ml">500 ml</td><td>12</td><td>28 × 21 × 27 cm</td></tr>
+<tr><td data-key="prodOliveGlass">Olive Oil · Glass</td><td data-key="size750ml">750 ml</td><td>9</td><td>28 × 21 × 30 cm</td></tr>
+<tr><td data-key="prodOliveTin">Olive Oil · Tin</td><td data-key="size1L">1 L</td><td>12</td><td>39 × 24 × 19 cm</td></tr>
+<tr><td data-key="prodOliveTin">Olive Oil · Tin</td><td data-key="size2L">2 L</td><td>6</td><td>33 × 34 × 17 cm</td></tr>
+<tr><td data-key="prodOliveTin">Olive Oil · Tin</td><td data-key="size4L">4 L</td><td>4</td><td>34 × 34 × 25 cm</td></tr>
+<tr><td data-key="prodBulkOlive">Bulk Olive Oil</td><td data-key="size10kg">10 kg</td><td data-key="singleUnit">Single unit</td><td>26 × 26 × 29 cm</td></tr>
+<tr><td data-key="prodBulkOlive">Bulk Olive Oil</td><td data-key="size15kg">15 kg</td><td data-key="singleUnit">Single unit</td><td>25 × 25 × 35 cm</td></tr>
+<tr><td data-key="prodOliveSachets">Olive Oil Sachets</td><td data-key="size15ml">15 ml</td><td data-key="twentySmallBox">20 / small box</td><td data-key="masterCartonDim">40 × 30 × 20 cm master</td></tr>
+</tbody></table>
+<p class="note" data-key="packagingNote">Dimensions shown are based on the current catalog data. Missing specifications are intentionally not replaced with estimates.</p>
+<div class="footer"><span>MANAJEL · LOGISTICS</span><span>11</span></div>
+</section>
+
+<section class="page">
+<div class="kicker" data-key="internationalKicker">11 / INTERNATIONAL</div><h2 class="title title-en" data-key="exportTitle">EXPORT & DISTRIBUTION</h2>
+<p class="lead" data-key="exportLead">MANAJEL currently serves regional and international markets, with export activity covering Jordan, GCC markets, the United States and Europe.</p>
+<div class="spec-grid" style="margin-top:34px">
+<div class="spec"><div class="label" data-key="currentMarketLabel">Current Market</div><div class="value" data-key="marketJordan">Jordan</div></div><div class="spec"><div class="label" data-key="currentMarketLabel">Current Market</div><div class="value" data-key="marketGCC">GCC</div></div>
+<div class="spec"><div class="label" data-key="currentMarketLabel">Current Market</div><div class="value" data-key="marketUS">United States</div></div><div class="spec"><div class="label" data-key="currentMarketLabel">Current Market</div><div class="value" data-key="marketEurope">Europe</div></div>
+</div>
+<div class="callout"><strong data-key="shippingTitle">Shipping arrangements</strong><span data-key="shippingText">International shipping can be arranged depending on destination, product, quantity and shipping conditions.</span></div>
+<div class="callout"><strong data-key="moqTitle">Minimum order quantity</strong><span data-key="moqText">MOQ is determined according to destination, order volume and circumstances rather than one fixed quantity.</span></div>
+<div class="footer"><span>MANAJEL · EXPORT</span><span>12</span></div>
+</section>
+
+<section class="page contact">
+<div class="eyebrow" data-key="contactEyebrow">MANAJEL · 2026</div><h2 class="contact-title" data-key="contactTitle">Let's work together.</h2><div class="rule"></div>
+<div class="contact-list">
+<div><div class="contact-label" data-key="contactLocationLabel">Location</div><div class="contact-value">Salfit, Palestine</div></div>
+<div><div class="contact-label" data-key="contactEmailLabel">Email</div><div class="contact-value">contact@mnajel.com</div></div>
+<div><div class="contact-label" data-key="contactWebsiteLabel">Website</div>
+<div class="contact-value"><a href="http://www.mnajel.com" target="_blank" rel="noopener noreferrer" style="color: #2F2B20; text-decoration: none;">www.mnajel.com</a></div></div>
+</div>
+<p class="note" style="margin-top:35px;max-width:460px" data-key="contactNote">For wholesale, distribution and export inquiries, please contact MANAJEL for current specifications and commercial terms.</p>
+<div class="footer"><span>MANAJEL · SALFIT · PALESTINE</span><span>13</span></div>
+</section>
+
+<script>
+const ar={
+coverEyebrow:"شركة فلسطينية للإنتاج الزراعي والغذائي",subtitle:"دليل المنتجات · 2026",location:"سلفيت · فلسطين",
+aboutTitle:"عن مناجل",aboutText:"مناجل شركة فلسطينية للإنتاج الزراعي والغذائي، تأسست عام 2021 في سلفيت. نعمل من قلب القطاع الزراعي الفلسطيني، مع تركيز خاص على إنتاج زيت الزيتون وتجهيزه وتعبئته، إلى جانب مجموعة من المنتجات الغذائية الفلسطينية.",
+aboutCalloutTitle:"من الزراعة إلى المنتج النهائي.",aboutCalloutText:"نربط الإنتاج الزراعي بالتصنيع والتخزين والتعبئة، ضمن عمليات تُدار وتُنفذ داخل شركة مناجل.",operationsValue:"داخل الشركة",millLocationValue:"سلفيت، فلسطين",millValue:"معصرة خاصة بالشركة",
+tonsLabel:"أطنان في الساعة — الطاقة الإنتاجية",millTitle:"معصرتنا",millText:"نمتلك معصرتنا الخاصة في سلفيت، مع تعبئة داخلية وتخزين زيت الزيتون في خزانات من الستانلس ستيل المخصصة للاستخدام الغذائي.",
+harvest:"الحصاد",harvestSub:"من مصادر الزيتون المحلية",pressing:"العصر",pressingSub:"في نفس يوم الحصاد",storage:"التخزين",storageSub:"خزانات ستانلس ستيل غذائية",filling:"التعبئة",fillingSub:"داخل الشركة",
+oliveTitle:"زيت الزيتون البكر الممتاز",oliveDesc:"زيت زيتون بكر ممتاز معصور على البارد، يُعصر في نفس يوم الحصاد ويُخزن في خزانات من الستانلس ستيل المخصصة للاستخدام الغذائي قبل التعبئة.",specHeading:"المواصفات الأساسية",oliveNote:"التخزين: يحفظ في مكان بارد بعيدًا عن أشعة الشمس المباشرة. تتوفر تحاليل للمنتج من وزارة الزراعة الفلسطينية.",
+classificationLabel:"التصنيف",classificationValue:"بكر ممتاز",acidityLabel:"الحموضة",processingLabel:"طريقة العصر",processingValue:"عصرة أولى على البارد",shelfLifeLabelSpec:"مدة الصلاحية",oliveShelfLifeValue:"سنتان",
+formatsTitle:"عبوات زيت الزيتون",formatsText:"مجموعة من أحجام التعبئة المتوفرة للتوزيع والبيع بالتجزئة والاستخدام الفردي والجملة.",allSizesTitle:"متوفرة للتصدير",allSizesText:"جميع أحجام زيت الزيتون المذكورة في هذا الكتالوج متوفرة للتصدير. تعتمد الكميات وترتيبات الشحن على الوجهة والظروف.",
+sachetsTitle:"أكياس زيت الزيتون",sachetsDesc:"15 مل · 20 قطعة / علبة صغيرة · 20 علبة / كرتون رئيسي",bottlesTitle:"عبوات زجاجية",bottlesDesc:"250 مل · 500 مل · 750 مل",tinsTitle:"علب تجزئة",tinsDesc:"1 لتر · 2 لتر · 4 لتر",bulkTinsTitle:"علب جملة",bulkTinsDesc:"10 كغم · 15 كغم",
+zaatar:"زعتر بلدي",zaatarShort:"خلطة فلسطينية من الزعتر والسماق والسمسم المحمص.",zaatarDesc:"مزيج فلسطيني تقليدي من السمسم المحمص والزعتر المجفف المطحون والسماق.",
+freekeh:"فريكة فلسطينية",freekehShort:"فريكة فلسطينية بطابع مدخن مميز.",freekehDesc:"قمح أخضر محمص ومجروش.",dukkah:"دقة فلسطينية",dukkahShort:"مزيج فلسطيني من البذور والحبوب والأعشاب والتوابل المحمصة.",dukkahIngredients:"سمسم محمص، قمح أخضر/فريكة محمصة ومجروشة، كمون مطحون، كزبرة يابسة مطحونة، سماق، فلفل حار/أحمر وملح.",pickled:"زيتون مكبوس",pickledShort:"زيتون مكبوس فلسطيني محضر بطرق تقليدية.",pickledIngredients:"زيتون أخضر · ليمون · فلفل · ملح",sage:"ميرمية جبلية",sageShort:"ميرمية جبلية فلسطينية مجففة بعناية.",sageDesc:"ميرمية جبلية مجففة.",
+pantryKicker:"05 / المونة الفلسطينية",pantryTitle:"المونة الفلسطينية",pantrySpecsKicker:"06 / مواصفات المونة",pantrySpecsTitle:"مواصفات المونة",dairyKicker:"08 / منتجات الألبان الفلسطينية",dairyTitle:"منتجات الألبان الفلسطينية",heritageKicker:"09 / منتج تراثي",packagingKicker:"10 / التعبئة والخدمات اللوجستية",packagingTitle:"التعبئة والخدمات اللوجستية",internationalKicker:"11 / الأسواق الدولية",exportTitle:"التصدير والتوزيع",contactEyebrow:"مناجل · 2026",contactTitle:"لنعمل معًا.",pantryCallout:"مجموعة مركزة من منتجات المطبخ الفلسطيني.",pantryCalloutText:"يعرض الكتالوج المنتجات ومعلومات التعبئة المتوفرة حاليًا. يمكن تزويد طلبات الجملة بالمواصفات التفصيلية عند الطلب.",
+ingredientsLabel:"المكونات:",shelfLifeLabel:"مدة الصلاحية:",storageLabel:"التخزين:",allergenLabel:"مسببات الحساسية:",
+zaatarIngredientsValue:"سمسم محمص، زعتر مجفف مطحون، سماق.",zaatarShelfValue:"سنة واحدة.",zaatarStorageValue:"يُحفظ في مكان بارد وجاف.",zaatarAllergenValue:"يحتوي على السمسم.",
+availableSizesLabel:"الأحجام المتوفرة",thSizeWeight:"الحجم / الوزن",thPcsCarton:"قطعة / كرتون",thCarton:"الكرتون",thSize:"الحجم",thProduct:"المنتج",thCartonDim:"أبعاد الكرتون",
+zaatarSize500:"500 غم",zaatarSize1kg:"1 كغم",zaatarSize2kg:"2 كغم",availableOnRequest1:"متوفر عند الطلب",availableOnRequest2:"متوفر عند الطلب",
+shelfLife1YearCool:"مدة الصلاحية: سنة واحدة · يُحفظ في مكان بارد وجاف.",shelfLife2YearsCool:"مدة الصلاحية: سنتان · يُحفظ في مكان بارد وجاف.",
+pickledSize500:"500 غم",pickledSize10kg:"10 كغم",sageSize300:"300 غم",freekehSize500:"500 غم",
+dukkahAllergenValue:"يحتوي على السمسم والقمح/الغلوتين.",
+cheese1Title:"جبنة نابلسية طازجة مفرغة الهواء",cheese1Desc:"جبنة نابلسية مسلوقة، معبأة بالتفريغ دون ماء.",cheese1Size:"300 غم",pcsCarton20:"20 قطعة / كرتون",dairyShelfStandard:"مدة الصلاحية: سنة واحدة · ظروف التخزين: وفق المواصفة المعتمدة للمنتج ومتطلبات السوق المستهدف.",cheese1OpenNote:"بعد الفتح والتعرض للهواء، يُفضّل استخدامها خلال 15 يومًا.",milkDairyAllergen:"يحتوي على الحليب ومنتجاته.",
+cheese2Title:"جبنة نابلسية بالمحلول الملحي",cheese2Desc:"جبنة مسلوقة محفوظة في الماء والملح.",cheese2Size:"300 غم · 500 غم",flavorsLabel:"النكهات:",cheese2Flavors:"أصلي · فلفل حار · حبة البركة",
+labanehTitle:"كرات لبنة بزيت الزيتون",labanehDesc:"لبنة من حليب البقر، ملح وزيت زيتون. مغموسة بزيت الزيتون.",labanehSize:"200 غم",labanehFlavors:"أصلي · فلفل حار · زعتر · حبة البركة",
+storageNoteTitle:"ملاحظة حول التخزين",storageNoteText:"تُحفظ المنتجات في مكان بارد. لغايات وثائق التصدير النهائية، يجب مطابقة متطلبات التخزين وسلسلة التبريد مع أنظمة السوق المستهدف والمواصفة المعتمدة للمنتج.",
+soapTitle:"صابون نابلسي",soapDesc:"صابون نابلسي فلسطيني تقليدي مصنوع من زيت الزيتون.",soapNote:"المكونات: زيت الزيتون وهيدروكسيد الصوديوم. الصلاحية: مدة صلاحية طويلة عند التخزين في ظروف مناسبة. يحفظ بعيدًا عن الرطوبة.",soapSize70:"70 غم",
+packagingLead:"معلومات مختارة حول التعبئة والكراتين ضمن مجموعة الكتالوج الحالية.",
+prodOliveGlass:"زيت زيتون · زجاج",prodOliveTin:"زيت زيتون · صفيح",prodBulkOlive:"زيت زيتون جملة",prodOliveSachets:"أكياس زيت زيتون",
+size250ml:"250 مل",size500ml:"500 مل",size750ml:"750 مل",size1L:"1 لتر",size2L:"2 لتر",size4L:"4 لتر",size10kg:"10 كغم",size15kg:"15 كغم",size15ml:"15 مل",
+singleUnit:"وحدة مفردة",twentySmallBox:"20 / علبة صغيرة",masterCartonDim:"40 × 30 × 20 سم (كرتون رئيسي)",
+packagingNote:"الأبعاد الموضحة مبنية على بيانات الكتالوج الحالية. المواصفات غير المتوفرة لم يتم استبدالها بتقديرات تقريبية عمدًا.",
+exportLead:"تخدم مناجل حاليًا أسواقًا إقليمية ودولية، ويشمل نشاط التصدير الأردن ودول الخليج والولايات المتحدة وأوروبا.",
+currentMarketLabel:"سوق حالي",marketJordan:"الأردن",marketGCC:"دول الخليج",marketUS:"الولايات المتحدة",marketEurope:"أوروبا",
+shippingTitle:"ترتيبات الشحن",shippingText:"يمكن ترتيب الشحن الدولي حسب الوجهة والمنتج والكمية وظروف الشحن.",moqTitle:"الحد الأدنى للطلب",moqText:"يتحدد الحد الأدنى للطلب وفق الوجهة وحجم الطلب والظروف، وليس بكمية ثابتة واحدة.",
+contactLocationLabel:"الموقع",contactEmailLabel:"البريد الإلكتروني",contactWebsiteLabel:"الموقع الإلكتروني",contactNote:"لطلبات الجملة والتوزيع والتصدير، يُرجى التواصل مع مناجل للحصول على المواصفات الحالية والشروط التجارية."
+};
+const en={
+coverEyebrow:"PALESTINIAN AGRICULTURAL & FOOD PRODUCTS",subtitle:"Product Catalog · 2026",location:"Salfit · Palestine",
+aboutTitle:"About Manajel",aboutText:"MANAJEL is a Palestinian agricultural and food production company founded in 2021 in Salfit. We operate within the Palestinian agricultural sector, with a particular focus on olive oil production, processing and filling, alongside a selection of Palestinian food products.",
+aboutCalloutTitle:"From agriculture to finished product.",aboutCalloutText:"Our operations connect agricultural production with processing, storage and packing, all managed within Manajel.",operationsValue:"In-house",millLocationValue:"Salfit, Palestine",millValue:"Own facility",
+tonsLabel:"tons per hour olive processing capacity",millTitle:"Our Mill",millText:"We operate our own olive oil mill in Salfit, with in-house filling and food-grade stainless steel storage tanks.",
+harvest:"Harvest",harvestSub:"Local olive sourcing",pressing:"Pressing",pressingSub:"Same day as harvest",storage:"Storage",storageSub:"Food-grade stainless steel",filling:"Filling",fillingSub:"In-house operations",
+oliveTitle:"Extra Virgin Olive Oil",oliveDesc:"Extra virgin olive oil, first cold pressed and processed on the same day as harvest, then stored in food-grade stainless steel tanks before filling.",specHeading:"Key specifications",oliveNote:"Storage: keep in a cool place and away from direct sunlight. Product analyses are available from the Palestinian Ministry of Agriculture.",
+classificationLabel:"Classification",classificationValue:"Extra Virgin",acidityLabel:"Acidity",processingLabel:"Processing",processingValue:"First Cold Press",shelfLifeLabelSpec:"Shelf Life",oliveShelfLifeValue:"2 years",
+formatsTitle:"Olive Oil Formats",formatsText:"A range of formats for distribution, retail, single-serve use and bulk supply.",allSizesTitle:"Available for export",allSizesText:"All olive oil sizes listed in this catalog are available for export. Order quantities and shipping arrangements depend on destination and circumstances.",
+sachetsTitle:"Olive Oil Sachets",sachetsDesc:"15 ml · 20 pcs / small box · 20 boxes / master carton",bottlesTitle:"Glass Bottles",bottlesDesc:"250 ml · 500 ml · 750 ml",tinsTitle:"Retail Tins",tinsDesc:"1 L · 2 L · 4 L",bulkTinsTitle:"Bulk Tins",bulkTinsDesc:"10 kg · 15 kg",
+zaatar:"Traditional Zaatar",zaatarShort:"A Palestinian zaatar blend with roasted sesame and sumac.",zaatarDesc:"A traditional Palestinian blend of zaatar, sumac and roasted sesame.",
+freekeh:"Traditional Freekeh",freekehShort:"Palestinian freekeh with a distinctive smoky character.",freekehDesc:"Roasted and cracked green wheat.",dukkah:"Traditional Dukkah",dukkahShort:"A Palestinian blend of roasted seeds, grains, herbs and spices.",dukkahIngredients:"Roasted sesame, roasted cracked wheat/freekeh, ground cumin, ground dried coriander, sumac, chili/red pepper and salt.",pickled:"Pickled Olives",pickledShort:"Traditional Palestinian pickled olives.",pickledIngredients:"Green olives · Lemon · Pepper · Salt",sage:"Mountain Sage",sageShort:"Palestinian mountain sage, carefully dried.",sageDesc:"Dried mountain sage.",
+pantryKicker:"05 / PALESTINIAN PANTRY",pantryTitle:"PALESTINIAN PANTRY",pantrySpecsKicker:"06 / PANTRY SPECIFICATIONS",pantrySpecsTitle:"PANTRY SPECIFICATIONS",dairyKicker:"08 / PALESTINIAN DAIRY",dairyTitle:"PALESTINIAN DAIRY",heritageKicker:"09 / HERITAGE PRODUCT",packagingKicker:"10 / PACKAGING & LOGISTICS",packagingTitle:"PACKAGING & LOGISTICS",internationalKicker:"11 / INTERNATIONAL",exportTitle:"EXPORT & DISTRIBUTION",contactEyebrow:"MANAJEL · 2026",contactTitle:"Let's work together.",pantryCallout:"A focused selection of Palestinian pantry products.",pantryCalloutText:"The C presents the products and packaging information currently available. Additional product specifications can be supplied for wholesale inquiries.",
+ingredientsLabel:"Ingredients:",shelfLifeLabel:"Shelf life:",storageLabel:"Storage:",allergenLabel:"Allergen:",
+zaatarIngredientsValue:"Roasted sesame, ground dried zaatar, sumac.",zaatarShelfValue:"1 year.",zaatarStorageValue:"Cool, dry place.",zaatarAllergenValue:"Contains sesame.",
+availableSizesLabel:"Available sizes",thSizeWeight:"Size / Weight",thPcsCarton:"Pcs / Carton",thCarton:"Carton",thSize:"Size",thProduct:"Product",thCartonDim:"Carton Dimensions",
+zaatarSize500:"500 g",zaatarSize1kg:"1 kg",zaatarSize2kg:"2 kg",availableOnRequest1:"Available on request",availableOnRequest2:"Available on request",
+shelfLife1YearCool:"Shelf life: 1 year · Store in a cool, dry place.",shelfLife2YearsCool:"Shelf life: 2 years · Store in a cool, dry place.",
+pickledSize500:"500 g",pickledSize10kg:"10 kg",sageSize300:"300 g",freekehSize500:"500 g",
+dukkahAllergenValue:"Contains sesame and wheat/gluten.",
+cheese1Title:"Vacuum Fresh Nabulsi Cheese",cheese1Desc:"Boiled Nabulsi cheese, vacuum-packed without water.",cheese1Size:"300 g",pcsCarton20:"20 pcs / carton",dairyShelfStandard:"Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.",cheese1OpenNote:"After opening and exposure to air, use preferably within 15 days.",milkDairyAllergen:"Milk and dairy.",
+cheese2Title:"Nabulsi Brined Cheese",cheese2Desc:"Boiled cheese preserved in water and salt.",cheese2Size:"300 g · 500 g",flavorsLabel:"Flavors:",cheese2Flavors:"Original · Hot Chili · Nigella Seeds",
+labanehTitle:"Labaneh Balls in Olive Oil",labanehDesc:"Cow's milk labaneh, salt and olive oil. Immersed in olive oil.",labanehSize:"200 g",labanehFlavors:"Original · Hot Chili · Zaatar · Nigella Seeds",
+storageNoteTitle:"Storage note",storageNoteText:"Keep products in a cool place. For final export documentation, storage and cold-chain requirements should be aligned with the destination-market regulations and the approved product specification.",
+soapTitle:"Nabulsi Soap",soapDesc:"Traditional Palestinian Nabulsi soap made with olive oil.",soapNote:"Ingredients: olive oil and sodium hydroxide. Shelf life: Long shelf life under proper storage conditions. Store away from moisture.",soapSize70:"70 g",
+packagingLead:"Selected packaging and carton information for the current catalog range.",
+prodOliveGlass:"Olive Oil · Glass",prodOliveTin:"Olive Oil · Tin",prodBulkOlive:"Bulk Olive Oil",prodOliveSachets:"Olive Oil Sachets",
+size250ml:"250 ml",size500ml:"500 ml",size750ml:"750 ml",size1L:"1 L",size2L:"2 L",size4L:"4 L",size10kg:"10 kg",size15kg:"15 kg",size15ml:"15 ml",
+singleUnit:"Single unit",twentySmallBox:"20 / small box",masterCartonDim:"40 × 30 × 20 cm master",
+packagingNote:"Dimensions shown are based on the current catalog data. Missing specifications are intentionally not replaced with estimates.",
+exportLead:"MANAJEL currently serves regional and international markets, with export activity covering Jordan, GCC markets, the United States and Europe.",
+currentMarketLabel:"Current Market",marketJordan:"Jordan",marketGCC:"GCC",marketUS:"United States",marketEurope:"Europe",
+shippingTitle:"Shipping arrangements",shippingText:"International shipping can be arranged depending on destination, product, quantity and shipping conditions.",moqTitle:"Minimum order quantity",moqText:"MOQ is determined according to destination, order volume and circumstances rather than one fixed quantity.",
+contactLocationLabel:"Location",contactEmailLabel:"Email",contactWebsiteLabel:"Website",contactNote:"For wholesale, distribution and export inquiries, please contact MANAJEL for current specifications and commercial terms."
+};
+
+// Static labels translated with the same language switch
+const staticTranslations = {
+  en: {
+    companyKicker:"01 / COMPANY", productionKicker:"02 / PRODUCTION",
+    signatureKicker:"03 / SIGNATURE PRODUCT", formatsKicker:"04 / OLIVE OIL FORMATS",
+    preservedKicker:"07 / PRESERVED & HERBAL",
+    foundedLabel:"Founded", locationLabel:"Location", millLabel:"Olive Oil Mill", operationsLabel:"Operations",
+    oliveEnName:"EXTRA VIRGIN OLIVE OIL", zaatarEnName:"TRADITIONAL ZAATAR",
+    soapEnName:"NABULSI SOAP", packagingLabel:"Packaging"
+  },
+  ar: {
+    companyKicker:"01 / الشركة", productionKicker:"02 / الإنتاج",
+    signatureKicker:"03 / المنتج الرئيسي", formatsKicker:"04 / أحجام زيت الزيتون",
+    preservedKicker:"07 / المخللات والأعشاب",
+    foundedLabel:"سنة التأسيس", locationLabel:"الموقع", millLabel:"معصرة زيت الزيتون", operationsLabel:"العمليات",
+    oliveEnName:"زيت الزيتون البكر الممتاز", zaatarEnName:"زعتر بلدي",
+    soapEnName:"صابون نابلسي", packagingLabel:"التعبئة"
+  }
+};
+
+let lang="en";
+function update(){
+ document.getElementById("mainHtml").dir=lang==="ar"?"rtl":"ltr";
+ document.body.className=lang==="en"?"english":"";
+ const d=lang==="ar"?ar:en;
+ const s=staticTranslations[lang];
+ document.querySelectorAll("[data-key]").forEach(e=>{let k=e.dataset.key;if(d[k]!==undefined)e.textContent=d[k];else if(s[k]!==undefined)e.textContent=s[k]});
+ document.getElementById("langBtn").textContent=lang==="ar"?"English":"عربي";
+ document.getElementById("printBtn").textContent=lang==="ar"?"تحميل PDF/طباعة":"Print / Save as PDF";
+}
+function toggleLanguage(){lang=lang==="ar"?"en":"ar";update()}
+update();
+</script>
+</body>
+</html>

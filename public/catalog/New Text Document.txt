@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="mainHtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مناجل - الكتالوج الكامل 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Tajawal-Bold';
+            src: url('Tajawal-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        body.english {
+            font-family: 'Tajawal-Bold', 'Inter', sans-serif !important;
+        }
+    </style>
+    <style>
+        :root {
+            --primary-green: #556B2F; 
+            --light-cream: #FDFBF0;
+            --dark-text: #333;
+            --accent-gold: #BC9B5D;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: #f4f4f4;
+            color: var(--dark-text);
+            margin: 0; padding: 0;
+        }
+
+        /* أدوات التحكم */
+        .controls {
+            position: fixed; top: 20px; left: 20px;
+            display: flex; gap: 10px; z-index: 1000;
+        }
+        .btn-action {
+            padding: 12px 24px; border-radius: 30px; cursor: pointer;
+            font-weight: bold; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-family: 'Cairo'; transition: 0.3s;
+        }
+        .lang-switch { background: var(--accent-gold); color: white; }
+        .print-pdf { background: var(--primary-green); color: white; }
+
+        /* تنسيق الصفحة */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+            position: relative;
+        }
+
+        /* الغلاف */
+        .cover-page {
+            background-color: var(--primary-green);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: 'Cairo', sans-serif !important;
+        }
+
+        /* محتوى المنتج */
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-gold);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            background: #fff;
+            position: relative;
+            z-index: 2;
+        }
+
+        .product-header h2 {
+            margin: 0; color: var(--primary-green); font-size: 2.2rem;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 40px;
+            flex: 1;
+            align-items: flex-start;
+        }
+
+        .image-side {
+            flex: 1;
+            height: 450px;
+            background: #fdfdfd;
+            border: 1px solid #f0f0f0;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .image-side img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 20px;
+        }
+
+        .info-side {
+            flex: 1;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* الجداول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        th { background: #f8f9fa; color: var(--primary-green); }
+
+        h4 { margin-top: 0; margin-bottom: 10px; color: var(--primary-green); border-right: 4px solid var(--accent-gold); padding-right: 10px; }
+
+        .page-footer {
+            position: absolute;
+            bottom: 15mm;
+            left: 20mm;
+            right: 20mm;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        @media print {
+            body { background: none; }
+            .controls { display: none; }
+            .page { margin: 0; box-shadow: none; width: 100%; height: 100vh; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="controls">
+    <button class="btn-action lang-switch" onclick="toggleLanguage()" id="langBtn">English</button>
+    <button class="btn-action print-pdf" onclick="window.print()" data-key="printBtn">تحميل الكتالوج PDF</button>
+</div>
+
+<div class="page cover-page">
+    <h1 style="font-size: 4.5rem; margin: 0;">مـنـاجـل</h1>
+    <h2 style="font-weight: 300; letter-spacing: 6px; margin-bottom: 40px;">MANAJEL</h2>
+    <div style="width: 80px; height: 3px; background: var(--accent-gold); margin-bottom: 40px;"></div>
+    <p style="font-size: 1.5rem;" data-key="subtitle">دليل المنتجات والبيانات اللوجستية 2026</p>
+    <p style="margin-top: 20px; opacity: 0.8;" data-key="location">سلفيت - فلسطين</p>
+</div>
+
+<div class="page">
+    <div class="product-header">
+        <h2 data-key="sachetTitle">مغلفات زيت زيتون (Sachets)</h2>
+
+    </div>
+    <div class="main-content">
+        <div class="image-side"><img src="sachets.jpg" alt="Sachet"></div>
+        <div class="info-side">
+            <p class="description" data-key="sachetDesc"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th data-key="thSize">الحجم</th>
+                        <th data-key="thInner">الكرتونة الصغيرة</th>
+                        <th data-key="thOuter">كرتونة Master</th>
+                        <th data-key="thDim">الأبعاد (سم)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>15 ml</td>
+                        <td>20 <span data-key="unitPcs">حبة</span></td>
+                        <td>20 <span data-key="unitBox">كرتونة</span></td>
+                        <td data-key="masterDimValue">40 × 30 × 20 سم</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg1">صفحة 1</span></div>
+</div>
+
+<div class="page">
+    <div class="product-header"><h2 data-key="oilGlass">زيت زيتون (زجاج)</h2></div>
+    <div class="main-content">
+        <div class="image-side"><img src="olive oil1.png" alt="Glass"></div>
+        <div class="info-side">
+            <p class="description" data-key="oilGlassDesc"></p>
+            <table>
+                <thead>
+                    <tr><th data-key="thSize">الحجم</th><th data-key="thQty">حبة/كرتونة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>250 ml</td><td>24</td><td>-- × -- × --</td></tr>
+                    <tr><td>500 ml</td><td>12</td><td>-- × -- × --</td></tr>
+                    <tr><td>750 ml</td><td>12</td><td>-- × -- × --</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg2">صفحة 2</span></div>
+</div>
+
+<div class="page">
+    <div class="product-header"><h2 data-key="oilTin">زيت زيتون (تنك - Tin)</h2></div>
+    <div class="main-content">
+        <div class="image-side"><img src="images/tin.jpg" alt="Tin"></div>
+        <div class="info-side">
+            <p class="description" data-key="oilTinDesc"></p>
+            
+            <h4 data-key="tinSmallTitle">عبوات التجزئة (Retail Tins)</h4>
+            <table>
+                <thead>
+                    <tr><th data-key="thSize">الحجم</th><th data-key="thQty">حبة/كرتونة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1 L</td><td>12</td><td>-- × -- × --</td></tr>
+                    <tr><td>2 L</td><td>6</td><td>-- × -- × --</td></tr>
+                    <tr><td>4 L</td><td>4</td><td>-- × -- × --</td></tr>
+                </tbody>
+            </table>
+
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg3">صفحة 3</span></div>
+    </div>
+
+    <!-- صفحة جديدة لعبوات الأحجام الكبيرة (Bulk Tins) -->
+    <div class="page">
+        <div class="product-header"><h2 data-key="tinLargeTitle">عبوات الأحجام الكبيرة (Bulk Tins)</h2></div>
+        <div class="main-content">
+            <div class="image-side"><img src="images/tin-bulk.jpg" alt="Bulk Tin"></div>
+            <div class="info-side">
+                <p class="description" data-key="bulkTinDesc"></p>
+                <table>
+                    <thead>
+                        <tr><th data-key="thSize">الوزن</th><th data-key="thQty">التعبئة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>10 kg</td><td data-key="singleUnit">عبوة منفردة</td><td>-- × -- × --</td></tr>
+                        <tr><td>15 kg</td><td data-key="singleUnit">عبوة منفردة</td><td>-- × -- × --</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg4">صفحة 4</span></div>
+    </div>
+
+    <div class="page">
+        <div class="product-header"><h2 data-key="zaatar">زعتر بلدي</h2></div>
+        <div class="main-content">
+            <div class="image-side"><img src="za'atar2.png" alt="Herbs"></div>
+            <div class="info-side">
+                <p class="description" data-key="zaatarDesc"></p>
+                <table>
+                    <thead>
+                        <tr><th data-key="thSize">الوزن</th><th data-key="thQty">حبة/كرتونة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>500g</td><td>20</td><td>-- × -- × --</td></tr>
+                        <tr><td>1kg</td><td>10</td><td>-- × -- × --</td></tr>
+                        <tr><td>2kg</td><td>5</td><td>-- × -- × --</td></tr>
+                    </tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg5">صفحة 5</span></div>
+        </div>
+    </div>
+
+    <!-- صفحة جديدة للفريكة بعد الزعتر -->
+    <div class="page">
+        <div class="product-header"><h2 data-key="freekah">فريكة بلدية</h2></div>
+        <div class="main-content">
+            <div class="image-side"><img src="freekeh.jpg" alt="Freekah"></div>
+            <div class="info-side">
+                <p class="description" data-key="freekehDesc"></p>
+                <table>
+                    <thead>
+                        <tr><th data-key="thSize">الوزن</th><th data-key="thQty">حبة/كرتونة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>500g</td><td>20</td><td>-- × -- × --</td></tr>
+                        <tr><td>1kg</td><td>10</td><td>-- × -- × --</td></tr>
+                        <tr><td>2kg</td><td>5</td><td>-- × -- × --</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg6">صفحة 6</span></div>
+    </div>
+
+    <!-- صفحة فريكة إضافية -->
+    <div class="page">
+        <div class="product-header"><h2 data-key="duqqa">دقة بلدية</h2></div>
+        <div class="main-content">
+            <div class="image-side"><img src="duqqa.png" alt="Duqqa"></div>
+            <div class="info-side">
+                <p class="description" data-key="duqqaDesc"></p>
+                <table>
+                    <thead>
+                        <tr><th data-key="thSize">الوزن</th><th data-key="thQty">حبة/كرتونة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>500g</td><td>20</td><td>-- × -- × --</td></tr>
+                        <tr><td>1kg</td><td>10</td><td>-- × -- × --</td></tr>
+                        <tr><td>2kg</td><td>5</td><td>-- × -- × --</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg7">صفحة 7</span></div>
+    </div>
+
+
+    <!-- صفحة جديدة لزيتون مكبوس (Pickled Olive) -->
+    <div class="page">
+        <div class="product-header"><h2 data-key="pickledOlive">زيتون مكبوس</h2></div>
+        <div class="main-content">
+            <div class="image-side"><img src="olive.png" alt="Pickled Olive"></div>
+            <div class="info-side">
+                <p class="description" data-key="pickledOliveDesc"></p>
+                <table>
+                    <thead>
+                        <tr><th data-key="thSize">الوزن</th><th data-key="thQty">حبة/كرتونة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>500g</td><td>حسب الطلب</td><td>-- × -- × --</td></tr>
+                        <tr><td>2kg</td><td>حسب الطلب</td><td>-- × -- × --</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg8">صفحة 8</span></div>
+        </div>
+
+    <!-- صفحة مكررة لزيتون مكبوس (Pickled Olive) -->
+    <div class="page">
+        <div class="product-header"><h2 data-key="sage">ميرمية جبلية</h2></div>
+        <div class="main-content">
+            <div class="image-side"><img src="sage.jpg" alt="Sage"></div>
+            <div class="info-side">
+                <p class="description" data-key="sageDesc"></p>
+                <table>
+                    <thead>
+                        <tr><th data-key="thSize">الوزن</th><th data-key="thQty">حبة/كرتونة</th><th data-key="thDim">الأبعاد (سم)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>500g</td><td>20</td><td>-- × -- × --</td></tr>
+                        <tr><td>1kg</td><td>10</td><td>-- × -- × --</td></tr>
+                        <tr><td>2kg</td><td>5</td><td>-- × -- × --</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg9">صفحة 9</span></div>
+    </div>
+
+    <!-- صفحة مكررة لميرمية جبلية -->
+    <div class="page">
+        <div class="product-header"><h2 data-key="nabulsiSoap">صابون بلدي</h2></div>
+        <div class="main-content">
+            <div class="image-side"><img src="soap.jpg" alt="Sage"></div>
+            <div class="info-side">
+                    <p class="description" data-key="nabulsiSoapDesc"></p>
+                <table>
+                    <thead>
+                        <tr><th data-key="thSize"></th><th data-key="thQty"></th><th data-key="thDim"></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>70g</td><td>50</td><td>-- × -- × --</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="page-footer"><span>MANAJEL 2026</span><span data-key="pg10">صفحة 10</span></div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+<script>
+    const langData = {
+        ar: {
+                                    sageDesc: "ميرمية جبلية فلسطينية طبيعية 100%، مجففة بعناية للحفاظ على نكهتها وفوائدها الصحية. تُستخدم في الطهي لإضافة نكهة عطرية مميزة للأطباق، كما تُعد خيارًا ممتازًا للمشروبات العشبية والمستحضرات الطبيعية. منتج يعكس أصالة الأرض والتراث الفلسطيني.\n\nالمميزات\n\nميرمية فلسطينية طبيعية 100%\n\nمجففة بعناية للحفاظ على النكهة والفوائد\n\nنكهة عطرية مميزة للأطباق\n\nمناسبة للمشروبات العشبية والمستحضرات الطبيعية\n\nتعكس التراث الفلسطيني",
+                        sage: "ميرمية جبلية",
+            nabulsiSoapDesc: "صابون نابلسي فلسطيني تقليدي مصنوع يدويًا من زيت الزيتون النقي ومكونات طبيعية، لطيف على البشرة ومغذي لها. يجمع بين التراث والأصالة مع الفعالية اليومية، حيث يوفر تنظيفًا عميقًا دون تجفيف البشرة، ويتركها ناعمة ومحمية.\n\nالمميزات\n\nصابون فلسطيني يدوي الصنع\nمصنوع من زيت الزيتون النقي\nمكونات طبيعية 100%\nلطيف على البشرة ويغذيها\nيحافظ على التراث والأصالة",
+            nabulsiSoap: "صابون نابلسي",
+            soapDesc: "صابون نابلسي فلسطيني تقليدي مصنوع يدويًا من زيت الزيتون النقي ومكونات طبيعية، لطيف على البشرة ومغذي لها. يجمع بين التراث والأصالة مع الفعالية اليومية، حيث يوفر تنظيفًا عميقًا دون تجفيف البشرة، ويتركها ناعمة ومحمية.\n\nالمميزات\n\nصابون فلسطيني يدوي الصنع\nمصنوع من زيت الزيتون النقي\nمكونات طبيعية 100%\nلطيف على البشرة ويغذيها\nيحافظ على التراث والأصالة",
+            duqqa: "دقة بلدية ",
+            duqqaDesc: "دقة بلدية فلسطينية محضرة بعناية من مزيج مختار من الأعشاب، المكسرات، والبذور، وفق وصفات تقليدية متوارثة. تتميز بنكهتها الغنية والمتوازنة التي تضيف طعمًا لذيذًا ومميزًا للمقبلات، الخبز مع الزيت، أو الأطباق اليومية. تجربة أصيلة تعكس التراث الفلسطيني وتمنح كل وجبة لمسة طبيعية وفريدة.\n\nالمميزات\n\nخليط أعشاب ومكسرات وبذور فلسطيني أصلي\nوصفة تقليدية متوارثة\nنكهة غنية ومتوازنة\nمثالية مع الخبز والزيت والمقبلات\nتحافظ على التراث والنكهة الأصيلة",
+            subtitle: "دليل المنتجات والبيانات اللوجستية 2026", location: "سلفيت - فلسطين",
+            sachetTitle: "مغلفات زيت زيتون (Sachets)", sachetDesc: "مغلفات زيت زيتون عملية بحجم فردي تحتوي على زيت زيتون فلسطيني عالي الجودة معصور على البارد، مثالية للاستخدام اليومي والسفر والمطاعم والضيافة. توفر هذه المغلفات طريقة نظيفة وسهلة للاستمتاع بزيت الزيتون الطبيعي في أي وقت ومكان.\n\nالمميزات\n\nزيت زيتون فلسطيني طبيعي\nعبوات فردية سهلة الاستخدام\nمناسبة للمطاعم والسفر والضيافة\nتحافظ على الطزاجة والجودة",
+            oilGlass: "زيت زيتون (زجاج)", oilGlassDesc: "زيت زيتون بكر ممتاز معصور على البارد ومعبأ في زجاج داكن فاخر يساعد على حماية الزيت من الضوء والحفاظ على جودته ونكهته الطبيعية لفترة أطول. خيار مثالي للاستخدام اليومي وللتقديم بشكل أنيق على المائدة.\n\nالمميزات\n\nزيت زيتون بكر ممتاز\nمعصور على البارد\nزجاج داكن لحماية الجودة\nنكهة طبيعية غنية",
+            oilTin: "زيت زيتون (تنك - Tin)", oilTinDesc: "زيت زيتون عالي الجودة معصور على البارد ومعبأ في عبوات معدنية آمنة، تُعد الخيار المثالي للتخزين والاستخدام العائلي اليومي. توفر هذه العبوات حماية ممتازة للزيت وتحافظ على نكهته وجودته، مع توفرها بأحجام صغيرة عملية.\n\nالمميزات\n\nزيت زيتون طبيعي عالي الجودة\nعبوات معدنية تحافظ على الطزاجة\nمناسبة للتخزين والاستخدام اليومي\nأحجام صغيرة عملية",
+            bulkTinDesc: "عبوات زيت زيتون فلسطيني عالي الجودة معصور على البارد، مخصصة لطلبات الجملة. تأتي هذه العبوات المعدنية الكبيرة بحجوم 10 و15 كجم لتسهيل التخزين والاستخدام التجاري والمطاعم والمطابخ الكبيرة، مع الحفاظ على جودة الزيت ونكهته الطبيعية.\n\nالمميزات\n\nزيت زيتون طبيعي عالي الجودة\nمعصور على البارد\nعبوات معدنية كبيرة للجملة\nمثالي للتخزين والاستخدام التجاري",
+            tinSmallTitle: "عبوات التجزئة (1 - 4 لتر)", tinLargeTitle: "عبوات الجملة (10 - 15 كجم)", singleUnit: "عبوة منفردة",
+            herbsTitle: "المونة والأعشاب", zaatar: "زعتر بلدي", freekah: "فريكة بلدية",
+            freekehDesc: "فريكة فلسطينية بلدية محضرة باستخدام طرق متوارثة عبر الأجيال، حيث يتم اختيار الحبوب بعناية وتجهيزها بطريقة تحافظ على قيمتها الغذائية ونكهتها المميزة. تتميز الفريكة بطعمها المدخن الطبيعي وقيمتها الغذائية العالية، ما يجعلها خيارًا صحيًا ولذيذًا للاستخدام في وجبات الإفطار، السلطات، والأطباق الرئيسية.\n\nالمميزات\n\nفريكة فلسطينية تقليدية عالية الجودة\nمحضرة باستخدام طرق متوارثة\nنكهة مدخنة طبيعية\nغنية بالقيمة الغذائية\nمناسبة للإفطار، السلطات، والأطباق المختلفة",
+            zaatarDesc: "خلطة زعتر فلسطينية أصلية، مُحضرة بعناية من أفضل أنواع الزعتر الفلسطيني الطازج، مع الطحينة الغنية، السمسم المحمص، ولمسة من السمّاق الذي يمنحها نكهة حامضة طبيعية متوازنة. تمثل هذه الخلطة تجربة طعام فلسطينية أصيلة، مثالية للاستمتاع على الخبز الطازج، أو كجزء من وجبة الإفطار التقليدية، أو حتى لإضافة نكهة مميزة للأطعمة المختلفة.\n\nالمميزات\n\nزعتر فلسطيني أصلي عالي الجودة\nمع الطحينة، السمسم المحمص، والسمّاق الطبيعي\nنكهة غنية، متوازنة، وحامضة قليلًا بشكل طبيعي\nمثالية للخبز، الفطور، والوجبات التقليدية\nتجربة فلسطينية أصيلة تحافظ على التراث\n",
+            thSize: "الحجم / الوزن", thInner: "الكرتونة الصغيرة", thOuter: "كرتونة Master", thQty: "حبة/كرتونة", thDim: "الأبعاد (سم)",
+            unitPcs: "حبة", unitBox: "كرتونة", pg1: "صفحة 1", pg2: "صفحة 2", pg3: "صفحة 3", pg4: "صفحة 4", pg5: "صفحة 5", pg6: "صفحة 6", pg7: "صفحة 7", pg8: "صفحة 8", pg9: "صفحة 9", pg10: "صفحة 10", pickledOlive: "زيتون مكبوس",
+                        pickledOliveDesc: "زيتون مكبوس فلسطيني محضّر بطرق تقليدية دون إضافة أي مواد حافظة، يتميز بطعم متوازن وجودة عالية. مثالي للتقديم مع الوجبات اليومية، المقبلات، أو كجزء من أطباق الإفطار والمقبلات، ليمنح كل وجبة نكهة أصيلة وطبيعية.\n\nالمميزات\n\nزيتون مكبوس فلسطيني أصلي\n\nمحضّر بطرق تقليدية\n\nبدون مواد حافظة\n\nطعم متوازن وجودة عالية\n\nمثالي للمقبلات والإفطار",
+            printBtn: "تحميل PDF", langBtn: "English"
+        },
+        en: {
+                                    sageDesc: "100% natural Palestinian mountain sage, carefully dried to preserve its flavor and health benefits. Used in cooking to add a distinctive aromatic taste to dishes, and also ideal for herbal teas and natural preparations. A product that reflects the authenticity of the land and Palestinian heritage.\n\nFeatures\n\n100% natural Palestinian sage\n\nCarefully dried to maintain flavor and benefits\n\nDistinctive aromatic flavor for dishes\n\nSuitable for herbal teas and natural preparations\n\nReflects Palestinian heritage",
+                        sage: "Mountain Sage",
+            nabulsiSoapDesc: "Traditional Palestinian Nabulsi soap, handmade from pure olive oil and natural ingredients, gentle and nourishing for the skin. It combines heritage and authenticity with daily effectiveness, providing deep cleansing without drying, leaving the skin soft and protected.\n\nFeatures\n\nHandmade Palestinian soap\nMade from pure olive oil\n100% natural ingredients\nGentle and nourishing for the skin\nPreserves heritage and authenticity",
+            nabulsiSoap: "Nabulsi Soap",
+            soapDesc: "Traditional Palestinian Nabulsi soap, handmade from pure olive oil and natural ingredients, gentle and nourishing for the skin. It combines heritage and authenticity with daily effectiveness, providing deep cleansing without drying, leaving the skin soft and protected.\n\nFeatures\n\nHandmade Palestinian soap\nMade from pure olive oil\n100% natural ingredients\nGentle and nourishing for the skin\nPreserves heritage and authenticity",
+            duqqa: "Traditional  Dukkah",
+            duqqaDesc: "Traditional  Dukkah, carefully prepared from a selected blend of herbs, nuts, and seeds following inherited recipes. It offers a rich and balanced flavor that enhances appetizers, bread with olive oil, or daily dishes. An authentic experience reflecting Palestinian heritage, adding a natural and unique touch to every meal.\n\nFeatures\n\nAuthentic Palestinian blend of herbs, nuts, and seeds\nPrepared using inherited traditional recipes\nRich and balanced flavor\nPerfect with bread, olive oil, and appetizers\nPreserves authentic Palestinian taste and heritage",
+            subtitle: "Product Catalog & Logistics Data 2026", location: "Salfit - Palestine",
+            sachetTitle: "Olive Oil Sachets", sachetDesc: "Practical single-serve olive oil sachets filled with high-quality Palestinian cold-pressed olive oil, perfect for daily use, travel, restaurants, and hospitality. These sachets offer a clean and convenient way to enjoy natural olive oil anytime, anywhere.\n\nFeatures\n\nNatural Palestinian olive oil\nEasy-to-use single-serve packs\nIdeal for restaurants, travel, and hospitality\nMaintains freshness and quality",
+            oilGlass: "Olive Oil (Glass)", oilGlassDesc: "Extra virgin cold-pressed olive oil packed in a premium dark glass bottle that protects the oil from light and preserves its natural quality and flavor for longer. A perfect choice for daily use and elegant table presentation.\n\nFeatures\n\nExtra virgin olive oil\nCold-pressed\nDark glass for quality protection\nRich natural flavor",
+            oilTin: "Olive Oil (Tin)", oilTinDesc: "High-quality cold-pressed olive oil packed in safe metal tins, making it an ideal choice for storage and daily family use. These tins provide excellent protection for the oil while preserving its flavor and quality, available in convenient small sizes.\n\nFeatures\n\nHigh-quality natural olive oil\nMetal tins preserve freshness\nIdeal for storage and daily use\nAvailable in convenient small sizes",
+            bulkTinDesc: "High-quality Palestinian cold-pressed olive oil, designed for wholesale orders. These large metal tins, available in 10 and 15 kg sizes, make storage and commercial use easy while preserving the oil’s natural quality and flavor. Perfect for restaurants, large kitchens, and bulk use.\n\nFeatures\n\nHigh-quality natural olive oil\nCold-pressed\nLarge metal tins for wholesale\nIdeal for storage and commercial use",
+            tinSmallTitle: "Retail Tins (1 - 4 L)", tinLargeTitle: "Bulk Tins (10 - 15 KG)", singleUnit: "Single Unit",
+            herbsTitle: "Pantry & Herbs", zaatar: "Traditional Zaatar", freekah: "Traditional Freekah",
+            freekehDesc: "Traditional Palestinian freekeh, prepared using inherited methods passed down through generations. The grains are carefully selected and processed to preserve their nutritional value and unique smoky flavor. Freekeh is a healthy and delicious choice for breakfast, salads, or main dishes.\n\nFeatures\n\nHigh-quality traditional Palestinian freekeh\nPrepared using inherited methods\nNaturally smoky flavor\nRich in nutritional value\nPerfect for breakfast, salads, and various dishes",
+            zaatarDesc: "Authentic Palestinian za’atar blend, carefully prepared using the finest fresh Palestinian thyme, rich tahini, roasted sesame, and a touch of sumac that gives it a naturally balanced tangy flavor. This blend offers a true Palestinian culinary experience, perfect for spreading on fresh bread, enjoying at traditional breakfast, or adding a distinctive flavor to various dishes.\n\nFeatures\n\nHigh-quality authentic Palestinian za’atar\nBlended with tahini, roasted sesame, and natural sumac\nRich, balanced, and naturally tangy flavor\nIdeal for bread, breakfast, and traditional dishes\nPreserves the authentic Palestinian heritage",
+            thSize: "Size / Weight", thInner: "Inner Box", thOuter: "Master Carton", thQty: "Pcs/Carton", thDim: "Dim (cm)",
+            unitPcs: "pcs", unitBox: "boxes", pg1: "Page 1", pg2: "Page 2", pg3: "Page 3", pg4: "Page 4", pg5: "Page 5", pg6: "Page 6", pg7: "Page 7", pg8: "Page 8", pg9: "Page 9", pg10: "Page 10", pickledOlive: "Pickled Olive",
+                        pickledOliveDesc: "Authentic Palestinian pickled olives, prepared using traditional methods with no preservatives. They feature a balanced taste and high quality, perfect for daily meals, appetizers, or as part of breakfast dishes, adding a natural and authentic flavor to every meal.\n\nFeatures\n\nAuthentic Palestinian pickled olives\n\nPrepared using traditional methods\n\nNo preservatives\n\nBalanced taste and high quality\n\nIdeal for appetizers and breakfast",
+            printBtn: "Download PDF", langBtn: "عربي"
+        }
+    };
+
+    let currentLang = 'ar';
+    function updateLanguageContent() {
+        const htmlTag = document.getElementById('mainHtml');
+        htmlTag.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-key]').forEach(el => {
+            const key = el.getAttribute('data-key');
+            const value = langData[currentLang][key];
+            if (el.classList.contains('description')) {
+                el.innerText = value || '';
+            } else {
+                el.textContent = value || '';
+            }
+        });
+        document.getElementById('langBtn').textContent = langData[currentLang].langBtn;
+        if (currentLang === 'ar') {
+            document.body.classList.remove('english');
+            document.body.style.fontFamily = "'Cairo', sans-serif";
+        } else {
+            document.body.classList.add('english');
+            document.body.style.fontFamily = "'Tajawal-Bold', 'Inter', sans-serif";
+        }
+        document.querySelectorAll('.cover-page').forEach(el => {
+            el.style.fontFamily = "'Cairo', sans-serif";
+        });
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'ar' ? 'en' : 'ar';
+        updateLanguageContent();
+    }
+
+    // Ensure content is set on initial load
+    document.addEventListener('DOMContentLoaded', updateLanguageContent);
+</script>
+
+</body>
+</html>
