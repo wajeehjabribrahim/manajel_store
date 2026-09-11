@@ -5,8 +5,58 @@
 <base href="/catalog/">
 <meta name="viewport" content="width=1024">
 <title>MANAJEL — Product Catalog 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
+
+/* Local Cairo font for the Next.js public/catalog folder */
+@font-face {
+  font-family: "CairoLocal";
+  src: url("/catalog/fonts/Cairo-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "CairoLocal";
+  src: url("/catalog/fonts/Cairo-Medium.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "CairoLocal";
+  src: url("/catalog/fonts/Cairo-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "CairoLocal";
+  src: url("/catalog/fonts/Cairo-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* Arabic mode */
+html[dir="rtl"],
+html[dir="rtl"] body,
+html[dir="rtl"] body * {
+  font-family: "CairoLocal", Arial, sans-serif !important;
+}
+
+/* Keep Latin labels/numbers in Inter */
+html[dir="rtl"] .brand-en,
+html[dir="rtl"] .title-en,
+html[dir="rtl"] .en-name,
+html[dir="rtl"] .number,
+html[dir="rtl"] .contact-label,
+html[dir="rtl"] .process-no {
+  font-family: "Inter", Arial, sans-serif !important;
+}
 :root{--ivory:#FBF8F2;--paper:#fff;--ink:#2F2B20;--muted:#716D63;--olive:#596247;--gold:#B49A68;--line:#DED9CF;--soft:#F3F0E9}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:#E9E6DF;color:var(--ink);font-family:Cairo,Inter,sans-serif}
