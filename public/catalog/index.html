@@ -5,7 +5,7 @@
 <base href="/catalog/">
 <meta name="viewport" content="width=1024">
 <title>MANAJEL — Product Catalog 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--ivory:#FBF8F2;--paper:#fff;--ink:#2F2B20;--muted:#716D63;--olive:#596247;--gold:#B49A68;--line:#DED9CF;--soft:#F3F0E9}
 *{box-sizing:border-box}
@@ -52,6 +52,26 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px
 .allergen{color:#75613E}
 .contact-title{font-size:45px;margin:0}.contact-list{margin-top:28px;display:grid;gap:13px;font-size:14px}.contact-label{color:var(--muted);font:500 9px Inter,sans-serif;letter-spacing:1.8px;text-transform:uppercase}.contact-value{font-size:16px}
 .footer{position:absolute;left:18mm;right:18mm;bottom:9mm;padding-top:8px;border-top:1px solid var(--line);display:flex;justify-content:space-between;color:#8A867D;font:500 8px Inter,Cairo,sans-serif;letter-spacing:.5px}
+/* Arabic font protection */
+html[dir="rtl"],
+html[dir="rtl"] body {
+  font-family: "Cairo", sans-serif !important;
+}
+
+html[dir="rtl"] body * {
+  font-family: "Cairo", sans-serif !important;
+}
+
+/* Keep Latin/English labels in Inter when Arabic mode is active */
+html[dir="rtl"] .brand-en,
+html[dir="rtl"] .title-en,
+html[dir="rtl"] .en-name,
+html[dir="rtl"] .number,
+html[dir="rtl"] .contact-label,
+html[dir="rtl"] .process-no {
+  font-family: "Inter", "Cairo", sans-serif !important;
+}
+
 [dir="rtl"] .footer{flex-direction:row-reverse}
 [dir="rtl"] .callout{border-left:none;border-right:2px solid var(--gold)}
 [dir="rtl"] .process-item{border-right:0;border-left:1px solid var(--line)}
@@ -278,7 +298,7 @@ formatsTitle:"Olive Oil Formats",formatsText:"A range of formats for distributio
 sachetsTitle:"Olive Oil Sachets",sachetsDesc:"15 ml · 20 pcs / small box · 20 boxes / master carton",bottlesTitle:"Glass Bottles",bottlesDesc:"250 ml · 500 ml · 750 ml",tinsTitle:"Retail Tins",tinsDesc:"1 L · 2 L · 4 L",bulkTinsTitle:"Bulk Tins",bulkTinsDesc:"10 kg · 15 kg",
 zaatar:"Traditional Zaatar",zaatarShort:"A Palestinian zaatar blend with roasted sesame and sumac.",zaatarDesc:"A traditional Palestinian blend of zaatar, sumac and roasted sesame.",
 freekeh:"Traditional Freekeh",freekehShort:"Palestinian freekeh with a distinctive smoky character.",freekehDesc:"Roasted and cracked green wheat.",dukkah:"Traditional Dukkah",dukkahShort:"A Palestinian blend of roasted seeds, grains, herbs and spices.",dukkahIngredients:"Roasted sesame, roasted cracked wheat/freekeh, ground cumin, ground dried coriander, sumac, chili/red pepper and salt.",pickled:"Pickled Olives",pickledShort:"Traditional Palestinian pickled olives.",pickledIngredients:"Green olives · Lemon · Pepper · Salt",sage:"Mountain Sage",sageShort:"Palestinian mountain sage, carefully dried.",sageDesc:"Dried mountain sage.",
-pantryKicker:"05 / PALESTINIAN PANTRY",pantryTitle:"PALESTINIAN PANTRY",pantrySpecsKicker:"06 / PANTRY SPECIFICATIONS",pantrySpecsTitle:"PANTRY SPECIFICATIONS",dairyKicker:"08 / PALESTINIAN DAIRY",dairyTitle:"PALESTINIAN DAIRY",heritageKicker:"09 / HERITAGE PRODUCT",packagingKicker:"10 / PACKAGING & LOGISTICS",packagingTitle:"PACKAGING & LOGISTICS",internationalKicker:"11 / INTERNATIONAL",exportTitle:"EXPORT & DISTRIBUTION",contactEyebrow:"MANAJEL · 2026",contactTitle:"Let's work together.",pantryCallout:"A focused selection of Palestinian pantry products.",pantryCalloutText:"The C presents the products and packaging information currently available. Additional product specifications can be supplied for wholesale inquiries.",
+pantryKicker:"05 / PALESTINIAN PANTRY",pantryTitle:"PALESTINIAN PANTRY",pantrySpecsKicker:"06 / PANTRY SPECIFICATIONS",pantrySpecsTitle:"PANTRY SPECIFICATIONS",dairyKicker:"08 / PALESTINIAN DAIRY",dairyTitle:"PALESTINIAN DAIRY",heritageKicker:"09 / HERITAGE PRODUCT",packagingKicker:"10 / PACKAGING & LOGISTICS",packagingTitle:"PACKAGING & LOGISTICS",internationalKicker:"11 / INTERNATIONAL",exportTitle:"EXPORT & DISTRIBUTION",contactEyebrow:"MANAJEL · 2026",contactTitle:"Let's work together.",pantryCallout:"A focused selection of Palestinian pantry products.",pantryCalloutText:"The catalog presents the products and packaging information currently available. Additional product specifications can be supplied for wholesale inquiries.",
 ingredientsLabel:"Ingredients:",shelfLifeLabel:"Shelf life:",storageLabel:"Storage:",allergenLabel:"Allergen:",
 zaatarIngredientsValue:"Roasted sesame, ground dried zaatar, sumac.",zaatarShelfValue:"1 year.",zaatarStorageValue:"Cool, dry place.",zaatarAllergenValue:"Contains sesame.",
 availableSizesLabel:"Available sizes",thSizeWeight:"Size / Weight",thPcsCarton:"Pcs / Carton",thCarton:"Carton",thSize:"Size",thProduct:"Product",thCartonDim:"Carton Dimensions",
@@ -324,7 +344,7 @@ const staticTranslations = {
 
 let lang="en";
 function update(){
- document.getElementById("mainHtml").dir=lang==="ar"?"rtl":"ltr";
+ document.getElementById("mainHtml").dir=lang==="ar"?"rtl":"ltr";document.getElementById("mainHtml").lang=lang;
  document.body.className=lang==="en"?"english":"";
  const d=lang==="ar"?ar:en;
  const s=staticTranslations[lang];
