@@ -559,12 +559,17 @@ export default function ProductPage({ params }: PageProps) {
             ) : null}
 
             {/* Size Selection */}
+            
             <div className="mb-6">
               <h3 className="mb-3 text-lg font-bold text-[#C9A66B]">
                 {t("product.selectSize")}
               </h3>
+
               <div className="grid grid-cols-3 gap-3">
-                {(sizeEntries.length ? sizeEntries.map(([size]) => size) : (["medium"] as const)).map((size) => (
+                {(sizeEntries.length
+                  ? sizeEntries.map(([size]) => size)
+                  : (["medium"] as const)
+                ).map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -574,35 +579,73 @@ export default function ProductPage({ params }: PageProps) {
                         : "border-dashed"
                     }`}
                     style={{
-                      borderColor: activeSize === size ? "#C9A66B" : "rgba(0,0,0,0.18)",
-                      backgroundColor: activeSize === size ? "rgba(201,166,107,0.16)" : "#FFFFFF",
+                      borderColor:
+                        activeSize === size
+                          ? "#C9A66B"
+                          : "rgba(0,0,0,0.18)",
+                      backgroundColor:
+                        activeSize === size
+                          ? "rgba(201,166,107,0.16)"
+                          : "#FFFFFF",
                     }}
                   >
                     <div className="font-bold capitalize text-[#121416]">
-                      {getProductSizeLabel(size, product.sizes as Record<string, { label?: string; labelEn?: string } | undefined>, t, language)}
+                      {getProductSizeLabel(
+                        size,
+                        product.sizes as Record<
+                          string,
+                          { label?: string; labelEn?: string } | undefined
+                        >,
+                        t,
+                        language
+                      )}
                     </div>
+
                     <div className="text-xs text-black/65">
                       {product.sizes?.[size]?.weight || ""}
                     </div>
-                    <div className="font-bold text-sm">
-                      {product.sizes?.[size]?.salePrice ? (
-                        <>
+
+                    {/* Price — يظهر فقط إذا المنتج متوفر */}
+                    {product.inStock ? (
+                      <div className="font-bold text-sm">
+                        {product.sizes?.[size]?.salePrice ? (
+                          <>
+                            <div
+                              className="text-xs line-through font-semibold"
+                              style={{
+                                color: "#ef4444",
+                                WebkitTextFillColor: "#ef4444",
+                              }}
+                            >
+                              {CURRENCY_SYMBOL}
+                              {formatNumber(
+                                product.sizes?.[size]?.price ?? product.price
+                              )}
+                            </div>
+
+                            <div
+                              style={{ color: COLORS.secondary }}
+                              className="font-bold text-sm text-[#C9A66B]"
+                            >
+                              {CURRENCY_SYMBOL}
+                              {formatNumber(
+                                product.sizes?.[size]?.salePrice ?? product.price
+                              )}
+                            </div>
+                          </>
+                        ) : (
                           <div
-                            className="text-xs line-through font-semibold"
-                            style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
+                            style={{ color: COLORS.secondary }}
+                            className="font-bold text-sm text-[#C9A66B]"
                           >
-                              {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.price ?? product.price)}
+                            {CURRENCY_SYMBOL}
+                            {formatNumber(
+                              product.sizes?.[size]?.price ?? product.price
+                            )}
                           </div>
-                          <div style={{ color: COLORS.secondary }} className="font-bold text-sm text-[#C9A66B]">
-                              {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.salePrice ?? product.price)}
-                          </div>
-                        </>
-                      ) : (
-                        <div style={{ color: COLORS.secondary }} className="font-bold text-sm text-[#C9A66B]">
-                            {CURRENCY_SYMBOL}{formatNumber(product.sizes?.[size]?.price ?? product.price)}
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    ) : null}
                   </button>
                 ))}
               </div>

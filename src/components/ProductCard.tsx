@@ -273,23 +273,26 @@ export default function ProductCard({ product, animationDelay = 0, isFirstProduc
           </p>
 
           {/* Price */}
-          <div className="mb-2 flex justify-between items-center">
-            <div>
-              <div className="flex items-center gap-3">
-                {hasSale ? (
-                  <p
-                      className="text-xs sm:text-sm font-semibold line-through decoration-2"
-                    style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
-                  >
-                    {CURRENCY_SYMBOL}{basePrice}
-                  </p>
-                ) : null}
-                <p className="text-sm sm:text-lg font-bold text-[#C9A66B]">
-                  {CURRENCY_SYMBOL}{displayPrice}
-                </p>
-              </div>
+            <div className="mb-2 flex justify-between items-center">
+              {product.inStock ? (
+                <div>
+                  <div className="flex items-center gap-3">
+                    {hasSale ? (
+                      <p
+                        className="text-xs sm:text-sm font-semibold line-through decoration-2"
+                        style={{ color: "#ef4444", WebkitTextFillColor: "#ef4444" }}
+                      >
+                        {CURRENCY_SYMBOL}{basePrice}
+                      </p>
+                    ) : null}
+
+                    <p className="text-sm sm:text-lg font-bold text-[#C9A66B]">
+                      {CURRENCY_SYMBOL}{displayPrice}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
             </div>
-          </div>
 
           <div className="mt-auto flex gap-1.5 sm:gap-2">
             <span className="flex-1 rounded-lg border border-[#C9A66B]/70 py-1.5 sm:py-2 text-center text-[10px] sm:text-sm font-semibold text-[#96691A] transition-colors duration-200 group-hover:bg-[#C9A66B]/10 tajawal-regular-all">

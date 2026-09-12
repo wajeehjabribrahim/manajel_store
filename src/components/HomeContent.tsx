@@ -499,14 +499,20 @@ export default function HomeContent() {
                           <h3 className="text-[#121416] tajawal-regular text-[13px] md:text-sm lg:text-base leading-tight line-clamp-2">
                             {t(`products.${product.id}.name`) === `products.${product.id}.name` ? product.name : t(`products.${product.id}.name`)}
                           </h3>
-                          <div className="flex items-center gap-2 min-w-fit">
-                            {hasSale ? (
-                              <span className="text-xs sm:text-sm line-through text-red-600 font-semibold">₪{basePrice}</span>
-                            ) : null}
-                            <span className="text-base sm:text-lg font-bold text-[#C9A66B] flex items-center gap-1">
-                              <span className="text-[1.1em]">₪</span>{hasSale ? salePrice : basePrice}
+                         {product.inStock ? (
+                        <div className="flex items-center gap-2 min-w-fit">
+                          {hasSale ? (
+                            <span className="text-xs sm:text-sm line-through text-red-600 font-semibold">
+                              ₪{basePrice}
                             </span>
-                          </div>
+                          ) : null}
+
+                          <span className="text-base sm:text-lg font-bold text-[#C9A66B] flex items-center gap-1">
+                            <span className="text-[1.1em]">₪</span>
+                            {hasSale ? salePrice : basePrice}
+                          </span>
+                        </div>
+                      ) : null}
                         </div>
                         <p className={`text-xs sm:text-sm lg:text-xs tajawal-regular text-black/70 leading-5 line-clamp-2 ${dir === "rtl" ? "text-right" : "text-left"}`}>
                           {t(`products.${product.id}.description`) === `products.${product.id}.description`
