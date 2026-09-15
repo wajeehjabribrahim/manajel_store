@@ -93,7 +93,7 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
 .card{border:1px solid var(--line);padding:13px;min-height:280px;display:flex;flex-direction:column}.card img{width:100%;height:235px;object-fit:contain;background:var(--ivory)}.card h3{font-size:16px;margin:12px 0 4px}.card p{margin:0;font-size:12px;color:var(--muted);line-height:1.7}
 .category-list{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;border-top:1px solid var(--line);margin-top:22px}.category-item{padding:20px 0;border-bottom:1px solid var(--line)}.category-item .num{color:var(--gold);font:500 11px CairoLocal,sans-serif}.category-item h3{margin:5px 0 4px;font-size:18px}.category-item p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
-.callout{margin-top:24px;padding:22px;border-left:2px solid var(--gold);background:var(--ivory)}.callout strong{display:block;font-size:15px;margin-bottom:5px}.callout span{color:var(--muted);font-size:12px;line-height:1.7}
+.callout{margin-top:4px;padding:2px;border-left:2px solid var(--gold);background:var(--ivory)}.callout strong{display:block;font-size:15px;margin-bottom:5px}.callout span{color:var(--muted);font-size:12px;line-height:1.7}
 .note{font-size:11px;color:var(--muted);line-height:1.7;margin-top:10px}
 .detail-list{margin:18px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}
 .detail-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.7}
@@ -107,6 +107,78 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px
 [dir="rtl"] .process-item:last-child{border-left:0}
 @media screen and (max-width:900px){.page{width:100%;height:auto;min-height:100vh;margin:0;padding:40px 25px 55px}.hero,.product-row{grid-template-columns:1fr}.hero-image,.product-image{height:420px}.cards,.category-list{grid-template-columns:1fr}.process{grid-template-columns:1fr 1fr}.process-item:nth-child(2){border-right:0}}
 @media print{@page{size:A4;margin:0}body{background:none}.controls{display:none!important}.page{width:210mm!important;height:297mm!important;min-height:297mm!important;margin:0!important;padding:18mm 18mm 20mm!important;box-shadow:none}.hero,.product-row{grid-template-columns:1fr 1fr!important}.hero-image,.product-image{height:610px!important}.product-image{height:560px!important}.cards,.category-list{grid-template-columns:1fr 1fr!important}.process{grid-template-columns:repeat(4,1fr)!important}.process-item{border-right:1px solid var(--line)!important}.process-item:last-child{border-right:0!important}}
+
+/* Pages 8–9: compact product cards that stay inside the A4 page */
+.page:nth-of-type(8) .cards,
+.page:nth-of-type(9) .cards{
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:22px;
+}
+.page:nth-of-type(8) .card,
+.page:nth-of-type(9) .card{
+  min-height:0;
+  padding:11px;
+}
+.page:nth-of-type(8) .card img,
+.page:nth-of-type(9) .card img{
+  height:205px;
+  max-height:205px;
+  object-fit:contain;
+}
+.page:nth-of-type(8) .card h3,
+.page:nth-of-type(9) .card h3{
+  font-size:15px;
+  line-height:1.35;
+  margin:9px 0 3px;
+}
+.page:nth-of-type(8) .card p,
+.page:nth-of-type(9) .card p{
+  font-size:11px;
+  line-height:1.55;
+}
+.page:nth-of-type(8) .card table,
+.page:nth-of-type(9) .card table{
+  margin-top:5px;
+}
+.page:nth-of-type(8) .card th,
+.page:nth-of-type(8) .card td,
+.page:nth-of-type(9) .card th,
+.page:nth-of-type(9) .card td{
+  padding:8px 6px;
+  font-size:10px;
+}
+.page:nth-of-type(8) .card .note,
+.page:nth-of-type(9) .card .note{
+  margin-top:7px;
+  font-size:10px;
+  line-height:1.5;
+}
+@media print{
+  .page:nth-of-type(8) .card img,
+.page:nth-of-type(8) .card img,
+  .page:nth-of-type(9) .card img{
+    height:205px;
+    max-height:205px;
+  }
+}
+
+/* Page 8 safety: keep all four cards and their content within the page */
+.page:nth-of-type(8) .cards{
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:22px;
+}
+.page:nth-of-type(8) .card{
+  min-height:0;
+  padding:11px;
+}
+.page:nth-of-type(8) .card img{
+  height:205px;
+  max-height:205px;
+  object-fit:contain;
+}
+
 </style>
 </head>
 <body>
@@ -166,7 +238,7 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px
 <section class="page">
 <div class="kicker" data-key="formatsKicker">04 / OLIVE OIL FORMATS</div><h2 class="title" data-key="formatsTitle">Olive Oil Formats</h2><p class="lead" data-key="formatsText">A range of formats for distribution, retail, single-serve use and bulk supply.</p>
 <div class="cards">
-<div class="card"><img src="sachets.png"><h3 data-key="sachetsTitle">Olive Oil Sachets</h3><p data-key="sachetsDesc">15 ml · 20 pcs / small box · 20 boxes / master carton</p></div>
+<div class="card"><img src="sachets.png"><h3 data-key="sachetsTitle">Olive Oil Sachets</h3><p data-key="sachetsDesc">15 ml · 24 pcs / small box · 20 boxes / master carton</p></div>
 <div class="card"><img src="olive%20oil1.jpg"><h3 data-key="bottlesTitle">Glass Bottles</h3><p data-key="bottlesDesc">250 ml · 500 ml · 750 ml</p></div>
 <div class="card"><img src="tin.jpg"><h3 data-key="tinsTitle">Retail Tins</h3><p data-key="tinsDesc">1 L · 2 L · 4 L</p></div>
 <div class="card"><img src="bigtin.png"><h3 data-key="bulkTinsTitle">Bulk Tins</h3><p data-key="bulkTinsDesc">10 kg · 15 kg</p></div>
@@ -211,7 +283,7 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px
 <div class="card"><img src="olive.jpg"><h3 data-key="pickled">Pickled Olives</h3><p data-key="pickledIngredients">Green olives · Lemon · Pepper · Salt</p><table><tr><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr><tr><td data-key="pickledSize500">500 g</td><td>8</td><td>39 × 19 × 13 cm</td></tr><tr><td data-key="pickledSize10kg">10 kg</td><td>1</td><td>25 × 25 × 35 cm</td></tr></table><p class="note" data-key="shelfLife1YearCool">Shelf life: 1 year · Store in a cool, dry place.</p></div>
 <div class="card"><img src="sage.jpg"><h3 data-key="sage">Mountain Sage</h3><p data-key="sageDesc">Dried mountain sage.</p><table><tr><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr><tr><td data-key="sageSize300">300 g</td><td>20</td><td>39 × 19 × 13 cm</td></tr></table><p class="note" data-key="shelfLife2YearsCool">Shelf life: 2 years · Store in a cool, dry place.</p></div>
 <div class="card"><img src="freekeh.jpg"><h3 data-key="freekeh">Traditional Freekeh</h3><p data-key="freekehDesc">Roasted and cracked green wheat.</p><table><tr><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr><tr><td data-key="freekehSize500">500 g</td><td>8</td><td>39 × 19 × 13 cm</td></tr></table><p class="note" data-key="shelfLife1YearCool">Shelf life: 1 year · Store in a cool, dry place.</p></div>
-<div class="card"><img src="duqqa.jpg"><h3 data-key="dukkah">Traditional Dukkah</h3><p data-key="dukkahIngredients">Roasted sesame, roasted cracked wheat/freekeh, ground cumin, ground dried coriander, sumac, chili/red pepper and salt.</p><p class="note" data-key="shelfLife1YearCool">Shelf life: 1 year · Store in a cool, dry place.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="dukkahAllergenValue">Contains sesame and wheat/gluten.</span></p></div>
+<div class="card"><img src="duqqa.jpg"><h3 data-key="dukkah">Traditional Dukkah</h3><p data-key="dukkahIngredients">Roasted sesame, roasted cracked wheat/freekeh, ground cumin, ground dried coriander, sumac, chili/red pepper and salt.</p><table><tr><th data-key="thSize">Size</th><th data-key="thPcsCarton">Pcs / Carton</th><th data-key="thCarton">Carton</th></tr><tr><td data-key="freekehSize500">500 g</td><td>8</td><td>39 × 19 × 13 cm</td></tr></table><p class="note" data-key="shelfLife1YearCool">Shelf life: 1 year · Store in a cool, dry place.</p><p class="note allergen"><strong data-key="allergenLabel">Allergen:</strong> <span data-key="dukkahAllergenValue">Contains sesame and wheat/gluten.</span></p></div>
 </div>
 <div class="footer"><span>MANAJEL · PANTRY SPECIFICATIONS</span><span>08</span></div>
 </section>
@@ -249,7 +321,7 @@ table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border-bottom:1px
 <tr><td data-key="prodOliveTin">Olive Oil · Tin</td><td data-key="size4L">4 L</td><td>4</td><td>34 × 34 × 25 cm</td></tr>
 <tr><td data-key="prodBulkOlive">Bulk Olive Oil</td><td data-key="size10kg">10 kg</td><td data-key="singleUnit">Single unit</td><td>26 × 26 × 29 cm</td></tr>
 <tr><td data-key="prodBulkOlive">Bulk Olive Oil</td><td data-key="size15kg">15 kg</td><td data-key="singleUnit">Single unit</td><td>25 × 25 × 35 cm</td></tr>
-<tr><td data-key="prodOliveSachets">Olive Oil Sachets</td><td data-key="size15ml">15 ml</td><td data-key="twentySmallBox">20 / small box</td><td data-key="masterCartonDim">40 × 30 × 20 cm master</td></tr>
+<tr><td data-key="prodOliveSachets">Olive Oil Sachets</td><td data-key="size15ml">15 ml</td><td data-key="twentySmallBox">24 / small box</td><td data-key="masterCartonDim">40 × 30 × 20 cm master</td></tr>
 </tbody></table>
 <p class="note" data-key="packagingNote">Dimensions shown are based on the current catalog data. Missing specifications are intentionally not replaced with estimates.</p>
 <div class="footer"><span>MANAJEL · LOGISTICS</span><span>11</span></div>
@@ -324,7 +396,7 @@ harvest:"Harvest",harvestSub:"Local olive sourcing",pressing:"Pressing",pressing
 oliveTitle:"Extra Virgin Olive Oil",oliveDesc:"Extra virgin olive oil, first cold pressed and processed on the same day as harvest, then stored in food-grade stainless steel tanks before filling.",specHeading:"Key specifications",oliveNote:"Storage: keep in a cool place and away from direct sunlight. Product analyses are available from the Palestinian Ministry of Agriculture.",
 classificationLabel:"Classification",classificationValue:"Extra Virgin",acidityLabel:"Acidity",processingLabel:"Processing",processingValue:"First Cold Press",shelfLifeLabelSpec:"Shelf Life",oliveShelfLifeValue:"2 years",
 formatsTitle:"Olive Oil Formats",formatsText:"A range of formats for distribution, retail, single-serve use and bulk supply.",allSizesTitle:"Available for export",allSizesText:"All olive oil sizes listed in this catalog are available for export. Order quantities and shipping arrangements depend on destination and circumstances.",
-sachetsTitle:"Olive Oil Sachets",sachetsDesc:"15 ml · 20 pcs / small box · 20 boxes / master carton",bottlesTitle:"Glass Bottles",bottlesDesc:"250 ml · 500 ml · 750 ml",tinsTitle:"Retail Tins",tinsDesc:"1 L · 2 L · 4 L",bulkTinsTitle:"Bulk Tins",bulkTinsDesc:"10 kg · 15 kg",
+sachetsTitle:"Olive Oil Sachets",sachetsDesc:"15 ml · 24 pcs / small box · 20 boxes / master carton",bottlesTitle:"Glass Bottles",bottlesDesc:"250 ml · 500 ml · 750 ml",tinsTitle:"Retail Tins",tinsDesc:"1 L · 2 L · 4 L",bulkTinsTitle:"Bulk Tins",bulkTinsDesc:"10 kg · 15 kg",
 zaatar:"Traditional Zaatar",zaatarShort:"A Palestinian zaatar blend with roasted sesame and sumac.",zaatarDesc:"A traditional Palestinian blend of zaatar, sumac and roasted sesame.",
 freekeh:"Traditional Freekeh",freekehShort:"Palestinian freekeh with a distinctive smoky character.",freekehDesc:"Roasted and cracked green wheat.",dukkah:"Traditional Dukkah",dukkahShort:"A Palestinian blend of roasted seeds, grains, herbs and spices.",dukkahIngredients:"Roasted sesame, roasted cracked wheat/freekeh, ground cumin, ground dried coriander, sumac, chili/red pepper and salt.",pickled:"Pickled Olives",pickledShort:"Traditional Palestinian pickled olives.",pickledIngredients:"Green olives · Lemon · Pepper · Salt",sage:"Mountain Sage",sageShort:"Palestinian mountain sage, carefully dried.",sageDesc:"Dried mountain sage.",
 pantryKicker:"05 / PALESTINIAN PANTRY",pantryTitle:"PALESTINIAN PANTRY",pantrySpecsKicker:"06 / PANTRY SPECIFICATIONS",pantrySpecsTitle:"PANTRY SPECIFICATIONS",dairyKicker:"08 / PALESTINIAN DAIRY",dairyTitle:"PALESTINIAN DAIRY",heritageKicker:"09 / HERITAGE PRODUCT",packagingKicker:"10 / PACKAGING & LOGISTICS",packagingTitle:"PACKAGING & LOGISTICS",internationalKicker:"11 / INTERNATIONAL",exportTitle:"EXPORT & DISTRIBUTION",contactEyebrow:"MANAJEL · 2026",contactTitle:"Let's work together.",pantryCallout:"A focused selection of Palestinian pantry products.",pantryCalloutText:"The catalog presents the products and packaging information currently available. Additional product specifications can be supplied for wholesale inquiries.",
@@ -335,7 +407,7 @@ zaatarSize500:"500 g",zaatarSize1kg:"1 kg",zaatarSize2kg:"2 kg",availableOnReque
 shelfLife1YearCool:"Shelf life: 1 year · Store in a cool, dry place.",shelfLife2YearsCool:"Shelf life: 2 years · Store in a cool, dry place.",
 pickledSize500:"500 g",pickledSize10kg:"10 kg",sageSize300:"300 g",freekehSize500:"500 g",
 dukkahAllergenValue:"Contains sesame and wheat/gluten.",
-cheese1Title:"Vacuum Fresh Nabulsi Cheese",cheese1Desc:"Boiled Nabulsi cheese, vacuum-packed without water.",cheese1Size:"300 g",pcsCarton20:"20 pcs / carton",dairyShelfStandard:"Shelf life: 1 year · Storage conditions: according to the approved product specification and destination-market requirements.",cheese1OpenNote:"After opening and exposure to air, use preferably within 15 days.",milkDairyAllergen:"Milk and dairy.",
+cheese1Title:"Vacuum Fresh Nabulsi Cheese",cheese1Desc:"Boiled Nabulsi cheese, vacuum-packed without water.",cheese1Size:"300 g",pcsCarton20:"20 pcs / carton",dairyShelfStandard:"Shelf life: 1 year · Storage conditions: in a cool, dry place away from direct sunlight .",cheese1OpenNote:"After opening and exposure to air, use preferably within 15 days.",milkDairyAllergen:"Milk and dairy.",
 cheese2Title:"Nabulsi Brined Cheese",cheese2Desc:"Boiled cheese preserved in water and salt.",cheese2Size:"300 g · 500 g",flavorsLabel:"Flavors:",cheese2Flavors:"Original · Hot Chili · Nigella Seeds",
 labanehTitle:"Labaneh Balls in Olive Oil",labanehDesc:"Cow's milk labaneh, salt and olive oil. Immersed in olive oil.",labanehSize:"200 g",labanehFlavors:"Original · Hot Chili · Zaatar · Nigella Seeds",
 storageNoteTitle:"Storage note",storageNoteText:"Keep products in a cool place. For final export documentation, storage and cold-chain requirements should be aligned with the destination-market regulations and the approved product specification.",
@@ -343,7 +415,7 @@ soapTitle:"Nabulsi Soap",soapDesc:"Traditional Palestinian Nabulsi soap made wit
 packagingLead:"Selected packaging and carton information for the current catalog range.",
 prodOliveGlass:"Olive Oil · Glass",prodOliveTin:"Olive Oil · Tin",prodBulkOlive:"Bulk Olive Oil",prodOliveSachets:"Olive Oil Sachets",
 size250ml:"250 ml",size500ml:"500 ml",size750ml:"750 ml",size1L:"1 L",size2L:"2 L",size4L:"4 L",size10kg:"10 kg",size15kg:"15 kg",size15ml:"15 ml",
-singleUnit:"Single unit",twentySmallBox:"20 / small box",masterCartonDim:"40 × 30 × 20 cm master",
+singleUnit:"Single unit",twentySmallBox:"24 / small box",masterCartonDim:"40 × 30 × 20 cm master",
 packagingNote:"Dimensions shown are based on the current catalog data. Missing specifications are intentionally not replaced with estimates.",
 exportLead:"MANAJEL currently serves regional and international markets, with export activity covering Jordan, GCC markets, the United States and Europe.",
 currentMarketLabel:"Current Market",marketJordan:"Jordan",marketGCC:"GCC",marketUS:"United States",marketEurope:"Europe",

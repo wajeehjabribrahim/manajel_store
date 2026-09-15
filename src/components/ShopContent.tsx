@@ -2,7 +2,7 @@
 
 import { PRODUCTS, Product, CATEGORIES } from "@/constants/products";
 import ProductCard from "@/components/ProductCard";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -10,73 +10,185 @@ import { showToast } from "@/components/Toast";
 
 const PRODUCTS_BATCH_SIZE = 4;
 
-// Products per grid row at each viewport width (must match the grid's
-// grid-cols-2 / md:grid-cols-3 / lg:grid-cols-4 / xl:grid-cols-5 classes)
-const getGridColumns = (width: number) =>
-  width >= 1280 ? 5 : width >= 1024 ? 4 : width >= 768 ? 3 : 2;
-
 interface Category {
-  id: string;
+  id: string | number;
   name: string;
   nameAr?: string;
 }
 
-const normalizeCategoryValue = (value: string) =>
-  value.trim().toLowerCase().replace(/[\s_]+/g, "-");
-
-const categoryAliases: Record<string, string[]> = {
-  "olive-oil": ["olive-oil", "oliveoil", "olive", "zayt", "zait", "زيت-الزيتون", "زيت"],
-  zatar: ["zatar", "zaatar", "za3tar", "thyme", "زعتر", "الزعتر", "زعتر-بلدي"],
-  zaatar: ["zatar", "zaatar", "za3tar", "thyme", "زعتر", "الزعتر", "زعتر-بلدي"],
-  freekeh: ["freekeh", "freekah", "freakeh", "فريكة", "الفريكة"],
+const normalizeId = (
+  value: string | number | null | undefined
+) => {
+  return String(value ?? "").trim();
 };
 
-const matchesCategory = (raw: string, category: Category) => {
-  const normalizedRaw = normalizeCategoryValue(raw);
-  const normalizedId = normalizeCategoryValue(category.id);
-  const normalizedName = normalizeCategoryValue(category.name);
-  const normalizedNameAr = category.nameAr
-    ? normalizeCategoryValue(category.nameAr)
-    : "";
+const normalizeCategoryValue = (
+  value: string | number | null | undefined
+) => {
+  return normalizeId(value)
+    .toLowerCase()
+    .replace(/[\s_]+/g, "-");
+};
+
+const getGridColumns = (width: number) => {
+  if (width >= 1280) return 5;
+  if (width >= 1024) return 4;
+  if (width >= 768) return 3;
+  return 2;
+};
+
+const categoryAliases: Record<string, string[]> = {
+  "olive-oil": [
+    "olive-oil",
+    "oliveoil",
+    "olive",
+    "zayt",
+    "zait",
+    "زيت",
+    "زيت-الزيتون",
+    "زيت الزيتون",
+  ],
+
+  zatar: [
+    "zatar",
+    "zaatar",
+    "za3tar",
+    "thyme",
+    "زعتر",
+    "الزعتر",
+    "زعتر-بلدي",
+  ],
+
+  zaatar: [
+    "zatar",
+    "zaatar",
+    "za3tar",
+    "thyme",
+    "زعتر",
+    "الزعتر",
+    "زعتر-بلدي",
+  ],
+
+  freekeh: [
+    "freekeh",
+    "freekah",
+    "freakeh",
+    "فريكة",
+    "الفريكة",
+  ],
+
+  pickles: [
+    "pickles",
+    "pickle",
+    "مخللات",
+    "المخللات",
+    "زيتون",
+    "الزيتون",
+  ],
+
+  soap: [
+    "soap",
+    "nabulsi-soap",
+    "صابون",
+    "الصابون",
+    "صابون نابلسي",
+  ],
+
+  gifts: [
+    "gifts",
+    "gift",
+    "هدايا",
+    "الهدايا",
+    "باقات",
+    "الباقات",
+  ],
+};
+
+const matchesCategory = (
+  rawValue: string | number,
+  category: Category
+) => {
+  const raw = normalizeCategoryValue(rawValue);
+
+  const categoryId = normalizeCategoryValue(
+    category.id
+  );
+
+  const categoryName = normalizeCategoryValue(
+    category.name
+  );
+
+  const categoryNameAr = normalizeCategoryValue(
+    category.nameAr
+  );
 
   if (
-    normalizedRaw === normalizedId ||
-    normalizedRaw === normalizedName ||
-    normalizedRaw === normalizedNameAr
+    raw === categoryId ||
+    raw === categoryName ||
+    raw === categoryNameAr
   ) {
     return true;
   }
 
-  const aliases = categoryAliases[normalizedId] || [];
-  const aliasesByName = categoryAliases[normalizedName] || [];
-  return [...aliases, ...aliasesByName].some(
-    (alias) => normalizeCategoryValue(alias) === normalizedRaw
+  const aliasesById =
+    categoryAliases[categoryId] || [];
+
+  const aliasesByName =
+    categoryAliases[categoryName] || [];
+
+  return [
+    ...aliasesById,
+    ...aliasesByName,
+  ].some(
+    (alias) =>
+      normalizeCategoryValue(alias) === raw
   );
 };
 
-const resolveCategoryId = (value: string, categories: Category[]) => {
-  const directMatch = categories.find((cat) => matchesCategory(value, cat));
+const resolveCategoryId = (
+  value: string | number,
+  categories: Category[]
+) => {
+  const directMatch = categories.find(
+    (category) =>
+      matchesCategory(value, category)
+  );
+
   if (directMatch) {
-    return directMatch.id;
+    return normalizeId(directMatch.id);
   }
 
-  const normalizedValue = normalizeCategoryValue(value);
-  const looseMatch = categories.find((cat) => {
-    const normalizedId = normalizeCategoryValue(cat.id);
-    const normalizedName = normalizeCategoryValue(cat.name);
-    const normalizedNameAr = cat.nameAr ? normalizeCategoryValue(cat.nameAr) : "";
+  const normalizedValue =
+    normalizeCategoryValue(value);
 
-    return (
-      normalizedId.includes(normalizedValue) ||
-      normalizedName.includes(normalizedValue) ||
-      normalizedNameAr.includes(normalizedValue) ||
-      normalizedValue.includes(normalizedId) ||
-      normalizedValue.includes(normalizedName) ||
-      (normalizedNameAr ? normalizedValue.includes(normalizedNameAr) : false)
-    );
-  });
+  const looseMatch = categories.find(
+    (category) => {
+      const categoryId =
+        normalizeCategoryValue(category.id);
 
-  return looseMatch?.id;
+      const categoryName =
+        normalizeCategoryValue(category.name);
+
+      const categoryNameAr =
+        normalizeCategoryValue(category.nameAr);
+
+      return (
+        categoryId.includes(normalizedValue) ||
+        categoryName.includes(normalizedValue) ||
+        categoryNameAr.includes(normalizedValue) ||
+        normalizedValue.includes(categoryId) ||
+        normalizedValue.includes(categoryName) ||
+        (
+          categoryNameAr &&
+          normalizedValue.includes(categoryNameAr)
+        )
+      );
+    }
+  );
+
+  return looseMatch
+    ? normalizeId(looseMatch.id)
+    : undefined;
 };
 
 const productMatchesSelectedCategory = (
@@ -84,516 +196,1118 @@ const productMatchesSelectedCategory = (
   selectedCategory: string,
   categories: Category[]
 ) => {
-  const resolvedSelected = resolveCategoryId(selectedCategory, categories);
-  const resolvedProduct = resolveCategoryId(productCategory, categories);
+  const normalizedProductCategory =
+    normalizeCategoryValue(productCategory);
 
-  if (resolvedSelected && resolvedProduct) {
-    return resolvedSelected === resolvedProduct;
-  }
+  const normalizedSelectedCategory =
+    normalizeCategoryValue(selectedCategory);
 
-  const normalizedProduct = normalizeCategoryValue(productCategory);
-  const normalizedSelected = normalizeCategoryValue(selectedCategory);
-
-  if (normalizedProduct === normalizedSelected) {
+  if (
+    normalizedProductCategory ===
+    normalizedSelectedCategory
+  ) {
     return true;
   }
 
-  const selectedCategoryObj = categories.find(
-    (cat) =>
-      normalizeCategoryValue(cat.id) === normalizedSelected ||
-      normalizeCategoryValue(cat.name) === normalizedSelected ||
-      (cat.nameAr && normalizeCategoryValue(cat.nameAr) === normalizedSelected)
-  );
+  const resolvedProductCategory =
+    resolveCategoryId(
+      productCategory,
+      categories
+    );
 
-  if (!selectedCategoryObj) {
-    const selectedAliases = categoryAliases[normalizedSelected] || [];
-    return selectedAliases.some(
-      (alias) => normalizeCategoryValue(alias) === normalizedProduct
+  const resolvedSelectedCategory =
+    resolveCategoryId(
+      selectedCategory,
+      categories
+    );
+
+  if (
+    resolvedProductCategory &&
+    resolvedSelectedCategory
+  ) {
+    return (
+      resolvedProductCategory ===
+      resolvedSelectedCategory
     );
   }
 
-  const candidates = new Set<string>([
-    normalizeCategoryValue(selectedCategoryObj.id),
-    normalizeCategoryValue(selectedCategoryObj.name),
-    selectedCategoryObj.nameAr ? normalizeCategoryValue(selectedCategoryObj.nameAr) : "",
-  ]);
+  const selectedCategoryObject =
+    categories.find(
+      (category) =>
+        normalizeId(category.id) ===
+          normalizeId(selectedCategory) ||
+        matchesCategory(
+          selectedCategory,
+          category
+        )
+    );
 
-  const normalizedName = normalizeCategoryValue(selectedCategoryObj.name);
-  const aliasesById = categoryAliases[normalizeCategoryValue(selectedCategoryObj.id)] || [];
-  const aliasesByName = categoryAliases[normalizedName] || [];
+  if (!selectedCategoryObject) {
+    const aliases =
+      categoryAliases[
+        normalizedSelectedCategory
+      ] || [];
 
-  [...aliasesById, ...aliasesByName].forEach((alias) => {
-    candidates.add(normalizeCategoryValue(alias));
+    return aliases.some(
+      (alias) =>
+        normalizeCategoryValue(alias) ===
+        normalizedProductCategory
+    );
+  }
+
+  const candidates = new Set<string>();
+
+  candidates.add(
+    normalizeCategoryValue(
+      selectedCategoryObject.id
+    )
+  );
+
+  candidates.add(
+    normalizeCategoryValue(
+      selectedCategoryObject.name
+    )
+  );
+
+  if (selectedCategoryObject.nameAr) {
+    candidates.add(
+      normalizeCategoryValue(
+        selectedCategoryObject.nameAr
+      )
+    );
+  }
+
+  const aliasesById =
+    categoryAliases[
+      normalizeCategoryValue(
+        selectedCategoryObject.id
+      )
+    ] || [];
+
+  const aliasesByName =
+    categoryAliases[
+      normalizeCategoryValue(
+        selectedCategoryObject.name
+      )
+    ] || [];
+
+  [
+    ...aliasesById,
+    ...aliasesByName,
+  ].forEach((alias) => {
+    candidates.add(
+      normalizeCategoryValue(alias)
+    );
   });
 
-  return candidates.has(normalizedProduct);
+  return candidates.has(
+    normalizedProductCategory
+  );
 };
 
 export default function ShopContent() {
   const { t, language } = useLanguage();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin";
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
-  // Language the loaded products were fetched for; see filteredProducts.
-  const [productsLang, setProductsLang] = useState<string | null>(null);
-  const [categories, setCategories] = useState<Category[]>(CATEGORIES.map(c => ({ id: c.id, name: c.name, nameAr: c.name })));
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
-  const [productsLoaded, setProductsLoaded] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(PRODUCTS_BATCH_SIZE);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
-  // One lazy-load step = one full grid row, tracked against the viewport width
-  const rowSizeRef = useRef(PRODUCTS_BATCH_SIZE);
+  const isAdmin =
+    (
+      session?.user as
+        | { role?: string }
+        | undefined
+    )?.role === "admin";
 
+  const [selectedCategory, setSelectedCategory] =
+    useState<string | null>(null);
+
+  const [products, setProducts] =
+    useState<Product[]>(PRODUCTS);
+
+  const [productsLang, setProductsLang] =
+    useState<string | null>(null);
+
+  const [categories, setCategories] =
+    useState<Category[]>(
+      CATEGORIES.map((category) => ({
+        id: category.id,
+        name: category.name,
+        nameAr: category.name,
+      }))
+    );
+
+  const [categoriesLoaded, setCategoriesLoaded] =
+    useState(false);
+
+  const [productsLoaded, setProductsLoaded] =
+    useState(false);
+
+  const [visibleCount, setVisibleCount] =
+    useState(PRODUCTS_BATCH_SIZE);
+
+  const [deleting, setDeleting] =
+    useState<string | null>(null);
+
+  const loadMoreRef =
+    useRef<HTMLDivElement | null>(null);
+
+  const rowSizeRef =
+    useRef(PRODUCTS_BATCH_SIZE);
+
+  const restoredRef =
+    useRef(false);
+
+  /*
+   * تحديد عدد أعمدة المنتجات
+   */
   useEffect(() => {
     const updateRowSize = () => {
-      rowSizeRef.current = getGridColumns(window.innerWidth);
+      rowSizeRef.current =
+        getGridColumns(window.innerWidth);
     };
+
     updateRowSize();
-    window.addEventListener("resize", updateRowSize);
-    return () => window.removeEventListener("resize", updateRowSize);
+
+    window.addEventListener(
+      "resize",
+      updateRowSize
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        updateRowSize
+      );
+    };
   }, []);
 
+  /*
+   * جلب التصنيفات
+   */
   const loadCategories = async () => {
     try {
-      const res = await fetch('/api/categories');
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+      const response = await fetch(
+        "/api/categories"
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (
+          Array.isArray(data) &&
+          data.length > 0
+        ) {
           setCategories(data);
+
           try {
-            localStorage.setItem('manajel-categories-cache', JSON.stringify(data));
+            localStorage.setItem(
+              "manajel-categories-cache",
+              JSON.stringify(data)
+            );
           } catch {
-            // ignore cache errors
+            // تجاهل أخطاء التخزين
           }
         }
       }
     } catch (error) {
-      console.error('Error loading categories:', error);
+      console.error(
+        "Error loading categories:",
+        error
+      );
     } finally {
       setCategoriesLoaded(true);
     }
   };
 
+  /*
+   * جلب المنتجات
+   */
   const loadProducts = async () => {
     try {
-      const res = await fetch(`/api/products?lang=${language}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data?.products)) {
+      const response = await fetch(
+        `/api/products?lang=${language}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (
+          Array.isArray(data?.products)
+        ) {
           setProducts(data.products);
           setProductsLang(language);
+
           try {
-            localStorage.setItem(`manajel-products-cache-${language}`, JSON.stringify(data.products));
-            try {
-              localStorage.setItem(
-                `manajel-products-cache-meta-${language}`,
-                JSON.stringify({ ts: Date.now() })
-              );
-            } catch {
-              // ignore meta cache errors
-            }
+            localStorage.setItem(
+              `manajel-products-cache-${language}`,
+              JSON.stringify(data.products)
+            );
+
+            localStorage.setItem(
+              `manajel-products-cache-meta-${language}`,
+              JSON.stringify({
+                ts: Date.now(),
+              })
+            );
           } catch {
-            // ignore cache errors
+            // تجاهل أخطاء التخزين
           }
         }
       }
-    } catch {
-      // keep fallback
+    } catch (error) {
+      console.error(
+        "Error loading products:",
+        error
+      );
     } finally {
       setProductsLoaded(true);
     }
   };
 
+  /*
+   * تحميل البيانات من الكاش ثم تحديثها
+   */
   useEffect(() => {
-    const CACHE_TTL = 60 * 60 * 1000; // 1 hour
-    const cacheKey = `manajel-products-cache-${language}`;
-    const metaKey = `manajel-products-cache-meta-${language}`;
-    let fresh = false;
+    const CACHE_TTL =
+      60 * 60 * 1000;
 
-    // Render cached categories instantly so returning to the page doesn't
-    // flash skeletons while /api/categories responds (it still refreshes below)
+    const productsCacheKey =
+      `manajel-products-cache-${language}`;
+
+    const productsMetaKey =
+      `manajel-products-cache-meta-${language}`;
+
+    let productsCacheIsFresh = false;
+
+    /*
+     * كاش التصنيفات
+     */
     try {
-      const cachedCats = localStorage.getItem('manajel-categories-cache');
-      if (cachedCats) {
-        const parsedCats = JSON.parse(cachedCats);
-        if (Array.isArray(parsedCats) && parsedCats.length > 0) {
-          setCategories(parsedCats);
+      const cachedCategories =
+        localStorage.getItem(
+          "manajel-categories-cache"
+        );
+
+      if (cachedCategories) {
+        const parsedCategories =
+          JSON.parse(cachedCategories);
+
+        if (
+          Array.isArray(parsedCategories) &&
+          parsedCategories.length > 0
+        ) {
+          setCategories(parsedCategories);
           setCategoriesLoaded(true);
         }
       }
     } catch {
-      // ignore cache errors
+      // تجاهل أخطاء الكاش
     }
 
+    /*
+     * كاش المنتجات
+     */
     try {
-      const cached = localStorage.getItem(cacheKey);
-      const metaRaw = localStorage.getItem(metaKey);
+      const cachedProducts =
+        localStorage.getItem(
+          productsCacheKey
+        );
 
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setProducts(parsed);
+      const cachedMeta =
+        localStorage.getItem(
+          productsMetaKey
+        );
+
+      if (cachedProducts) {
+        const parsedProducts =
+          JSON.parse(cachedProducts);
+
+        if (
+          Array.isArray(parsedProducts) &&
+          parsedProducts.length > 0
+        ) {
+          setProducts(parsedProducts);
           setProductsLang(language);
-          if (metaRaw) {
+
+          if (cachedMeta) {
             try {
-              const meta = JSON.parse(metaRaw);
-              const ts = typeof meta?.ts === "number" ? meta.ts : 0;
-              if (Date.now() - ts < CACHE_TTL) fresh = true;
+              const parsedMeta =
+                JSON.parse(cachedMeta);
+
+              const timestamp =
+                typeof parsedMeta?.ts ===
+                "number"
+                  ? parsedMeta.ts
+                  : 0;
+
+              if (
+                Date.now() - timestamp <
+                CACHE_TTL
+              ) {
+                productsCacheIsFresh = true;
+              }
             } catch {
-              // ignore meta parse
+              // تجاهل أخطاء البيانات
             }
           }
         }
       }
-
-      loadCategories();
-      if (!fresh) {
-        loadProducts();
-      } else {
-        setProductsLoaded(true);
-      }
     } catch {
-      loadCategories();
+      // تجاهل أخطاء الكاش
+    }
+
+    loadCategories();
+
+    if (!productsCacheIsFresh) {
       loadProducts();
+    } else {
+      setProductsLoaded(true);
     }
 
     return () => undefined;
   }, [language]);
 
-  // Read category from URL
+  /*
+   * اختيار الفئة من الرابط
+   *
+   * إذا ما في فئة بالرابط،
+   * يتم اختيار أول فئة تلقائيًا
+   */
   useEffect(() => {
-    const category = searchParams.get('category');
-
-    if (!category) {
-      setSelectedCategory(null);
+    if (!categories.length) {
       return;
     }
 
-    const matchedCategory = categories.find((cat) => matchesCategory(category, cat));
-    setSelectedCategory(matchedCategory?.id ?? category);
-  }, [searchParams, categories]);
+    const categoryFromUrl =
+      searchParams.get("category");
 
-  const handleDelete = async (productId: string) => {
-    if (!confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+    if (categoryFromUrl) {
+      const matchedCategory =
+        categories.find((category) =>
+          matchesCategory(
+            categoryFromUrl,
+            category
+          )
+        );
+
+      setSelectedCategory(
+        normalizeId(
+          matchedCategory?.id ??
+            categoryFromUrl
+        )
+      );
+
+      return;
+    }
+
+    setSelectedCategory(
+      (currentCategory) => {
+        if (currentCategory) {
+          return normalizeId(
+            currentCategory
+          );
+        }
+
+        return normalizeId(
+          categories[0]?.id
+        );
+      }
+    );
+  }, [categories, searchParams]);
+
+  /*
+   * تغيير الفئة
+   */
+  const handleCategoryChange = (
+    categoryId: string | number
+  ) => {
+    const normalizedCategoryId =
+      normalizeId(categoryId);
+
+    setSelectedCategory(
+      normalizedCategoryId
+    );
+
+    setVisibleCount(
+      rowSizeRef.current * 2
+    );
+
+    try {
+      const url = new URL(
+        window.location.href
+      );
+
+      url.searchParams.set(
+        "category",
+        normalizedCategoryId
+      );
+
+      window.history.pushState(
+        {},
+        "",
+        url.toString()
+      );
+    } catch {
+      // تجاهل أخطاء الرابط
+    }
+  };
+
+  /*
+   * حذف المنتج
+   */
+  const handleDelete = async (
+    productId: string
+  ) => {
+    const confirmed = window.confirm(
+      "هل أنت متأكد من حذف هذا المنتج؟"
+    );
+
+    if (!confirmed) {
       return;
     }
 
     setDeleting(productId);
-    try {
-      const res = await fetch(`/api/products/${productId}`, {
-        method: "DELETE",
-      });
 
-      if (res.ok) {
+    try {
+      const response = await fetch(
+        `/api/products/${productId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
         await loadProducts();
       } else {
-        const data = await res.json().catch(() => ({}));
-        showToast(data?.error || "فشل حذف المنتج", "error");
+        const data =
+          await response
+            .json()
+            .catch(() => ({}));
+
+        showToast(
+          data?.error ||
+            "فشل حذف المنتج",
+          "error"
+        );
       }
     } catch {
-      showToast("حدث خطأ أثناء الحذف", "error");
+      showToast(
+        "حدث خطأ أثناء حذف المنتج",
+        "error"
+      );
     } finally {
       setDeleting(null);
     }
   };
 
+  /*
+   * فلترة المنتجات حسب الفئة
+   */
   const filteredProducts = useMemo(() => {
-    // Products carry names in the language they were fetched for. After a
-    // language switch the previous list lingers until the refetch resolves, so
-    // it is withheld rather than rendered with the wrong-language names.
-    if (productsLang !== language) return [];
-    return selectedCategory
-      ? products.filter((p) =>
-          productMatchesSelectedCategory(p.category, selectedCategory, categories)
-        )
-      : products;
-  }, [products, selectedCategory, categories, productsLang, language]);
+    /*
+     * لا تعرض المنتجات قبل تحميل لغة المنتجات الحالية
+     */
+    if (productsLang !== language) {
+      return [];
+    }
 
-  const visibleProducts = filteredProducts.slice(0, visibleCount);
-  const hasMoreProducts = visibleCount < filteredProducts.length;
+    /*
+     * لا تعرض كل المنتجات إذا ما في فئة مختارة
+     */
+    if (!selectedCategory) {
+      return [];
+    }
 
-  const isLoading = !categoriesLoaded || !productsLoaded;
+    return products.filter((product) =>
+      productMatchesSelectedCategory(
+        product.category,
+        selectedCategory,
+        categories
+      )
+    );
+  }, [
+    products,
+    productsLang,
+    language,
+    selectedCategory,
+    categories,
+  ]);
 
+  const visibleProducts =
+    filteredProducts.slice(
+      0,
+      visibleCount
+    );
+
+  const hasMoreProducts =
+    visibleCount <
+    filteredProducts.length;
+
+  /*
+   * التحميل فقط للبيانات،
+   * وليس عند عدم وجود فئة مختارة
+   */
+  const isLoading =
+    !categoriesLoaded ||
+    !productsLoaded;
+
+  /*
+   * إعادة عدد المنتجات عند تغيير الفئة
+   */
   useEffect(() => {
-    // Start with two full rows for the current viewport width.
-    // Deliberately NOT keyed on filteredProducts.length: a background data
-    // refresh must not collapse the list and yank the user back to the top.
-    setVisibleCount(rowSizeRef.current * 2);
+    setVisibleCount(
+      rowSizeRef.current * 2
+    );
   }, [selectedCategory, language]);
 
+  /*
+   * تحميل المزيد تلقائيًا
+   */
   useEffect(() => {
-    if (isLoading || !hasMoreProducts || !loadMoreRef.current) {
+    if (
+      isLoading ||
+      !hasMoreProducts ||
+      !loadMoreRef.current
+    ) {
       return;
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry?.isIntersecting) {
-          return;
-        }
-        // Advance to the next full-row boundary so rows never render incomplete
-        setVisibleCount((prev) => {
-          const row = rowSizeRef.current;
-          return Math.min((Math.floor(prev / row) + 1) * row, filteredProducts.length);
-        });
-      },
-      {
-        root: null,
-        rootMargin: "300px 0px",
-        threshold: 0.01,
-      }
-    );
+    const observer =
+      new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
 
-    observer.observe(loadMoreRef.current);
+          if (
+            !entry?.isIntersecting
+          ) {
+            return;
+          }
+
+          setVisibleCount(
+            (previousCount) => {
+              const row =
+                rowSizeRef.current;
+
+              const nextCount =
+                (
+                  Math.floor(
+                    previousCount / row
+                  ) + 1
+                ) * row;
+
+              return Math.min(
+                nextCount,
+                filteredProducts.length
+              );
+            }
+          );
+        },
+        {
+          root: null,
+          rootMargin: "300px 0px",
+          threshold: 0.01,
+        }
+      );
+
+    observer.observe(
+      loadMoreRef.current
+    );
 
     return () => {
       observer.disconnect();
     };
-  }, [isLoading, hasMoreProducts, filteredProducts.length]);
+  }, [
+    isLoading,
+    hasMoreProducts,
+    filteredProducts.length,
+  ]);
 
-  // Restore to the last clicked product when returning from a product page.
-  // Reveals every row up to that product in ONE state update, then scrolls
-  // straight to it — no incremental reveal crawl. Falls back to the stored
-  // Y position. Runs once per mount.
-  const restoredRef = useRef(false);
+  /*
+   * اسم الفئة المختارة
+   */
+  const selectedCategoryName =
+    useMemo(() => {
+      const category =
+        categories.find(
+          (item) =>
+            normalizeId(item.id) ===
+            normalizeId(
+              selectedCategory
+            )
+        );
+
+      if (!category) {
+        return "";
+      }
+
+      return language === "ar"
+        ? category.nameAr ||
+            category.name
+        : category.name;
+    }, [
+      categories,
+      selectedCategory,
+      language,
+    ]);
+
+  /*
+   * استعادة مكان المستخدم السابق
+   */
   useEffect(() => {
-    if (!productsLoaded || restoredRef.current) return;
+    if (
+      !productsLoaded ||
+      restoredRef.current
+    ) {
+      return;
+    }
 
     try {
-      const productId = sessionStorage.getItem('lastProductId');
-      const pos = sessionStorage.getItem('manajel:shop:scroll');
-      if (!productId && !pos) return;
+      const lastProductId =
+        sessionStorage.getItem(
+          "lastProductId"
+        );
+
+      const storedScroll =
+        sessionStorage.getItem(
+          "manajel:shop:scroll"
+        );
+
+      if (
+        !lastProductId &&
+        !storedScroll
+      ) {
+        return;
+      }
+
       restoredRef.current = true;
 
-      const clearKeys = () => {
+      const clearStoredValues = () => {
         try {
-          sessionStorage.removeItem('lastProductId');
-          sessionStorage.removeItem('manajel:shop:scroll');
+          sessionStorage.removeItem(
+            "lastProductId"
+          );
+
+          sessionStorage.removeItem(
+            "manajel:shop:scroll"
+          );
         } catch {
-          // ignore
+          // تجاهل أخطاء التخزين
         }
       };
 
-      const scrollToStoredY = () => {
-        const n = Number(pos);
-        if (pos && !Number.isNaN(n)) {
+      const restoreScroll = () => {
+        const position =
+          Number(storedScroll);
+
+        if (
+          storedScroll &&
+          !Number.isNaN(position)
+        ) {
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              window.scrollTo({ top: n, behavior: 'auto' });
-              clearKeys();
+              window.scrollTo({
+                top: position,
+                behavior: "auto",
+              });
+
+              clearStoredValues();
             });
           });
         } else {
-          clearKeys();
+          clearStoredValues();
         }
       };
 
-      if (productId) {
-        const index = filteredProducts.findIndex((p) => String(p.id) === String(productId));
-        if (index >= 0) {
-          // Reveal the product's row plus one extra row in a single update
-          const row = rowSizeRef.current;
-          const needed = Math.min((Math.ceil((index + 1) / row) + 1) * row, filteredProducts.length);
-          setVisibleCount((prev) => Math.max(prev, needed));
+      if (lastProductId) {
+        const productIndex =
+          filteredProducts.findIndex(
+            (product) =>
+              String(product.id) ===
+              String(lastProductId)
+          );
+
+        if (productIndex >= 0) {
+          const row =
+            rowSizeRef.current;
+
+          const requiredCount =
+            Math.min(
+              (
+                Math.ceil(
+                  (productIndex + 1) / row
+                ) + 1
+              ) * row,
+              filteredProducts.length
+            );
+
+          setVisibleCount(
+            (previousCount) =>
+              Math.max(
+                previousCount,
+                requiredCount
+              )
+          );
 
           let tries = 0;
-          const tick = () => {
-            const el = document.getElementById(`product-${productId}`);
-            if (el) {
-              el.scrollIntoView({ behavior: 'auto', block: 'center' });
-              clearKeys();
-              return;
-            }
-            tries += 1;
-            if (tries < 30) {
-              requestAnimationFrame(tick);
-            } else {
-              scrollToStoredY();
-            }
-          };
-          requestAnimationFrame(tick);
+
+          const findProductElement =
+            () => {
+              const element =
+                document.getElementById(
+                  `product-${lastProductId}`
+                );
+
+              if (element) {
+                element.scrollIntoView({
+                  behavior: "auto",
+                  block: "center",
+                });
+
+                clearStoredValues();
+                return;
+              }
+
+              tries += 1;
+
+              if (tries < 30) {
+                requestAnimationFrame(
+                  findProductElement
+                );
+              } else {
+                restoreScroll();
+              }
+            };
+
+          requestAnimationFrame(
+            findProductElement
+          );
+
           return;
         }
       }
 
-      scrollToStoredY();
+      restoreScroll();
     } catch {
-      // ignore
+      // تجاهل أخطاء الاستعادة
     }
-  }, [productsLoaded, filteredProducts]);
+  }, [
+    productsLoaded,
+    filteredProducts,
+  ]);
 
   return (
     <div className="bg-[#FBF8F2] text-[#121416]">
-      {/* Header */}
+      {/* عنوان المتجر */}
       <section
         style={{
           background:
             "linear-gradient(180deg, #F3EEE3 0%, #FBF8F2 100%)",
-          borderBottom: "1px solid rgba(201,166,107,0.25)",
+          borderBottom:
+            "1px solid rgba(201,166,107,0.25)",
         }}
         className="px-4 py-7 text-[#121416]"
       >
-        <div className="max-w-7xl mx-auto">
-          <h1 className="mb-2 text-3xl sm:text-4xl text-[#C9A66B] leading-tight tajawal-regular-all">{t("shop.title")}</h1>
-          <p className="text-sm sm:text-base md:text-lg text-black/80 leading-relaxed tajawal-regular-all">
+        <div className="mx-auto max-w-7xl">
+          <h1 className="mb-2 text-3xl leading-tight text-[#C9A66B] sm:text-4xl tajawal-regular-all">
+            {t("shop.title")}
+          </h1>
+
+          <p className="text-sm leading-relaxed text-black/80 sm:text-base md:text-lg tajawal-regular-all">
             {t("shop.subtitle")}
           </p>
         </div>
       </section>
 
-      {/* Shop */}
-      <section className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col gap-2">
-          {/* Categories - horizontal chips */}
-          <div>
-            <div className="mb-4 flex flex-wrap items-center gap-2 tajawal-regular-all">
-              {isLoading ? (
-                // Categories Skeleton
-                <>
-                  {Array.from({ length: 5 }).map((_, idx) => (
-                    <div key={idx} className="relative animate-pulse">
-                      <div className="h-9 w-24 rounded-full border border-black/10 bg-black/10" />
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      try {
-                        const u = new URL(window.location.href);
-                        u.searchParams.delete('category');
-                        window.history.pushState({}, '', u.toString());
-                      } catch {}
-                      setSelectedCategory(null);
-                    }}
-                    className={`rounded-full border px-4 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-                      selectedCategory === null
-                        ? "border-[#C9A66B] bg-[#C9A66B]/20 font-semibold text-[#121416]"
-                         : "border-black/15 bg-[#FFFFFF] text-black/85 hover:border-[#C9A66B]/60 hover:text-black"
-                    }`}
-                    type="button"
+      {/* محتوى المتجر */}
+      <section className="mx-auto max-w-7xl px-4 py-8">
+        {/* عنوان اختيار الفئة */}
+        <div className="mb-5 text-center">
+         <h2 className="text-2xl font-bold text-[#3E2F1C] sm:text-3xl tajawal-regular-all">
+            {language === "ar"
+              ? "اختر فئة لعرض منتجاتها"
+              : "Choose a category to view its products"}
+          </h2>
+
+          <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-[#C9A66B]" />
+        </div>
+
+        {/* الفئات */}
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center justify-center gap-2 tajawal-regular-all">
+            {isLoading ? (
+              Array.from({ length: 5 }).map(
+                (_, index) => (
+                  <div
+                    key={index}
+                    className="animate-pulse"
                   >
-                    {t("shop.allProducts")}
+                    <div className="h-9 w-24 rounded-full border border-black/10 bg-black/10" />
+                  </div>
+                )
+              )
+            ) : (
+              categories.map((category) => {
+                const categoryId =
+                  normalizeId(
+                    category.id
+                  );
+
+                const displayName =
+                  language === "ar"
+                    ? category.nameAr ||
+                      category.name
+                    : category.name;
+
+                const isSelected =
+                  normalizeId(
+                    selectedCategory
+                  ) === categoryId;
+
+                return (
+                  <button
+                    key={categoryId}
+                    type="button"
+                    onClick={() =>
+                      handleCategoryChange(
+                        categoryId
+                      )
+                    }
+                    className={`rounded-full border px-4 py-1.5 text-sm transition-all duration-200 sm:px-5 sm:py-2 sm:text-base ${
+                      isSelected
+                        ? "border-[#C9A66B] bg-[#C9A66B]/30 font-bold text-[#3E2F1C] shadow-sm ring-1 ring-[#C9A66B]/30"
+                        : "border-black/15 bg-white text-black/85 hover:border-[#C9A66B]/60 hover:text-black"
+                    }`}
+                  >
+                    {displayName}
                   </button>
-                  {categories.map((category) => {
-                    const displayName = language === 'ar' ? (category.nameAr || category.name) : category.name;
-                    
-                    return (
-                      <button
-                        key={category.id}
-                        onClick={() => {
-                            try {
-                              const u = new URL(window.location.href);
-                              u.searchParams.set('category', category.id);
-                              window.history.pushState({}, '', u.toString());
-                            } catch {}
-                            setSelectedCategory(category.id);
-                          }}
-                        className={`rounded-full border px-4 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-                          selectedCategory === category.id
-                            ? "border-[#C9A66B] bg-[#C9A66B]/20 font-semibold text-[#121416]"
-                             : "border-black/15 bg-[#FFFFFF] text-black/85 hover:border-[#C9A66B]/60 hover:text-black"
-                        }`}
-                        type="button"
-                      >
-                        {displayName}
-                      </button>
-                    );
-                  })}
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Products Grid */}
-          <div className="flex-1">
-            {!isLoading && (
-              <div className="mb-4 text-sm text-black/80 tajawal-regular-all">
-                {(() => {
-                  const cat = categories.find((c) => c.id === selectedCategory);
-                  const catName = cat
-                    ? (language === "ar" ? cat.nameAr || cat.name : cat.name)
-                    : t("shop.allProducts");
-                  return `${catName} — ${filteredProducts.length} ${t("shop.items")}`;
-                })()}
-              </div>
-            )}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-5 md:gap-6 auto-rows-fr">
-              {isLoading || filteredProducts.length === 0
-                ? Array.from({ length: 8 }).map((_, idx) => (
-                    <div key={idx} className="relative h-full animate-pulse">
-                      <div className="mb-4 h-48 w-full rounded-lg bg-black/10" />
-                      <div className="mb-2 h-6 w-3/4 rounded bg-black/10" />
-                      <div className="mb-2 h-4 w-1/2 rounded bg-black/10" />
-                      <div className="mb-2 h-4 w-1/3 rounded bg-black/10" />
-                      <div className="mt-auto h-8 w-1/2 rounded bg-black/10" />
-                    </div>
-                  ))
-                : visibleProducts.map((product, index) => (
-                  <div id={`product-${product.id}`} key={product.id} className="relative h-full">
-                      <ProductCard 
-                        product={product} 
-                        animationDelay={index * 50}
-                        isFirstProduct={index < 3}
-                      />
-                      {isAdmin && (
-                        <div className="absolute top-2 right-2 flex gap-2 z-10">
-                          <button
-                            onClick={() => window.location.href = `/store/admin/products/${product.id}/edit`}
-                            className="rounded-lg border border-[#C9A66B]/60 bg-[#FFFFFF]/95 p-2 text-[#121416] shadow-md backdrop-blur hover:bg-[#F3EEE3]"
-                            title="تعديل المنتج"
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => handleDelete(product.id)}
-                            disabled={deleting === product.id}
-                            className="rounded-lg border border-red-400/50 bg-red-500/20 p-2 text-red-200 shadow-md hover:bg-red-500/30 disabled:opacity-50"
-                            title="حذف المنتج"
-                          >
-                            {deleting === product.id ? (
-                              <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                              </svg>
-                            ) : (
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            )}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-            </div>
-
-            {!isLoading && hasMoreProducts && (
-              <div ref={loadMoreRef} className="mt-6 flex justify-center">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setVisibleCount((prev) => {
-                      const row = rowSizeRef.current;
-                      return Math.min((Math.floor(prev / row) + 1) * row, filteredProducts.length);
-                    })
-                  }
-                  className="gold-button rounded-xl px-5 py-2 text-sm font-bold"
-                >
-                  {language === "ar" ? "تحميل المزيد" : "Load more"}
-                </button>
-              </div>
+                );
+              })
             )}
           </div>
         </div>
+
+        {/* اسم الفئة وعدد المنتجات */}
+        {!isLoading &&
+          selectedCategoryName && (
+            <div className="mb-4 flex items-center gap-2 text-sm text-black/80 tajawal-regular-all">
+              <span className="font-bold text-[#3E2F1C]">
+                {selectedCategoryName}
+              </span>
+
+              <span className="text-black/40">
+                —
+              </span>
+
+              <span>
+                {filteredProducts.length}{" "}
+                {t("shop.items")}
+              </span>
+            </div>
+          )}
+
+        {/* شبكة المنتجات */}
+        <div className="grid auto-rows-fr grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
+          {/*
+           * Skeleton يظهر فقط أثناء التحميل
+           */}
+          {isLoading ? (
+            Array.from({ length: 8 }).map(
+              (_, index) => (
+                <div
+                  key={index}
+                  className="relative h-full animate-pulse"
+                >
+                  <div className="mb-4 h-48 w-full rounded-lg bg-black/10" />
+
+                  <div className="mb-2 h-6 w-3/4 rounded bg-black/10" />
+
+                  <div className="mb-2 h-4 w-1/2 rounded bg-black/10" />
+
+                  <div className="mb-2 h-4 w-1/3 rounded bg-black/10" />
+
+                  <div className="mt-auto h-8 w-1/2 rounded bg-black/10" />
+                </div>
+              )
+            )
+          ) : filteredProducts.length === 0 ? (
+            /*
+             * إذا الفئة ما فيها منتجات
+             */
+            <div className="col-span-full flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-[#C9A66B]/30 bg-white/60 px-6 py-12 text-center">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#C9A66B]/15">
+                <svg
+                  className="h-8 w-8 text-[#C9A66B]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.6}
+                    d="M20 13V7a2 2 0 00-2-2h-3l-1-2H10L9 5H6a2 2 0 00-2 2v6m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4m5 4h6"
+                  />
+                </svg>
+              </div>
+
+              <h3 className="mb-2 text-lg font-bold text-[#3E2F1C] tajawal-regular-all">
+                {language === "ar"
+                  ? "لا توجد منتجات"
+                  : "No products found"}
+              </h3>
+
+              <p className="max-w-md text-sm text-black/60 tajawal-regular-all">
+                {language === "ar"
+                  ? "لا توجد منتجات متوفرة ضمن هذه الفئة حاليًا."
+                  : "There are currently no products available in this category."}
+              </p>
+            </div>
+          ) : (
+            /*
+             * المنتجات التابعة للفئة المختارة
+             */
+            visibleProducts.map(
+              (product, index) => (
+                <div
+                  id={`product-${product.id}`}
+                  key={product.id}
+                  className="relative h-full"
+                >
+                  <ProductCard
+                    product={product}
+                    animationDelay={
+                      index * 50
+                    }
+                    isFirstProduct={
+                      index < 3
+                    }
+                  />
+
+                  {isAdmin && (
+                    <div className="absolute right-2 top-2 z-10 flex gap-2">
+                      {/* تعديل */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          window.location.href =
+                            `/store/admin/products/${product.id}/edit`;
+                        }}
+                        className="rounded-lg border border-[#C9A66B]/60 bg-white/95 p-2 text-[#121416] shadow-md backdrop-blur hover:bg-[#F3EEE3]"
+                        title="تعديل المنتج"
+                      >
+                        <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                      </button>
+
+                      {/* حذف */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleDelete(
+                            String(product.id)
+                          )
+                        }
+                        disabled={
+                          deleting ===
+                          String(product.id)
+                        }
+                        className="rounded-lg border border-red-400/50 bg-red-500/20 p-2 text-red-200 shadow-md hover:bg-red-500/30 disabled:opacity-50"
+                        title="حذف المنتج"
+                      >
+                        {deleting ===
+                        String(product.id) ? (
+                          <svg
+                            className="h-5 w-5 animate-spin"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l-2.647z"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )
+            )
+          )}
+        </div>
+
+        {/* تحميل المزيد */}
+        {!isLoading &&
+          hasMoreProducts && (
+            <div
+              ref={loadMoreRef}
+              className="mt-6 flex justify-center"
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleCount(
+                    (previousCount) => {
+                      const row =
+                        rowSizeRef.current;
+
+                      const nextCount =
+                        (
+                          Math.floor(
+                            previousCount /
+                              row
+                          ) + 1
+                        ) * row;
+
+                      return Math.min(
+                        nextCount,
+                        filteredProducts.length
+                      );
+                    }
+                  )
+                }
+                className="rounded-full border border-[#C9A66B] px-6 py-2 text-sm font-semibold text-[#3E2F1C] transition hover:bg-[#C9A66B]/15"
+              >
+                {language === "ar"
+                  ? "عرض المزيد"
+                  : "Load more"}
+              </button>
+            </div>
+          )}
       </section>
     </div>
   );
